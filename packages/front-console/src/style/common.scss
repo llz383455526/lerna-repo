@@ -1,0 +1,653 @@
+
+@import "./color";
+
+html, body {
+    height: 100%;
+}
+
+body {
+    background-color: $white;
+    margin: 0;
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+}
+
+.red {
+    color: $red;
+}
+
+.green{
+    color: $green
+}
+
+.body-max-width {
+    width: 1306px;
+    margin: auto;
+    padding: 15px 30px;
+}
+
+.body-min-width {
+    width: 1106px;
+    margin: auto;
+    padding: 15px 30px;
+}
+
+.body-margin {
+    margin: 30px auto 80px;
+    background-color: $white;
+}
+
+.submit-search {
+    height: 28px;
+    width: 60px;
+    color: $blue;
+    //border: 1px solid $blue;
+    outline: none;
+    font-size: 14px;
+    border-radius: 2px;
+    padding: 0;
+    background-color:white;
+}
+
+.clear-all {
+    font-size: 14px;
+    margin-left: 16px;
+    cursor: pointer;
+    list-style: none;
+    /*color: $blue;*/
+    color: $basic-green2;
+}
+
+.list-container {
+    padding: 10px 0;
+
+    .listing-container {
+        width: auto;
+        margin: 10px 0 20px;
+
+        .content {
+            padding: 0;
+
+            .search-box {
+
+                & > form > .el-form-item {
+                    margin-bottom: 0;
+                    
+                    &.cutoff-line{
+                        margin-right:0;
+                        margin-left:-10px;
+                    }
+                }
+                
+                .inputSearch {
+                    &.range {
+                        width:unset;
+                        .el-input__inner{
+                            width: 80px;
+                        }
+                    }
+                    .el-input__inner {
+                        font-size:14px;
+                        border-radius:2px;
+                        color: $dark-grey;
+                        width: 120px;
+                        line-height:28px;
+                        height:28px;
+                    }
+                }
+                .selectSearch .el-input__inner {
+                    font-size:14px;
+                    border-radius:2px;
+                    height:28px;
+                    width:120px;
+                }
+                .dateSearch .el-input__inner {
+                    border-radius:2px;
+                    height:28px;
+                    width:150px;
+                }
+                .dateRangeSearch{
+                    border-radius:2px;
+                    height:28px;
+                    width:300px;
+                    &.el-date-editor .el-range-input ,
+                    &.el-date-editor .el-input__icon,
+                    &.el-date-editor .el-range-separator{
+                        line-height: 0px;
+                    }        
+                    &.el-date-editor .el-range__close-icon{
+                        width:15px;
+                    }            
+                }
+                
+            }
+        }
+    }
+}
+
+.table-container {
+
+    .function-container {
+        margin: 10px 0;
+    }
+    
+    .cell {
+        font-size:12px;
+    }
+
+    a {
+        /*color: $blue;*/
+        color: $basic-green;
+        text-decoration: none;
+        font-size: 14px;
+        position: relative;
+    }
+}
+
+a.new {
+    color: $basic-green;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.pagination-container {
+    text-align: right;
+    position: relative;
+    margin: 20px auto;
+
+}
+
+a.operation, span.operation{
+    cursor:pointer;
+}
+/*按钮样式  start*/
+button{
+    border:none;
+    cursor:pointer;  
+}
+.submit-search {
+    height: 28px;
+    width: 60px;
+    /*color: $blue;
+    border: 1px solid $blue;*/
+    color: $white;
+    background-color: $basic-green;
+    outline: none;
+    font-size: 14px;
+    border-radius: 2px;
+    padding: 0;
+    /*background-color:white;*/
+}
+.btn-table {
+    line-height: 28px;
+    height: 28px;
+    /*width: 90px;*/
+    min-width: 90px;
+    color: white;
+    font-size: 14px;
+    border-radius: 2px;
+    padding: 0;
+    /*background-color:$blue;*/
+    background-color: $basic-green;
+}
+.btn-table-light{
+    line-height: 26px;
+    height: 28px;
+    /*width: 90px;*/
+    min-width: 90px;
+    color: $blue;
+    font-size: 14px;
+    border-radius: 2px;
+    padding: 0;
+    background-color:$bg-color1;
+    border:1px solid $lighter-grey8;
+}
+.btn-table-large {
+    line-height: 28px;
+    height: 28px;
+    color: white;
+    font-size: 14px;
+    border-radius: 2px;
+    padding: 0 20px;
+    background-color:$blue;
+}
+.btn-normal {
+    line-height: 30px;
+    height: 38px;
+    width: 120px;
+    color: white;
+    font-size: 14px;
+    border-radius: 2px;
+    padding: 0;
+    background-color:$blue;
+    font-weight:bold;
+}
+.btn-normal-large {
+    color: white;
+    font-size: 14px;
+    border-radius: 2px;
+    padding: 12px 20px;
+    background-color:$blue;
+    font-weight:bold;
+}
+.btn-cancel{
+    line-height: 30px;
+    height: 38px;
+    width: 120px;
+    color: #333;
+    font-size: 14px;
+    border-radius: 2px;
+    padding: 0;
+    background-color:$lighter-grey7;
+    border:1px solid $lighter-grey6;
+    font-weight:bold;
+}
+.btn-radius{
+    line-height: 32px;
+    height: 32px;
+    width: 120px;
+    box-radius:30px;
+    color: white;
+    font-size: 14px;
+    padding: 0;
+    background-color:$blue;
+    font-weight:bold;
+}
+.btn-radius-large{
+    padding: 10px 34px;
+    box-radius:34px;
+    color: white;
+    font-size: 14px;
+    background-color:$blue;
+    font-weight:bold;
+}
+.btn-table:hover,.btn-table-large:hover,
+.btn-normal:hover,.btn-normal-large:hover,
+.btn-radius:hover,.btn-radius-large:hover{
+    /*background-color:#296dc3;*/
+}
+.btn-table.disabled,.btn-table-large.disabled,
+.btn-normal.disabled,.btn-normal-large.disabled,
+.btn-radius.disabled,.btn-radius-large.disabled {
+    cursor: not-allowed;
+    background-color: #86b4ee;
+}
+.btn-cancel:hover{
+    background-color:#eaecec;
+}
+.btn-cancel.disabled{
+    cursor: not-allowed;
+    color:#ccc;
+}
+/*按钮样式  end*/
+
+.input-container {
+    /*min-height: 40px;*/
+    line-height: 40px;
+    margin-bottom: 20px;
+    font-size: 14px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    .label {
+        display: inline-block;
+        color: $grey;
+        text-align: left;
+        width: 150px;
+
+        span {
+            color: $red;
+        }
+
+        &.top {
+            vertical-align: top;
+        }
+    }
+
+    .input {
+        display: inline-block;
+        width: 300px;
+        position: relative;
+
+        &.upload {
+            width: 100px;
+            cursor: pointer;
+        }
+
+        .el-select, .el-input, .el-input-number, .el-autocomplete {
+            width: 100%;
+        }
+
+        p {
+            font-size: 12px;
+            color: $light-grey;
+
+            &.wrong {
+                color: $red;
+                margin-top: 0;
+                line-height: 12px;
+            }
+        }
+
+        a {
+            /*color: $blue;*/
+            color: $basic-green2;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .n-l-h {
+            margin: 0;
+            line-height: 12px;
+
+            &:first-child {
+                margin-top: 15px;
+            }
+        }
+
+        .upload-logo {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            background-image: url("../image/upload_logo.png");
+        }
+    }
+    
+    .el-form-item {
+        margin-bottom: 0;
+    }
+}
+
+.sub-title {
+    position: relative;
+    font-size: 16px;
+    line-height: 16px;
+    color: $dark-grey;
+    padding-left: 12px;
+    margin: 10px 0 20px;
+
+    &:before {
+        content: '';
+        position: absolute;
+        width: 3px;
+        height: 100%;
+        /*background-color: $blue;*/
+        background-color: $basic-green;
+        left: 0;
+        top: 0;
+    }
+
+    span {
+        font-size: 12px;
+        color: $light-grey;
+    }
+}
+
+.bottom-container {
+    height: 60px;
+    background-color: $bottom-bg;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 99;
+
+    .container {
+        max-width: 1360px;
+        margin: auto;
+
+        .btn {
+            width: 120px;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 2px;
+            font-size: 14px;
+            margin: 10px 20px 0 0;
+            text-align: center;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            color: $white;
+            /*background-color: $blue;*/
+            background-color: $basic-green;
+        }
+
+        .btn-cancel {
+            color: $dark-grey;
+            background-color: $lighter-grey2;
+        }
+    }
+}
+
+.v-short-line {
+    width: 4px;
+    height: 20px;
+    line-height: 20px;
+    background-color: $basic-green;
+    display: inline-block;
+    vertical-align: text-bottom;
+    margin-right: 5px;
+}
+
+.v-short-line-text {
+    margin-right: 10px;
+}
+
+.company-container {
+    margin-top: 15px;
+    background-color: white;
+    padding: 15px;
+}
+
+.content-part {
+    .information-content {
+        display: inline-block;
+        vertical-align: top;
+        &:first-child {
+            margin-right: 100px;
+        }
+
+        .input-container {
+            .content {
+                width: 470px;
+                word-wrap: break-word;
+            }
+        }
+    }
+}
+
+.information-content {
+    /*display: inline-block;
+
+    &:first-child {
+        margin-right: 100px;
+    }*/
+
+    .input-container {
+        height: 30px;
+        line-height: 12px;
+        margin-bottom: 10px;
+        font-size: 14px;
+
+        &.short {
+            height: 16px;
+            line-height: 16px;
+            margin-bottom: 10px;
+        }
+
+        .label {
+            display: inline-block;
+            text-align: left;
+            width: 150px;
+            color: $grey;
+        }
+
+        .content {
+            display: inline-block;
+            text-align: left;
+            color: $dark-grey;
+
+            &.blue {
+                color: $blue;
+            }
+
+            &.red {
+                color: $red;
+            }
+        }
+    }
+}
+.el-message {
+    top:60px !important;
+}
+
+.el-transfer-panel {
+    width: 250px;
+}
+
+.el-checkbox+.el-checkbox {
+    margin-left: 0;
+}
+
+.upload-file {
+    margin: 15px 0;
+    border: $lighter-grey5 solid 1px;
+    width: 320px;
+    height: 34px;
+    line-height: 34px;
+    font-size: 12px;
+    color: $dark-grey;
+    position: relative;
+    padding-left: 40px;
+
+    .file-logo {
+        width: 20px;
+        height: 20px;
+        background-image: url("../image/file_logo.png");
+        position: absolute;
+        left: 10px;
+        top: 6px;
+    }
+
+    .img-logo {
+        width: 20px;
+        height: 20px;
+        background-image: url("../image/img_logo.png");
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        margin-top: -10px;
+    }
+
+    .download-logo {
+        width: 16px;
+        height: 16px;
+        position: absolute;
+        right: 36px;
+        top: 9px;
+        background-image: url("../image/download_logo.png");
+        cursor: pointer;
+        background-color: white;
+        z-index: 10;
+    }
+
+    .delete-logo {
+        width: 16px;
+        height: 16px;
+        position: absolute;
+        right: 10px;
+        top: 9px;
+        background-image: url("../image/close.png");
+        cursor: pointer;
+    }
+}
+
+.analyze-company-name {
+    font-size: 20px;
+    color: $dark-grey;
+    font-weight: bold;
+    padding: 10px 15px;
+}
+
+.show-progress-dialog {
+    .el-dialog {
+        width: 78% !important;
+    }
+    img {
+        width: 100%;
+    }
+}
+
+
+.el-tabs {
+    .el-tabs__header {
+        .el-tabs__item {
+            color: $light-grey;
+
+            &.is-active {
+                color: $basic-green;
+            }
+        }
+    }
+}
+
+.el-tabs--card {
+    .el-tabs__header {
+
+        .el-tabs__item {
+
+            &.is-active {
+                color: $white;
+                background-color: $basic-green;
+            }
+        }
+    }
+
+    .tab-inner-container {
+        .el-tabs__header {
+
+            .el-tabs__item {
+
+                &.is-active {
+                    color: $basic-green;
+                    background-color: transparent;
+                }
+            }
+        }
+
+        .el-tabs__content {
+            margin-top: 0;
+            border: none;
+            padding: 0;
+        }
+    }
+
+    .el-tabs__content {
+        margin-top: -16px;
+        border: #e4e7ed solid 1px;
+        padding: 20px;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

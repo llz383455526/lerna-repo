@@ -1,0 +1,98 @@
+/**
+ * Created by bigben on 2017/4/18.
+ */
+
+export default (type = 'GET', url, param = {}, callback, async=true) => {
+	type = type.toUpperCase();
+	
+	let requestObj;
+	if (window.XMLHttpRequest) {
+		requestObj = new XMLHttpRequest();
+	} else {
+		requestObj = new ActiveXObject;
+	}
+
+	//console.log('requestObj', requestObj);
+	
+	if(type === 'GET') {
+		let dataStr = '' //数据拼接字符串
+		Object.keys(param).forEach(key => {
+			dataStr += key + '=' + param[key] + '&'
+		})
+		dataStr = dataStr.substr(0, dataStr.lastIndexOf('&'))
+		if(dataStr) url += `?${dataStr}&t=${parseInt(Math.random() * 100000)}`
+		else url += `?t=${parseInt(Math.random() * 100000)}`
+		
+		requestObj.timeout = 30000
+		requestObj.open(type, url, async)
+		requestObj.setRequestHeader('If-Modified-Since', '0')
+		requestObj.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+        //console.log('getttttttttttttttt', requestObj);
+		requestObj.send()
+	}else if (type === 'POST') {
+		requestObj.timeout = 30000
+		requestObj.open(type, url, async);
+		requestObj.setRequestHeader("Content-type", "application/json");
+		requestObj.send(JSON.stringify(param));
+        //console.log('postoooooooooooooo', requestObj);
+	}else if (type === 'FORM') {
+		let url = 'https://sunnyhao.oss-cn-shenzhen.aliyuncs.com'
+		requestObj.open('post', url, async);
+		requestObj.send(param);
+	}else if (type === 'IMPORT') {
+		requestObj.open('post', url, async);
+		requestObj.send(param);
+	}else {
+		callback({error: 'error type'});
+	}
+	
+	requestObj.onreadystatechange = () => {
+		if (requestObj.readyState === 4) {
+			/*if(requestObj.responseURL !== url){
+				window.location.href = requestObj.responseURL
+				reject(false)
+			}*/
+			//console.log(requestObj)
+			
+			if (requestObj.status === 200) {
+				let obj = requestObj.response || requestObj.responseText
+				if(type === 'FORM' && !obj) {
+					//let url = param.get('key').split('/')
+					obj = {
+						code: 200,
+						data: {
+							/*displayName: param.get('name'),
+							name: url[1],
+							catalogue: url[0]*/
+						}
+					}
+				}
+				
+				if (obj && typeof obj !== 'object') {
+					try {
+                        obj = JSON.parse(obj);
+					} catch (error) {
+						console.log(error);
+					}
+				}
+				callback(obj);
+			}else {
+				callback(requestObj)
+			}
+		}
+	}
+	
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
