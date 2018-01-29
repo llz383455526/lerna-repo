@@ -61,10 +61,35 @@
             })
         },
         watch: {
-
+            userInformation() {
+                showTopToast('success', '登录成功', 1500);
+                if (this.userInformation) {
+                    this.$router.replace('main');
+                }
+            }
         },
         methods: {
             login() {
+                let result = formSubmitChecker([
+                    {
+                        common: {
+                            text: this.loginForm.username,
+                            emptyText: '请输入账户/注册手机号/注册邮箱'
+                        }
+                    },
+                    {
+                        password: {
+                            text: this.loginForm.password,
+                        }
+                    }
+                ]);
+                if (!result) {
+                    return;
+                }
+                this.$store.dispatch('login', {
+                    loginName: this.loginForm.username,
+                    password: this.loginForm.password,
+                });
 
             },
 

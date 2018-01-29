@@ -12,7 +12,10 @@ import getters from './getters'
 Vue.use(Vuex)
 
 let state = {
-	userInformation: null
+	userInformation: false,
+    logoutRandomTime: 0,
+    principalMenu: false,
+	userTaskCount: 0,
 }
 
 export default new Vuex.Store({
