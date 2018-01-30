@@ -38,7 +38,7 @@
                             <template slot="title">{{item.title}}</template>
                             <el-menu-item style="min-width: 140px" v-for="child in item.children" :key="child.orderSeq"
                                           :index="buildMenuIndex(item.orderSeq,child.orderSeq)">{{child.title}}
-                            
+
                             </el-menu-item>
                         </el-submenu>
                     </div>
@@ -169,6 +169,7 @@
             },
 
             handleSelect(key, keyPath) {
+                // console.log(keyPath)
                 if (keyPath[0] == '0') {
                     this.activeIndex = '#';
                     if (key == '0-1') {
@@ -192,7 +193,7 @@
                                 for (let j = 0; j < children.length; ++j) {
                                     if (key == this.buildMenuIndex(this.principalMenu[i].orderSeq, children[j].orderSeq)) {
                                         this.$router.push(children[j]['action']);
-                                        console.log(this.principalMenu[i]['title'] + '---' + children[j]['title']);
+                                        // console.log(this.principalMenu[i]['title'] + '---' + children[j]['title']);
                                         break;
                                     }
                                 }

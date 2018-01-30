@@ -28,7 +28,30 @@ const mutations = {
     [types.LOGOUT_PRINCIPAL](state, payload) {
         state.userInformation = payload.user;
         state.permissions = payload.permissions;
-        state.principalMenu = payload.menus;
+        // console.log(payload.menus);
+        const menus = [
+			{
+				action: "/account/basic",
+				title: "账户管理",
+                menuId: 1,
+                orderSeq: 1,
+                children: [
+					{
+						action: "/main/account/index",
+                        title: "账户管理",
+                        menuId: 100,
+                        orderSeq: 1
+					},{
+                        action: "/main/account/list",
+                        title: "发放流水记录",
+                        menuId: 102,
+                        orderSeq: 2
+                    }
+				]
+			}
+		];
+        // state.principalMenu = payload.menus;
+        state.principalMenu = menus;
     },
 	[types.SET_UPLOAD_POLICY](state, payload) {
 		state.uploadPolicy = payload.data

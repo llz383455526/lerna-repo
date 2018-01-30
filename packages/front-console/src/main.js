@@ -102,6 +102,9 @@ Date.prototype.toJSON = function () {
 	return Date.parse(this)
 }
 
+import {register} from './component/component'
+register();
+
 Vue.prototype.judgePermission = function (url) {
     let permissions = this.$store.getters['permissions'];
     return permissions && permissions.hasOwnProperty(url);
