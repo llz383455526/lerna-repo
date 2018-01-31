@@ -3,7 +3,7 @@ let baseUrl
 
 switch(process.env.NODE_ENV) {
 	case 'development':
-		baseUrl = 'http://fttest94.aiyuangong.com/factor-server'
+		baseUrl = 'http://consoletest94.aiyuangong.com/api/console-deliver'
 		break
 	default:
 		baseUrl = '/factor-server'

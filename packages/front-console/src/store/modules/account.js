@@ -1,5 +1,6 @@
 import * as types from '../mutation-types'
 import {post, get} from '../api'
+// import _ from 'lodash'
 
 const initState = {
     companyBuildList: {total: 0, list: []},
@@ -21,7 +22,10 @@ const initState = {
     companySubmitResult: '',
     companySearchResult: {
         result: '',
-    }
+    },
+    account: '',
+    customerNameList: [],
+    payOrderList: []
 }
 
 const state = {
@@ -40,13 +44,53 @@ const getters = {
     companyDeleteResult: state => state.companyDeleteResult,
     companyContactDeleteResult: state => state.companyContactDeleteResult,
     companySubmitResult: state => state.companySubmitResult,
+    account: state => state.account,
+    customerNameList: state => state.customerNameList,
+    payOrderList: state => state.payOrderList
 }
 
 const actions = {
     companyBuildList({commit}, param) {
-        post('/company/companies', param).then(data => {
+        get('/pay-order/get-all-app').then(data => {
             commit(types.GET_COMPANY_BUILD_LIST, data);
         })
+    },
+
+    account({commit}, param) {
+        post('/pay-user-account/query', {
+            "companyId": 60085,
+            "isQueryBalance": 1
+        }).then(data => {
+            commit(types.GET_ACCOUNT, data)
+        });
+    },
+
+    customerNameList({commit}) {
+        get('/pay-order/get-all-app').then(data => {
+            commit(types.GET_CUSTOMERNAMELIST, data)
+        });
+    },
+
+    payOrderList({commit}, param) {
+        post('/pay-order/query-item', param).then(data => {
+            // _.forEach(data.list, item => {
+            //     var timestampDate = new Date(item.createAt);
+            //     var y = timestampDate.getFullYear();
+            //     var mo = timestampDate.getMonth() + 1;
+            //     var d = timestampDate.getDate();
+            //     var h = timestampDate.getHours();
+            //     var m = timestampDate.getMinutes();
+            //     var s = timestampDate.getSeconds();
+            //     item.createAt = y + '-' + mo + '-' + d + ' ' + h + ':' + m + ':' + s;
+            // });
+            commit(types.GET_PAYORDERLIST, data)
+        })
+    },
+
+    exportXls({commit}, param) {
+        get('/pay-order/export-item', param).then(data => {
+            console.log(data)
+        });
     },
 
     searchCompanyByName({commit}, param) {
@@ -122,6 +166,15 @@ const actions = {
 const mutations = {
     [types.GET_COMPANY_BUILD_LIST](state, payload) {
         state.companyBuildList = payload;
+    },
+    [types.GET_ACCOUNT](state, payload) {
+        state.account = payload;
+    },
+    [types.GET_CUSTOMERNAMELIST](state, payload) {
+        state.customerNameList = payload;
+    },
+    [types.GET_PAYORDERLIST](state, payload) {
+        state.payOrderList = payload;
     },
     [types.GET_COMPANY_SEARCH_RESULT](state, payload) {
         state.companySearchResult = payload;

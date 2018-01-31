@@ -7,6 +7,7 @@ export default {
 
     login({commit}, param) {
         post('/auth/login', param).then((data) => {
+        	console.log('123')
             // console.log(data);
             commit(types.LOGIN_ACTION, data);
         });

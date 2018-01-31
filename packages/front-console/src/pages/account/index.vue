@@ -4,62 +4,36 @@
         <div style="padding: 30px;">
             <img src="../../image/money.png" style="width: 120px;height: 120px;float: left; margin-right: 50px;"/>
             <p>账户总余额（元）： </p>
-            <h2>1,423,586.79</h2>
+            <h2>{{account.balanceAmount}}</h2>
         </div>
-        <el-table
-        :data="companyBuildList.list"
-        style="width: 100%;margin-top: 20px;">
-        <el-table-column
-        align="left"
-        prop='code'
-        label='企业编号'
-        width=160>
-        </el-table-column>
-        <el-table-column
-        align="left"
-        prop='name'
-        label='企业名称'>
-        </el-table-column>
-        <el-table-column
-        align="left"
-        prop='createByName'
-        label='企业创建人'
-        width=140>
-        </el-table-column>
-        <el-table-column
-        align="left"
-        label='企业创建日期'
-        width=200>
-        <template slot-scope="scope">
-        <span>{{scope.row.createAt | formatTime}}</span>
-        </template>
-        </el-table-column>
-        <el-table-column
-        align="left"
-        prop='state'
-        label='企业创建状态'
-        width=140>
-        </el-table-column>
-        <el-table-column
-        label="操作"
-        width="160">
-        <template slot-scope="scope">
-        <el-button :disabled="!judgePermission('difactor:/company/detail/contacts')"
-        @click="handleClick(true, scope.$index)" type="text" size="medium">查看
-
-        </el-button>
-        <el-button :disabled="!judgePermission('difactor:/company/delete')||scope.row['stateValue']=='20'"
-        @click="handleClick(false, scope.$index)"
-        type="text" size="medium">删除
-
-
-        </el-button>
-        </template>
-        </el-table-column>
+        <el-table :data="account.customerBalances" style="width: 100%;margin-top: 20px;">
+            <el-table-column
+                    align="left"
+                    prop='customerCompanyName'
+                    label='客户名称'
+                    width='160'>
+            </el-table-column>
+            <el-table-column
+                    align="left"
+                    prop='payUserName'
+                    label='子账号名称'>
+            </el-table-column>
+            <el-table-column
+                    align="left"
+                    prop='payUserNo'
+                    label='子账号'
+                    width=140>
+            </el-table-column>
+            <el-table-column
+                    align="left"
+                    prop="balanceAmount"
+                    label='余额（元）'
+                    width='200'>
+            </el-table-column>
         </el-table>
-        <ayg-pagination v-if="companyBuildList.total" :total="companyBuildList.total"
-        v-on:handleSizeChange="handleSizeChange"
-        v-on:handleCurrentChange="handleCurrentChange" :currentPage="currentPage"></ayg-pagination>
+        <!--<ayg-pagination v-if="companyBuildList.total" :total="companyBuildList.total"-->
+        <!--v-on:handleSizeChange="handleSizeChange"-->
+        <!--v-on:handleCurrentChange="handleCurrentChange" :currentPage="currentPage"></ayg-pagination>-->
     </div>
 </template>
 
@@ -85,7 +59,7 @@
         },
         computed: {
             ...mapGetters({
-                companyBuildList: 'companyBuildList',
+                account: 'account',
                 // companyDeleteResult: 'companyDeleteResult',
                 // dictData: 'dictData',
             })
@@ -169,7 +143,8 @@
                     page: pageInfo.page,
                     pageSize: pageInfo.pageSize,
                 }
-                this.$store.dispatch('companyBuildList', param);
+                // this.$store.dispatch('companyBuildList', param);
+                this.$store.dispatch('account', param);
             }
         },
 

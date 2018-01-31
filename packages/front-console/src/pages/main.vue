@@ -7,23 +7,23 @@
                          active-text-color="#fff"
                          mode="horizontal"
                          @select="handleSelect"
-                         background-color="#128888" style="float:right;margin-right: 50px">
+                         background-color="#128888" style="float:right;margin-right: 50px;">
                     <el-submenu index="0">
-                        <template slot="title">{{userInformation.name}}</template>
+                        <template slot="title" s>{{userInformation.name}}</template>
                         <!--<el-menu-item index="0-1" style="min-width: 100px">账户中心</el-menu-item>-->
                         <el-menu-item index="0-2" style="min-width: 100px">修改密码</el-menu-item>
                         <el-menu-item index="0-3" style="min-width: 100px">退出登录</el-menu-item>
                     </el-submenu>
                 </el-menu>
-                <div style="float:right;width: 28px;margin-top: 15px; margin-left: 50px">
+                <div style="float:right;width: 28px;margin-top: 15px; margin-left: 35px;margin-right: 15px;">
                     <img src="../image/ic-person-avatar.png" style="width: 100%; border-radius: 50%"/>
                 </div>
-                <div @click="messageClick" style="float: right;cursor: pointer">
-                    <el-badge :value="userTaskCount" :max="99" background-color="#3582e2"
-                              style="margin-left:20px; margin-top: 18px;">
-                        <i class="el-icon-bell" width="16" style="width: 16px;color: white"></i>
-                    </el-badge>
-                </div>
+                <!--<div @click="messageClick" style="float: right;cursor: pointer">-->
+                    <!--<el-badge :value="userTaskCount" :max="99" background-color="#3582e2"-->
+                              <!--style="margin-left:20px; margin-top: 18px;">-->
+                        <!--<i class="el-icon-bell" width="16" style="width: 16px;color: white"></i>-->
+                    <!--</el-badge>-->
+                <!--</div>-->
                 <i @click="search" slot="prefix" class="el-input__icon el-icon-search"
                    style="float: right;color: white;margin-top: 20px;cursor: pointer;display: none"></i>
                 <el-menu style="float: right" v-if="principalMenu&&principalMenu.length!=0"
@@ -231,7 +231,7 @@
             submitClientForm() {
                 this.$refs['clientForm'].validate(valid => {
                     if (valid) {
-                        let url = '/user/alter-password'
+                        let url = '/auth/reset-password'
                         let option = this.clientForm
                         post(url, option).then(data => {
                             showNotify('success', '操作成功！')
@@ -248,9 +248,9 @@
         },
         created() {
             this.$store.dispatch('principal');
-            this.$store.dispatch('getDictData');
+            // this.$store.dispatch('getDictData');
 
-            this.$store.dispatch('getUserTaskCount')
+            // this.$store.dispatch('getUserTaskCount')
         }
     }
 </script>
