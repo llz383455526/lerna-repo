@@ -11,7 +11,7 @@ let backlog = r => require.ensure([], () => r(require('../pages/backlog/list')),
 export default [{
     path: '/',
     component: App,
-    redirect: '/main/backlog',
+    redirect: '/main/account/list',
     children: [{
         path: '/main',
         component: main,

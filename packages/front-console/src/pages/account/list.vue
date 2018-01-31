@@ -41,8 +41,7 @@
                         v-model="dataValue"
                         type="daterange"
                         start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        default-value="2010-10-01">
+                        end-placeholder="结束日期">
                 </el-date-picker>
             </el-form-item>
             <el-form-item style="margin-top: -4px">
