@@ -155,7 +155,7 @@
                         v-on:handleCurrentChange="handleCurrentChange" :currentPage="currentPage"></ayg-pagination>
 
         <el-dialog title="请求报文" :before-close="closeClientDialog" :visible.sync="dialogClientVisible" width="30%">
-            <div style="word-wrap: break-word; word-break: normal;overflow: auto;">{{orderMessage}}</div>
+            <div style="word-wrap: break-word; word-break: normal;overflow: auto;">{{orderMessage.value}}</div>
         </el-dialog>
     </div>
 </template>
