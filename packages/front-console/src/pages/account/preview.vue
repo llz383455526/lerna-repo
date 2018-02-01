@@ -144,18 +144,18 @@
                     label="查看请求报文"
                     width="160">
                 <template slot-scope="scope">
-                    <el-button @click="handleClick(scope.$index)" type="text" size="medium">查看
+                    <el-button @click="handleClick(scope.$index)" type="text" size="medium" style="padding:0;">查看
 
                     </el-button>
                 </template>
             </el-table-column>
         </el-table>
-        <ayg-pagination v-if="payOrderList.total" :total="payOrderList.total"
+        <ayg-pagination v-if="orderList.total" :total="orderList.total"
                         v-on:handleSizeChange="handleSizeChange"
                         v-on:handleCurrentChange="handleCurrentChange" :currentPage="currentPage"></ayg-pagination>
 
         <el-dialog title="请求报文" :before-close="closeClientDialog" :visible.sync="dialogClientVisible" width="30%">
-            <div style="word-wrap: break-word; word-break: normal; ">{{orderMessage}}</div>
+            <div style="word-wrap: break-word; word-break: normal;overflow: auto;">{{orderMessage}}</div>
         </el-dialog>
     </div>
 </template>
