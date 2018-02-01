@@ -10,6 +10,8 @@ import getters from './getters'
 
 import account from './modules/account'
 
+import orderHistory from './orderHistory/index'
+
 Vue.use(Vuex)
 
 let state = {
@@ -25,7 +27,8 @@ export default new Vuex.Store({
     mutations,
     getters,
     modules: {
-        account
+        account,
+        orderHistory
     }
 })
 

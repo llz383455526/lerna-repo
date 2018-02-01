@@ -25,7 +25,8 @@ const initState = {
     },
     account: '',
     customerNameList: [],
-    payOrderList: []
+    payOrderList: [],
+    rejectList: [],
 }
 
 const state = {
@@ -46,7 +47,8 @@ const getters = {
     companySubmitResult: state => state.companySubmitResult,
     account: state => state.account,
     customerNameList: state => state.customerNameList,
-    payOrderList: state => state.payOrderList
+    payOrderList: state => state.payOrderList,
+    rejectList: state => state.rejectList,
 }
 
 const actions = {
@@ -64,6 +66,8 @@ const actions = {
             commit(types.GET_ACCOUNT, data)
         });
     },
+
+
 
     customerNameList({commit}) {
         get('/pay-order/get-all-app').then(data => {
