@@ -12,14 +12,14 @@ import account from './modules/account'
 
 import orderHistory from './orderHistory/index'
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 let state = {
 	userInformation: false,
     logoutRandomTime: 0,
     principalMenu: false,
 	userTaskCount: 0,
-}
+};
 
 export default new Vuex.Store({
     state,

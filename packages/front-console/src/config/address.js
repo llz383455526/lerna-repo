@@ -6,7 +6,7 @@ switch(process.env.NODE_ENV) {
 		baseUrl = 'http://consoletest94.aiyuangong.com/api/console-deliver'
 		break
 	default:
-		baseUrl = '/factor-server'
+		baseUrl = '/api/console-deliver'
 }
 
 export {
