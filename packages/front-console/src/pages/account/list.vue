@@ -165,6 +165,7 @@
     import {showConfirm} from '../../plugin/utils-message'
     import {showTopErrorToast} from '../../plugin/utils-toast'
     import {formatTime} from '../../plugin/utils-functions'
+    import {baseUrl} from '../../config/address'
 
     export default {
         data() {
@@ -237,7 +238,7 @@
                     createAtEnd = formatTime(this.dataValue[1], 'yyyy-MM-dd');
                 }
                 // this.$store.dispatch('exportXls', this.formSearch);
-                window.location.href = 'http://consoletest94.aiyuangong.com/api/console-deliver/pay-order/export-item?appName=' + this.formSearch.appName
+                window.location.href = baseUrl+'/pay-order/export-item?appName=' + this.formSearch.appName
                     + '&outOrderNo=' + this.formSearch.outOrderNo
                     + '&paymentThirdTypeName=' + this.formSearch.paymentThirdTypeName
                     + '&paymentThirdTradeNo=' + this.formSearch.paymentThirdTradeNo
