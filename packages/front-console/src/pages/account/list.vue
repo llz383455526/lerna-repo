@@ -4,6 +4,7 @@
         <el-form :inline="true" :model="formSearch" class="demo-form-inline" style="padding-left: 35px;padding: 10px 0 10px 35px;">
             <el-form-item label="客户名称:" size="small">
                 <el-select style="width: 150px" v-model="formSearch.appName" placeholder="请选择">
+                    <el-option label="所有" value=""></el-option>
                     <el-option v-for="(item, index) in customerNameList"
                                :label="item.text"
                                :value="item.value"
@@ -146,7 +147,10 @@
                     align="left"
                     prop='paymentResDesc'
                     label='失败原因'
-                    width=140>
+                    width="140">
+                <template slot-scope="scope">
+                    <span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" :title="scope.row.paymentResDesc">{{scope.row.paymentResDesc}}</span>
+                </template>
             </el-table-column>
         </el-table>
         <ayg-pagination v-if="payOrderList.total" :total="payOrderList.total"
