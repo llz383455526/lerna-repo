@@ -77,11 +77,11 @@
                             emptyText: '请输入账户/注册手机号/注册邮箱'
                         }
                     },
-                    {
-                        password: {
-                            text: this.loginForm.password,
-                        }
-                    }
+                    // {
+                    //     password: {
+                    //         text: this.loginForm.password,
+                    //     }
+                    // }
                 ]);
                 if (!result) {
                     return;
