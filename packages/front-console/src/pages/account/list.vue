@@ -34,6 +34,7 @@
                     <el-option label="支付中" value="20"></el-option>
                     <el-option label="支付成功" value="30"></el-option>
                     <el-option label="支付失败" value="40"></el-option>
+                    <el-option label="所有" value=""></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="请求起止时间:" size="small">
@@ -221,6 +222,7 @@
                 this.formSearch.account = '';
                 this.formSearch.stateName = '';
                 this.formSearch.paymentResDesc = '';
+                this.dataValue = '';
             },
 
             exportXls() {

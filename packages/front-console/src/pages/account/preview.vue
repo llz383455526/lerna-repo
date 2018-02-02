@@ -1,6 +1,6 @@
 <template>
     <div class="company-build-container company-container">
-        <div style="margin: 0 30px 30px;">发放流水记录</div>
+        <div style="margin: 0 30px 30px;">拒绝下单记录</div>
         <el-form :inline="true" :model="formSearch" class="demo-form-inline" style="padding-left: 35px;padding: 10px 0 10px 35px;">
             <el-form-item label="客户名称:" size="small">
                 <el-select style="width: 150px" v-model="formSearch.appName" placeholder="请选择">
@@ -232,6 +232,7 @@
                 this.formSearch.account = '';
                 this.formSearch.stateName = '';
                 this.formSearch.paymentResDesc = '';
+                this.dataValue = '';
             },
 
             exportXls() {
