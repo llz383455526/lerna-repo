@@ -31,10 +31,10 @@
 
             <el-form-item label="交易状态:" size="small">
                 <el-select style="width: 150px" v-model="formSearch.stateName" placeholder="请选择">
-                    <el-option label="支付中" value="20"></el-option>
+                    <el-option label="所有" value=""></el-option>
                     <el-option label="支付成功" value="30"></el-option>
                     <el-option label="支付失败" value="40"></el-option>
-                    <el-option label="所有" value=""></el-option>
+                    <el-option label="支付中" value="20"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="请求起止时间:" size="small">
