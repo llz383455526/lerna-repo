@@ -12,6 +12,8 @@ import account from './modules/account'
 
 import orderHistory from './orderHistory/index'
 
+import amountManager from './amountManager'
+
 Vue.use(Vuex);
 
 let state = {
@@ -28,7 +30,8 @@ export default new Vuex.Store({
     getters,
     modules: {
         account,
-        orderHistory
+        orderHistory,
+        amountManager
     }
 })
 

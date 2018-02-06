@@ -7,7 +7,15 @@ let accountList = r => require.ensure([], () => r(require('../pages/account/list
 let accountIndex = r => require.ensure([], () => r(require('../pages/account/index.vue')), 'accountIndex');
 let accountPreview = r => require.ensure([], () => r(require('../pages/account/preview.vue')), 'accountPreview');
 
+let amountManagerBasic = r => require.ensure([], () => r(require('../pages/amountManager/basic.vue')), 'amountManagerBasic');
+let amountManager = r => require.ensure([], () => r(require('../pages/amountManager/index.vue')), 'amountManager');
+let rechargeRecord = r => require.ensure([], () => r(require('../pages/rechargeRecord/index.vue')), 'rechargeRecord');
+
 let backlog = r => require.ensure([], () => r(require('../pages/backlog/list')), 'backlog');
+
+let creditBillIndex = r => require.ensure([], () => r(require('../pages/paymentIssue/index.vue')), 'creditBillIndex');
+let creditBill = r => r => require.ensure([], () => r(require('../pages/paymentIssue/creditBill.vue')), 'creditBill');
+
 
 export default [{
     path: '/',
@@ -31,6 +39,26 @@ export default [{
                 },{
                     path: 'preview',
                     component: accountPreview
+                },{
+                    path: 'amountManager',
+                    component: amountManager
+                },{
+                    path: 'rechargeRecord',
+                    component: rechargeRecord
+                }]
+            },{
+                path: 'amountManager',
+                component: amountManagerBasic,
+                children: [{
+                    path: 'index',
+                    component: amountManager
+                }]
+            },{
+                path: 'paymentIssue',
+                component: creditBillIndex,
+                children: [{
+                    path: 'creditBill',
+                    component: creditBill
                 }]
             }
         ]
