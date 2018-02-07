@@ -1,4 +1,4 @@
-import {post, get} from './api'
+import {post, get} from '../api'
 
 const store = {
     state: {
@@ -14,7 +14,7 @@ const store = {
     },
     actions: {
         getAmountTable({commit}, param) {
-            post('/pay-order/query-item', param).then(data => {
+            post('/company-credit/query-list', param).then(data => {
                 commit('setAmountTable', data);
             })
         }

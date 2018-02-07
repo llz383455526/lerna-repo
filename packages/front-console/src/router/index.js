@@ -3,18 +3,17 @@ import App from '../App'
 let login = r => require.ensure([], () => r(require('../pages/login.vue')), 'login');
 let main = r => require.ensure([], () => r(require('../pages/main.vue')), 'main');
 let account = r => require.ensure([], () => r(require('../pages/account/basic.vue')), 'account');
-let accountList = r => require.ensure([], () => r(require('../pages/account/list.vue')), 'accountList');
+let payOrder = r => require.ensure([], () => r(require('../pages/accountManager/payOrder.vue')), 'payOrder');
 let accountIndex = r => require.ensure([], () => r(require('../pages/account/index.vue')), 'accountIndex');
-let accountPreview = r => require.ensure([], () => r(require('../pages/account/preview.vue')), 'accountPreview');
+let payOrderReject = r => require.ensure([], () => r(require('../pages/accountManager/payOrderReject.vue')), 'payOrderReject');
 
-let amountManagerBasic = r => require.ensure([], () => r(require('../pages/amountManager/basic.vue')), 'amountManagerBasic');
-let amountManager = r => require.ensure([], () => r(require('../pages/amountManager/index.vue')), 'amountManager');
-let rechargeRecord = r => require.ensure([], () => r(require('../pages/rechargeRecord/index.vue')), 'rechargeRecord');
+let amountManager = r => require.ensure([], () => r(require('../pages/accountManager/amountManager.vue')), 'amountManager');
+let companyCreditRecord = r => require.ensure([], () => r(require('../pages/accountManager/companyCreditRecord.vue')), 'companyCreditRecord');
 
 let backlog = r => require.ensure([], () => r(require('../pages/backlog/list')), 'backlog');
 
-let creditBillIndex = r => require.ensure([], () => r(require('../pages/paymentIssue/index.vue')), 'creditBillIndex');
-let creditBill = r => r => require.ensure([], () => r(require('../pages/paymentIssue/creditBill.vue')), 'creditBill');
+let index = r => require.ensure([], () => r(require('../pages/public/index.vue')), 'index');
+let creditBill = r => require.ensure([], () => r(require('../pages/accountManager/companyCredit.vue')), 'creditBill');
 
 
 export default [{
@@ -25,41 +24,41 @@ export default [{
         path: '/main',
         component: main,
         // redirect: '/main/backlog',
-        redirect: '/main/account/list',
+        redirect: '/main/accountManager/payOrder',
         children: [
             {
-                path: 'account',
+                path: 'accountManager',
                 component: account,
                 children: [{
-                    path: 'list',
-                    component: accountList
+                    path: 'payOrder',
+                    component: payOrder
                 },{
                     path: 'index',
                     component: accountIndex
                 },{
-                    path: 'preview',
-                    component: accountPreview
+                    path: 'payOrderReject',
+                    component: payOrderReject
                 },{
                     path: 'amountManager',
                     component: amountManager
+                }, {
+                    path: 'companyCreditRecord',
+                    component: companyCreditRecord
                 },{
-                    path: 'rechargeRecord',
-                    component: rechargeRecord
+                    path: 'creditBill',
+                    component: creditBill
                 }]
             },{
                 path: 'amountManager',
-                component: amountManagerBasic,
+                component: index,
                 children: [{
                     path: 'index',
                     component: amountManager
                 }]
             },{
                 path: 'paymentIssue',
-                component: creditBillIndex,
-                children: [{
-                    path: 'creditBill',
-                    component: creditBill
-                }]
+                component: index,
+                children: []
             }
         ]
     }, {

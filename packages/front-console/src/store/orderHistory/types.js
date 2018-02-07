@@ -1,2 +1,0 @@
-export const SET_ORDER_MESSAGE = 'SET_ORDER_MESSAGE';
-export const SET_ORDER_LIST = 'SET_ORDER_LIST';

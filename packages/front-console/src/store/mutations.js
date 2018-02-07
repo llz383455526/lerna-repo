@@ -41,46 +41,40 @@ const mutations = {
                 orderSeq: 1,
                 children: [
 					{
-						action: "/main/account/index",
+						action: "/main/accountManager/index",
                         title: "账户信息",
                         menuId: 102,
                         orderSeq: 1
 					},{
-                        action: "/main/account/list",
+                        action: "/main/accountManager/payOrder",
                         title: "发放流水",
                         menuId: 103,
                         orderSeq: 2
                     },{
-                        action: "/main/account/preview",
+                        action: "/main/accountManager/payOrderReject",
                         title: "拒绝下单流水",
                         menuId: 104,
                         orderSeq: 3
                     },{
-                        action: "/main/amountManager/index",
+                        action: "/main/accountManager/amountManager",
                         title: "额度管理",
                         menuId: 105,
                         orderSeq: 4
                     },
                     {
-                        action: "/main/rechargeRecord/index",
+                        action: "/main/accountManager/companyCreditRecord",
                         title: "充值记录",
                         menuId: 106,
                         orderSeq: 5
+                    },
+                    {
+                        action: "/main/accountManager/creditBill",
+                        title: "信用账单",
+                        menuId: 108,
+                        orderSeq: 6
                     }
 				]
-			},
-            {
-                action: null,
-                title: "薪酬发放",
-                menuId: 2,
-                orderSeq: 2,
-                children: [{
-                    action: "/main/paymentIssue/creditBill",
-                    title: "信用账单",
-                    menuId: 108,
-                    orderSeq: 1
-                }]
-            }
+			}
         ];
         state.principalMenu = menus;
 

@@ -185,7 +185,6 @@
                     for (let i = 0; i < this.principalMenu.length; ++i) {
                         if (keyPath[0] == this.principalMenu[i].orderSeq) {
                             if (keyPath.length === 1) {
-                                console.log(this.principalMenu[i]['action'])
                                 this.$router.push(this.principalMenu[i]['action']);
                                 console.log(this.principalMenu[i]['title'] + '---' + this.principalMenu[i]['action']);
                                 break;
@@ -193,7 +192,6 @@
                                 let children = this.principalMenu[i].children;
                                 for (let j = 0; j < children.length; ++j) {
                                     if (key == this.buildMenuIndex(this.principalMenu[i].orderSeq, children[j].orderSeq)) {
-                                        console.log(children[j]['action'])
                                         this.$router.push(children[j]['action']);
                                         // console.log(this.principalMenu[i]['title'] + '---' + children[j]['title']);
                                         break;

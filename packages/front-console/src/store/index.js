@@ -10,9 +10,11 @@ import getters from './getters'
 
 import account from './modules/account'
 
-import orderHistory from './orderHistory/index'
-
-import amountManager from './amountManager'
+import amountManager from './modules/amountManager'
+import creditBill from './modules/companyCredit'
+import topUpRecord from './modules/companyCreditRecord'
+import payOrder from './modules/payOrder'
+import payOrderReject from './modules/payOrderReject'
 
 Vue.use(Vuex);
 
@@ -30,8 +32,11 @@ export default new Vuex.Store({
     getters,
     modules: {
         account,
-        orderHistory,
-        amountManager
+        amountManager,
+        creditBill,
+        topUpRecord,
+        payOrder,
+        payOrderReject
     }
 })
 
