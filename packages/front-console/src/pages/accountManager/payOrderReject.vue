@@ -43,7 +43,7 @@
             <el-table-column align="left" prop="rejectReason" label="拒绝原因"></el-table-column>
             <el-table-column align="center" label="查看请求报文" width="160">
                 <template slot-scope="scope">
-                    <el-button @click="handleClick(scope.$index)" type="text" size="medium" style="padding:0;">查看</el-button>
+                    <el-button @click="handleClick(scope.row.id)" type="text" size="medium" style="padding:0;">查看</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -136,7 +136,7 @@
             },
             handleClick(index) {
                 this.dialogClientVisible = true;
-                this.$store.dispatch('getPayOrderRejectBody', {id: index + 1});
+                this.$store.dispatch('getPayOrderRejectBody', {id: index});
             },
             handleSizeChange(value) {
                 this.pageSize = value;
