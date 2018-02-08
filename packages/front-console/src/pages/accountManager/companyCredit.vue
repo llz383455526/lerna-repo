@@ -23,7 +23,7 @@
                     <el-option v-for="(item, index) in companyCreditStates" :label="item" :value="item" :key="index"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="使用说明:" size="small">
+            <el-form-item label="充值说明:" size="small">
                 <el-select v-model="formSearch.payRemarks">
                     <el-option label="全部" value=""></el-option>
                     <el-option v-for="(item, index) in companyCreditRemarks" :label="item.text" :value="item.value" :key="index"></el-option>
@@ -55,7 +55,7 @@
 
         <el-table :data="companyCreditList.list" style="width: 100%;margin-top: 20px;">
             <el-table-column prop="companyAccountName" label="账户名"></el-table-column>
-            <el-table-column prop="payRemarksName" label="使用说明"></el-table-column>
+            <el-table-column prop="payRemarksName" label="充值说明"></el-table-column>
             <el-table-column prop="amount" label="金额"></el-table-column>
             <el-table-column prop="state" label="状态"></el-table-column>
             <el-table-column prop="updateAt" label="记录">
