@@ -29,13 +29,13 @@
                         <el-option v-for="(item, index) in payRemarks" :label="item.text" :value="item.value" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="客户名称：">
+                <el-form-item label="账号名称：">
                     <el-select v-model="formEdit.accountNo" @change="handleChangeAccount">
                         <el-option v-for="(item, index) in accounts" :label="item.accountAliasName" :value="item.accountNo" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="客户账号：">
-                    <el-input style="width: 200px;" v-model="formEdit.accountNo" :disabled="true"></el-input>
+                <el-form-item label="账号：">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<el-input style="width: 200px;" v-model="formEdit.accountNo" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="充值金额：">
                     <el-input style="width: 200px;" v-model="formEdit.amount"></el-input>
