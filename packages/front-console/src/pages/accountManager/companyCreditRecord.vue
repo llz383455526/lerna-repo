@@ -7,7 +7,7 @@
             <el-table-column prop="companyAccountNo" label="账户名"></el-table-column>
             <el-table-column prop="payRemarksName" label="充值说明"></el-table-column>
             <el-table-column prop="companyAccountName" label="客户账号"></el-table-column>
-            <el-table-column prop="amount" label="金额"></el-table-column>
+            <el-table-column prop="amount" label="金额(万元)"></el-table-column>
             <el-table-column prop="state" label="状态"></el-table-column>
             <el-table-column prop="updateAt" label="记录">
                 <template slot-scope="scope">
@@ -39,7 +39,8 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="账号：">
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<el-input style="width: 200px;" v-model="formEdit.accountNo" :disabled="true"></el-input>
+                    <em style="width: 2em;min-height:1px;display:block;float:left;"></em>
+                    <el-input style="width: 200px;" v-model="formEdit.accountNo" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="充值金额：">
                     <el-input style="width: 200px;" v-model="formEdit.amount"></el-input>
