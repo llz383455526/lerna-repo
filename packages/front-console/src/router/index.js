@@ -19,7 +19,7 @@ let creditBill = r => require.ensure([], () => r(require('../pages/accountManage
 export default [{
     path: '/',
     component: App,
-    redirect: '/main/account/list',
+    redirect: '/main/accountManager/payOrder',
     children: [{
         path: '/main',
         component: main,

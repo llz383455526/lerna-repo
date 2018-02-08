@@ -4,9 +4,15 @@
 
         <div style="margin: 0px 30px 30px;">
             <el-row :gutter="20">
-                <el-col :span="6">信用额度： <span style="font-size: 26px;">{{moneyCompanyCredit.amount}}</span></el-col>
-                <el-col :span="6">已用信用额度： <span style="font-size: 26px;">{{moneyCompanyCredit.usedAmount}}</span></el-col>
-                <el-col :span="6">可用信用额度： <span style="font-size: 26px;">{{moneyCompanyCredit.availAmount}}</span></el-col>
+                <el-col :span="6">信用额度： <span style="font-size: 26px;">{{moneyCompanyCredit.amount}}</span>万元
+                    <i class="el-icon-question" style="margin-left:5px;color:#f56c6c;cursor:pointer;" title="为官方提供资金垫付的总额度（单位：万元）"></i>
+                </el-col>
+                <el-col :span="6">已用信用额度： <span style="font-size: 26px;">{{moneyCompanyCredit.usedAmount}}</span>万元
+                    <i class="el-icon-question" style="margin-left:5px;color:#f56c6c;cursor:pointer;" title="已提供垫付资金的资金数（单位：万元）"></i>
+                </el-col>
+                <el-col :span="6">可用信用额度： <span style="font-size: 26px;">{{moneyCompanyCredit.availAmount}}</span>万元
+                    <i class="el-icon-question" style="margin-left:5px;color:#f56c6c;cursor:pointer;" title="还可使用的垫付资金的资金数（单位：万元）"></i>
+                </el-col>
             </el-row>
         </div>
 
@@ -35,9 +41,15 @@
 
         <div style="margin: 0px 30px 30px;">
             <el-row :gutter="20">
-                <el-col :span="6">累计充值： <span>{{moneyCompanyCredit.sumCZAmount}}</span></el-col>
-                <el-col :span="6">累计代付额度： <span>{{moneyCompanyCredit.sumDFAmount}}</span></el-col>
-                <el-col :span="6">累计还款： <span>{{moneyCompanyCredit.sumHKAmount}}</span></el-col>
+                <el-col :span="6">累计充值： <span>{{moneyCompanyCredit.sumCZAmount}}</span>万元
+                    <i class="el-icon-question" style="margin-left:5px;color:#f56c6c;cursor:pointer;" title="所选条件下，本公司充值的总数（单位：万元）"></i>
+                </el-col>
+                <el-col :span="6">累计代付额度： <span>{{moneyCompanyCredit.sumDFAmount}}</span>万元
+                    <i class="el-icon-question" style="margin-left:5px;color:#f56c6c;cursor:pointer;" title="所选条件下，官方提供的垫付金额总数统计（单位：万元）"></i>
+                </el-col>
+                <el-col :span="6">累计还款： <span>{{moneyCompanyCredit.sumHKAmount}}</span>万元
+                    <i class="el-icon-question" style="margin-left:5px;color:#f56c6c;cursor:pointer;" title="所选条件下，本公司还款的资金总数（单位：万元）"></i>
+                </el-col>
             </el-row>
         </div>
 
