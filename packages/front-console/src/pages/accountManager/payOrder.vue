@@ -149,7 +149,7 @@
                     createAtBegin = formatTime(this.dateValue[0], 'yyyy-MM-dd');
                     createAtEnd = formatTime(this.dateValue[1], 'yyyy-MM-dd');
                 }
-                window.location.href = baseUrl + '/pay-order/export-item?appName=' + this.formSearch.appName
+                window.location.href = baseUrl + '/pay-order/export-item?appId=' + this.formSearch.appName
                     + '&outOrderNo=' + this.formSearch.outOrderNo
                     + '&paymentThirdTypeName=' + this.formSearch.paymentThirdTypeName
                     + '&paymentThirdTradeNo=' + this.formSearch.paymentThirdTradeNo
@@ -158,7 +158,7 @@
                     + '&accountName=' + this.formSearch.accountName
                     + '&accountNo=' + this.formSearch.accountNo
                     + '&account=' + this.formSearch.account
-                    + '&stateName=' + this.formSearch.stateName
+                    + '&state=' + this.formSearch.stateName
                     + '&paymentResDesc=' + this.formSearch.paymentResDesc;
             },
             handleSizeChange(value) {

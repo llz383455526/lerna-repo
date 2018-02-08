@@ -9,7 +9,11 @@
             <el-table-column prop="companyAccountName" label="客户账号"></el-table-column>
             <el-table-column prop="amount" label="金额"></el-table-column>
             <el-table-column prop="state" label="状态"></el-table-column>
-            <el-table-column prop="payRemarks" label="记录"></el-table-column>
+            <el-table-column prop="updateAt" label="记录">
+                <template slot-scope="scope">
+                    <span>{{scope.row.updateAt | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="updateByName" label="操作人"></el-table-column>
         </el-table>
 
