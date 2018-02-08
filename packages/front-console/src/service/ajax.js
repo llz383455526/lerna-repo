@@ -23,15 +23,15 @@ export default (type = 'GET', url, param = {}, callback, async=true) => {
 		if(dataStr) url += `?${dataStr}&t=${parseInt(Math.random() * 100000)}`
 		else url += `?t=${parseInt(Math.random() * 100000)}`
 		
-		requestObj.timeout = 30000
 		requestObj.open(type, url, async)
+		requestObj.timeout = 30000
 		requestObj.setRequestHeader('If-Modified-Since', '0')
 		requestObj.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
         //console.log('getttttttttttttttt', requestObj);
 		requestObj.send()
 	}else if (type === 'POST') {
-		requestObj.timeout = 30000
 		requestObj.open(type, url, async);
+		requestObj.timeout = 30000
 		requestObj.setRequestHeader("Content-type", "application/json");
 		requestObj.send(JSON.stringify(param));
         //console.log('postoooooooooooooo', requestObj);
