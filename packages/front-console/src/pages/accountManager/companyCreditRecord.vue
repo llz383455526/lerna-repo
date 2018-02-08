@@ -1,6 +1,6 @@
 <template>
     <div style="margin-top: 15px;background-color: #fff;padding: 15px;">
-        <div style="margin: 0px 30px 30px;">充值信用额度管理<el-button style="float:right;" @click="creatNew">添加信用额度</el-button></div>
+        <div style="margin: 0px 30px 30px;">充值记录<el-button style="float:right;" @click="creatNew">新增充值记录</el-button></div>
 
         <el-table :data="companyCreditRecordList.list" style="width: 100%;margin-top: 20px;">
             <el-table-column prop="companyName" label="客户公司"></el-table-column>

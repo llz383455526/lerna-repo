@@ -55,7 +55,7 @@
 
         <el-table :data="companyCreditList.list" style="width: 100%;margin-top: 20px;">
             <el-table-column prop="companyAccountName" label="账户名"></el-table-column>
-            <el-table-column prop="payRemarksName" label="充值说明"></el-table-column>
+            <el-table-column prop="payRemarksName" label="使用说明"></el-table-column>
             <el-table-column prop="amount" label="金额"></el-table-column>
             <el-table-column prop="state" label="状态"></el-table-column>
             <el-table-column prop="updateAt" label="记录">
