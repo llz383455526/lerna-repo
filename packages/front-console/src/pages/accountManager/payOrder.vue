@@ -12,9 +12,14 @@
             <el-form-item label="客户订单号:" size="small">
                 <el-input style="width: 150px" v-model="formSearch.outOrderNo" placeholder="客户订单号"></el-input>
             </el-form-item>
+            <el-form-item label="发放渠道:" size="small">
+                <el-select style="width: 150px" v-model="formSearch.paymentThirdType" placeholder="请选择">
+                    <el-option label="所有" value=""></el-option>
+                    <el-option v-for="(item, index) in selectList2" :label="item.text" :value="item.value" :key="index"></el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item label="渠道交易流水号:" size="small">
-                <el-input style="width: 150px" v-model="formSearch.paymentThirdTradeNo" placeholder="渠道交易流水号">
-                </el-input>
+                <el-input style="width: 150px" v-model="formSearch.paymentThirdTradeNo" placeholder="渠道交易流水号"></el-input>
             </el-form-item>
             <el-form-item label="收款人姓名:" size="small">
                 <el-input style="width: 150px" v-model="formSearch.accountName" placeholder="收款人姓名"></el-input>
@@ -90,6 +95,7 @@
     import {showConfirm} from '../../plugin/utils-message'
     import {formatTime} from '../../plugin/utils-functions'
     import {baseUrl} from '../../config/address'
+    import {post, get} from '../../store/api'
 
     export default {
         data() {
@@ -107,9 +113,11 @@
                     accountNo: '',
                     account: '',
                     stateName: '',
-                    paymentResDesc: ''
+                    paymentResDesc: '',
+                    paymentThirdType: ''
                 },
                 dateValue: '',
+                selectList2: []
             }
         },
         computed: {
@@ -141,7 +149,6 @@
                 this.formSearch.paymentResDesc = '';
                 this.dateValue = '';
             },
-
             exportXls() {
                 let createAtBegin = '';
                 let createAtEnd = '';
@@ -159,7 +166,8 @@
                     + '&accountNo=' + this.formSearch.accountNo
                     + '&account=' + this.formSearch.account
                     + '&state=' + this.formSearch.stateName
-                    + '&paymentResDesc=' + this.formSearch.paymentResDesc;
+                    + '&paymentResDesc=' + this.formSearch.paymentResDesc
+                    + "&paymentThirdType=" + this.formSearch.paymentThirdType;
             },
             handleSizeChange(value) {
                 this.pageSize = value;
@@ -202,20 +210,26 @@
                     account: this.formSearch.account,
                     state: this.formSearch.stateName,
                     paymentResDesc: this.formSearch.paymentResDesc,
+                    paymentThirdType: this.formSearch.paymentThirdType,
 
                     page: pageInfo.page,
                     pageSize: pageInfo.pageSize,
                 };
                 this.$store.dispatch('getFlowTableList', param);
+            },
+            getSelectList2() {
+                get('/pay-order/payment-third-types').then(data => {
+                    this.selectList2 = data;
+                });
             }
         },
-
         created: function () {
             this.requestAction({
                 page: 1,
                 pageSize: this.pageSize,
             });
             this.$store.dispatch('getCustomNameList');
+            this.getSelectList2();
         },
     }
 </script>
