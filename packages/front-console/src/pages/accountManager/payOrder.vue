@@ -48,11 +48,11 @@
 
         <div style="margin: 0px 30px 30px;">
             <el-row :gutter="20">
-                <el-col :span="6">发放总金额： <span>{{moneyFlow.amount | formatMoney()}}</span>
+                <el-col :span="6">发放总金额： <span>{{moneyFlow.amount | formatMoney}}</span>
                     <i class="el-icon-question" style="margin-left:5px;color:#f56c6c;cursor:pointer;" title="所选条件下的发放成功和发放中的金额总数"></i>
                 </el-col>
-                <el-col :span="6">发成功金额： <span>{{moneyFlow.doneAmount | formatMoney()}}</span></el-col>
-                <el-col :span="6">发放中金额： <span>{{moneyFlow.doingAmount | formatMoney()}}</span></el-col>
+                <el-col :span="6">发成功金额： <span>{{moneyFlow.doneAmount | formatMoney}}</span></el-col>
+                <el-col :span="6">发放中金额： <span>{{moneyFlow.doingAmount | formatMoney}}</span></el-col>
             </el-row>
         </div>
 
@@ -70,7 +70,7 @@
             <el-table-column prop="accountNo" label="收款账号" width="160"></el-table-column>
             <el-table-column prop="amount" label="交易金额" width="120">
                 <template slot-scope="scope">
-                    <span>{{scope.row.amount | formatMoney()}}</span>
+                    <span>{{scope.row.amount | formatMoney}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="stateName" label="交易状态"></el-table-column>

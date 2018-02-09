@@ -6,7 +6,7 @@
             <el-table-column prop="companyName" label="企业名称"></el-table-column>
             <el-table-column prop="amount" label="信用额度（元）">
                 <template slot-scope="scope">
-                    <span>{{scope.row.amount | formatMoney()}}</span>
+                    <span>{{scope.row.amount | formatMoney}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="updateAt" label="更新时间记录">

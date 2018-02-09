@@ -41,7 +41,7 @@
             <el-table-column align="left" prop="accountNo" label="收款账号" width="260"></el-table-column>
             <el-table-column align="left" prop="amount" label="交易金额" width="120">
                 <template slot-scope="scope">
-                    <span>{{scope.row.amount | formatMoney()}}</span>
+                    <span>{{scope.row.amount | formatMoney}}</span>
                 </template>
             </el-table-column>
             <el-table-column align="left" prop="rejectReason" label="拒绝原因"></el-table-column>

@@ -9,7 +9,7 @@
             <el-table-column prop="companyAccountName" label="客户账号"></el-table-column>
             <el-table-column prop="amount" label="金额(元)">
                 <template slot-scope="scope">
-                    <span>{{scope.row.amount | formatMoney()}}</span>
+                    <span>{{scope.row.amount | formatMoney}}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="state" label="状态"></el-table-column>
