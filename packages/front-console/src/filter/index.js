@@ -4,9 +4,14 @@ import _ from 'lodash'
 
 
 Vue.filter('formatMoney', input => {
-	if (input) return `￥${(parseFloat(input).toFixed(2) + '').replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, '$&,')}`
+	if (input || input == '0') return `￥${(parseFloat(input).toFixed(2) + '').replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, '$&,')}`
 	return '0'
-})
+});
+
+Vue.filter('formatTimes', input => {
+    if (input || input == '0') return `${(parseFloat(input).toFixed(3) + '').replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, '$&,')}`
+    return '0.000'
+});
 
 Vue.filter('formatTime', (time, format = 'yyyy-MM-dd hh:mm:ss') => {
 	/*time = new Date(time * 1000)*/

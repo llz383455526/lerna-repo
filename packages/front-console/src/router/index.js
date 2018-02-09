@@ -16,6 +16,9 @@ let index = r => require.ensure([], () => r(require('../pages/public/index.vue')
 let creditBill = r => require.ensure([], () => r(require('../pages/accountManager/companyCredit.vue')), 'creditBill');
 
 
+let statistics = r => require.ensure([], () => r(require('../pages/orderManager/statistics.vue')), 'statistics');
+
+
 export default [{
     path: '/',
     component: App,
@@ -59,6 +62,13 @@ export default [{
                 path: 'paymentIssue',
                 component: index,
                 children: []
+            }, {
+                path: 'orderManager',
+                component: index,
+                children: [{
+                    path: 'statistics',
+                    component: statistics
+                }]
             }
         ]
     }, {

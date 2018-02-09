@@ -4,7 +4,11 @@
 
         <el-table :data="amountTable.list" style="width: 100%;margin-top: 20px;">
             <el-table-column prop="companyName" label="企业名称"></el-table-column>
-            <el-table-column prop="amount" label="信用额度（元）"></el-table-column>
+            <el-table-column prop="amount" label="信用额度（元）">
+                <template slot-scope="scope">
+                    <span>{{scope.row.amount | formatMoney()}}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="updateAt" label="更新时间记录">
                 <template slot-scope="scope">
                     <span>{{scope.row.updateAt | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
@@ -36,7 +40,7 @@
                     <div class="label">信用金额(元)：</div>
                     <div class="input">
                         <el-form-item>
-                            <el-input type="text" v-model="formEdit.amount"></el-input>
+                            <el-input type="text" v-model="formEdit.amount" :maxlength="13"></el-input>
                         </el-form-item>
                     </div>
                 </div>

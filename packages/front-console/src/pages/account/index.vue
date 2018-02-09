@@ -4,7 +4,7 @@
         <div style="padding: 30px;">
             <img src="../../image/money.png" style="width: 120px;height: 120px;float: left; margin-right: 50px;"/>
             <p>账户总余额（元）： </p>
-            <h2>{{account.balanceAmount}}</h2>
+            <h2>{{account.balanceAmount | formatMoney()}}</h2>
         </div>
         <el-table :data="account.customerBalances" style="width: 100%;margin-top: 20px;">
             <el-table-column
@@ -29,6 +29,9 @@
                     prop="balanceAmount"
                     label='余额（元）'
                     width='200'>
+                <template slot-scope="scope">
+                    <span>{{scope.row.balanceAmount | formatMoney()}}</span>
+                </template>
             </el-table-column>
         </el-table>
         <!--<ayg-pagination v-if="companyBuildList.total" :total="companyBuildList.total"-->
