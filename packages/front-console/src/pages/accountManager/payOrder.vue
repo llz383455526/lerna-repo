@@ -157,6 +157,7 @@
                 this.formSearch.stateName = '';
                 this.formSearch.paymentResDesc = '';
                 this.dateValue = '';
+                this.formSearch.paymentThirdType = '';
             },
             exportXls() {
                 let createAtBegin = '';
