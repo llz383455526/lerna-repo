@@ -25,7 +25,7 @@
                 </template>
             </el-table-column>
             <el-table-column prop="failCount" label="失败次数"></el-table-column>
-            <el-table-column prop="processingCount" label="请求总数"></el-table-column>
+            <el-table-column prop="totalCount" label="请求总数"></el-table-column>
             <el-table-column prop="failRate" label="失败率"></el-table-column>
         </el-table>
     </div>
