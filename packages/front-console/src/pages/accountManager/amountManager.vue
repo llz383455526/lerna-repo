@@ -26,7 +26,7 @@
                 v-on:handleSizeChange="handleSizeChange"
                 v-on:handleCurrentChange="handleCurrentChange"></ayg-pagination>
 
-        <el-dialog title="新增信用授权额度" :visible.sync="formEditVisible" width="30%">
+        <el-dialog :title="formEditTitle" :visible.sync="formEditVisible" width="30%">
             <el-form :model="formEdit" ref="formEdit">
                 <div class="input-container">
                     <div class="label">企业名字：</div>
@@ -67,6 +67,7 @@
                     companyId: '',
                     amount: ''
                 },
+                formEditTitle: '新增信用授权额度',
                 appNameList: []
             }
         },
@@ -105,6 +106,9 @@
                 if (obj.companyName) {
                     this.formEdit.companyId = obj.companyId;
                     this.formEdit.amount = obj.amount;
+                    this.formEditTitle = '修改信用授权额度';
+                } else {
+                    this.formEditTitle = '新增信用授权额度';
                 }
                 this.formEditVisible = true;
                 let url = '/company-credit/query-all-companies';

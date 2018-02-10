@@ -44,7 +44,12 @@
                     <span>{{scope.row.amount | formatMoney}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="left" prop="rejectReason" label="拒绝原因"></el-table-column>
+            <el-table-column align="left" prop="rejectReason" label="拒绝原因">
+                <template slot-scope="scope">
+                    <span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
+                          :title="scope.row.rejectReason">{{scope.row.rejectReason}}</span>
+                </template>
+            </el-table-column>
             <el-table-column align="center" label="查看请求报文" width="160">
                 <template slot-scope="scope">
                     <el-button @click="handleClick(scope.row.id)" type="text" size="medium" style="padding:0;">查看</el-button>
