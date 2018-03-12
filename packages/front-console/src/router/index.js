@@ -69,6 +69,19 @@ export default [{
                     path: 'statistics',
                     component: statistics
                 }]
+            }, {
+                path: 'contract',
+                component: index,
+                children: [
+                    {
+                        path: 'list',
+                        component: r => require.ensure([], () => r(require('../pages/contract/list.vue')), 'list')
+                    },
+                    {
+                        path: 'create',
+                        component: r => require.ensure([], () => r(require('../pages/contract/create.vue')), 'create')
+                    }
+                ]
             }
         ]
     }, {

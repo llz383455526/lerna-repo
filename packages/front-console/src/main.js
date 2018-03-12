@@ -49,7 +49,8 @@ import {
 	Tooltip,
 	Container,
 	Aside,
-	Main
+	Main,
+    Upload
 } from 'element-ui'
 
 Vue.use(Menu)
@@ -91,6 +92,7 @@ Vue.use(Tooltip)
 Vue.use(Container)
 Vue.use(Aside)
 Vue.use(Main)
+Vue.use(Upload)
 
 Vue.use(Loading.directive)
 Vue.prototype.$loading = Loading.service

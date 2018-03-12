@@ -9,6 +9,7 @@ import actions from './actions'
 import getters from './getters'
 
 import account from './modules/account'
+import contract from './modules/contract'
 
 import amountManager from './modules/amountManager'
 import creditBill from './modules/companyCredit'
@@ -36,7 +37,8 @@ export default new Vuex.Store({
         creditBill,
         topUpRecord,
         payOrder,
-        payOrderReject
+        payOrderReject,
+        contract
     }
 })
 

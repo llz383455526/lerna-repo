@@ -255,6 +255,10 @@
     }
 </script>
 
+<style lang="scss">
+    @import "../../assets/sass/style";
+</style>
+
 <style lang="scss" scoped>
     @import "../style/color";
 

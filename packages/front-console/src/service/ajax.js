@@ -36,7 +36,7 @@ export default (type = 'GET', url, param = {}, callback, async=true) => {
 		requestObj.send(JSON.stringify(param));
         //console.log('postoooooooooooooo', requestObj);
 	}else if (type === 'FORM') {
-		let url = 'https://sunnyhao.oss-cn-shenzhen.aliyuncs.com'
+		//let url = 'https://sunnyhao.oss-cn-shenzhen.aliyuncs.com'
 		requestObj.open('post', url, async);
 		requestObj.send(param);
 	}else if (type === 'IMPORT') {
