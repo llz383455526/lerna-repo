@@ -159,7 +159,7 @@
                 param = _.assign(param, this.formSearch)
                 this.$store.dispatch('getRechargeApplyList', param);
             },
-        	unReceiveMoney(orderNo){
+        	receiveMoney(orderNo){
                 showConfirm({
                     title:'提示',
                     msg:'确定已到账吗？',
@@ -176,7 +176,7 @@
                 this.$refs['dialogCreateForm'].resetFields()
                 next()
             },
-            receiveMoney(orderNo){
+            unReceiveMoney(orderNo){
                 showConfirm({
                     title:'提示',
                     msg:'确定未到账吗？',
