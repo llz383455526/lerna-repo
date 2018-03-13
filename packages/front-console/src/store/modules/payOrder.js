@@ -29,7 +29,7 @@ const store = {
     },
     actions: {
         getFlowTableList({commit}, param) {
-            post('/pay-order/query-item', param).then(data => {
+            post('/api/console-dlv/pay-order/query-item', param).then(data => {
                 commit('setMoneyFlow', {
                     amount: data.amount,
                     doingAmount: data.doingAmount,
@@ -39,7 +39,7 @@ const store = {
             });
         },
         getCustomNameList({commit}) {
-            get('/pay-order/get-all-app').then(data => {
+            get('/api/console-dlv/pay-order/get-all-app').then(data => {
                 commit('setCustomNameList', data);
             });
         }

@@ -165,7 +165,7 @@
 
             messageClick() {
                 this.activeIndex = '';
-                this.$router.push('/main/backlog')
+                this.$router.push('/api/console-dlv/main/backlog')
             },
 
             handleSelect(key, keyPath) {
@@ -231,7 +231,7 @@
             submitClientForm() {
                 this.$refs['clientForm'].validate(valid => {
                     if (valid) {
-                        let url = '/auth/reset-password'
+                        let url = '/api/console-dlv/auth/reset-password'
                         let option = this.clientForm
                         post(url, option).then(data => {
                             showNotify('success', '操作成功！')

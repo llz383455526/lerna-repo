@@ -129,13 +129,13 @@
                 this.getPayRemarks();
             },
             getPayRemarks: function () {
-                let url = '/company-credit-record/all-pay-remarks';
+                let url = '/api/console-dlv/company-credit-record/all-pay-remarks';
                 get(url).then(data => {
                     this.payRemarks = data
                 });
             },
             getAccounts: function () {
-                let url = '/company-credit-record/get-accounts';
+                let url = '/api/console-dlv/company-credit-record/get-accounts';
                 get(url, {
                     companyId: this.formEdit.companyId
                 }).then(data => {
@@ -143,7 +143,7 @@
                 });
             },
             getCompanies: function () {
-                let url = '/company-credit/query-all-companies';
+                let url = '/api/console-dlv/company-credit/query-all-companies';
                 get(url).then(data => {
                     this.companies = data
                 });

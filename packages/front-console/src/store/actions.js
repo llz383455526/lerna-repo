@@ -6,13 +6,13 @@ import { showLoading } from '../plugin/utils-loading'
 export default {
 
     login({commit}, param) {
-        post('/auth/login', param).then((data) => {
+        post('/api/console-dlv/auth/login', param).then((data) => {
             commit(types.LOGIN_ACTION, data);
         });
     },
 
     logout({commit}) {
-        post('/auth/logout').then((data) => {
+        post('/api/console-dlv/auth/logout').then((data) => {
             //console.log(data);
 	        commit(types.RESET_STATES)
 	        commit(types.SET_USER_TASK_LIST, null)
@@ -21,7 +21,7 @@ export default {
     },
 
     principal({commit}) {
-        get('/auth/principal').then((data) => {
+        get('/api/console-dlv/auth/principal').then((data) => {
             // console.log(data);
             commit(types.LOGOUT_PRINCIPAL, data);
         });
@@ -29,7 +29,7 @@ export default {
 	getUploadPolicy({commit}, param) {
 		showLoading()
     	/*let type = param.targetType*/
-		get('/file/policy', param)
+		get('/api/console-dlv/file/policy', param)
 			.then(result => {
 				commit(types.SET_UPLOAD_POLICY, {
 					type: result.dir,
@@ -51,24 +51,24 @@ export default {
 		commit(types.SET_UPLOAD_FILE, false)
 	},
 	getDictData({commit}) {
-    	get('/common/dict/all')
+    	get('/api/console-dlv/common/dict/all')
 		    .then(result => {
 		        commit(types.SET_DICT_DATA, result)
 		    })
 	},
 	getUserTask({commit}, param) {
-    	post('/common/current-user-tasks', param)
+    	post('/api/console-dlv/common/current-user-tasks', param)
 		    .then(result => {
 		        commit(types.SET_USER_TASK_LIST, result)
 		    })
 	},
     getFundCompanyList({commit}, param) {
-        post('/assets-allocate/funds-companies', param).then(data => {
+        post('/api/console-dlv/assets-allocate/funds-companies', param).then(data => {
             commit(types.SET_FUND_COMPANY_LIST, data);
         })
     },
 	getUserTaskCount({commit}, param) {
-        get('/common/current-user-task-count')
+        get('/api/console-dlv/common/current-user-task-count')
 	        .then(result => {
 	        	commit(types.SET_USER_TASK_COUNT, result)
 	        })

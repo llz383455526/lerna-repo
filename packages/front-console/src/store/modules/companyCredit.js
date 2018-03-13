@@ -36,7 +36,7 @@ const store = {
     },
     actions: {
         getCompanyCreditList({commit}, param) {
-            post('/company-credit-record/query-list', param).then(data => {
+            post('/api/console-dlv/company-credit-record/query-list', param).then(data => {
                 commit('setMoneyCompanyCredit', {
                     amount: data.amount,
                     availAmount: data.availAmount,
@@ -49,12 +49,12 @@ const store = {
             })
         },
         getCompanyCreditStates({commit}) {
-            get('/company-credit-record/all-states').then(data => {
+            get('/api/console-dlv/company-credit-record/all-states').then(data => {
                 commit('setCompanyCreditStates', data);
             })
         },
         getCompanyCreditRemarks({commit}) {
-            get('/company-credit-record/all-pay-remarks').then(data => {
+            get('/api/console-dlv/company-credit-record/all-pay-remarks').then(data => {
                 commit('setCompanyCreditRemarks', data);
             })
         }

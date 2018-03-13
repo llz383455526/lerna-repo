@@ -65,7 +65,7 @@
                     startAt = formatTime(this.dateValue[0], 'yyyy-MM-dd hh:mm:ss');
                     endAt = formatTime(this.dateValue[1], 'yyyy-MM-dd hh:mm:ss');
                 }
-                window.location.href = baseUrl + '/pay-order-statistics/export-list'
+                window.location.href = baseUrl + '/api/console-dlv/pay-order-statistics/export-list'
                     + '?startAt=' + startAt
                     + '&endAt=' + endAt;
             },
@@ -83,7 +83,7 @@
                     page: pageInfo.page,
                     pageSize: pageInfo.pageSize,
                 };
-                post('/pay-order-statistics/query-list', param).then(data => {
+                post('/api/console-dlv/pay-order-statistics/query-list', param).then(data => {
                     this.tableList = data
                 })
             },

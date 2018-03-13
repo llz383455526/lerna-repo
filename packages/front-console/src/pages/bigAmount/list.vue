@@ -118,7 +118,7 @@
                 });
             },
             handlePass(id, approveState) {
-                let url = '/pay-order/query-big-amount-approve';
+                let url = '/api/console-dlv/pay-order/query-big-amount-approve';
                 post(url, {id: id, approveState: approveState}).then(data => {
                     showNotify('success', data);
                     this.requestAction({
@@ -150,7 +150,7 @@
                 });
             },
             requestAction(pageInfo) {
-                let url = '/pay-order/query-big-amount-approve-list';
+                let url = '/api/console-dlv/pay-order/query-big-amount-approve-list';
                 let self = this;
                 _.foreach(this.allAppList, function (value) {
                     if (value['text'] == self.appName) {
@@ -183,19 +183,19 @@
                 })
             },
             getThirdPaymentType() {
-                let url = '/option/get-by-types';
+                let url = '/api/console-dlv/option/get-by-types';
                 get(url, {type: 'ThirdPaymentType'}).then(data => {
                     this.options1 = data.ThirdPaymentType;
                 })
             },
             getPayOrderApproveState() {
-                let url = '/option/get-by-types';
+                let url = '/api/console-dlv/option/get-by-types';
                 get(url, {type: 'PayOrderApproveState'}).then(data => {
                     this.options2 = data.PayOrderApproveState;
                 })
             },
             getAllApp() {
-                let url = '/option/get-all-app';
+                let url = '/api/console-dlv/option/get-all-app';
                 let self = this;
                 get(url).then(data => {
                     self.allAppList = data;

@@ -123,7 +123,7 @@
             submitFormEdit: function () {
                 this.$refs['formEdit'].validate(valid => {
                     if (valid) {
-                        let url = '/company-credit/add-update';
+                        let url = '/api/console-dlv/company-credit/add-update';
                         let option = this.formEdit;
                         post(url, option).then(data => {
                             showNotify('success', '操作成功!');

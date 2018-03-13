@@ -325,9 +325,9 @@
             submitForm(formName) {
                 let url;
                 if (this.$route.query.contractId) {
-                    url = '/contract/update-contract'
+                    url = '/api/console-dlv/contract/update-contract'
                 } else {
-                    url = '/contract/add-contract';
+                    url = '/api/console-dlv/contract/add-contract';
                 }
                 let self = this;
                 _.foreach(this.customerCompaniesList, function (value) {
@@ -404,7 +404,7 @@
                 })
             },
             getOptionCustomerCompanies() {
-                let url = '/option/get-option-customer-companies';
+                let url = '/api/console-dlv/option/get-option-customer-companies';
                 let self = this;
                 get(url).then(data => {
                     self.customerCompaniesList = data;
@@ -416,7 +416,7 @@
                 })
             },
             getOptionServiceCompanies() {
-                let url = '/option/get-option-service-companies';
+                let url = '/api/console-dlv/option/get-option-service-companies';
                 let self = this;
                 get(url).then(data => {
                     self.serviceCompaniesList = data
@@ -456,11 +456,11 @@
                 showNotify('error', '上传失败!');
             },
             handleDownload(downloadCode) {
-                window.location.href = baseUrl + '/file/download'
+                window.location.href = baseUrl + '/api/console-dlv/file/download'
                     + '?downloadCode=' + downloadCode;
             },
             handleDelete(downloadCode) {
-                post('/file/delete', {downloadCode: downloadCode});
+                post('/api/console-dlv/file/delete', {downloadCode: downloadCode});
             },
             handleBeforeUpload(file) {
                 let formData = new FormData();
@@ -469,7 +469,7 @@
                 this.formData = formData;
             },
             hanldleHttpRequest() {
-                let url = '/file/upload';
+                let url = '/api/console-dlv/file/upload';
                 formPost(url, this.formData).then(data => {
                     this.fileList.push(data);
                     this.referArr.push(data.referId);
@@ -489,7 +489,7 @@
                 this.dateValue = [this.contractForm.startDate, this.contractForm.endDate];
             },
             queryDetail(id) {
-                let url = '/contract/contract-detail';
+                let url = '/api/console-dlv/contract/contract-detail';
                 get(url, {contractId: id}).then(data => {
                     this.contractForm = data;
                     this.calcuServiceFeeReverse();
@@ -497,14 +497,14 @@
                 })
             },
             queryAttachments(id) {
-                let url = '/contract/contract-attachments';
+                let url = '/api/console-dlv/contract/contract-attachments';
                 get(url, {contractId: id}).then(data => {
                     this.fileList = data;
                 });
             }
         },
         created() {
-            this.uploadUrl = baseUrl+"/file/upload";
+            this.uploadUrl = baseUrl+"/api/console-dlv/file/upload";
             this.getOptionCustomerCompanies();
             this.getOptionServiceCompanies();
             if (this.$route.query.contractId) {

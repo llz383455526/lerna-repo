@@ -20,12 +20,12 @@ const store = {
     },
     actions: {
         getPayOrderRejectList({commit}, param) {
-            post('/pay-order-reject/query-list', param).then(data => {
+            post('/api/console-dlv/pay-order-reject/query-list', param).then(data => {
                 commit('setPayOrderRejectList', data);
             });
         },
         getPayOrderRejectBody({commit}, param) {
-            get('/pay-order-reject/request-body', param).then(data => {
+            get('/api/console-dlv/pay-order-reject/request-body', param).then(data => {
                 commit('setPayOrderRejectBody', data);
             });
         }

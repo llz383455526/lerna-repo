@@ -123,7 +123,7 @@
                     updateAtBegin = formatTime(this.dateValue[0], 'yyyy-MM-dd');
                     updateAtEnd = formatTime(this.dateValue[1], 'yyyy-MM-dd');
                 }
-                window.location.href = baseUrl + '/company-credit-record/export-list'
+                window.location.href = baseUrl + '/api/console-dlv/company-credit-record/export-list'
                     + '?state=' + this.formSearch.state
                     + '&payRemarks=' + this.formSearch.payRemarks
                     + '&updateAtBegin=' + updateAtBegin

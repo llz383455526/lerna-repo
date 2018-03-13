@@ -133,7 +133,7 @@
                     createAtBegin = formatTime(this.dataValue[0], 'yyyy-MM-dd');
                     createAtEnd = formatTime(this.dataValue[1], 'yyyy-MM-dd');
                 }
-                window.location.href = baseUrl+'/pay-order-reject/export-list?appId=' + this.formSearch.appName
+                window.location.href = baseUrl+'/api/console-dlv/pay-order-reject/export-list?appId=' + this.formSearch.appName
                     + '&outOrderNo=' + this.formSearch.outOrderNo
                     + '&paymentThirdTypeName=' + this.formSearch.paymentThirdTypeName
                     + '&createAtBegin=' + createAtBegin

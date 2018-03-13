@@ -124,7 +124,7 @@
                     page: pageInfo.page,
                     pageSize: pageInfo.pageSize,
                 };
-                post('/contract/query-contracts', param).then(data => {
+                post('/api/console-dlv/contract/query-contracts', param).then(data => {
                     this.tableList = data
                 })
             },
@@ -132,7 +132,7 @@
                 this.$router.push({path: val});
             },
             getSettleType() {
-                let url = '/option/get-by-type';
+                let url = '/api/console-dlv/option/get-by-type';
                 get(url, {type: 'SettleType'}).then(data => {
                     this.options = data
                 })

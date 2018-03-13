@@ -14,7 +14,7 @@ const store = {
     },
     actions: {
         getAmountTable({commit}, param) {
-            post('/company-credit/query-list', param).then(data => {
+            post('/api/console-dlv/company-credit/query-list', param).then(data => {
                 commit('setAmountTable', data);
             })
         }

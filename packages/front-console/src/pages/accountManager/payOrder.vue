@@ -166,7 +166,7 @@
                     createAtBegin = formatTime(this.dateValue[0], 'yyyy-MM-dd');
                     createAtEnd = formatTime(this.dateValue[1], 'yyyy-MM-dd');
                 }
-                window.location.href = baseUrl + '/pay-order/export-item?appId=' + this.formSearch.appName
+                window.location.href = baseUrl + '/api/console-dlv/pay-order/export-item?appId=' + this.formSearch.appName
                     + '&outOrderNo=' + this.formSearch.outOrderNo
                     + '&paymentThirdTypeName=' + this.formSearch.paymentThirdTypeName
                     + '&paymentThirdTradeNo=' + this.formSearch.paymentThirdTradeNo
@@ -228,7 +228,7 @@
                 this.$store.dispatch('getFlowTableList', param);
             },
             getSelectList2() {
-                get('/pay-order/payment-third-types').then(data => {
+                get('/api/console-dlv/pay-order/payment-third-types').then(data => {
                     this.selectList2 = data;
                 });
             }

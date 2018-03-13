@@ -14,7 +14,7 @@ const store = {
     },
     actions: {
         getCompanyCreditRecord({commit}, param) {
-            post('/company-credit-record/query-all-list', param).then(data => {
+            post('/api/console-dlv/company-credit-record/query-all-list', param).then(data => {
                 commit('setCompanyCreditRecordList', data);
             })
         }
