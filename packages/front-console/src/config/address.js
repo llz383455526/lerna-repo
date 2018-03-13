@@ -6,7 +6,7 @@ switch(process.env.NODE_ENV) {
 		baseUrl = 'http://consoletest94.aiyuangong.com'
 		break
 	default:
-		baseUrl = '/api/console-dlv'
+		baseUrl = ''
 }
 
 export {
