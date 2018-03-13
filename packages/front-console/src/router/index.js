@@ -17,6 +17,8 @@ let creditBill = r => require.ensure([], () => r(require('../pages/accountManage
 
 
 let statistics = r => require.ensure([], () => r(require('../pages/orderManager/statistics.vue')), 'statistics');
+let eContractIndex = r => require.ensure([], () => r(require('../pages/eContract/index.vue')), 'eContractIndex');
+let rechargeIndex = r => require.ensure([], () => r(require('../pages/recharge/index.vue')), 'rechargeIndex');
 
 
 export default [{
@@ -95,6 +97,20 @@ export default [{
                         component: r => require.ensure([], () => r(require('../pages/bigAmount/list.vue')), 'list')
                     }
                 ]
+            }, {
+                path: 'eContract',
+                component: index,
+                children: [{
+                    path: 'index',
+                    component: eContractIndex
+                }]
+            }, {
+                path: 'recharge',
+                component: index,
+                children: [{
+                    path: 'applyList',
+                    component: rechargeIndex
+                }]
             }
         ]
     }, {

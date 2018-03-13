@@ -16,6 +16,8 @@ import creditBill from './modules/companyCredit'
 import topUpRecord from './modules/companyCreditRecord'
 import payOrder from './modules/payOrder'
 import payOrderReject from './modules/payOrderReject'
+import recharge from './modules/recharge'
+import eContract from './modules/eContract'
 
 Vue.use(Vuex);
 
@@ -38,7 +40,9 @@ export default new Vuex.Store({
         topUpRecord,
         payOrder,
         payOrderReject,
-        contract
+        contract,
+        eContract,
+        recharge
     }
 })
 
