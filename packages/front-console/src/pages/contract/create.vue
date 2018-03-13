@@ -20,7 +20,7 @@
             <el-form-item label="服务商名称" prop="serviceCompanyId" placeholder="请输入内容">
                 <el-autocomplete
                         class="inline-input"
-                        v-model="serviceCompanyName"
+                        v-model="contractForm.serviceCompanyName"
                         :fetch-suggestions="querySearch2"
                         placeholder="请输入内容"
                         style="width:100%;"
@@ -30,7 +30,7 @@
             </el-form-item>
             <el-form-item label="合同类型" prop="cotractType" required>
                 <el-select v-model="contractForm.cotractType" placeholder="请选择" style="width:100%;">
-                    <el-option label="直播" value="Zhibo"></el-option>
+                    <el-option label="直播" value="ZhiBo"></el-option>
                     <el-option label="保险" value="BaoXian"></el-option>
                     <el-option label="市场推广" value="sctg"></el-option>
                 </el-select>
@@ -95,9 +95,13 @@
                         <el-radio label="ratio" v-model="contractForm.serviceFeeType" @change="calcuServiceFee">固定比例收费</el-radio>
                     </el-col>
                     <el-col :span="12">
-                        <el-input placeholder="请输入内容" v-model="inputRatio" @change="calcuServiceFee">
+                        <el-input placeholder="请输入内容" v-model="inputRatio" @blur="calcuServiceFee">
                             <template slot="append">% 每笔</template>
                         </el-input>
+                    </el-col>
+                    <el-col :span="1" style="text-align: right;">
+                        <i class="el-icon-question" title="表示按照固定比例来收取服务费。
+计算公式：应发金额 * 收费比例 = 服务费"></i>
                     </el-col>
                 </el-row>
                 <el-row>
@@ -105,9 +109,13 @@
                         <el-radio label="fixed" v-model="contractForm.serviceFeeType" @change="calcuServiceFee">固定金额收费</el-radio>
                     </el-col>
                     <el-col :span="12">
-                        <el-input placeholder="请输入内容" v-model="inputFixed" @change="calcuServiceFee">
+                        <el-input placeholder="请输入内容" v-model="inputFixed" @blur="calcuServiceFee">
                             <template slot="append">元 每笔</template>
                         </el-input>
+                    </el-col>
+                    <el-col :span="1" style="text-align: right;">
+                        <i class="el-icon-question" title="表示按照固定金额来收取服务费。
+计算公式：固定收费金额 = 服务费"></i>
                     </el-col>
                 </el-row>
             </el-form-item>
@@ -157,7 +165,7 @@
 
             <div class="pl50 mb50">
                 <el-table :data="fileList">
-                    <el-table-column prop="fileName" label="文件名称"></el-table-column>
+                    <el-table-column prop="createByName" label="文件名称"></el-table-column>
                     <el-table-column prop="createTime" label="上传时间">
                         <template slot-scope="scope">
                             <span>{{scope.row.createTime | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
@@ -262,7 +270,6 @@
                 inputRatio: '',
                 inputFixed: '',
                 radio: '固定日',
-                serviceCompanyName: '',
                 customerCompaniesList: [],
                 serviceCompaniesList: [],
                 tableData: [],
@@ -303,19 +310,25 @@
                     {value: '每月30日', label: '每月30日'},
                     {value: '每月31日', label: '每月31日'}
                 ],
+                contractForm: {
+                    type: 'customer',
+                    serviceFeeType: 'ratio',
+                    serviceFee: '',
+                    settleExp: ''
+                }
             }
-        },
-        computed: {
-            ...mapGetters({
-                contractForm: 'contractForm'
-            })
         },
         methods: {
             routerPush(val) {
                 this.$router.push({path: val});
             },
             submitForm(formName) {
-                let url = '/contract/add-contract';
+                let url;
+                if (this.$route.query.contractId) {
+                    url = '/contract/update-contract'
+                } else {
+                    url = '/contract/add-contract';
+                }
                 let self = this;
                 _.foreach(this.customerCompaniesList, function (value) {
                     if (value['companyName'] == self.contractForm.customerName) {
@@ -329,7 +342,6 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         post(url, this.contractForm).then(data => {
-                            // this.companies = data
                             showNotify('success', data);
                             this.$router.push({path: '/main/contract/list'});
                         });
@@ -356,26 +368,34 @@
             calcuSettleExp() {
                 this.$store.dispatch('setSettleExp', '');
                 if (this.radio == '固定日') {
-                    this.$store.dispatch('setSettleExp', this.settleExpDay);
+                    this.contractForm.settleExp = this.settleExpDay;
                 }
                 if (this.radio == '范围日' && this.settleExpStart && this.settleExpEnd) {
-                    this.$store.dispatch('setSettleExp', this.settleExpStart + ',' + this.settleExpEnd);
+                    this.contractForm.settleExp = this.settleExpStart + ',' + this.settleExpEnd;
                 }
                 this.$refs['contractForm'].validateField('settleExp')
             },
             calcuServiceFee() {
                 if (this.contractForm.serviceFeeType == 'ratio') {
-                    this.$store.dispatch('setServiceFee', this.inputRatio);
+                    this.contractForm.serviceFee = this.inputRatio;
                 }
                 if (this.contractForm.serviceFeeType == 'fixed') {
-                    this.$store.dispatch('setServiceFee', this.inputFixed);
+                    this.contractForm.serviceFee = this.inputFixed;
                 }
                 this.$refs['contractForm'].validateField('serviceFee')
+            },
+            calcuServiceFeeReverse() {
+                if (this.contractForm.serviceFeeType == 'ratio') {
+                    this.inputRatio = this.contractForm.serviceFee;
+                }
+                if (this.contractForm.serviceFeeType == 'fixed') {
+                    this.inputFixed = this.contractForm.serviceFee;
+                }
             },
             calcuCompanyId() {
                 let self = this;
                 _.foreach(this.serviceCompaniesList, function (value) {
-                    if (value['companyName'] == self.serviceCompanyName) {
+                    if (value['companyName'] == self.contractForm.serviceCompanyName) {
                         self.contractForm.serviceCompanyId = value['companyId'];
                         return false;
                     } else {
@@ -436,7 +456,8 @@
                 showNotify('error', '上传失败!');
             },
             handleDownload(downloadCode) {
-                get('/file/download', {downloadCode: downloadCode});
+                window.location.href = baseUrl + '/file/download'
+                    + '?downloadCode=' + downloadCode;
             },
             handleDelete(downloadCode) {
                 post('/file/delete', {downloadCode: downloadCode});
@@ -448,7 +469,11 @@
                 this.formData = formData;
             },
             hanldleHttpRequest() {
-                formPost(this.uploadUrl, this.formData);
+                let url = '/file/upload';
+                formPost(url, this.formData).then(data => {
+                    this.fileList.push(data);
+                    this.referArr.push(data.referId);
+                });
             },
             handleChange() {
                 if (this.dateValue) {
@@ -459,12 +484,33 @@
                     this.contractForm.endDate = '';
                     this.$refs['contractForm'].validateField('startDate')
                 }
+            },
+            handdleChangeReverse() {
+                this.dateValue = [this.contractForm.startDate, this.contractForm.endDate];
+            },
+            queryDetail(id) {
+                let url = '/contract/contract-detail';
+                get(url, {contractId: id}).then(data => {
+                    this.contractForm = data;
+                    this.calcuServiceFeeReverse();
+                    this.handdleChangeReverse();
+                })
+            },
+            queryAttachments(id) {
+                let url = '/contract/contract-attachments';
+                get(url, {contractId: id}).then(data => {
+                    this.fileList = data;
+                });
             }
         },
         created() {
             this.uploadUrl = baseUrl+"/file/upload";
             this.getOptionCustomerCompanies();
             this.getOptionServiceCompanies();
+            if (this.$route.query.contractId) {
+                this.queryDetail(this.$route.query.contractId);
+                this.queryAttachments(this.$route.query.contractId);
+            }
         }
     }
 </script>
@@ -472,5 +518,10 @@
 <style scoped>
     .el-time-spinner.has-seconds .el-time-spinner__wrapper:nth-child(2) {
         margin-left: 0;
+    }
+    .el-icon-question {
+        margin-left: 5px;
+        color: #f56c6c;
+        cursor: pointer;
     }
 </style>

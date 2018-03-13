@@ -80,6 +80,19 @@ export default [{
                     {
                         path: 'create',
                         component: r => require.ensure([], () => r(require('../pages/contract/create.vue')), 'create')
+                    },
+                    {
+                        path: 'preview',
+                        component: r => require.ensure([], () => r(require('../pages/contract/preview.vue')), 'preview')
+                    }
+                ]
+            }, {
+                path: 'bigAmount',
+                component: index,
+                children: [
+                    {
+                        path: 'list',
+                        component: r => require.ensure([], () => r(require('../pages/bigAmount/list.vue')), 'list')
                     }
                 ]
             }
