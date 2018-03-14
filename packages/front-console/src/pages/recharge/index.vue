@@ -101,6 +101,7 @@
                 formSearch: {
                     rechargeCode: '',
                     state:'',
+                    dateValue:''
                 },
                 orderInfo:'',
                 dialogConfirmVisible:false
