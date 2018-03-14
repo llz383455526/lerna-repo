@@ -10,7 +10,7 @@
             </el-form-item>
             <el-form-item label="结算周期" size="small" prop="settleType">
                 <el-select v-model="formSearch.settleType" placeholder="请选择" style="width:100%;">
-                    <el-option v-for="item in options" :key="item.value" :label="item.label"
+                    <el-option v-for="item in options" :key="item.value" :label="item.text"
                                :value="item.value"></el-option>
                 </el-select>
             </el-form-item>
@@ -34,7 +34,7 @@
             <el-table-column prop="customerName" label="客户名称" width="200"></el-table-column>
             <el-table-column prop="serviceCompanyName" label="服务商名称" width="220"></el-table-column>
             <el-table-column prop="settleTypeName" label="结算周期"></el-table-column>
-            <el-table-column prop="serviceFee" label="服务费收费比例"></el-table-column>
+            <el-table-column prop="serviceFeeName" label="服务费收费比例"></el-table-column>
             <el-table-column prop="contractStartDate" label="合同开始时间"></el-table-column>
             <el-table-column prop="contractEndDate" label="合同结束时间"></el-table-column>
             <el-table-column prop="lastUpdateAt" label="更新时间" width="180">

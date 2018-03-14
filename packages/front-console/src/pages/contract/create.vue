@@ -95,7 +95,7 @@
                         <el-radio label="ratio" v-model="contractForm.serviceFeeType" @change="calcuServiceFee">固定比例收费</el-radio>
                     </el-col>
                     <el-col :span="12">
-                        <el-input placeholder="请输入内容" v-model="inputRatio" @blur="calcuServiceFee">
+                        <el-input placeholder="请输入内容" v-model="inputRatio" @blur="calcuServiceFee" :disabled="showInputRatio">
                             <template slot="append">% 每笔</template>
                         </el-input>
                     </el-col>
@@ -109,7 +109,7 @@
                         <el-radio label="fixed" v-model="contractForm.serviceFeeType" @change="calcuServiceFee">固定金额收费</el-radio>
                     </el-col>
                     <el-col :span="12">
-                        <el-input placeholder="请输入内容" v-model="inputFixed" @blur="calcuServiceFee">
+                        <el-input placeholder="请输入内容" v-model="inputFixed" @blur="calcuServiceFee" :disabled="showInputFixed">
                             <template slot="append">元 每笔</template>
                         </el-input>
                     </el-col>
@@ -165,7 +165,7 @@
 
             <div class="pl50 mb50">
                 <el-table :data="fileList">
-                    <el-table-column prop="createByName" label="文件名称"></el-table-column>
+                    <el-table-column prop="fileName" label="文件名称"></el-table-column>
                     <el-table-column prop="createTime" label="上传时间">
                         <template slot-scope="scope">
                             <span>{{scope.row.createTime | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
@@ -261,6 +261,8 @@
                 },
                 weekVisible: false,
                 monthVisible: false,
+                showInputRatio: false,
+                showInputFixed: false,
                 formData: '',
                 dateValue: '',
                 uploadUrl: '',
@@ -378,18 +380,24 @@
             calcuServiceFee() {
                 if (this.contractForm.serviceFeeType == 'ratio') {
                     this.contractForm.serviceFee = this.inputRatio;
+                    this.showInputFixed = true;
+                    this.showInputRatio = false;
                 }
                 if (this.contractForm.serviceFeeType == 'fixed') {
                     this.contractForm.serviceFee = this.inputFixed;
+                    this.showInputFixed = false;
+                    this.showInputRatio = true;
                 }
                 this.$refs['contractForm'].validateField('serviceFee')
             },
             calcuServiceFeeReverse() {
                 if (this.contractForm.serviceFeeType == 'ratio') {
                     this.inputRatio = this.contractForm.serviceFee;
+                    this.showInputFixed = true;
                 }
                 if (this.contractForm.serviceFeeType == 'fixed') {
                     this.inputFixed = this.contractForm.serviceFee;
+                    this.showInputRatio = true;
                 }
             },
             calcuCompanyId() {
@@ -460,7 +468,10 @@
                     + '?downloadCode=' + downloadCode;
             },
             handleDelete(downloadCode) {
-                post('/api/console-dlv/file/delete', {downloadCode: downloadCode});
+                post('/api/console-dlv/file/delete', {downloadCode: downloadCode}).then(data => {
+                    showNotify('success', data);
+                    this.queryAttachments(this.$route.query.contractId);
+                });
             },
             handleBeforeUpload(file) {
                 let formData = new FormData();
@@ -473,6 +484,7 @@
                 formPost(url, this.formData).then(data => {
                     this.fileList.push(data);
                     this.referArr.push(data.referId);
+                    showNotify('success', '上传成功!');
                 });
             },
             handleChange() {
@@ -515,7 +527,7 @@
     }
 </script>
 
-<style scoped>
+<style>
     .el-time-spinner.has-seconds .el-time-spinner__wrapper:nth-child(2) {
         margin-left: 0;
     }
@@ -523,5 +535,8 @@
         margin-left: 5px;
         color: #f56c6c;
         cursor: pointer;
+    }
+    .is-disabled input {
+        border-color: #e4e7ed!important;
     }
 </style>
