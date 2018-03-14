@@ -34,6 +34,7 @@ import {
   	Col,
   	MessageBox,
 	Radio,
+	RadioGroup,
 	InputNumber,
 	Badge,
 	Autocomplete,
@@ -76,6 +77,7 @@ Vue.use(TimeSelect)
 Vue.use(TimePicker)
 Vue.use(Col)
 Vue.use(Radio)
+Vue.use(RadioGroup)
 Vue.use(InputNumber)
 Vue.use(Badge)
 Vue.use(Autocomplete)

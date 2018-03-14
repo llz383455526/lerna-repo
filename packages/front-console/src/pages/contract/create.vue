@@ -53,29 +53,33 @@
                     <el-option label="每周日" value="每周日"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="结算日期" v-if="monthVisible" prop="settleExp" required>
+            <el-form-item label="结算日期" v-if="monthVisible" prop="settleExp">
                 <el-row class="mb15">
                     <el-col :span="4">
-                        <el-radio label="固定日" v-model="radio" @change="calcuSettleExp"></el-radio>
+                        <el-radio-group v-model="radio">
+                            <el-radio label="固定日"></el-radio>
+                        </el-radio-group>
                     </el-col>
                     <el-col :span="8">
-                        <el-select v-model="settleExpDay" placeholder="请选择"style="width: 100%;" @change="calcuSettleExp">
+                        <el-select v-model="settleExpDay" placeholder="请选择" style="width: 100%;">
                             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
                         </el-select>
                     </el-col>
                 </el-row>
                 <el-row>
                     <el-col :span="4">
-                        <el-radio label="范围日" v-model="radio" @change="calcuSettleExp"></el-radio>
+                        <el-radio-group v-model="radio">
+                            <el-radio label="范围日"></el-radio>
+                        </el-radio-group>
                     </el-col>
                     <el-col :span="8">
-                        <el-select v-model="settleExpStart" placeholder="请选择" style="width: 100%;" @change="calcuSettleExp">
+                        <el-select v-model="settleExpStart" placeholder="请选择" style="width: 100%;">
                             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
                         </el-select>
                     </el-col>
                     <el-col class="line" :span="2">-</el-col>
                     <el-col :span="8">
-                        <el-select v-model="settleExpEnd" placeholder="请选择" style="width: 100%;" @change="calcuSettleExp">
+                        <el-select v-model="settleExpEnd" placeholder="请选择" style="width: 100%;">
                             <el-option v-for="item in options" :key="item.value" :label="item.label"
                                        :value="item.value"></el-option>
                         </el-select>
@@ -211,6 +215,29 @@
             fileUploader
         },
         data() {
+            var validatorSettleExp = (rule, value, callback) => {
+              if (this.contractForm.settleType == 'month') {
+                  if(this.radio == '固定日') {
+                      if(this.settleExpDay) {
+                          this.contractForm.settleExp = this.settleExpDay;
+                          callback();
+                      } else {
+                          callback(new Error('请选择结算日期'));
+                      }
+                  }
+                  if(this.radio == '范围日') {
+                      if (!this.settleExpStart || !this.settleExpEnd) {
+                          callback(new Error('请选择结算日期'));
+                      } else if (parseInt(this.settleExpStart.replace('每月','').replace('日',''))
+                          > parseInt(this.settleExpEnd.replace('每月','').replace('日',''))) {
+                          callback(new Error('开始时间大于结束时间'));
+                      } else if (this.settleExpStart && this.settleExpEnd) {
+                          this.contractForm.settleExp = this.settleExpStart + ',' + this.settleExpEnd;
+                          callback();
+                      }
+                  }
+              }
+            };
             return {
                 rules: {
                     customerName: [
@@ -226,7 +253,7 @@
                         {required: true, message: '请选择结算方式', trigger: 'change'}
                     ],
                     settleExp: [
-                        {required: true, message: '请选择结算日期', trigger: 'change'}
+                        {validator: validatorSettleExp, trigger: 'change'}
                     ],
                     invoiceType: [
                         {required: true, message: '请选择发票类型', trigger: 'change'}
@@ -352,30 +379,27 @@
             },
             showType(val) {
                 if (val == 'day') {
-                    this.$store.dispatch('setSettleExp', '每天');
+                    this.contractForm.settleExp = '每天';
                     this.weekVisible = false;
                     this.monthVisible = false;
                 }
                 if (val == 'week') {
-                    this.$store.dispatch('setSettleExp', '');
+                    this.contractForm.settleExp = '';
                     this.weekVisible = true;
                     this.monthVisible = false;
                 }
                 if (val == 'month') {
-                    this.$store.dispatch('setSettleExp', '');
+                    if (this.contractForm.settleExp.split(',')[1] != undefined) {
+                        this.radio = '范围日';
+                        this.settleExpStart = this.contractForm.settleExp.split(',')[0];
+                        this.settleExpEnd = this.contractForm.settleExp.split(',')[1];
+                    } else {
+                        this.radio = '固定日';
+                        this.settleExpDay = this.contractForm.settleExp.split(',')[0];
+                    }
                     this.weekVisible = false;
                     this.monthVisible = true;
                 }
-            },
-            calcuSettleExp() {
-                this.$store.dispatch('setSettleExp', '');
-                if (this.radio == '固定日') {
-                    this.contractForm.settleExp = this.settleExpDay;
-                }
-                if (this.radio == '范围日' && this.settleExpStart && this.settleExpEnd) {
-                    this.contractForm.settleExp = this.settleExpStart + ',' + this.settleExpEnd;
-                }
-                this.$refs['contractForm'].validateField('settleExp')
             },
             calcuServiceFee() {
                 if (this.contractForm.serviceFeeType == 'ratio') {
@@ -506,6 +530,7 @@
                     this.contractForm = data;
                     this.calcuServiceFeeReverse();
                     this.handdleChangeReverse();
+                    this.showType(this.contractForm.settleType);
                 })
             },
             queryAttachments(id) {

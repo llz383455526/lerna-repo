@@ -64,8 +64,12 @@
             <el-table-column prop="approveStateName" label="处理状态"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button @click="handlePass(scope.row.id, 2)" type="text" size="medium" style="padding:0;">通过</el-button>
-                    <el-button @click="handlePass(scope.row.id, 3)" type="text" size="medium" style="padding:0;">不通过</el-button>
+                    <el-button @click="handlePass(scope.row.id, 2)" type="text" size="medium" style="padding:0;"
+                               v-if="scope.row.approveState == 1">通过
+                    </el-button>
+                    <el-button @click="handlePass(scope.row.id, 3)" type="text" size="medium" style="padding:0;"
+                               v-if="scope.row.approveState == 1">不通过
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -86,7 +90,16 @@
                 appName: '',
                 pageSize: 10,
                 tableData: [],
-                formSearch: {},
+                formSearch: {
+                    appId: '',
+                    outOrderNo: '',
+                    approveState: '',
+                    createAtBegin: '',
+                    createAtEnd: '',
+                    accountName: '',
+                    accountNo: '',
+                    paymentThirdType: '',
+                },
                 options1: [],
                 options2: [],
                 restaurants1: [],
