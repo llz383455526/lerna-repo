@@ -134,6 +134,7 @@
                 let url = '/api/console-dlv/pay-order/query-big-amount-approve';
                 post(url, {id: id, approveState: approveState}).then(data => {
                     showNotify('success', data);
+                    this.currentPage = 1;
                     this.requestAction({
                         page: 1,
                         pageSize: this.pageSize,
