@@ -20,8 +20,8 @@ export default {
         });
     },
 
-    principal({commit}) {
-        get('/api/console-dlv/auth/principal').then((data) => {
+    principal({commit},param) {
+        get('/api/console-dlv/auth/principal', param).then((data) => {
             // console.log(data);
             commit(types.LOGOUT_PRINCIPAL, data);
         });
