@@ -41,7 +41,7 @@
         <h4 class="ml50">合同文件</h4>
         <div style="margin-left: 120px; margin-right: 120px;">
             <el-table :data="tableList" style="width: 100%;margin-top: 20px;">
-                <el-table-column prop="createByName" label="文件名称"></el-table-column>
+                <el-table-column prop="fileName" label="文件名称"></el-table-column>
                 <el-table-column prop="createTime" label="上传时间">
                     <template slot-scope="scope">
                         <span>{{scope.row.createTime | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
