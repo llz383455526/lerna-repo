@@ -247,7 +247,7 @@
             },
         },
         created() {
-            this.$store.dispatch('principal',{menuType:'console-company'});
+            this.$store.dispatch('principal',{menuType:'console-admin'});
             // this.$store.dispatch('getDictData');
 
             // this.$store.dispatch('getUserTaskCount')
