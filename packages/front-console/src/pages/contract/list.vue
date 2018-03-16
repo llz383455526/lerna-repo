@@ -21,7 +21,7 @@
                         type="datetimerange"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd hh:mm:ss">
+                        value-format="yyyy-MM-dd HH:mm:ss">
                 </el-date-picker>
             </el-form-item>
             <el-form-item style="margin-top: -4px">
@@ -161,7 +161,7 @@
     }
 </script>
 
-<style scoped>
+<style>
     .el-time-spinner.has-seconds .el-time-spinner__wrapper:nth-child(2) {
         margin-left: 0;
     }

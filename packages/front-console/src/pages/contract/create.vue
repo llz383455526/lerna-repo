@@ -56,12 +56,13 @@
             <el-form-item label="结算日期" v-if="monthVisible" prop="settleExp">
                 <el-row class="mb15">
                     <el-col :span="4">
-                        <el-radio-group v-model="radio">
+                        <el-radio-group v-model="radio" @change="showSelectExpSelect">
                             <el-radio label="固定日"></el-radio>
                         </el-radio-group>
                     </el-col>
                     <el-col :span="8">
-                        <el-select v-model="settleExpDay" placeholder="请选择" style="width: 100%;">
+                        <el-select v-model="settleExpDay" placeholder="请选择" style="width: 100%;"
+                                   :disabled="showSelectExpDay">
                             <el-option v-for="item in options" :key="item.value" :label="item.label"
                                        :value="item.value"></el-option>
                         </el-select>
@@ -69,19 +70,21 @@
                 </el-row>
                 <el-row>
                     <el-col :span="4">
-                        <el-radio-group v-model="radio">
+                        <el-radio-group v-model="radio" @change="showSelectExpSelect">
                             <el-radio label="范围日"></el-radio>
                         </el-radio-group>
                     </el-col>
                     <el-col :span="8">
-                        <el-select v-model="settleExpStart" placeholder="请选择" style="width: 100%;">
+                        <el-select v-model="settleExpStart" placeholder="请选择" style="width: 100%;"
+                                   :disabled="showSelectExpStart">
                             <el-option v-for="item in options" :key="item.value" :label="item.label"
                                        :value="item.value"></el-option>
                         </el-select>
                     </el-col>
                     <el-col class="line" :span="2">-</el-col>
                     <el-col :span="8">
-                        <el-select v-model="settleExpEnd" placeholder="请选择" style="width: 100%;">
+                        <el-select v-model="settleExpEnd" placeholder="请选择" style="width: 100%;"
+                                   :disabled="showSelectExpStart">
                             <el-option v-for="item in options" :key="item.value" :label="item.label"
                                        :value="item.value"></el-option>
                         </el-select>
@@ -187,9 +190,10 @@
                             <el-button @click="handleDownload(scope.row.downloadCode)" type="text" size="medium"
                                        style="padding:0;">下载
                             </el-button>
-                            <el-button @click="handleDelete(scope.row.downloadCode)" type="text" size="medium"
-                                       style="padding:0;">删除
+                            <el-button  type="text" size="medium"
+                                       style="padding:0;" @click="dialogVisible = true, downloadCode = scope.row.downloadCode">删除
                             </el-button>
+                            <!--@click="handleDelete(scope.row.downloadCode)"-->
                         </template>
                     </el-table-column>
                 </el-table>
@@ -199,6 +203,13 @@
                 <el-button @click="routerPush('/main/contract/list')">取消</el-button>
             </el-form-item>
         </el-form>
+        <el-dialog :visible.sync="dialogVisible" width="30%">
+            <span>确认删除该合同文件吗？</span>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="handleDelete">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -227,7 +238,7 @@
         data() {
             var validatorSettleExp = (rule, value, callback) => {
                 if (this.contractForm.settleType == 'week') {
-                    if (this.settleExp == '') {
+                    if (this.contractForm.settleExp == '') {
                         callback(new Error('请选择结算日期'));
                     } else {
                         callback();
@@ -307,6 +318,10 @@
                 monthVisible: false,
                 showInputRatio: false,
                 showInputFixed: false,
+                showSelectExpDay: false,
+                showSelectExpStart: true,
+                dialogVisible: false,
+                downloadCode: '',
                 formData: '',
                 dateValue: '',
                 uploadUrl: '',
@@ -403,6 +418,15 @@
                     showNotify('success', '绑定客户合同成功');
                 })
             },
+            showSelectExpSelect() {
+                if (this.radio == '范围日') {
+                    this.showSelectExpStart = false;
+                    this.showSelectExpDay = true;
+                } else {
+                    this.showSelectExpStart = true;
+                    this.showSelectExpDay = false;
+                }
+            },
             showType(val) {
                 if (val == 'day') {
                     this.contractForm.settleExp = '每天';
@@ -410,7 +434,7 @@
                     this.monthVisible = false;
                 }
                 if (val == 'week') {
-                    if (!this.contractForm.settleExp) {
+                    if (!this.contractForm.settleExp || this.contractForm.settleExp.split(',')[1] != undefined) {
                         this.contractForm.settleExp = '';
                     }
                     this.weekVisible = true;
@@ -423,7 +447,11 @@
                         this.settleExpEnd = this.contractForm.settleExp.split(',')[1];
                     } else {
                         this.radio = '固定日';
-                        this.settleExpDay = this.contractForm.settleExp.split(',')[0];
+                        if (this.contractForm.settleExp.split('周').length == 2) {
+                            this.settleExpDay = '';
+                        } else {
+                            this.settleExpDay = this.contractForm.settleExp.split(',')[0];
+                        }
                     }
                     this.weekVisible = false;
                     this.monthVisible = true;
@@ -519,13 +547,22 @@
                 window.location.href = baseUrl + '/api/console-dlv/file/download'
                     + '?downloadCode=' + downloadCode;
             },
-            handleDelete(downloadCode) {
-                post('/api/console-dlv/file/delete', {downloadCode: downloadCode}).then(data => {
-                    showNotify('success', data);
-                    this.queryAttachments(this.$route.query.contractId);
-                });
+            handleDelete() {
+                if (this.downloadCode) {
+                    post('/api/console-dlv/file/delete', {downloadCode: this.downloadCode}).then(data => {
+                        showNotify('success', data);
+                        this.queryAttachments(this.$route.query.contractId);
+                        this.dialogVisible = false;
+                    });
+                }
             },
             handleBeforeUpload(file) {
+                var AllImgExt = ".doc|.docx|.pdf";
+                var extName = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();//（把路径中的所有字母全部转换为小写）
+                if (AllImgExt.indexOf(extName + "|") == -1) {
+                    showNotify('error', '文件类型错误');
+                    return false;
+                }
                 let formData = new FormData();
                 formData.append('fileName', file.name);
                 formData.append('file', file);

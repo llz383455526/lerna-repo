@@ -38,7 +38,32 @@
             <el-col :span="4" style="text-align: right; margin-right: 20px;">合同起止时间：</el-col>
             <el-col :span="8">{{detail.startDate}} 至 {{detail.endDate}}</el-col>
         </el-row>
-        <h4 class="ml50">合同文件</h4>
+        <h4 class="ml50 mt50">发票信息</h4>
+        <el-row class="mb15" style="font-weight: normal;">
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">公司名称：</el-col>
+            <el-col :span="8">{{detail.invoiceCompanyName}}</el-col>
+        </el-row>
+        <el-row class="mb15" style="font-weight: normal;">
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">纳税人识别号：</el-col>
+            <el-col :span="8">{{detail.invoiceTin}}</el-col>
+        </el-row>
+        <el-row class="mb15" style="font-weight: normal;">
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">地址：</el-col>
+            <el-col :span="8">{{detail.invoiceAddress}}</el-col>
+        </el-row>
+        <el-row class="mb15" style="font-weight: normal;">
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">电话：</el-col>
+            <el-col :span="8">{{detail.invoicePhone}}</el-col>
+        </el-row>
+        <el-row class="mb15" style="font-weight: normal;">
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">开户银行：</el-col>
+            <el-col :span="8">{{detail.invoiceBank}}</el-col>
+        </el-row>
+        <el-row class="mb15" style="font-weight: normal;">
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">银行账号：</el-col>
+            <el-col :span="8">{{detail.invoiceAccount}}</el-col>
+        </el-row>
+        <h4 class="ml50 mt50">合同文件</h4>
         <div style="margin-left: 120px; margin-right: 120px;">
             <el-table :data="tableList" style="width: 100%;margin-top: 20px;">
                 <el-table-column prop="fileName" label="文件名称"></el-table-column>
