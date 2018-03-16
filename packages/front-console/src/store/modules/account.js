@@ -53,7 +53,7 @@ const getters = {
 
 const actions = {
     companyBuildList({commit}, param) {
-        get('/api/console-dlv/pay-order/get-all-app').then(data => {
+        get('/api/console-dlv/option/get-all-app').then(data => {
             commit(types.GET_COMPANY_BUILD_LIST, data);
         })
     },
@@ -70,7 +70,7 @@ const actions = {
 
 
     customerNameList({commit}) {
-        get('/api/console-dlv/pay-order/get-all-app').then(data => {
+        get('/api/console-dlv/option/get-all-app').then(data => {
             commit(types.GET_CUSTOMERNAMELIST, data)
         });
     },

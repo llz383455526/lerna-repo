@@ -39,7 +39,7 @@ const store = {
             });
         },
         getCustomNameList({commit}) {
-            get('/api/console-dlv/pay-order/get-all-app').then(data => {
+            get('/api/console-dlv/option/get-all-app').then(data => {
                 commit('setCustomNameList', data);
             });
         }
