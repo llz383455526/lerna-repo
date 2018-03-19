@@ -60,7 +60,7 @@
             <el-table-column prop="orderStateDesc" label="订单状态"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <a v-if="scope.row.downloadUrl" class="operation">合同下载</a>
+                    <a v-if="scope.row.downloadUrl" :href="scope.row.downloadUrl" class="operation">合同下载</a>
                 </template>
             </el-table-column>
         </el-table>
