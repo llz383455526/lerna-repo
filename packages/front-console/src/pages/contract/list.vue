@@ -55,13 +55,19 @@
     </div>
 </template>
 
+<style>
+    .el-time-spinner.has-seconds .el-time-spinner__wrapper:nth-child(2) {
+        margin-left: 0;
+    }
+</style>
+
 <script>
     import {post, get} from '../../store/api';
     export default {
         data() {
             return {
                 pageSize: 10,
-                currentPage: 1,
+                currentPage: parseInt(this.$route.query.page) || 1,
                 tableList: [],
                 options: [],
                 formSearch: {
@@ -125,6 +131,10 @@
                     pageSize: pageInfo.pageSize,
                 };
                 post('/api/console-dlv/contract/query-contracts', param).then(data => {
+                    this.$router.push({
+                        path: '/main/contract/list',
+                        query: {page: pageInfo.page}
+                    });
                     this.tableList = data
                 })
             },
@@ -146,13 +156,16 @@
             handleEdit(id) {
                 this.$router.push({
                     path: '/main/contract/create',
-                    query: {contractId: id}
+                    query: {
+                        contractId: id,
+                        page: this.$route.query.page
+                    }
                 });
             }
         },
         created() {
             this.requestAction({
-                page: 1,
+                page: this.$route.query.page || 1,
                 pageSize: this.pageSize,
             });
             this.getSettleType();
@@ -160,9 +173,3 @@
 
     }
 </script>
-
-<style>
-    .el-time-spinner.has-seconds .el-time-spinner__wrapper:nth-child(2) {
-        margin-left: 0;
-    }
-</style>

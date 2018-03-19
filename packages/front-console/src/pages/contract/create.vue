@@ -153,7 +153,7 @@
                 <el-input v-model="contractForm.invoiceAddress"></el-input>
             </el-form-item>
             <el-form-item label="电话" prop="invoicePhone" required>
-                <el-input v-model="contractForm.invoicePhone"></el-input>
+                <el-input v-model="contractForm.invoicePhone" :maxlength="11" @change="calcuPhone"></el-input>
             </el-form-item>
             <el-form-item label="开户银行" prop="invoiceBank" required>
                 <el-input v-model="contractForm.invoiceBank"></el-input>
@@ -175,7 +175,6 @@
                     :file-list="fileList">
                 <el-button size="small" type="primary">点击上传</el-button>
             </el-upload>
-
             <div class="pl50 mb50">
                 <el-table :data="fileList">
                     <el-table-column prop="fileName" label="文件名称"></el-table-column>
@@ -220,6 +219,22 @@
 
     .line {
         text-align: center;
+    }
+</style>
+
+<style>
+    .el-time-spinner.has-seconds .el-time-spinner__wrapper:nth-child(2) {
+        margin-left: 0;
+    }
+
+    .el-icon-question {
+        margin-left: 5px;
+        color: #f56c6c;
+        cursor: pointer;
+    }
+
+    .is-disabled input {
+        border-color: #e4e7ed !important;
     }
 </style>
 
@@ -287,7 +302,7 @@
                         {required: true, message: '请选择发票类型', trigger: 'change'}
                     ],
                     serviceFee: [
-                        {required: true, message: '请输入服务费收费', trigger: 'blur'}
+                        {type: 'number', required: true, message: '请输入正确的服务费收费', trigger: 'blur'}
                     ],
                     startDate: [
                         {required: true, message: '请选择合同起止时间', trigger: 'blur'}
@@ -305,7 +320,7 @@
                         {required: true, message: '请输入地址', trigger: 'blur'}
                     ],
                     invoicePhone: [
-                        {required: true, message: '请输入电话', trigger: 'blur'}
+                        {type: 'number', required: true, message: '请输入正确的电话', trigger: 'blur'}
                     ],
                     invoiceBank: [
                         {required: true, message: '请输入开户银行', trigger: 'blur'}
@@ -381,7 +396,12 @@
         },
         methods: {
             routerPush(val) {
-                this.$router.push({path: val});
+                this.$router.push({
+                    path: val,
+                    query: {
+                        page: this.$route.query.page
+                    }
+                });
             },
             submitForm(formName) {
                 let url;
@@ -459,12 +479,12 @@
             },
             calcuServiceFee() {
                 if (this.contractForm.serviceFeeType == 'ratio') {
-                    this.contractForm.serviceFee = this.inputRatio;
+                    this.contractForm.serviceFee = parseInt(this.inputRatio);
                     this.showInputFixed = true;
                     this.showInputRatio = false;
                 }
                 if (this.contractForm.serviceFeeType == 'fixed') {
-                    this.contractForm.serviceFee = this.inputFixed;
+                    this.contractForm.serviceFee = parseInt(this.inputFixed);
                     this.showInputFixed = false;
                     this.showInputRatio = true;
                 }
@@ -490,6 +510,11 @@
                         self.contractForm.serviceCompanyId = '';
                     }
                 })
+            },
+            calcuPhone() {
+                if (!isNaN(this.contractForm.invoicePhone)) {
+                    this.contractForm.invoicePhone = parseInt(this.contractForm.invoicePhone)
+                }
             },
             getOptionCustomerCompanies() {
                 let url = '/api/console-dlv/option/get-option-customer-companies';
@@ -619,19 +644,3 @@
         }
     }
 </script>
-
-<style>
-    .el-time-spinner.has-seconds .el-time-spinner__wrapper:nth-child(2) {
-        margin-left: 0;
-    }
-
-    .el-icon-question {
-        margin-left: 5px;
-        color: #f56c6c;
-        cursor: pointer;
-    }
-
-    .is-disabled input {
-        border-color: #e4e7ed !important;
-    }
-</style>
