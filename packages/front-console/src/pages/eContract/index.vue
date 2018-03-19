@@ -94,6 +94,11 @@
                     dateValue: '',
                     signState:'',
                     orderState:'',
+                    orderId:'',
+                    personalName:'',
+                    personalIdentity:'',
+                    personalMobile:'',
+                    serverName:''
                 }
             }
         },
