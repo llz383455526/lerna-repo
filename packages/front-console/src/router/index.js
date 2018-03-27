@@ -98,6 +98,15 @@ export default [{
                     }
                 ]
             }, {
+                path: 'settled',
+                component: index,
+                children: [
+                    {
+                        path: 'list-flow',
+                        component: r => require.ensure([], () => r(require('../pages/settled/list-flow.vue')), 'list-flow')
+                    }
+                ]
+            }, {
                 path: 'eContract',
                 component: index,
                 children: [{
