@@ -173,7 +173,7 @@
                 })
             },
             handleDownload(appId, billType, settledTime) {
-                window.location.href = baseUrl + '/api/console-dlv/settled/service-free-order-download'
+                window.location.href = baseUrl + '/api/console-dlv/settled/flow-order-download'
                     + '?appId=' + appId + '&billType=' + billType
                     + '&settledTime=' + settledTime;
             },
