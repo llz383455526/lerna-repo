@@ -1,6 +1,6 @@
 <template>
     <div class="bg-white p15">
-        <div class="mb30">流水账单</div>
+        <div class="mb30">异常账单</div>
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
             <el-form-item label="客户名称" size="small">
                 <el-autocomplete
@@ -42,38 +42,35 @@
                 <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
             </el-form-item>
         </el-form>
-        <el-table :data="tableData.list">
+        <el-table :data="tableData.list" v-if="tableData">
             <el-table-column prop="appName" label="客户名称"></el-table-column>
             <el-table-column prop="settleDate" label="记账时间">
                 <template slot-scope="scope">
                     <span>{{scope.row.settleDate | formatTime('yyyy-MM-dd')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="支付宝">
+            <el-table-column label="发放统计">
                 <template slot-scope="scope">
-                    <span>总金额 {{scope.row.alipayAmount}}元  发放{{scope.row.alipayCount}}笔</span>
+                    <div>发放成功金额 {{scope.row.amount}}</div>
+                    <div>发放成功笔数 {{scope.row.count}}</div>
                 </template>
             </el-table-column>
-            <el-table-column label="银行卡">
+            <el-table-column label="服务费收取标准">
                 <template slot-scope="scope">
-                    <span>总金额 {{scope.row.bankAmount}}元  发放{{scope.row.bankCount}}笔</span>
+                    <span>发放金额 *{{scope.row.serviceFeeRate}}% </span>
                 </template>
             </el-table-column>
-            <el-table-column label="微信">
-                <template slot-scope="scope">
-                    <span>总金额 {{scope.row.wechatAmount}}元  发放{{scope.row.wechatCount}}笔</span>
-                </template>
-            </el-table-column>
+            <el-table-column prop="serviceFee" label="服务费金额"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button @click="handleDownload(scope.row.appId, scope.row.billType, scope.row.settleDate)"
+                    <el-button @click="handleDownload(scope.row.appId, scope.row.billType, scope.row.settledTime)"
                                type="text" size="medium" style="padding:0;">
                         账单下载
                     </el-button>
                 </template>
             </el-table-column>
         </el-table>
-        <ayg-pagination v-if="tableData.total" :total="tableData.total"
+        <ayg-pagination v-if="tableData" :total="tableData.total"
                         v-on:handleSizeChange="handleSizeChange"
                         v-on:handleCurrentChange="handleCurrentChange" :currentPage="currentPage"></ayg-pagination>
     </div>
@@ -99,7 +96,7 @@
                 valueDate: '',
                 appName: '',
                 pageSize: 10,
-                tableData: [],
+                tableData: '',
             }
         },
         methods: {
@@ -141,7 +138,7 @@
                 });
             },
             requestAction(pageInfo) {
-                let url = '/api/console-dlv/settled/flow-order-list';
+                let url = '/api/console-dlv/settled/abnormity-order-list';
                 let self = this;
                 _.foreach(this.allAppList, function (value) {
                     if (value['text'] == self.appName) {
@@ -175,7 +172,7 @@
             },
             handleDownload(appId, billType, settledTime) {
                 settledTime = formatTime(settledTime, 'yyyy-MM-dd');
-                window.location.href = baseUrl + '/api/console-dlv/settled/flow-order-download'
+                window.location.href = baseUrl + '/api/console-dlv/settled/abnormity-order-download'
                     + '?appId=' + appId + '&billType=' + billType
                     + '&settledTime=' + settledTime;
             },

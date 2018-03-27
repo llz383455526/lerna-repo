@@ -104,6 +104,14 @@ export default [{
                     {
                         path: 'list-flow',
                         component: r => require.ensure([], () => r(require('../pages/settled/list-flow.vue')), 'list-flow')
+                    },
+                    {
+                        path: 'list-service',
+                        component: r => require.ensure([], () => r(require('../pages/settled/list-service.vue')), 'list-service')
+                    },
+                    {
+                        path: 'list-abnormity',
+                        component: r => require.ensure([], () => r(require('../pages/settled/list-abnormity.vue')), 'list-abnormity')
                     }
                 ]
             }, {
