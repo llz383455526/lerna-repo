@@ -46,7 +46,8 @@
             <el-table-column prop="appName" label="客户名称"></el-table-column>
             <el-table-column prop="settleDate" label="记账时间">
                 <template slot-scope="scope">
-                    <span>{{scope.row.settleDate | formatTime('yyyy-MM-dd')}}</span>
+                    <span v-if="scope.row.billType === 'month'">{{scope.row.settleDate | formatTime('yyyy-MM')}}</span>
+                    <span v-if="scope.row.billType === 'day'">{{scope.row.settleDate | formatTime('yyyy-MM-dd')}}</span>
                 </template>
             </el-table-column>
             <el-table-column label="支付宝">

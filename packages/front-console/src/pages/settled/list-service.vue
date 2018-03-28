@@ -46,7 +46,8 @@
             <el-table-column prop="appName" label="客户名称"></el-table-column>
             <el-table-column prop="settleDate" label="记账时间">
                 <template slot-scope="scope">
-                    <span>{{scope.row.settleDate | formatTime('yyyy-MM-dd')}}</span>
+                    <span v-if="scope.row.billType === 'month'">{{scope.row.settleDate | formatTime('yyyy-MM')}}</span>
+                    <span v-if="scope.row.billType === 'day'">{{scope.row.settleDate | formatTime('yyyy-MM-dd')}}</span>
                 </template>
             </el-table-column>
             <el-table-column label="发放统计">
@@ -63,7 +64,7 @@
             <el-table-column prop="serviceFee" label="服务费金额"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button @click="handleDownload(scope.row.appId, scope.row.billType, scope.row.settledTime)"
+                    <el-button @click="handleDownload(scope.row.appId, scope.row.billType, scope.row.settleDate)"
                                type="text" size="medium" style="padding:0;">
                         账单下载
                     </el-button>
@@ -171,6 +172,7 @@
                 })
             },
             handleDownload(appId, billType, settledTime) {
+                console.log(settledTime)
                 settledTime = formatTime(settledTime, 'yyyy-MM-dd');
                 window.location.href = baseUrl + '/api/console-dlv/settled/service-free-order-download'
                     + '?appId=' + appId + '&billType=' + billType
