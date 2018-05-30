@@ -51,7 +51,13 @@ import {
 	Container,
 	Aside,
 	Main,
-    Upload
+	Upload,
+	Breadcrumb,
+	BreadcrumbItem,
+	Tree,
+	Message,
+    Cascader,
+    Card
 } from 'element-ui'
 
 Vue.use(Menu)
@@ -95,12 +101,18 @@ Vue.use(Container)
 Vue.use(Aside)
 Vue.use(Main)
 Vue.use(Upload)
+Vue.use(Breadcrumb)
+Vue.use(BreadcrumbItem)
+Vue.use(Tree)
+Vue.use(Cascader)
+Vue.use(Card)
 
 Vue.use(Loading.directive)
 Vue.prototype.$loading = Loading.service
 Vue.prototype.$notify = Notification
 Vue.prototype.$confirm = MessageBox.confirm
 Vue.prototype.$alert = MessageBox.alert
+Vue.prototype.$message = Message
 
 Date.prototype.toJSON = function () {
 	return Date.parse(this)

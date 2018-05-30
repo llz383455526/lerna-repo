@@ -83,6 +83,7 @@
     import _ from 'lodash';
     import {get, post, formPost} from "../../store/api";
     import {showNotify} from '../../plugin/utils-notify';
+
     export default {
         data() {
             return {
@@ -143,14 +144,11 @@
             },
             handleSizeChange(value) {
                 this.pageSize = value;
-                if (this.currentPage == 1) {
-                    this.requestAction({
-                        page: 1,
-                        pageSize: value,
-                    });
-                } else {
-                    this.currentPage = 1;
-                }
+                this.currentPage = 1;
+                this.requestAction({
+                    page: this.currentPage,
+                    pageSize: value,
+                });
             },
             handleCurrentChange(value) {
                 this.currentPage = value;
@@ -213,7 +211,7 @@
                 let self = this;
                 get(url).then(data => {
                     self.allAppList = data;
-                    _.foreach(data, function(value) {
+                    _.foreach(data, function (value) {
                         self.restaurants1.push({
                             "value": value['text']
                         });

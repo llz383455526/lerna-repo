@@ -22,7 +22,7 @@ export default {
 
     principal({commit},param) {
         get('/api/console-dlv/auth/principal', param).then((data) => {
-            // console.log(data);
+            // console.log(this)
             commit(types.LOGOUT_PRINCIPAL, data);
         });
     },

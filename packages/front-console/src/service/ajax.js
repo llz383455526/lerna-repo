@@ -16,12 +16,16 @@ export default (type = 'GET', url, param = {}, callback, async=true) => {
 	
 	if(type === 'GET') {
 		let dataStr = '' //数据拼接字符串
+		let link = '?'	//处理如果url本身带?的情况
+		if(url.indexOf('?') > -1){
+			link = '&'
+		}
 		Object.keys(param).forEach(key => {
 			dataStr += key + '=' + param[key] + '&'
 		})
 		dataStr = dataStr.substr(0, dataStr.lastIndexOf('&'))
-		if(dataStr) url += `?${dataStr}&t=${parseInt(Math.random() * 100000)}`
-		else url += `?t=${parseInt(Math.random() * 100000)}`
+		if(dataStr) url += `${link}${dataStr}&t=${parseInt(Math.random() * 100000)}`
+		else url += `${link}t=${parseInt(Math.random() * 100000)}`
 		
 		requestObj.open(type, url, async)
 		requestObj.timeout = 30000

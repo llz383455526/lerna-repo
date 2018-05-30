@@ -58,7 +58,7 @@
             </el-table-column>
             <el-table-column label="服务费收取标准">
                 <template slot-scope="scope">
-                    <span>发放金额 *{{scope.row.serviceFeeRate}}% </span>
+                    <span>{{scope.row.serviceFeeType == 'ratio' ? '发放金额 *' + scope.row.serviceFeeRate + '%' : scope.row.serviceFeeRate + '元/笔'}} </span>
                 </template>
             </el-table-column>
             <el-table-column prop="serviceFee" label="服务费金额"></el-table-column>
@@ -82,6 +82,7 @@
     import {get, post, formPost} from "../../store/api";
     import {baseUrl} from '../../config/address';
     import {formatTime} from '../../plugin/utils-functions';
+
     export default {
         data() {
             return {
@@ -117,7 +118,7 @@
                 let self = this;
                 get(url).then(data => {
                     self.allAppList = data;
-                    _.foreach(data, function(value) {
+                    _.foreach(data, function (value) {
                         self.restaurants1.push({
                             "value": value['text']
                         });
@@ -180,14 +181,8 @@
             },
             handleSizeChange(value) {
                 this.pageSize = value;
-                if (this.currentPage == 1) {
-                    this.requestAction({
-                        page: 1,
-                        pageSize: value,
-                    });
-                } else {
-                    this.currentPage = 1;
-                }
+                this.currentPage = 1;
+                this.requestAction({page: this.currentPage, pageSize: value,});
             },
             handleCurrentChange(value) {
                 this.currentPage = value;

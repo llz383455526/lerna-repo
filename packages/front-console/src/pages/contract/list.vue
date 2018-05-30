@@ -18,10 +18,11 @@
             <el-form-item label="请求起止时间:" size="small">
                 <el-date-picker
                         v-model="dateValue"
-                        type="datetimerange"
+                        type="daterange"
+                        :unlink-panels="true"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd HH:mm:ss">
+                        value-format="yyyy-MM-dd">
                 </el-date-picker>
             </el-form-item>
             <el-form-item style="margin-top: -4px">
@@ -44,8 +45,10 @@
             </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button @click="handleLook(scope.row.id)" type="text" size="medium" style="padding:0;">查看</el-button>
-                    <el-button @click="handleEdit(scope.row.id)" type="text" size="medium" style="padding:0;">编辑</el-button>
+                    <el-button @click="handleLook(scope.row.id)" type="text" size="medium" style="padding:0;">查看
+                    </el-button>
+                    <el-button @click="handleEdit(scope.row.id)" type="text" size="medium" style="padding:0;">编辑
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -63,6 +66,7 @@
 
 <script>
     import {post, get} from '../../store/api';
+
     export default {
         data() {
             return {
@@ -94,14 +98,11 @@
             },
             handleSizeChange(value) {
                 this.pageSize = value;
-                if (this.currentPage == 1) {
-                    this.requestAction({
-                        page: 1,
-                        pageSize: value,
-                    });
-                } else {
-                    this.currentPage = 1;
-                }
+                this.currentPage = 1;
+                this.requestAction({
+                    page: this.currentPage,
+                    pageSize: value,
+                });
             },
             handleCurrentChange(value) {
                 this.currentPage = value;
@@ -130,7 +131,7 @@
                     page: pageInfo.page,
                     pageSize: pageInfo.pageSize,
                 };
-                post('/api/console-dlv/contract/query-contracts', param).then(data => {
+                post('/api/contract-web/contract/query-contracts', param).then(data => {
                     this.$router.push({
                         path: '/main/contract/list',
                         query: {page: pageInfo.page}

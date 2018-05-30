@@ -176,17 +176,7 @@
                     + '?appId=' + appId + '&billType=' + billType
                     + '&settledTime=' + settledTime;
             },
-            handleSizeChange(value) {
-                this.pageSize = value;
-                if (this.currentPage == 1) {
-                    this.requestAction({
-                        page: 1,
-                        pageSize: value,
-                    });
-                } else {
-                    this.currentPage = 1;
-                }
-            },
+            handleSizeChange(value) {                this.pageSize = value;                this.currentPage = 1;                this.requestAction({                    pageNo: this.currentPage,                    pageSize: value,                });            },
             handleCurrentChange(value) {
                 this.currentPage = value;
                 if (this.currentChangeBySetting) {

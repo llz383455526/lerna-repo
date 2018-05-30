@@ -95,19 +95,19 @@
         },
         methods: {
             getAttachments(id) {
-              let url = '/api/console-dlv/contract/contract-attachments';
+              let url = '/api/contract-web/contract/contract-attachments';
               get(url, {contractId: id}).then(data => {
                   this.tableList = data
               })
             },
             getDetail(id) {
-                let url = '/api/console-dlv/contract/contract-detail';
+                let url = '/api/contract-web/contract/contract-detail';
                 get(url, {contractId: id}).then(data => {
                     this.detail = data
                 })
             },
             handleDowload(downloadCode) {
-                window.location.href = baseUrl + '/api/console-dlv/file/download'
+                window.location.href = baseUrl + '/api/contract-web/file/download'
                     + '?downloadCode=' + downloadCode;
             }
         },

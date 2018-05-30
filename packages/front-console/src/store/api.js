@@ -16,19 +16,21 @@ function requestBefore(param = {}) {
 function showErrorToast(show, res, errorCallback, reject) {
     hideLoading();
     if (show) {
-        let msg = res.message;
+        let msg = res.message || res.msg;
         if (res.code === undefined) {
             let obj = res.response || res.responseText;
             if (obj) {
                 try {
-                    msg = JSON.parse(obj).message;
+                    msg = JSON.parse(obj).message || JSON.parse(obj).msg;
                 } catch (error) {
                     console.log(error);
                 }
             }
         }
         if (msg) {
-            showNotify('error', msg);
+            if(res.message != "无效的授权码！"){
+                showNotify('error', msg);
+            }
         } else {
             showNotify('error', '服务器打盹了哦，请稍后再试~');
         }
@@ -89,7 +91,7 @@ function getButNoErrorToast(url, param) {
 }
 
 function ajaxAction(requestType, url, param, resolve, reject, showToast, needCallback, withLoading) {
-    ajax(requestType, `${baseUrl}${url}`, param, res => {
+    ajax(requestType, `${baseUrl}${url}`, param, res => {       
         if(!withLoading) hideLoading()
         if (res.code === 200) {
             resolve(res.data);

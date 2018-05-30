@@ -130,15 +130,7 @@
                     + '&updateAtEnd=' + updateAtEnd;
             },
             handleSizeChange(value) {
-                this.pageSize = value;
-                if (this.currentPage == 1) {
-                    this.requestAction({
-                        page: 1,
-                        pageSize: value,
-                    });
-                } else {
-                    this.currentPage = 1;
-                }
+                this.pageSize = value;                this.currentPage = 1;                this.requestAction({                    page: this.currentPage,                    pageSize: value,                });
             },
             handleCurrentChange(value) {
                 this.currentPage = value;

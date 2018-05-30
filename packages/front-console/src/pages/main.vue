@@ -38,7 +38,6 @@
                             <template slot="title">{{item.title}}</template>
                             <el-menu-item style="min-width: 140px" v-for="child in item.children" :key="child.orderSeq"
                                           :index="buildMenuIndex(item.orderSeq,child.orderSeq)">{{child.title}}
-
                             </el-menu-item>
                         </el-submenu>
                     </div>
@@ -91,229 +90,244 @@
 </template>
 
 <script>
-    import {mapGetters} from 'vuex'
-    import {showConfirm, showAlert} from '../plugin/utils-message'
-    import {showNotify} from '../plugin/utils-notify'
-    import {get, post, importPost} from '../store/api'
+import { mapGetters } from "vuex";
+import { showConfirm, showAlert } from "../plugin/utils-message";
+import { showNotify } from "../plugin/utils-notify";
+import { get, post, importPost } from "../store/api";
 
-    export default {
+export default {
+  data() {
+    let confirmPwd = (rule, value, callback) => {
+      if (value == this.clientForm.newPassword) {
+        callback();
+      } else {
+        callback(new Error("两次输入密码不一致"));
+      }
+    };
+    return {
+      activeIndex: "",
+      clientForm: {
+        oldPassword: "",
+        newPassword: "",
+        confirmPwd: ""
+      },
+      clientFormRules: {
+        oldPassword: [
+          {
+            required: true,
+            message: "请填写旧密码",
+            trigger: "blur"
+          }
+        ],
+        newPassword: [
+          {
+            required: true,
+            message: "请填写新密码",
+            trigger: "blur"
+          }
+        ],
+        confirmPwd: [
+          {
+            required: true,
+            message: "请确认密码",
+            trigger: "blur"
+          },
+          {
+            validator: confirmPwd
+          }
+        ]
+      },
+      dialogClientVisible: false,
+      menumActive: '1-1'
+    };
+  },
 
-        data() {
-            let confirmPwd = (rule, value, callback) => {
-                if (value == this.clientForm.newPassword) {
-                    callback();
-                } else {
-                    callback(new Error('两次输入密码不一致'));
-                }
-            }
-            return {
-                activeIndex: '',
-                clientForm: {
-                    "oldPassword": "",
-                    "newPassword": "",
-                    "confirmPwd": "",
-                },
-                clientFormRules: {
-                    oldPassword: [{
-                        required: true,
-                        message: '请填写旧密码',
-                        trigger: 'blur'
-                    }],
-                    newPassword: [{
-                        required: true,
-                        message: '请填写新密码',
-                        trigger: 'blur'
-                    }],
-                    confirmPwd: [{
-                        required: true,
-                        message: '请确认密码',
-                        trigger: 'blur'
-                    }, {
-                        validator: confirmPwd
-                    }],
-                },
-                dialogClientVisible: false,
-            }
-        },
-
-        computed: {
-            ...mapGetters({
-                userInformation: 'userInformation',
-                logoutRandomTime: 'logoutRandomTime',
-                principalMenu: 'principalMenu',
-                userTaskCount: 'userTaskCount',
-            })
-        },
-        watch: {
-            logoutRandomTime() {
-                this.$router.replace('/login')
-            },
-            principalMenu() {
-                this.checkActiveIndex();
-            },
-
-        },
-        methods: {
-
-            buildMenuIndex(index, subIndex) {
-                return index + (subIndex ? ('-' + subIndex) : '');
-            },
-
-            search() {
-//                alert('search');
-            },
-
-            messageClick() {
-                this.activeIndex = '';
-                this.$router.push('/api/console-dlv/main/backlog')
-            },
-
-            handleSelect(key, keyPath) {
-                // console.log(keyPath)
-                if (keyPath[0] == '0') {
-                    this.activeIndex = '#';
-                    if (key == '0-1') {
-                        console.log('账户中心')
-                    } else if (key == '0-2') {
-                        console.log('修改密码')
-                        this.dialogClientVisible = true
-                    } else {
-                        console.log('退出登录')
-                        this.logout();
-                    }
-                } else {
-                    for (let i = 0; i < this.principalMenu.length; ++i) {
-                        if (keyPath[0] == this.principalMenu[i].orderSeq) {
-                            if (keyPath.length === 1) {
-                                this.$router.push(this.principalMenu[i]['action']);
-                                console.log(this.principalMenu[i]['title'] + '---' + this.principalMenu[i]['action']);
-                                break;
-                            } else {
-                                let children = this.principalMenu[i].children;
-                                for (let j = 0; j < children.length; ++j) {
-                                    if (key == this.buildMenuIndex(this.principalMenu[i].orderSeq, children[j].orderSeq)) {
-                                        this.$router.push(children[j]['action']);
-                                        // console.log(this.principalMenu[i]['title'] + '---' + children[j]['title']);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-
-            checkActiveIndex() {
-                let path = this.$route.path;
-                for (let i = 0; i < this.principalMenu.length; ++i) {
-                    if (path == this.principalMenu[i]['action']) {
-                        this.activeIndex = this.principalMenu[i].orderSeq + '';
-                        break;
-                    } else {
-                        let children = this.principalMenu[i].children;
-                        for (let j = 0; j < children.length; ++j) {
-                            if (path == children[j]['action']) {
-                                this.activeIndex = this.buildMenuIndex(this.principalMenu[i].orderSeq, children[j].orderSeq);
-                                return;
-                            }
-                        }
-                    }
-                }
-            },
-
-            logout() {
-                this.$store.dispatch('logout');
-            },
-            resetForm(formName) {
-                this.$refs[formName].resetFields()
-                this[formName] = {}
-            },
-            submitClientForm() {
-                this.$refs['clientForm'].validate(valid => {
-                    if (valid) {
-                        let url = '/api/console-dlv/auth/reset-password'
-                        let option = this.clientForm
-                        post(url, option).then(data => {
-                            showNotify('success', '操作成功！')
-                            this.resetForm('clientForm')
-                            this.dialogClientVisible = false
-                        })
-                    }
-                })
-            },
-            closeClientDialog(done) {
-                this.resetForm('clientForm')
-                done();
-            },
-        },
-        created() {
-            this.$store.dispatch('principal',{menuType:'console-admin'});
-            // this.$store.dispatch('getDictData');
-
-            // this.$store.dispatch('getUserTaskCount')
-        }
+  computed: {
+    ...mapGetters({
+      userInformation: "userInformation",
+      logoutRandomTime: "logoutRandomTime",
+      principalMenu: "principalMenu",
+      userTaskCount: "userTaskCount"
+    })
+  },
+  watch: {
+    logoutRandomTime() {
+      this.$router.replace("/login");
+    },
+    principalMenu() {
+      this.checkActiveIndex();
     }
+  },
+  methods: {
+    buildMenuIndex(index, subIndex) {
+      return index + (subIndex ? "-" + subIndex : "");
+    },
+
+    search() {
+      //                alert('search');
+    },
+
+    messageClick() {
+      this.activeIndex = "";
+      this.$router.push("/api/console-dlv/main/backlog");
+    },
+
+    handleSelect(key, keyPath) {
+      // console.log(keyPath)
+      if (keyPath[0] == "0") {
+        this.activeIndex = "#";
+        if (key == "0-1") {
+          console.log("账户中心");
+        } else if (key == "0-2") {
+          console.log("修改密码");
+          this.dialogClientVisible = true;
+        } else {
+          console.log("退出登录");
+          this.logout();
+        }
+      } else {
+        for (let i = 0; i < this.principalMenu.length; ++i) {
+          if (keyPath[0] == this.principalMenu[i].orderSeq) {
+            if (keyPath.length === 1) {
+              this.$router.push(this.principalMenu[i]["action"]);
+              console.log(
+                this.principalMenu[i]["title"] +
+                  "---" +
+                  this.principalMenu[i]["action"]
+              );
+              break;
+            } else {
+              let children = this.principalMenu[i].children;
+              for (let j = 0; j < children.length; ++j) {
+                if (
+                  key ==
+                  this.buildMenuIndex(
+                    this.principalMenu[i].orderSeq,
+                    children[j].orderSeq
+                  )
+                ) {
+                  this.$router.push(children[j]["action"]);
+                  // console.log(this.principalMenu[i]['title'] + '---' + children[j]['title']);
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    checkActiveIndex() {
+      let path = this.$route.path;
+      for (let i = 0; i < this.principalMenu.length; ++i) {
+        if (path == this.principalMenu[i]["action"]) {
+          this.activeIndex = this.principalMenu[i].orderSeq + "";
+          break;
+        } else {
+          let children = this.principalMenu[i].children;
+          for (let j = 0; j < children.length; ++j) {
+            if (path == children[j]["action"]) {
+              this.activeIndex = this.buildMenuIndex(
+                this.principalMenu[i].orderSeq,
+                children[j].orderSeq
+              );
+              return;
+            }
+          }
+        }
+      }
+    },
+
+    logout() {
+      this.$store.dispatch("logout");
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+      this[formName] = {};
+    },
+    submitClientForm() {
+      this.$refs["clientForm"].validate(valid => {
+        if (valid) {
+          let url = "/api/console-dlv/auth/reset-password";
+          let option = this.clientForm;
+          post(url, option).then(data => {
+            showNotify("success", "操作成功！");
+            this.resetForm("clientForm");
+            this.dialogClientVisible = false;
+          });
+        }
+      });
+    },
+    closeClientDialog(done) {
+      this.resetForm("clientForm");
+      done();
+    }
+  },
+  created() {
+    this.$store.dispatch("principal", { menuType: "console-admin" });
+    // this.$store.dispatch('getDictData');
+
+    // this.$store.dispatch('getUserTaskCount')
+  }
+};
 </script>
 
 <style lang="scss">
-    @import "../../assets/sass/style";
+@import "../../assets/sass/style";
 </style>
 
 <style lang="scss" scoped>
-    @import "../style/color";
+@import "../style/color";
 
-    .top-menu {
-        height: 60px;
-        background-color: $basic-green;
-        position: relative;
-        .menu-container {
-            position: absolute;
-            right: 0;
+.top-menu {
+  height: 60px;
+  background-color: $basic-green;
+  position: relative;
+  .menu-container {
+    position: absolute;
+    right: 0;
 
-            .login-menu-wrap {
-                .el-menu {
-                    width: 80px;
-                    .el-menu-item {
-                        width: 100%;
-                        min-width: unset;
-                    }
-                }
-                .el-submenu__title {
-                    padding: 0 30px;
-                }
-            }
-
+    .login-menu-wrap {
+      .el-menu {
+        width: 80px;
+        .el-menu-item {
+          width: 100%;
+          min-width: unset;
         }
+      }
+      .el-submenu__title {
+        padding: 0 30px;
+      }
     }
+  }
+}
 
-    #container {
-        position: absolute;
-        width: 100%;
-        bottom: 0;
-        top: 55px;
-        overflow: auto;
-        background-color: $bg-color;
+#container {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  top: 55px;
+  overflow: auto;
+  background-color: $bg-color;
 
-        #mainContainer {
-            width: 1366px;
-            margin: 20px auto 0;
-            /*background-color: $white;
+  #mainContainer {
+    position: relative;
+    width: 1366px;
+    margin: 20px auto 0;
+    /*background-color: $white;
             border-radius: 15px;*/
-        }
-    }
-
+  }
+}
 </style>
 
 <style lang="scss">
+.el-submenu__title i {
+  color: #fff;
+}
 
-    .el-submenu__title i {
-        color: #fff;
-    }
-
-    .el-menu--horizontal .el-submenu > .el-menu {
-        top: 60px !important;
-    }
-
+.el-menu--horizontal .el-submenu > .el-menu {
+  top: 60px !important;
+}
 </style>
 
 

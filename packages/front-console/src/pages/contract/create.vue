@@ -9,16 +9,20 @@
                 <input v-model="contractForm.referIds">
             </el-form-item>
             <el-form-item label="客户名称" prop="customerName" placeholder="请输入内容">
-                <el-autocomplete
+                <!--<el-autocomplete
                         class="inline-input"
                         v-model="contractForm.customerName"
                         :fetch-suggestions="querySearch1"
                         placeholder="请输入内容"
                         style="width:100%;">
-                </el-autocomplete>
+                </el-autocomplete>-->
+                <el-select v-model="contractForm.customerName" placeholder="请选择" style="width:100%;">
+                    <el-option v-for="item in customerCompaniesList" :key="item.companyId" :label="item.companyName"
+                               :value="item.companyName"></el-option>
+                </el-select>
             </el-form-item>
-            <el-form-item label="服务商名称" prop="serviceCompanyId" placeholder="请输入内容">
-                <el-autocomplete
+            <el-form-item label="服务商名称" prop="serviceCompanyName" placeholder="请输入内容">
+                <!--<el-autocomplete
                         class="inline-input"
                         v-model="contractForm.serviceCompanyName"
                         :fetch-suggestions="querySearch2"
@@ -26,7 +30,11 @@
                         style="width:100%;"
                         @blur="calcuCompanyId"
                         @select="handleSelect">
-                </el-autocomplete>
+                </el-autocomplete>-->
+                <el-select v-model="contractForm.serviceCompanyName" placeholder="请选择" style="width:100%;">
+                    <el-option v-for="item in serviceCompaniesList" :key="item.companyId" :label="item.companyName"
+                               :value="item.companyName"></el-option>
+                </el-select>
             </el-form-item>
             <el-form-item label="合同类型" prop="cotractType" required>
                 <el-select v-model="contractForm.cotractType" placeholder="请选择" style="width:100%;">
@@ -136,6 +144,7 @@
                 <el-date-picker
                         v-model="dateValue"
                         type="daterange"
+                        :unlink-panels="true"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
                         value-format="yyyy-MM-dd"
@@ -153,7 +162,7 @@
                 <el-input v-model="contractForm.invoiceAddress"></el-input>
             </el-form-item>
             <el-form-item label="电话" prop="invoicePhone" required>
-                <el-input v-model="contractForm.invoicePhone" :maxlength="11" @change="calcuPhone"></el-input>
+                <el-input v-model="contractForm.invoicePhone" :maxlength="12"></el-input>
             </el-form-item>
             <el-form-item label="开户银行" prop="invoiceBank" required>
                 <el-input v-model="contractForm.invoiceBank"></el-input>
@@ -190,7 +199,7 @@
                                        style="padding:0;">下载
                             </el-button>
                             <el-button  type="text" size="medium"
-                                       style="padding:0;" @click="dialogVisible = true, downloadCode = scope.row.downloadCode">删除
+                                       style="padding:0;" @click="dialogVisible = true, downloadCode = scope.row.downloadCode, deleteKey = scope.$index">删除
                             </el-button>
                             <!--@click="handleDelete(scope.row.downloadCode)"-->
                         </template>
@@ -246,6 +255,8 @@
     import {showNotify} from '../../plugin/utils-notify';
     import fileUploader from '../../component/fileUploader'
 
+    import { checkPhone } from '../../plugin/utils-element-validator'
+
     export default {
         components: {
             fileUploader
@@ -287,7 +298,7 @@
                         {required: true, message: '请输入客户名称', trigger: 'change'}
                     ],
                     serviceCompanyId: [
-                        {required: true, message: '请输入服务商名称', trigger: 'blur'}
+                        {required: true, message: '请输入服务商名称', trigger: 'change'}
                     ],
                     cotractType: [
                         {required: true, message: '请选择合同类型', trigger: 'change'}
@@ -320,7 +331,7 @@
                         {required: true, message: '请输入地址', trigger: 'blur'}
                     ],
                     invoicePhone: [
-                        {type: 'number', required: true, message: '请输入正确的电话', trigger: 'blur'}
+                        { required: true, message: '请输入正确的电话', trigger: 'blur', validator: checkPhone}
                     ],
                     invoiceBank: [
                         {required: true, message: '请输入开户银行', trigger: 'blur'}
@@ -391,7 +402,8 @@
                     serviceFeeType: 'ratio',
                     serviceFee: '',
                     settleExp: ''
-                }
+                },
+	            deleteKey: ''
             }
         },
         methods: {
@@ -406,9 +418,9 @@
             submitForm(formName) {
                 let url;
                 if (this.$route.query.contractId) {
-                    url = '/api/console-dlv/contract/update-contract'
+                    url = '/api/contract-web/contract/update-contract'
                 } else {
-                    url = '/api/console-dlv/contract/add-contract';
+                    url = '/api/contract-web/contract/add-contract';
                 }
                 let self = this;
                 _.foreach(this.customerCompaniesList, function (value) {
@@ -419,6 +431,7 @@
                         self.contractForm.customerId = '';
                     }
                 });
+                this.calcuCompanyId()
                 this.contractForm.referIds = this.referArr;
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
@@ -426,11 +439,13 @@
                             showNotify('success', data);
                             this.$router.push({path: '/main/contract/list'});
                         });
+                    }else {
+	                    showNotify('error', '请检查输入项错误！')
                     }
                 });
             },
             updateAttachment(contractId, referId) {
-                let url = '/api/console-dlv/contract/update-contract-attachment';
+                let url = '/api/contract-web/contract/update-contract-attachment';
                 post(url, {
                     contractId: contractId,
                     referId: referId
@@ -569,14 +584,17 @@
                 showNotify('error', '上传失败!');
             },
             handleDownload(downloadCode) {
-                window.location.href = baseUrl + '/api/console-dlv/file/download'
+                window.location.href = baseUrl + '/api/contract-web/file/download'
                     + '?downloadCode=' + downloadCode;
             },
             handleDelete() {
                 if (this.downloadCode) {
-                    post('/api/console-dlv/file/delete', {downloadCode: this.downloadCode}).then(data => {
-                        showNotify('success', data);
-                        this.queryAttachments(this.$route.query.contractId);
+                    post('/api/contract-web/file/delete', {downloadCode: this.downloadCode}).then(data => {
+                        // showNotify('success', data);
+                        //this.queryAttachments(this.$route.query.contractId);
+	                    showNotify('success', '删除成功')
+	                    this.fileList.splice(this.deleteKey, 1)
+	                    this.referArr.splice(this.deleteKey, 1)
                         this.dialogVisible = false;
                     });
                 }
@@ -594,7 +612,7 @@
                 this.formData = formData;
             },
             hanldleHttpRequest() {
-                let url = '/api/console-dlv/file/upload';
+                let url = '/api/contract-web/file/upload';
                 formPost(url, this.formData).then(data => {
                     this.fileList.push(data);
                     this.referArr.push(data.referId);
@@ -618,7 +636,7 @@
                 this.dateValue = [this.contractForm.startDate, this.contractForm.endDate];
             },
             queryDetail(id) {
-                let url = '/api/console-dlv/contract/contract-detail';
+                let url = '/api/contract-web/contract/contract-detail';
                 get(url, {contractId: id}).then(data => {
                     this.contractForm = data;
                     this.calcuServiceFeeReverse();
@@ -627,7 +645,7 @@
                 })
             },
             queryAttachments(id) {
-                let url = '/api/console-dlv/contract/contract-attachments';
+                let url = '/api/contract-web/contract/contract-attachments';
                 get(url, {contractId: id}).then(data => {
                     this.fileList = data;
                 });

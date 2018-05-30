@@ -89,6 +89,7 @@
                 this.$store.dispatch('login', {
                     loginName: this.loginForm.username,
                     password: this.loginForm.password,
+                    sourceType: 'console-admin'
                 });
 
             },

@@ -77,17 +77,7 @@
             })
         },
         methods: {
-            handleSizeChange(value) {
-                this.pageSize = value;
-                if (this.currentPage == 1) {
-                    this.requestAction({
-                        page: 1,
-                        pageSize: value,
-                    });
-                } else {
-                    this.currentPage = 1;
-                }
-            },
+
             handleCurrentChange(value) {
                 this.currentPage = value;
                 this.requestAction({

@@ -6,12 +6,16 @@ const store = {
         optionTypes: {},
         curServiceCompanies: [],
         rechargeConfirm: {},
+        productName: [],
+        customCompanies: []
     },
     getters: {
         rechargeApplyList: state => state.rechargeApplyList,
         optionTypes: state => state.optionTypes,
         curServiceCompanies: state => state.curServiceCompanies,
         rechargeConfirm: state => state.rechargeConfirm,
+        productName: state => state.productName,
+        customCompanies: state => state.customCompanies
     },
     mutations: {
         setRechargeApplyList (state, payload) {
@@ -26,16 +30,21 @@ const store = {
         setRechargeConfirm (state, payload) {
             state.rechargeConfirm = payload
         },
-        
+        setProductName (state, payload) {
+            state.productName = payload
+        },
+        setCustomCompanies (state, payload) {
+            state.customCompanies = payload
+        }
     },
     actions: {
         getRechargeApplyList({commit}, param) {
-            post('/api/console-dlv/recharge-order/query-list', param).then(data => {
+            post('/api/balance-web/recharge-order/query-list', param).then(data => {
                 commit('setRechargeApplyList', data);
             })
         },
         getCurServiceCompanies({commit}) {
-            get('/api/console-dlv/option/get-option-cur-service-companies')
+            get('/api/console-dlv/option/get-option-service-companies')
                 .then(result => {
                     commit('setCurServiceCompanies', result);
                 })
@@ -43,10 +52,14 @@ const store = {
         getByTypes({commit}, param) {
             let str = ''
             param.forEach((item, index)=>{
-                str += 'type=' + item + '&'
+                str += '' + item + ','
             })
-            get('/api/console-dlv/option/get-by-types?'+str)
+            if(str !=''){
+            	str = 'enumTypes='+str.substring(0,str.length-1)
+            }
+            post('/api/sysmgr-web/commom/options?'+str)
                 .then(result => {
+                    console.log(result)
                     commit('setOptionTypes', result);
                 })
         },
@@ -56,6 +69,18 @@ const store = {
                     commit('setRechargeConfirm', result);
                 })
         },
+        getProductName({commit}, param) {
+            post('/api/balance-web/recharge-order/query-app', param)
+                .then(result => {
+                    commit('setProductName', result)
+                })
+        },
+        getCustomCompanies({commit}, param) {
+            get('/api/console-dlv/option/get-option-customer-companies', param)
+                .then(result => {
+                    commit('setCustomCompanies', result)
+                })
+        }
     }
 };
 

@@ -1,39 +1,65 @@
 <template>
     <div class="company-build-container company-container">
-        <div style="margin: 0 30px 30px;">账户管理</div>
-        <div style="padding: 30px;">
-            <img src="../../image/money.png" style="width: 120px;height: 120px;float: left; margin-right: 50px;"/>
-            <p>账户总余额（元）： </p>
-            <h2>{{account.balanceAmount | formatMoney}}</h2>
-        </div>
-        <el-table :data="account.customerBalances" style="width: 100%;margin-top: 20px;">
-            <el-table-column
-                    align="left"
-                    prop='customerCompanyName'
-                    label='客户名称'
-                    width='160'>
-            </el-table-column>
-            <el-table-column
-                    align="left"
-                    prop='payUserName'
-                    label='子账号名称'>
-            </el-table-column>
-            <el-table-column
-                    align="left"
-                    prop='payUserNo'
-                    label='子账号'
-                    width=140>
-            </el-table-column>
-            <el-table-column
-                    align="left"
-                    prop="balanceAmount"
-                    label='余额（元）'
-                    width='200'>
-                <template slot-scope="scope">
-                    <span>{{scope.row.balanceAmount | formatMoney}}</span>
-                </template>
-            </el-table-column>
-        </el-table>
+        <el-tabs v-model="activeName">
+            <el-tab-pane label="客户账户余额" name="new" v-loading="!aData">
+                <div style="padding: 30px;">
+                    <img src="../../image/money.png" style="width: 120px;height: 120px;float: left; margin-right: 50px;"/>
+                    <p>账户总余额（元）： </p>
+                    <h2>{{aData.totalAvailBalance | formatMoney}}</h2>
+                </div>
+                <el-table :data="aData.balanceAccountItems" style="width: 100%;margin-top: 20px;">
+                    <el-table-column
+                            align="left"
+                            prop='companyName'
+                            label='客户公司'>
+                    </el-table-column>
+                    <el-table-column
+                            align="left"
+                            prop='appName'
+                            label='接入应用'>
+                    </el-table-column>
+                    <el-table-column
+                            align="left"
+                            label='余额（元）'>
+                        <template slot-scope="scope">
+                            <span>{{scope.row.availBalance | formatMoney}}</span>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-tab-pane>
+            <el-tab-pane label="渠道账户余额" name="old" v-loading="load">
+                <div style="padding: 30px;">
+                    <img src="../../image/money.png" style="width: 120px;height: 120px;float: left; margin-right: 50px;"/>
+                    <p>账户总余额（元）： </p>
+                    <h2>{{account.balanceAmount | formatMoney}}</h2>
+                </div>
+                <el-table :data="account.customerBalances" style="width: 100%;margin-top: 20px;">
+                    <el-table-column
+                            align="left"
+                            prop='customerCompanyName'
+                            label='客户名称'>
+                    </el-table-column>
+                    <el-table-column
+                            align="left"
+                            prop='payUserName'
+                            label='子账号名称'>
+                    </el-table-column>
+                    <el-table-column
+                            align="left"
+                            prop='payUserNo'
+                            label='子账号'>
+                    </el-table-column>
+                    <el-table-column
+                            align="left"
+                            prop="balanceAmount"
+                            label='余额（元）'>
+                        <template slot-scope="scope">
+                            <span>{{scope.row.balanceAmount | formatMoney}}</span>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-tab-pane>
+        </el-tabs>
         <!--<ayg-pagination v-if="companyBuildList.total" :total="companyBuildList.total"-->
         <!--v-on:handleSizeChange="handleSizeChange"-->
         <!--v-on:handleCurrentChange="handleCurrentChange" :currentPage="currentPage"></ayg-pagination>-->
@@ -45,6 +71,8 @@
     import {mapGetters} from 'vuex'
     import {showConfirm} from '../../plugin/utils-message'
     import {showTopErrorToast} from '../../plugin/utils-toast'
+    import {post} from '../../store/api'
+    import { setTimeout } from 'timers';
 
     export default {
         data() {
@@ -57,14 +85,15 @@
                     createByNameLK: '',
                     stateEQ: '',
                 },
-                value9: ''
+                value9: '',
+                activeName: 'old',
+                aData: '',
+                load: true
             }
         },
         computed: {
             ...mapGetters({
-                account: 'account',
-                // companyDeleteResult: 'companyDeleteResult',
-                // dictData: 'dictData',
+                account: 'account'
             })
         },
         watch: {
@@ -74,7 +103,20 @@
                     pageSize: this.pageSize,
                 });
             },
-
+            account() {
+                if(this.account.balanceAmount || this.account.balanceAmount === 0){
+                    this.load = false
+                }
+            }
+        },
+        mounted() {
+            post('/api/balance-web/balance-account/query-account').then(function(data){
+                console.log(data)
+                this.aData = data
+            }.bind(this))
+            setTimeout(function(){
+                this.activeName = 'new'
+            }.bind(this), 10)
         },
         methods: {
             // search() {
@@ -115,17 +157,7 @@
             //     }
             // },
 
-            handleSizeChange(value) {
-                this.pageSize = value;
-                if (this.currentPage == 1) {
-                    this.requestAction({
-                        page: 1,
-                        pageSize: value,
-                    });
-                } else {
-                    this.currentPage = 1;
-                }
-            },
+            handleSizeChange(value) {                this.pageSize = value;                this.currentPage = 1;                this.requestAction({                    pageNo: this.currentPage,                    pageSize: value,                });            },
             handleCurrentChange(value) {
                 this.currentPage = value;
                 if (this.currentChangeBySetting) {
