@@ -14,6 +14,7 @@
       </div>
       <el-table class="table" :data="tableData" border>
           <el-table-column prop="name" label="发票类目名"></el-table-column>
+          <el-table-column prop="fullName" label="发票全称"></el-table-column>
           <el-table-column prop="taxRate" label="税率"></el-table-column>
           <el-table-column prop="abbreviation" label="简称"></el-table-column>
           <el-table-column prop="code" label="税收分类编码"></el-table-column>

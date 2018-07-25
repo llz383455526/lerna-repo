@@ -13,6 +13,8 @@ export default (type = 'GET', url, param = {}, callback, async=true) => {
 	}
 
 	//console.log('requestObj', requestObj);
+	let userProfiles = window.localStorage.getItem('userProfiles')
+	if(userProfiles === 'undefined') userProfiles= false
 	
 	if(type === 'GET') {
 		let dataStr = '' //数据拼接字符串
@@ -31,12 +33,14 @@ export default (type = 'GET', url, param = {}, callback, async=true) => {
 		requestObj.timeout = 30000
 		requestObj.setRequestHeader('If-Modified-Since', '0')
 		requestObj.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+		if(userProfiles) requestObj.setRequestHeader('x-sec-profile', userProfiles)
         //console.log('getttttttttttttttt', requestObj);
 		requestObj.send()
 	}else if (type === 'POST') {
 		requestObj.open(type, url, async);
 		requestObj.timeout = 30000
 		requestObj.setRequestHeader("Content-type", "application/json");
+		if(userProfiles) requestObj.setRequestHeader('x-sec-profile', userProfiles)
 		requestObj.send(JSON.stringify(param));
         //console.log('postoooooooooooooo', requestObj);
 	}else if (type === 'FORM') {

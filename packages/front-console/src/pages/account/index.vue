@@ -37,7 +37,7 @@
                     <el-table-column
                             align="left"
                             prop='customerCompanyName'
-                            label='客户名称'>
+                            label='接入应用'>
                     </el-table-column>
                     <el-table-column
                             align="left"

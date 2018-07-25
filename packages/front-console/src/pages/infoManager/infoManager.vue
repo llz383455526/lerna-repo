@@ -117,20 +117,20 @@ export default {
         taxIdcd: [
           { required: true, message: '请输入纳税识别号', trigger: 'blur' }
         ],
-        addr: [
-          { required: true, message: '请输入地址', trigger: 'blur' }
-        ],
-        phone: [
-          { required: true, message: '请输入电话号码', trigger: 'blur' },
-          { pattern: /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/, message: '请正确输入号码'}
-        ],
-        bankName: [
-          { required: true, message: '请输入开户银行名称', trigger: 'blur' }
-        ],
-        bankAccount: [
-          { required: true, message: '请输入开户银行账号', trigger: 'blur' },
-          // { pattern: /^([1-9]{1})(\d{12,25})$/, message: '请正确输入银行账号', trigger: 'blur'}
-        ],
+        // addr: [
+        //   { required: true, message: '请输入地址', trigger: 'blur' }
+        // ],
+        // phone: [
+        //   { required: true, message: '请输入电话号码', trigger: 'blur' },
+        //   { pattern: /^[\d\-]+$/, message: '请正确输入号码'}
+        // ],
+        // bankName: [
+        //   { required: true, message: '请输入开户银行名称', trigger: 'blur' }
+        // ],
+        // bankAccount: [
+        //   { required: true, message: '请输入开户银行账号', trigger: 'blur' },
+        //   { pattern: /^([1-9]{1})(\d{12,25})$/, message: '请正确输入银行账号', trigger: 'blur'}
+        // ],
         // collector: [
         //   { required: true, message: '请输入收票人名字', trigger: 'blur' }
         // ],

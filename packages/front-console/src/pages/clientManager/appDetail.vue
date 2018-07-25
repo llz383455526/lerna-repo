@@ -12,7 +12,57 @@
           </el-breadcrumb-item>
           </el-breadcrumb>
       <div class="content">
-          <div class="title">
+		<div class="title">基本信息</div><el-button type="primary" style="margin-left: 120px;" size="small" @click="open">编辑</el-button>
+		<div class="box">
+      		<el-row :gutter="20">
+      		    <el-col :span="10">
+					  <el-col :span="8" class="right">商户名称</el-col><el-col :span="10">{{data.appName}}</el-col>
+				</el-col>
+      		    <el-col :span="10">
+					  <el-col :span="8" class="right">Company ID</el-col><el-col :span="10">{{data.id}}</el-col>
+				</el-col>
+      		</el-row>
+			<el-row :gutter="20">
+      		    <el-col :span="10">
+					  <el-col :span="8" class="right">appId</el-col><el-col :span="10">{{data.appId}}</el-col>
+				</el-col>
+				<el-col :span="10">
+					  <el-col :span="8" class="right">商户负责人</el-col><el-col :span="10">{{data.chargeByName}}</el-col>
+				</el-col>
+      		</el-row>
+			<el-row :gutter="20">
+				<el-col :span="10">
+					  <el-col :span="8" class="right">服务商</el-col><el-col :span="10">{{data.serviceCompanyName}}</el-col>
+				</el-col>
+      		    <el-col :span="10">
+					  <el-col :span="8" class="right">负责人电话</el-col><el-col :span="10">{{data.phone}}</el-col>
+				</el-col>
+      		</el-row>
+			<el-row :gutter="20">
+      		    <el-col :span="10">
+					  <el-col :span="8" class="right">更新人</el-col><el-col :span="10">{{data.updateByName}}</el-col>
+				</el-col>
+				<el-col :span="10">
+					  <el-col :span="8" class="right">更新时间</el-col><el-col :span="10">{{data.updateTime}}</el-col>
+				</el-col>
+      		</el-row>
+			<el-row :gutter="20">
+      		    <el-col :span="20">
+					  <el-col :span="4" class="right">异步通知appid</el-col><el-col :span="10" style="word-wrap: break-word;">{{data.notifyAppId}}</el-col>
+				</el-col>
+      		</el-row>
+			<el-row :gutter="20">
+      		    <el-col :span="20">
+					  <el-col :span="4" class="right">异步通知接口</el-col><el-col :span="10" style="word-wrap: break-word;">{{data.notifyUrl}}</el-col>
+				</el-col>
+      		</el-row>
+			<el-row :gutter="20">
+      		    <el-col :span="20">
+					  <el-col :span="4" class="right">RSA公钥</el-col><el-col :span="10" style="word-wrap: break-word;">{{data.appRsaPublickKey}}</el-col>
+				</el-col>
+      		</el-row>
+      	</div>
+          <!-- <div class="title">
               基本信息
           </div>
           <el-form label-width="180px" class="form">
@@ -28,8 +78,8 @@
               <el-form-item label="服务商名称：">
                   <template>{{data.serviceCompanyName}}</template>
               </el-form-item>
-          </el-form>
-          <div class="title">客户应用配置信息</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="open">编辑</el-button>
+          </el-form> -->
+          <!-- <div class="title">客户应用配置信息</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="open">编辑</el-button>
           <el-form label-width="180px" class="form">
             <el-form-item label="应用类型：">
                 <template>{{data.isFromOutApp ? '外部' : '内部'}}应用</template>
@@ -49,7 +99,7 @@
             <el-form-item label="手机号码(发放短信验证)：" v-if="!data.isFromOutApp">
                 <template>{{data.phone}}</template>
             </el-form-item>
-          </el-form>
+          </el-form> -->
           <div class="title">支付渠道</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="addChannel">添加支付渠道</el-button>
           <el-table :data="data.payUsers">
               <el-table-column prop="thirdPaymentType" label="支付渠道"></el-table-column>
@@ -64,7 +114,7 @@
           </el-table>
       </div>
       <el-dialog title="appid配置信息" :visible.sync="ashow" width="70%">
-          <el-form label-width="180px" :model="aform" :rules="arule">
+          <el-form label-width="180px" :model="aform" :rules="arule" ref="aform">
               <template v-if="data.isFromOutApp">
                 <el-form-item label="异步通知appId：" prop="notifyAppId">
                     <el-input class="f_input" v-model="aform.notifyAppId"></el-input>
@@ -87,7 +137,7 @@
           </el-form>
           <span class="form_footer" slot="footer">
               <el-button @click="update" type="primary">保存</el-button>
-              <el-button @click="ashow = false" type="warning">关闭</el-button>
+              <el-button @click="ashow = false">关闭</el-button>
           </span>
       </el-dialog>
       <el-dialog title="appid配置信息" :visible.sync="addShow" width="70%">
@@ -101,15 +151,15 @@
                   </el-select>
               </el-form-item>
               <el-form-item label="子账号名称">
-                  <el-select class="f_input" v-model="paymentUserId" @change="pick">
-                      <el-option v-for="e in others" :value="e.payUserId" :label="e.payUserName"></el-option>
+                  <el-select class="f_input" v-model="payeruserName" @change="pick">
+                      <el-option v-for="e in others" :value="e.payeruserName" :label="e.payeruserName"></el-option>
                   </el-select>
               </el-form-item>
               <el-form-item v-show="result" label="支付账户" style="color: red;">
-                  <template>{{result.payUserId}}</template>
+                  <template>{{result.userId}}</template>
               </el-form-item>
               <el-form-item v-show="result" label="子账号" style="color: red;">
-                  <template>{{result.payUserNo}}</template>
+                  <template>{{result.thirdpayUserId}}</template>
               </el-form-item>
           </el-form>
           <span class="form_footer" slot="footer">
@@ -213,7 +263,7 @@ export default {
       result: "",
       types: [],
       paymentThirdType: "",
-      paymentUserId: "",
+      payeruserName: "",
       others: [],
       curr: {},
       cshow: false,
@@ -235,6 +285,10 @@ export default {
         this.types = data;
       }
     );
+    // post('/api/paymentmgt/front/payuser/qrybycompany', {
+    //   companyId: this.data.id,
+    //   thirdpaySystemId: "string"
+    // })
     this.getPhone();
     this.createId();
     this.authCode = localStorage.getItem("authCode");
@@ -261,41 +315,45 @@ export default {
       };
     },
     update() {
-      if (this.authCode) {
-        this.aform.authCode = this.authCode;
-        postWithErrorCallback(
-          "/api/sysmgr-web/company-app/update-app",
-          this.aform
-        )
-          .then(data => {
-            console.log(data);
-            this.ashow = false;
-            this.$message({
-              type: "success",
-              message: "操作成功"
-            });
-            this.data.notifyAppId = this.aform.notifyAppId;
-            this.data.appRsaPublickKey = this.aform.appRsaPublickKey;
-            this.data.allowIp = this.aform.allowIp;
-            this.data.notifyUrl = this.aform.notifyUrl;
-            this.data.phone = this.aform.phone;
-          })
-          .catch(err => {
-            if (err.message == "无效的授权码！") {
-              this.getAccredit(this.update);
-            }
-          });
-      } else {
-        this.getAccredit(this.update);
-      }
+      this.$refs["aform"].validate(valid => {
+        if (valid) {
+          if (this.authCode) {
+            this.aform.authCode = this.authCode;
+            postWithErrorCallback(
+              "/api/sysmgr-web/company-app/update-app",
+              this.aform
+            )
+              .then(data => {
+                console.log(data);
+                this.ashow = false;
+                this.$message({
+                  type: "success",
+                  message: "操作成功"
+                });
+                this.data.notifyAppId = this.aform.notifyAppId;
+                this.data.appRsaPublickKey = this.aform.appRsaPublickKey;
+                this.data.allowIp = this.aform.allowIp;
+                this.data.notifyUrl = this.aform.notifyUrl;
+                this.data.phone = this.aform.phone;
+              })
+              .catch(err => {
+                if (err.message == "无效的授权码！") {
+                  this.getAccredit(this.update);
+                }
+              });
+          } else {
+            this.getAccredit(this.update);
+          }
+        }
+      });
     },
     getList() {
       this.others = [];
       this.result = "";
-      this.paymentUserId = "";
-      post("/api/sysmgr-web/company-app/query-service-company-payuser", {
-        serviceCompanyId: this.data.serviceCompanyId,
-        thirdPaymentType: this.paymentThirdType
+      this.payeruserName = "";
+      post("/api/paymentmgt/front/payuser/qrybycompany", {
+        companyId: this.data.serviceCompanyId,
+        thirdpaySystemId: this.paymentThirdType
       }).then(data => {
         console.log(data);
         this.others = data;
@@ -303,7 +361,7 @@ export default {
     },
     pick() {
       var arr = this.others.filter(e => {
-        return e.payUserId == this.paymentUserId;
+        return e.payeruserName == this.payeruserName;
       });
       console.log(arr);
       this.result = arr[0];
@@ -311,7 +369,7 @@ export default {
     addChannel() {
       this.addShow = true;
       this.paymentThirdType = "";
-      this.paymentUserId = "";
+      this.payeruserName = "";
       this.others = [];
       this.result = "";
     },
@@ -319,8 +377,9 @@ export default {
       if (this.authCode) {
         postWithErrorCallback("/api/sysmgr-web/company-app/add-payment-user", {
           appId: this.appId,
-          paymentThirdType: this.paymentThirdType,
-          paymentUserId: this.paymentUserId,
+          paymentThirdType: this.result.thirdpaySystemId,
+          payeruserName: this.result.payeruserName,
+          paymentUserId: this.result.userId,
           authCode: this.authCode
         })
           .then(data => {
@@ -410,15 +469,14 @@ export default {
       }
     },
     getAccredit(a) {
-      if(this.phone){
+      if (this.phone) {
         this.cshow = true;
         this.currEvent = a;
-      }
-      else{
+      } else {
         this.$message({
-          type: 'error',
-          message: '未绑定手机号码，无法获取权限！'
-        })
+          type: "error",
+          message: "未绑定手机号码，无法获取权限！"
+        });
       }
     },
     submit() {
@@ -469,5 +527,18 @@ export default {
 .center {
   text-align: center;
   font-size: 24px;
+}
+.box {
+  font-size: 14px;
+  padding: 20px;
+  /* background-color: #fff; */
+  color: #909399;
+}
+/* .box > div:nth-child(1) {
+	margin-bottom: 20px;
+} */
+.right {
+  font-weight: bold;
+  text-align: right;
 }
 </style>

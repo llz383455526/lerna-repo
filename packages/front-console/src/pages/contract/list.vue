@@ -143,8 +143,8 @@
                 this.$router.push({path: val});
             },
             getSettleType() {
-                let url = '/api/console-dlv/option/get-by-type';
-                get(url, {type: 'SettleType'}).then(data => {
+                let url = '/api/contract-web/commom/option';
+                get(url, {enumType: 'SettleType'}).then(data => {
                     this.options = data
                 })
             },
@@ -171,6 +171,11 @@
             });
             this.getSettleType();
         },
-
+        activated() {
+            this.requestAction({
+                page: this.$route.query.page || 1,
+                pageSize: this.pageSize,
+            });
+        }
     }
 </script>

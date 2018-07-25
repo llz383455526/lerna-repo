@@ -14,20 +14,19 @@
             </el-form-item>
 
             <h4 class="ml50 mt50">合同内容</h4>
-            <el-form-item label="发票类型" prop="invoiceType" >
-                <el-select v-model="contractForm.invoiceType" placeholder="请选择" style="width:100%;">
-                    <el-option v-for="item in searchOptions.InvoiceType" :key="item.value" :label="item.text"
-                               :value="item.value"></el-option>
+            <el-form-item label="服务类型" prop="serviceId" >
+                <el-select v-model="contractForm.serviceId" @change="seviceTypeChange" placeholder="请选择" style="width:100%;">
+                    <el-option v-for="item in serviceTypes" :key="item.serviceId" :label="item.serviceName"
+                               :value="item.serviceId"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="发票类目" prop="invoiceSubjectId" >
-                <el-select v-model="contractForm.invoiceSubjectId" placeholder="请选择" style="width:100%;">
-                    <el-option v-for="item in invoiceOptions" :key="item.id" :label="item.name"
-                               :value="item.id"></el-option>
-                </el-select>
-            </el-form-item>
+            <el-form-item label="服务内容：">
+				{{serviceContent}}
+			</el-form-item>
+
             <el-form-item label="服务商名称" prop="serviceCompanyId" >
-                <el-select v-model="contractForm.serviceCompanyId" placeholder="请选择" style="width:100%;">
+                <el-select v-model="contractForm.serviceCompanyId" placeholder="请选择" style="width:100%;"
+                @change="serviceBank">
                     <el-option v-for="item in serviceList" :key="item.id" :label="item.name"
                                :value="item.id"></el-option>
                 </el-select>
@@ -35,9 +34,37 @@
             <el-form-item label="法定代表人" required>
                 <el-input v-model="serviceCompany.legalPerson" :disabled="true"></el-input>
             </el-form-item>
+            <el-form-item  label="公司电话" >
+                <el-input v-model="serviceCompany.phone" :disabled="true"></el-input>
+            </el-form-item>
             <el-form-item label="公司地址" required>
                 <el-input v-model="serviceCompany.registerAddr" :disabled="true"></el-input>
+                <el-button @click="show" type="text">{{showDesc}}</el-button>
             </el-form-item>
+            <div v-if="isShow">
+                 <el-form-item label="服务商开户银行" >
+                    {{contractForm.serviceDepositBank}}
+                </el-form-item>
+                <el-form-item label="服务商账户名称" >
+                    {{contractForm.serviceAccountName}}
+                </el-form-item>
+                <el-form-item label="服务商银行账号" >
+                    {{contractForm.serviceAccountNo}}
+                </el-form-item>
+
+                <h4 class="ml50 mt50">客户（甲方）法定代表人</h4>
+                <el-form-item label="合摩法定代表人" >
+                    {{contractForm.aygLegalPerson}}
+                </el-form-item>
+                <el-form-item  label="合摩电话" >
+                    {{contractForm.aygContactPhone}}
+                </el-form-item>
+                <el-form-item label="合摩地址" >
+                    {{contractForm.aygAddress}}
+                </el-form-item>
+            </div>
+           
+                    
             <el-form-item label="合同期限:" prop="dateValue" size="small" >
                 <el-date-picker
                         v-model="contractForm.dateValue"
@@ -49,7 +76,24 @@
                 </el-date-picker>
             </el-form-item>
 
-            <h4 class="ml50 mt50">客户（公司）信息</h4>
+            <el-form-item label="结算周期" prop="settleType" >
+                <el-select v-model="contractForm.settleType" placeholder="请选择" style="width:100%;">
+                    <el-option v-for="item in searchOptions.ContractGenSettleType" :key="item.value" :label="item.text"
+                               :value="item.value"></el-option>
+                </el-select>
+            </el-form-item>
+            <h4 class="ml50 mt50">合同联系人信息</h4>
+            <el-form-item label="合同联系人" prop="contractPerson" >
+                <el-input v-model="contractForm.contractPerson"></el-input>
+            </el-form-item>
+            <el-form-item label="合同联系人邮箱" prop="contractEmail" >
+                <el-input v-model="contractForm.contractEmail"></el-input>
+            </el-form-item>
+            <el-form-item label="合同联系人地址" prop="contractAddr" >
+                <el-input v-model="contractForm.contractAddr"></el-input>
+            </el-form-item>
+
+            <h4 class="ml50 mt50">客户联系信息</h4>
             <!--<el-form-item label="客户名称（公司）" prop="customCompanyId" required>
                 <el-select v-model="contractForm.customCompanyId" placeholder="请选择" style="width:100%;">
                     <el-option v-for="item in customList" :key="item.id" :label="item.name"
@@ -79,6 +123,18 @@
             </el-form-item>
 
             <h4 class="ml50 mt50">客户（公司）开票信息</h4>
+            <el-form-item label="发票类型" prop="invoiceType" >
+                <el-select v-model="contractForm.invoiceType" placeholder="请选择" style="width:100%;">
+                    <el-option v-for="item in searchOptions.ContractGenInvoiceType" :key="item.value" :label="item.text"
+                               :value="item.value"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="发票类目" prop="invoiceSubjectId" >
+                <el-select v-model="contractForm.invoiceSubjectId" placeholder="请选择" style="width:100%;">
+                    <el-option v-for="item in invoiceOptions" :key="item.value" :label="item.text"
+                               :value="item.value"></el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item label="公司名称" prop="invoiceCompanyName" >
                 <el-input v-model="contractForm.invoiceCompanyName"></el-input>
             </el-form-item>
@@ -141,6 +197,9 @@
 
 	export default {
 		created() {
+            this.getCompanyList()
+            this.getSearchOptions()
+            this.getServiceTypesOptions();
 			this.contractId = this.$route.query.contractId
             if(this.contractId) {
 				this.getContractDetail(this.contractId)
@@ -148,13 +207,12 @@
 	            let tplId = this.$route.query.tplId
 	            this.getTemplateDetail(tplId)
             }
-
-            this.getCompanyList()
-            this.getSearchOptions()
-            this.getInvoiceOptions()
+            this.aCompany();
         },
         data() {
 			return {
+                isShow:false,
+                showDesc:'展开',
                 templateDetail: {},
                 contractForm: {
 	                invoiceType: '',
@@ -179,7 +237,18 @@
 	                customPhone: '',
 	                customBankName: '',
 	                customBankAccount: '',
-	                dateValue: ''
+                    dateValue: '',
+                    serviceId:'',
+                    settleType:'',
+                    serviceAccountName:'',
+                    serviceAccountNo:'',
+                    serviceDepositBank:'',
+                    contractPerson:'',
+                    contractEmail:'',
+                    contractAddr:'',
+                    aygLegalPerson:'',
+                    aygContactPhone:'',
+                    aygAddress:'',
                 },
 				rules: {
 					invoiceType: [
@@ -187,7 +256,7 @@
                     ],
 					invoiceSubjectId: [
 						{required: true, message: '请选择发票类目', trigger: 'change'}
-					],
+                    ],
 					serviceCompanyId: [
 						{required: true, message: '请选择服务商', trigger: 'change'}
 					],
@@ -226,15 +295,31 @@
 					],
 					customBankAccount: [
 						{ required: true, message: '银行账号为5至20位的数字', trigger: 'blur', validator: checkBankNo  }
+                    ],
+                    serviceId: [
+						{required: true, message: '请选择服务类型', trigger: 'change'}
+                    ],
+                    settleType: [
+						{required: true, message: '请选择结算周期', trigger: 'change'}
+					],
+                    contractPerson: [
+						{required: true, message: '合同联系人', trigger: 'blur'}
+					],
+                    contractEmail: [
+						{required: true, message: '合同联系人邮箱', trigger: 'blur'}
+					],
+                    contractAddr: [
+						{required: true, message: '合同联系人地址', trigger: 'blur'}
 					],
                 },
                 customList: [],
                 serviceList: [],
 				searchOptions: {},
                 invoiceOptions: {},
+                serviceTypes:{},
 				dateValue: '',
                 contractId: '',
-				fileList: []
+				fileList: [],
             }
         },
         computed: {
@@ -245,9 +330,47 @@
             serviceCompany() {
 	            let company = _.find(this.serviceList, custom => custom.id === this.contractForm.serviceCompanyId)
                 return company || {}
+            },
+            serviceContent() {
+                let content = _.find(this.serviceTypes, serviceType => serviceType.serviceId === this.contractForm.serviceId)
+                if(content){
+                    return content.serviceContent
+                }else{
+                    return ''
+                }
             }
         },
         methods: {
+            aCompany(){
+                get('/api/sysmgr-web/commom/company-infos', {
+                        companyId: 1
+                    }).then(result => {
+                            if(result){
+                                this.contractForm.aygLegalPerson = result.baseInfo.legalPerson 
+                                this.contractForm.aygContactPhone = result.baseInfo.contactPhone1
+                                this.contractForm.aygAddress = result.baseInfo.contactAddr1
+                            }
+                            
+                    })
+            },
+            serviceBank(){
+                if(this.contractForm.serviceCompanyId){
+                    get('/api/sysmgr-web/commom/company-bank-info', {
+                        companyId: this.contractForm.serviceCompanyId
+                    }).then(result => {
+                            if(result){
+                                this.contractForm.serviceDepositBank = result[0].depositBank
+                                this.contractForm.serviceAccountNo = result[0].bankAccount
+                                this.contractForm.serviceAccountName = result[0].bankAccountName
+                            }else{
+                                this.contractForm.serviceDepositBank = ''
+                                this.contractForm.serviceAccountNo = ''
+                                this.contractForm.serviceAccountName = ''
+                            }
+                            
+                    })
+                }
+            },
             getTemplateDetail(tplId) {
                 get('/api/contract-web/contract-tpl/contract-tpl-detail', {
 	                id: tplId
@@ -257,32 +380,41 @@
                 })
             },
             getCompanyList() {
-            	get('/api/sysmgr-web/commom/company-detail', {})
-                    .then(result => {
-                        let _list = result
+            	get('/api/sysmgr-web/commom/company-detail', {
+		            companyIdentity: 'service'
+                }).then(result => {
+		            this.serviceList= result
+                        /*let _list = result
                         _.forEach(_list, item => {
 	                        if(item.service) {
                         		this.serviceList.push(item)
                             }else if(item.custom) {
                         		this.customList.push(item)
                             }
-                        })
+                        })*/
                     })
             },
 	        getSearchOptions() {
-		        post('/api/sysmgr-web/commom/options?enumTypes=InvoiceType', {})
+		        post('/api/sysmgr-web/commom/options?enumTypes=ContractGenInvoiceType,ContractGenSettleType', {})
 			        .then(result => {
 				        this.searchOptions = result
 			        })
             },
-            getInvoiceOptions() {
-	            post('/api/invoice-web/custom-invoice-subject/qry', {
-	            	name: '',
-                    pageSize: 0,
-                    page: 0
+            getInvoiceOptions(serviceId,invoiceSubjectId) {
+	            get('/api/contract-web/service-mgr/get-service-subject-options', {
+	            	serviceId: serviceId,
                 }).then(result => {
-			            this.invoiceOptions = result.list
-		            })
+                    this.invoiceOptions = result;
+                    this.contractForm.invoiceSubjectId = invoiceSubjectId;
+		        })
+            },
+            getServiceTypesOptions() {
+	            get('/api/contract-web/service-mgr/get-service-type-options', {}).then(result => {
+                    this.serviceTypes = result
+                })
+            },
+             seviceTypeChange(serviceId){
+                this.getInvoiceOptions(serviceId, '');
             },
             setContractFormData(options, key, idKey, nKey, value) {
             	let obj = _.find(options, item => item[idKey] === value)
@@ -296,8 +428,8 @@
 
 		        this.$refs[formName].validate(valid => {
 			        if (valid) {
-				        this.setContractFormData(this.searchOptions.InvoiceType, 'invoiceType', 'value', 'text', this.contractForm.invoiceType)
-				        this.setContractFormData(this.invoiceOptions, 'invoiceSubject', 'id', 'name', this.contractForm.invoiceSubjectId)
+				        this.setContractFormData(this.searchOptions.ContractGenInvoiceType, 'invoiceType', 'value', 'text', this.contractForm.invoiceType)
+				        this.setContractFormData(this.invoiceOptions, 'invoiceSubject', 'value', 'text', this.contractForm.invoiceSubjectId)
 				        this.setContractFormData(this.serviceList, 'serviceCompany', 'id', 'name', this.contractForm.serviceCompanyId)
 				        // this.setContractFormData(this.customList, 'customCompany', 'id', 'name', this.contractForm.customCompanyId)
 
@@ -306,7 +438,8 @@
 
 				        contractForm = _.assign(contractForm, {
 					        serviceLegalPerson: this.serviceCompany.legalPerson,
-					        serviceRegisterAddr: this.serviceCompany.registerAddr
+					        serviceRegisterAddr: this.serviceCompany.registerAddr,
+                            servicePhone: this.serviceCompany.phone
                         })
 
 				        let startAt = contractForm.dateValue[0]
@@ -331,13 +464,11 @@
                 	id: id
                 }).then(result => {
                     this.tplId = result.tplId
-                    this.getTemplateDetail(this.tplId)
-
+                    this.getTemplateDetail(this.tplId);
+                    this.getInvoiceOptions(result.serviceId,""+result.invoiceSubjectId);
                     this.contractForm = {
 	                    invoiceType: result.invoiceType,
 	                    invoiceTypeName: result.invoiceTypeName,
-	                    invoiceSubjectId: result.invoiceSubjectId,
-	                    invoiceSubjectName: result.invoiceSubjectName,
 	                    serviceCompanyId: result.serviceCompanyId,
 	                    serviceCompanyName: result.serviceCompanyName,
 	                    contractStartDate: result.contractStartDate,
@@ -356,12 +487,32 @@
 	                    customPhone: result.customPhone,
 	                    customBankName: result.customBankName,
 	                    customBankAccount: result.customBankAccount,
-	                    dateValue: [result.contractStartDate, result.contractEndDate]
+                        dateValue: [result.contractStartDate, result.contractEndDate],
+                        serviceId: result.serviceId,
+                        settleType:result.settleType,
+                        serviceAccountName:result.serviceAccountName,
+                        serviceAccountNo:result.serviceAccountNo,
+                        serviceDepositBank:result.serviceDepositBank,
+                        contractPerson:result.contractPerson,
+                        contractEmail:result.contractEmail,
+                        contractAddr:result.contractAddr,
+                        aygLegalPerson:result.aygLegalPerson,
+                        aygContactPhone:result.aygContactPhone,
+                        aygAddress:result.aygAddress,
+                        
                     }
                 })
             },
 	        handleDownload(downloadCode) {
             	window.location.href = `/api/contract-web/contract-generate/download-single-attachment?downloadCode=${downloadCode}&id=${this.contractId}&type=docx`
+            },
+            show(){
+                this.isShow = !this.isShow;
+                if(this.isShow){
+                    this.showDesc = '收起';
+                }else{
+                     this.showDesc = '展开';
+                }
             }
         }
     }

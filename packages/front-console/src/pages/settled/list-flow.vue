@@ -41,6 +41,9 @@
                 <el-button type="primary" @click="search" size="small">查询</el-button>
                 <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
             </el-form-item>
+            <el-form-item style="margin-top: -4px">
+                <span style="color: red">账单结算按照发放成功时间统计</span>
+            </el-form-item>
         </el-form>
         <el-table :data="tableData.list">
             <el-table-column prop="appName" label="客户名称"></el-table-column>

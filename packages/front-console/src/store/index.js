@@ -17,7 +17,15 @@ import topUpRecord from './modules/companyCreditRecord'
 import payOrder from './modules/payOrder'
 import payOrderReject from './modules/payOrderReject'
 import recharge from './modules/recharge'
+import order from './modules/order'
 import eContract from './modules/eContract'
+
+import offlineSalaryUpload from './modules/offlineSalaryUpload'
+import offlineSalaryImport from './modules/offlineSalaryImport'
+import offlineSalaryManager from './modules/offlineSalaryManager'
+
+import taxDiscount from './modules/taxDiscount'
+
 
 Vue.use(Vuex);
 
@@ -25,7 +33,9 @@ let state = {
 	userInformation: false,
     logoutRandomTime: 0,
     principalMenu: false,
-	userTaskCount: 0,
+	permissions: false,
+    userTaskCount: 0,
+    uploadFile:null,
 };
 
 export default new Vuex.Store({
@@ -42,7 +52,12 @@ export default new Vuex.Store({
         payOrderReject,
         contract,
         eContract,
-        recharge
+        order,
+        recharge,
+		offlineSalaryUpload,
+		offlineSalaryImport,
+		offlineSalaryManager,
+	    taxDiscount
     }
 })
 

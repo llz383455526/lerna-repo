@@ -11,9 +11,21 @@
 
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
             <el-form-item label="接入应用"   size="small" prop="extrSystemIds">
-                <el-select multiple v-model="formSearch.extrSystemIds">
+                <el-select multiple v-model="formSearch.extrSystemIds" filterable>
                     <el-option v-for="item in extrSystemOptions" :label="item.extrSystemName" :value="item.extrSystemId" :key="item.extrSystemId"></el-option>
                 </el-select>
+            </el-form-item>
+
+			<el-form-item label="订单批次号" size="small" prop="batchId">
+                <el-input v-model="formSearch.batchId"></el-input>
+            </el-form-item>
+
+			<el-form-item label="合同模板名称" size="small" prop="templateName">
+                <el-input v-model="formSearch.templateName"></el-input>
+            </el-form-item>
+
+			<el-form-item label="签约服务商" size="small" prop="serverName">
+                <el-input v-model="formSearch.serverName"></el-input>
             </el-form-item>
 
             <el-form-item label="签约订单号" size="small" prop="orderId">
@@ -30,10 +42,6 @@
 
             <el-form-item label="手机号" size="small" prop="personalMobile">
                 <el-input v-model="formSearch.personalMobile"></el-input>
-            </el-form-item>
-
-            <el-form-item label="签约服务商" size="small" prop="serverName">
-                <el-input v-model="formSearch.serverName"></el-input>
             </el-form-item>
 
             <el-form-item label="发起签约时间范围" size="small">
@@ -53,6 +61,12 @@
                 </el-select>
             </el-form-item>
 
+			<el-form-item label="身份证认证状态" prop="certState">
+				<el-select v-model="formSearch.certState" size="small">
+					<el-option v-for="e in certStates" :label="e.text" :value="e.value"></el-option>
+				</el-select>
+			</el-form-item>
+
             <el-form-item label="订单状态:" size="small" v-if="activeTab === 'first'">
                 <el-select v-model="formSearch.orderState">
                     <el-option v-for="item in orderStateList" :label="item.value" :value="item.key" :key="item.key"></el-option>
@@ -66,24 +80,37 @@
 
         <div class="table-container">
             <el-table :data="tableList.data">
-                <el-table-column prop="extrSystemName" label="应用名称"></el-table-column>
-                <el-table-column prop="orderId" label="签约订单号"></el-table-column>
-                <el-table-column prop="createTime" label="发起时间">
+				<el-table-column prop="createTimeDesc" label="签约时间">
                     <template slot-scope="scope">
-                        <span>{{scope.row.createTime | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
+                        <span>{{scope.row.createTimeDesc | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
                     </template>
                 </el-table-column>
+				<el-table-column prop="orderId" label="签约订单号"></el-table-column>
+                <el-table-column prop="extrSystemName" label="应用名称"></el-table-column>
+				<el-table-column prop="templateName" label="合同模板名称"></el-table-column>
+				<el-table-column prop="serverName" label="签约服务商"></el-table-column>
                 <el-table-column prop="personalName" label="姓名"></el-table-column>
                 <el-table-column prop="personalIdentity" label="证件号"></el-table-column>
-                <el-table-column prop="personalMobile" label="手机号"></el-table-column>
-                <el-table-column prop="serverName" label="签约服务商"></el-table-column>
+                <!-- <el-table-column prop="personalMobile" label="手机号"></el-table-column> -->
                 <el-table-column prop="signStateDesc" label="签约状态"></el-table-column>
                 <el-table-column prop="certStateDesc" label="身份证认证状态"></el-table-column>
-                <el-table-column prop="orderStateDesc" label="订单状态"></el-table-column>
+                <el-table-column prop="orderStateDesc" label="订单状态">
+					<!-- <template slot-scope="scope">
+						<template v-if="wait.indexOf(scope.row.orderState) > -1">待签约</template>
+						<template v-else-if="fail.indexOf(scope.row.orderState) > -1">签约失败</template>
+						<template v-else>{{scope.row.orderStateDesc}}</template>
+					</template> -->
+				</el-table-column>
 
                 <el-table-column label="操作">
                     <template slot-scope="scope">
-                        <a v-if="scope.row.downloadUrl" target="_blank" :href="scope.row.downloadUrl" class="operation">合同下载</a>
+						<el-button v-if="scope.row.orderState == 'SIGNING'" type="text" size="small" @click="cancleOrder(scope.row)">取消签约</el-button>
+						<el-button v-if="isRe.indexOf(scope.row.orderState) > -1" type="text" size="small" @click="reCall(scope.row)">
+							{{scope.row.orderState == 'REJECTED' ? '重发通知': scope.row.orderState == 'SIGNING' ? '重发通知' : '重试'}}
+						</el-button>
+                        <a v-if="scope.row.downloadUrl" target="_blank" :href="`${baseUrl}/api/econtract/contract/download?orderId=${scope.row.orderId}`">
+							<el-button type="text" size="small">合同下载</el-button>
+						</a>
                     </template>
                 </el-table-column>
             </el-table>
@@ -92,37 +119,36 @@
         <ayg-pagination v-if="tableList.total" :total="tableList.total"
                         v-on:handleSizeChange="handleSizeChange" :currentSize="pageSize"
                         v-on:handleCurrentChange="handleCurrentChange" :currentPage="pageIndex"></ayg-pagination>
-
+ 
     </div>
 
 </template>
 
 <script>
 	import { post, get } from "../../store/api"
-
 	import _ from 'lodash'
-
 	import { showNotify } from '../../plugin/utils-notify'
-
+	import { baseUrl } from "../../config/address.js"
 	export default {
 		created() {
 			this.getOrderStateList()
 			this.getSignStateList()
 			this.getClient()
-
-			this.getList()
 		},
 		data() {
 			return {
 				formSearch: {
 					extrSystemIds: [],
 					orderId: '',
+					batchId: '',
 					personalName: '',
+					templateName: '',
 					personalIdentity: '',
 					personalMobile: '',
 					serverName: '',
 					signState: '',
-					orderState: ''
+					orderState: '',
+					certState: ''
 				},
 				orderStateList: [],
 				sighStateList: [],
@@ -131,8 +157,34 @@
 				tableList: [],
 				pageSize: 10,
 				pageIndex: 1,
-				activeTab: 'first'
+				activeTab: 'first',
+				isRe: ['SIGNING', 'CREATE_ERR', 'AUTH_ERR', 'NOTIFY_ERR', 'SIGN_ERR', 'CLOSE_ERR', 'EXPIRED', 'REJECTED'],
+				certStates: [
+					{
+						text: '未上传',
+						value: '0'
+					},
+					{
+						text: '认证失败',
+						value: '1'
+					},
+					{
+						text: '认证成功',
+						value: '2'
+					},
+					{
+						text: '不需要上传',
+						value: '3'
+					}
+				],
+				wait: ['SIGNING', 'AUTHING'],
+				fail: ['CREATE_ERR', 'AUTH_ERR', 'NOTIFY_ERR', 'SIGN_ERR', 'CLOSE_ERR', 'EXPIRED', 'EXPIRE_CLOSED'],
+				baseUrl
 			}
+		},
+		mounted() {
+			Object.assign(this.formSearch, this.$route.query)
+			this.getList()
 		},
 		methods: {
 			getOrderStateList() {
@@ -206,11 +258,36 @@
 						this.formSearch.unfinished = '1'
 						break
 					default:
-
-
 				}
-
 				this.getList()
+			},
+			cancleOrder(a) {
+				post(`/api/econtract/order/cancelsign?orderId=${a.orderId}`).then(data => {
+					this.$message({
+						type: 'success',
+						message: '已取消签约！'
+					})
+					this.getList()
+				})
+			},
+			reCall(a) {
+				this.$confirm(`最近通知时间 ${a.lastNotifyTimeDesc} 确认重新发送通知吗？`, '提示', {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                  type: 'warning'
+                }).then(() => {
+					post(`/api/econtract/order/reSubmit?orderId=${a.orderId}&repeatFlag=RENOTIFYING`).then(data => {
+						this.$message({
+							type: 'success',
+							message: '已重发通知！'
+						})
+                    })
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '已取消！'
+					})
+				})
 			}
 		}
 	}

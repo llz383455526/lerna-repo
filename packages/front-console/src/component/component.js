@@ -7,7 +7,7 @@ import Vue from 'vue'
 export function register() {
     Vue.component('ayg-pagination', {
         props: ['total', 'currentPage', 'currentSize'],
-        template: ' <div style="padding: 30px;text-align: right;background-color: white"><el-pagination\
+        template: ' <div style="padding: 20px;text-align: right;background-color: white"><el-pagination\
     	background\
     	@size-change="handleSizeChange"\
     	@current-change="handleCurrentChange"\

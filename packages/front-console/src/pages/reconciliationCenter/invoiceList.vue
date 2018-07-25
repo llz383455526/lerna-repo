@@ -3,7 +3,7 @@
     <div class="main-container">
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
             <el-form-item label="客户公司:"   size="small" prop="customCompanyId">
-                <el-select v-model="formSearch.customCompanyId">
+                <el-select filterable v-model="formSearch.customCompanyId">
                     <el-option v-for="item in customCompanyList" :label="item.name" :value="item.id" :key="item.id"></el-option>
                 </el-select>
             </el-form-item>

@@ -24,6 +24,13 @@
                 </el-select>
             </el-form-item>
 
+            <el-form-item label="合同类型"  size="small" prop="tplType">
+                <el-select v-model="formSearch.tplType" placeholder="请选择" style="width:100%;">
+                    <el-option v-for="item in searchOptions.ContractTplType" :key="item.value" :label="item.text"
+                                :value="item.value"></el-option>
+                </el-select>
+            </el-form-item>
+
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="search" size="small">查询</el-button>
                 <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
@@ -46,6 +53,8 @@
                 <el-table-column prop="industryTypeNames" label="行业类型"></el-table-column>
                 <el-table-column prop="remark" label="合同备注"></el-table-column>
                 <el-table-column prop="usage" label="适用情况"></el-table-column>
+                <el-table-column prop="tplTypeName" label="合同类型"></el-table-column>
+
                 <el-table-column prop="status" label="是否有效">
                     <template slot-scope="scope">{{scope.row.status === '1' ? '有效' : '无效'}}</template>
                 </el-table-column>
@@ -93,7 +102,8 @@
 				formSearch: {
 					contractType: '',
 					industryType: '',
-					status: '1'
+                    status: '1',
+                    tplType:'',
                 },
                 tableList: [],
 				pageSize: 10,
@@ -141,7 +151,7 @@
                     })
 	        },
             getSearchOptions() {
-                post('/api/sysmgr-web/commom/options?enumTypes=BusinessType,IndustryType,ValidationType', {})
+                post('/api/sysmgr-web/commom/options?enumTypes=BusinessType,IndustryType,ValidationType,ContractTplType', {})
                     .then(result => {
                     	this.searchOptions = result
                     })

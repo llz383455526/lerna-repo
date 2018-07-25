@@ -122,7 +122,7 @@
                     <div class="input">
                         <el-form-item prop="amount">
                             <el-input v-model="formCategory.amount" style="width: 250px;" :disable="true"
-                                      value="" :maxlength="9"></el-input>
+                                      value="" :maxlength="12"></el-input>
                         </el-form-item>
                     </div>
                 </div>
@@ -137,7 +137,7 @@
                     </div>
                 </div>
                 <div class="input-container">
-                    <div class="label">发票用途
+                    <div class="label">发票用途（对内说明）
                         <!--<span>*</span>-->
                     </div>
                     <div class="input">
@@ -199,7 +199,7 @@
                 </div>
                 <br>
                 <div class="input-container">
-                    <div class="label">备注
+                    <div class="label">备注（发票显示备注）
                         <!--<span>*</span>-->
                     </div>
                     <div class="input">

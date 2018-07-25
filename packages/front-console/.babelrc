@@ -9,7 +9,11 @@
           "libraryName": "element-ui",
           "styleLibraryName": "~theme"
         }
-      ]]
+      ]],
+      ["on-demand-import", {
+        "libraryName": "vue-area-linkage",
+        "libraryPath": "dist/lib"
+      }]
   ],
   "comments": false
 }

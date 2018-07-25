@@ -22,9 +22,9 @@ module.exports = {
         assetsSubDirectory: 'static',
         assetsPublicPath: '/',
         context: [ //代理路径
-        
+	        '/api'
         ],
-        proxypath: '',
+        proxypath: 'http://openadmintest94.aiyuangong.com',
         cssSourceMap: false
     }
 }

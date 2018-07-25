@@ -40,6 +40,34 @@ export default {
   width: 100%;
 }
 </style>
+<style>
+*{
+  box-sizing: border-box;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+}
+.el-menu--horizontal .el-submenu .el-submenu__icon-arrow {
+    position: static;
+    vertical-align: middle;
+    margin-left: 8px;
+    margin-top: -3px;
+}
+.el-step__head.is-process {
+  color: #c0c4cc;
+  border-color: #c0c4cc;
+}
+.el-step__title.is-process {
+  color: #c0c4cc;
+}
+.el-submenu__title {
+  padding: 0px 10px;
+}
+.el-col {
+    word-break: break-all;
+}
+</style>
 
 
 

@@ -9,28 +9,12 @@
                 <input v-model="contractForm.referIds">
             </el-form-item>
             <el-form-item label="客户名称" prop="customerName" placeholder="请输入内容">
-                <!--<el-autocomplete
-                        class="inline-input"
-                        v-model="contractForm.customerName"
-                        :fetch-suggestions="querySearch1"
-                        placeholder="请输入内容"
-                        style="width:100%;">
-                </el-autocomplete>-->
-                <el-select v-model="contractForm.customerName" placeholder="请选择" style="width:100%;">
+                <el-select v-model="contractForm.customerName" placeholder="请选择" @change="getInvoice" style="width:100%;">
                     <el-option v-for="item in customerCompaniesList" :key="item.companyId" :label="item.companyName"
                                :value="item.companyName"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="服务商名称" prop="serviceCompanyName" placeholder="请输入内容">
-                <!--<el-autocomplete
-                        class="inline-input"
-                        v-model="contractForm.serviceCompanyName"
-                        :fetch-suggestions="querySearch2"
-                        placeholder="请输入内容"
-                        style="width:100%;"
-                        @blur="calcuCompanyId"
-                        @select="handleSelect">
-                </el-autocomplete>-->
                 <el-select v-model="contractForm.serviceCompanyName" placeholder="请选择" style="width:100%;">
                     <el-option v-for="item in serviceCompaniesList" :key="item.companyId" :label="item.companyName"
                                :value="item.companyName"></el-option>
@@ -45,6 +29,7 @@
             </el-form-item>
             <el-form-item label="结算方式" prop="settleType" required>
                 <el-select v-model="contractForm.settleType" placeholder="请选择" @change="showType" style="width:100%;">
+                	<el-option label="实时" value="each"></el-option>
                     <el-option label="日结" value="day"></el-option>
                     <el-option label="周结" value="week"></el-option>
                     <el-option label="月结" value="month"></el-option>
@@ -109,34 +94,72 @@
             <el-form-item label="服务费收费比例" prop="serviceFee">
                 <el-row class="mb15">
                     <el-col :span="6">
-                        <el-radio label="ratio" v-model="contractForm.serviceFeeType" @change="calcuServiceFee">固定比例收费
+                        <el-radio label="fixed" v-model="contractForm.serviceFeeType" @change="calcuServiceFee(0)">固定金额收费
                         </el-radio>
                     </el-col>
-                    <el-col :span="12">
-                        <el-input placeholder="请输入内容" v-model="inputRatio" @blur="calcuServiceFee"
-                                  :disabled="showInputRatio">
-                            <template slot="append">% 每笔</template>
-                        </el-input>
-                    </el-col>
-                    <el-col :span="1" style="text-align: right;">
-                        <i class="el-icon-question" title="表示按照固定比例来收取服务费。
-计算公式：应发金额 * 收费比例 = 服务费"></i>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="6">
-                        <el-radio label="fixed" v-model="contractForm.serviceFeeType" @change="calcuServiceFee">固定金额收费
-                        </el-radio>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-input placeholder="请输入内容" v-model="inputFixed" @blur="calcuServiceFee"
-                                  :disabled="showInputFixed">
+                    <el-col :span="15">
+                        <el-input placeholder="请输入内容" v-model="inputFixed" @blur="calcuServiceFee(0)"
+                                  :disabled="!(showInputRatio === 0)">
                             <template slot="append">元 每笔</template>
                         </el-input>
                     </el-col>
                     <el-col :span="1" style="text-align: right;">
                         <i class="el-icon-question" title="表示按照固定金额来收取服务费。
 计算公式：固定收费金额 = 服务费"></i>
+                    </el-col>
+                </el-row>
+                <el-row class="mb15">
+                    <el-col :span="6">
+                        <el-radio label="ratio" v-model="contractForm.serviceFeeType" @change="calcuServiceFee(1)">固定比例收费
+                        </el-radio>
+                    </el-col>
+                    <el-col :span="15">
+                        <div style="float: left; width: 70px; color: #606266;">实发金额 * </div>
+                        <el-input v-model="inputRatio" @blur="calcuServiceFee(1)"
+                                  :disabled="!(showInputRatio === 1)" style="width: calc(100% - 70px);">
+                            <template slot="append">% 每笔</template>
+                        </el-input>
+                    </el-col>
+                    <el-col :span="1" style="text-align: right;">
+                        <i class="el-icon-question" title="表示按照固定比例来收取服务费。
+计算公式：实发发金额 * 收费比例 = 服务费"></i>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="6">
+                        <el-radio label="ratio_1" v-model="contractForm.serviceFeeType" @change="calcuServiceFee(2)">固定比例收费
+                        </el-radio>
+                    </el-col>
+                    <el-col :span="15">
+                        <div style="display: inline-block; width: 110px; color: #606266;">实发金额 / ( 1 -  </div>
+                        <el-input v-model="inputRatio_1" @blur="calcuServiceFee(2)"
+                                  :disabled="!(showInputRatio === 2)" style="width: 135px;">
+                            <template slot="append">%</template>
+                        </el-input>
+                        <div style="display: inline-block; width: 20px; color: #606266;">) * </div>
+                        <el-input v-model="inputRatio_2" @blur="calcuServiceFee(2)"
+                                  :disabled="!(showInputRatio === 2)" style="width: 160px;">
+                            <template slot="append">% 每笔</template>
+                        </el-input>
+                    </el-col>
+                    <el-col :span="1" style="text-align: right;">
+                        <i class="el-icon-question" title="表示按照固定比例来收取服务费。
+计算公式：实发发金额 * 收费比例 = 服务费"></i>
+                    </el-col>
+                </el-row>
+                <el-row class="mb15" v-show="contractForm.settleType == 'month'">
+                    <el-col :span="6">
+                        <el-radio label="step" v-model="contractForm.serviceFeeType" @change="calcuServiceFee(3)">每月阶梯收费</el-radio>
+                    </el-col>
+                    <el-col :span="18">
+                        <el-table :data="step">
+                            <el-table-column label="月收入区间" prop="name" width="200"></el-table-column>
+                            <el-table-column label="阶梯收费" width="270px">
+                                <template slot-scope="scope" v-if="contractForm.stepwiseList">
+                                    实发金额 * <el-input type="number" max="99" min="1" :disabled="!(showInputRatio === 3)" v-model="contractForm.stepwiseList[scope.row.index].percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                                </template>
+                            </el-table-column>
+                        </el-table>
                     </el-col>
                 </el-row>
             </el-form-item>
@@ -151,24 +174,32 @@
                         @change="handleChange">
                 </el-date-picker>
             </el-form-item>
+        </el-form>
+        <el-form :model="invoiceForm" :rules="irule" label-width="200px" class="demo-contractForm" ref="invoice">
             <h4 class="ml50 mt50">发票信息</h4>
-            <el-form-item label="公司名称" prop="invoiceCompanyName" required>
-                <el-input v-model="contractForm.invoiceCompanyName"></el-input>
+            <el-form-item label="开票类型" prop="openInvoiceType" required>
+                <el-select v-model="invoiceForm.openInvoiceType" placeholder="请选择" style="width:100%;">
+                    <el-option v-for="item in invoiceType" :key="item.value" :label="item.text" :value="item.value"></el-option>
+                </el-select>
+                <!-- <el-input v-model="invoiceForm.openInvoiceType"></el-input> -->
             </el-form-item>
-            <el-form-item label="纳税人识别号" prop="invoiceTin" required>
-                <el-input v-model="contractForm.invoiceTin"></el-input>
+            <el-form-item label="公司名称" prop="name" required>
+                <el-input v-model="invoiceForm.name"></el-input>
             </el-form-item>
-            <el-form-item label="地址" prop="invoiceAddress" required>
-                <el-input v-model="contractForm.invoiceAddress"></el-input>
+            <el-form-item label="纳税人识别号" prop="taxIdcd" required>
+                <el-input v-model="invoiceForm.taxIdcd"></el-input>
             </el-form-item>
-            <el-form-item label="电话" prop="invoicePhone" required>
-                <el-input v-model="contractForm.invoicePhone" :maxlength="12"></el-input>
+            <el-form-item label="地址" prop="addr">
+                <el-input v-model="invoiceForm.addr"></el-input>
             </el-form-item>
-            <el-form-item label="开户银行" prop="invoiceBank" required>
-                <el-input v-model="contractForm.invoiceBank"></el-input>
+            <el-form-item label="电话" prop="phone">
+                <el-input v-model="invoiceForm.phone"></el-input>
             </el-form-item>
-            <el-form-item label="银行账号" prop="invoiceAccount" required>
-                <el-input v-model="contractForm.invoiceAccount"></el-input>
+            <el-form-item label="开户银行" prop="bankName">
+                <el-input v-model="invoiceForm.bankName"></el-input>
+            </el-form-item>
+            <el-form-item label="银行账号" prop="bankAccount">
+                <el-input v-model="invoiceForm.bankAccount"></el-input>
             </el-form-item>
             <h4 class="ml50 mt50">合同文件</h4>
             <el-upload
@@ -220,33 +251,6 @@
         </el-dialog>
     </div>
 </template>
-
-<style lang="scss" scoped>
-    .demo-contractForm {
-        width: 800px;
-    }
-
-    .line {
-        text-align: center;
-    }
-</style>
-
-<style>
-    .el-time-spinner.has-seconds .el-time-spinner__wrapper:nth-child(2) {
-        margin-left: 0;
-    }
-
-    .el-icon-question {
-        margin-left: 5px;
-        color: #f56c6c;
-        cursor: pointer;
-    }
-
-    .is-disabled input {
-        border-color: #e4e7ed !important;
-    }
-</style>
-
 <script>
     import _ from 'lodash';
     import {mapGetters} from 'vuex';
@@ -297,6 +301,9 @@
                     customerName: [
                         {required: true, message: '请输入客户名称', trigger: 'change'}
                     ],
+                    serviceCompanyName: [
+                        {required: true, message: '请输入公司名称', trigger: 'change'}
+                    ],
                     serviceCompanyId: [
                         {required: true, message: '请输入服务商名称', trigger: 'change'}
                     ],
@@ -320,29 +327,11 @@
                     ],
                     endDate: [
                         {required: true, message: '请选择合同起止时间', trigger: 'blur'}
-                    ],
-                    invoiceCompanyName: [
-                        {required: true, message: '请输入公司名称', trigger: 'blur'}
-                    ],
-                    invoiceTin: [
-                        {required: true, message: '请输入纳税人识别号', trigger: 'blur'}
-                    ],
-                    invoiceAddress: [
-                        {required: true, message: '请输入地址', trigger: 'blur'}
-                    ],
-                    invoicePhone: [
-                        { required: true, message: '请输入正确的电话', trigger: 'blur', validator: checkPhone}
-                    ],
-                    invoiceBank: [
-                        {required: true, message: '请输入开户银行', trigger: 'blur'}
-                    ],
-                    invoiceAccount: [
-                        {required: true, message: '请输入银行账号', trigger: 'blur'}
                     ]
                 },
                 weekVisible: false,
                 monthVisible: false,
-                showInputRatio: false,
+                showInputRatio: 0,
                 showInputFixed: false,
                 showSelectExpDay: false,
                 showSelectExpStart: true,
@@ -354,8 +343,10 @@
                 settleExpDay: '',
                 settleExpStart: '',
                 settleExpEnd: '',
-                inputRatio: '',
                 inputFixed: '',
+                inputRatio: '',
+                inputRatio_1: '',
+                inputRatio_2: '',
                 radio: '固定日',
                 customerCompaniesList: [],
                 serviceCompaniesList: [],
@@ -401,12 +392,116 @@
                     type: 'customer',
                     serviceFeeType: 'ratio',
                     serviceFee: '',
-                    settleExp: ''
+                    settleExp: '',
+                    serviceFeeRate: '',
+                    shouldAmountRate: '',
+                    stepwiseList: [
+                        {
+                            startAmount: 0,
+                            endAmount: 28000,
+                            sequence: 0,
+                            percent: ''
+
+                        },
+                        {
+                            startAmount: 28000,
+                            endAmount: 999999999,
+                            sequence: 1,
+                            percent: ''
+
+                        }
+                    ]
                 },
-	            deleteKey: ''
+                invoiceForm: {
+                    id: '',
+                    openInvoiceType: '',
+                    name: '',
+                    taxIdcd: '',
+                    addr: '',
+                    phone: '',
+                    bankName: '',
+                    bankAccount: ''
+                },
+                irule: {
+                    openInvoiceType: [
+                        {required: true, message: '请输入公司名称', trigger: 'blur'}
+                    ],
+                    name: [
+                        {required: true, message: '请输入公司名称', trigger: 'blur'}
+                    ],
+                    taxIdcd: [
+                        {required: true, message: '请输入纳税人识别号', trigger: 'blur'}
+                    ],
+                    // addr: [
+                    //     {required: true, message: '请输入地址', trigger: 'blur'}
+                    // ],
+                    phone: [
+                        // { required: true, message: '请输入正确的电话', trigger: 'blur'},
+                        { pattern: /^[\d-\(\)]+$/, message: '请输入正确的电话', trigger: 'blur'}
+                    ],
+                    // bankName: [
+                    //     {required: true, message: '请输入开户银行', trigger: 'blur'}
+                    // ],
+                    // bankAccount: [
+                    //     {required: true, message: '请输入银行账号', trigger: 'blur'}
+                    // ]
+                },
+                deleteKey: '',
+                step: [
+                    {
+                        name: '2.8万以下（包含2.8万）',
+                        index: 0
+                    },
+                    {
+                        name: '2.8万以上',
+                        index: 1
+                    }
+                ],
+                invoiceType: []
+            }
+        },
+        created() {
+            this.uploadUrl = baseUrl + "/api/console-dlv/file/upload";
+            this.getOptionServiceCompanies();
+            this.getType()
+            if (this.$route.query.contractId) {
+                this.queryDetail(this.$route.query.contractId);
+                this.queryAttachments(this.$route.query.contractId);
+            }
+            else {
+                this.getOptionCustomerCompanies();
             }
         },
         methods: {
+            getInvoice() {
+                var id = ''
+                this.customerCompaniesList.forEach(e => {
+                    if(e.companyName == this.contractForm.customerName) {
+                        id = e.companyId
+                    }
+                })
+                get('/api/invoice-web/custom-company/detail', {
+                    id: id
+                }).then(data => {
+                    if(data) {
+                        this.invoiceForm = data
+                    }
+                    else {
+                        this.invoiceForm.id = id
+                    }
+                })
+            },
+            getType() {
+                get('/api/sysmgr-web/commom/option?enumType=OpenInvoiceType').then(data => {
+                    this.invoiceType = data
+                })
+            },
+            invoiceUpdate(data) {
+                post('/api/invoice-web/custom-company/save-update', this.invoiceForm).then(e => {
+                    showNotify('success', data);
+                    this.$router.push({path: '/main/contract/list'});
+                })
+            },
             routerPush(val) {
                 this.$router.push({
                     path: val,
@@ -423,7 +518,11 @@
                     url = '/api/contract-web/contract/add-contract';
                 }
                 let self = this;
+                console.log('this:')
+                console.log(self.contractForm.customerName)
                 _.foreach(this.customerCompaniesList, function (value) {
+                    console.log('arr:')
+                    console.log(value['companyName'])
                     if (value['companyName'] == self.contractForm.customerName) {
                         self.contractForm.customerId = value['companyId'];
                         return false;
@@ -435,10 +534,39 @@
                 this.contractForm.referIds = this.referArr;
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        post(url, this.contractForm).then(data => {
-                            showNotify('success', data);
-                            this.$router.push({path: '/main/contract/list'});
-                        });
+                        this.$refs['invoice'].validate((v) => {
+                            if(v) {
+                                var err = false
+                                if(this.contractForm.serviceFeeType == 'ratio'){
+                                    this.contractForm.serviceFee = 0
+                                    this.contractForm.serviceFeeRate = this.inputRatio
+                                    this.contractForm.shouldAmountRate = ''
+                                }
+                                if(this.contractForm.serviceFeeType == 'ratio_1'){
+                                    this.contractForm.serviceFeeType = 'ratio'
+                                    this.contractForm.serviceFee = 0
+                                    this.contractForm.shouldAmountRate = this.inputRatio_1
+                                    this.contractForm.serviceFeeRate = this.inputRatio_2
+                                }
+                                if(this.contractForm.serviceFeeType == 'step'){
+                                    this.contractForm.stepwiseList.forEach(e => {
+                                        if(e.percent < 1 || e.percent > 99) {
+                                            err = true
+                                        }
+                                    })
+                                }
+                                if(err) {
+                                    showNotify('error', '收费比例在0%到100%之间！')
+                                    return
+                                }
+                                post(url, this.contractForm).then(data => {
+                                    this.invoiceUpdate(data)
+                                });
+                            }
+                            else {
+                                showNotify('error', '请检查输入项错误！')
+                            }
+                        })
                     }else {
 	                    showNotify('error', '请检查输入项错误！')
                     }
@@ -463,7 +591,7 @@
                 }
             },
             showType(val) {
-                if (val == 'day') {
+                if (val == 'day' || val == 'each') {
                     this.contractForm.settleExp = '每天';
                     this.weekVisible = false;
                     this.monthVisible = false;
@@ -491,28 +619,53 @@
                     this.weekVisible = false;
                     this.monthVisible = true;
                 }
-            },
-            calcuServiceFee() {
-                if (this.contractForm.serviceFeeType == 'ratio') {
-                    this.contractForm.serviceFee = parseInt(this.inputRatio);
-                    this.showInputFixed = true;
-                    this.showInputRatio = false;
+                else if(this.contractForm.serviceFeeType == 'step') {
+                    this.contractForm.serviceFeeType = ''
+                    this.contractForm.serviceFee = ''
                 }
+            },
+            calcuServiceFee(a) {
                 if (this.contractForm.serviceFeeType == 'fixed') {
                     this.contractForm.serviceFee = parseInt(this.inputFixed);
-                    this.showInputFixed = false;
-                    this.showInputRatio = true;
+                    // this.showInputFixed = false;
+                    this.showInputRatio = a;
+                }
+                if (this.contractForm.serviceFeeType == 'ratio') {
+                    this.contractForm.serviceFee = parseInt(this.inputRatio);
+                    // this.showInputFixed = true;
+                    this.showInputRatio = a;
+                }
+                if (this.contractForm.serviceFeeType == 'ratio_1') {
+                    this.contractForm.serviceFee = parseInt(this.inputRatio_1);
+                    // this.showInputFixed = true;
+                    this.showInputRatio = a;
+                }
+                if (this.contractForm.serviceFeeType == 'step') {
+                    this.contractForm.serviceFee = 0;
+                    // this.showInputFixed = true;
+                    this.showInputRatio = a;
                 }
                 this.$refs['contractForm'].validateField('serviceFee')
             },
             calcuServiceFeeReverse() {
-                if (this.contractForm.serviceFeeType == 'ratio') {
-                    this.inputRatio = this.contractForm.serviceFee;
-                    this.showInputFixed = true;
-                }
                 if (this.contractForm.serviceFeeType == 'fixed') {
                     this.inputFixed = this.contractForm.serviceFee;
-                    this.showInputRatio = true;
+                    this.showInputRatio = 0;
+                }
+                if (this.contractForm.serviceFeeType == 'ratio') {
+                    if(this.contractForm.shouldAmountRate) {
+                        this.contractForm.serviceFeeType = 'ratio_1'
+                        this.inputRatio_1 = this.contractForm.shouldAmountRate;
+                        this.inputRatio_2 = this.contractForm.serviceFeeRate;
+                        this.showInputRatio = 2;
+                    }
+                    else{
+                        this.inputRatio = this.contractForm.serviceFeeRate;
+                        this.showInputRatio = 1;
+                    }
+                }
+                if(this.contractForm.serviceFeeType == 'step') {
+                    this.showInputRatio = 3;
                 }
             },
             calcuCompanyId() {
@@ -541,6 +694,7 @@
                             "value": value['companyName']
                         });
                     });
+                    this.getInvoice()
                 })
             },
             getOptionServiceCompanies() {
@@ -639,6 +793,31 @@
                 let url = '/api/contract-web/contract/contract-detail';
                 get(url, {contractId: id}).then(data => {
                     this.contractForm = data;
+                    delete this.contractForm.invoiceCompanyName
+                    delete this.contractForm.invoiceTin
+                    delete this.contractForm.invoiceAddress
+                    delete this.contractForm.invoicePhone
+                    delete this.contractForm.invoiceBank
+                    delete this.contractForm.invoiceAccount
+                    this.getOptionCustomerCompanies()
+                    if(!this.contractForm.stepwiseList) {
+                        this.contractForm.stepwiseList = [
+                        {
+                            startAmount: 0,
+                            endAmount: 30000,
+                            sequence: 0,
+                            percent: ''
+
+                        },
+                        {
+                            startAmount: 30000,
+                            endAmount: 999999999,
+                            sequence: 1,
+                            percent: ''
+
+                        }
+                    ]
+                    }
                     this.calcuServiceFeeReverse();
                     this.handdleChangeReverse();
                     this.showType(this.contractForm.settleType);
@@ -650,15 +829,31 @@
                     this.fileList = data;
                 });
             }
-        },
-        created() {
-            this.uploadUrl = baseUrl + "/api/console-dlv/file/upload";
-            this.getOptionCustomerCompanies();
-            this.getOptionServiceCompanies();
-            if (this.$route.query.contractId) {
-                this.queryDetail(this.$route.query.contractId);
-                this.queryAttachments(this.$route.query.contractId);
-            }
         }
     }
 </script>
+<style lang="scss" scoped>
+    .demo-contractForm {
+        width: 900px;
+    }
+
+    .line {
+        text-align: center;
+    }
+</style>
+
+<style>
+    .el-time-spinner.has-seconds .el-time-spinner__wrapper:nth-child(2) {
+        margin-left: 0;
+    }
+
+    .el-icon-question {
+        margin-left: 5px;
+        color: #f56c6c;
+        cursor: pointer;
+    }
+
+    .is-disabled input {
+        border-color: #e4e7ed !important;
+    }
+</style>

@@ -7,41 +7,38 @@
       </el-breadcrumb>
       <el-form class="form" :model="form" :inline="true" label-width="100px">
           <el-form-item label="客户名称">
-              <el-input v-model="form.customCompanyName" class="in_input"></el-input>
+              <el-input v-model="form.customCompanyName" class="in_input" size="small"></el-input>
           </el-form-item>
           <el-form-item label="申请编号">
-              <el-input v-model="form.orderNo" class="in_input"></el-input>
+              <el-input v-model="form.orderNo" class="in_input" size="small"></el-input>
           </el-form-item>
           <el-form-item label="申请日期">
               <el-date-picker
+              size="small"
               v-model="timeRange"
               type="daterange"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               value-format="yyyy-MM-dd"
-              @change="change"
               ></el-date-picker>
           </el-form-item>
           <el-form-item label="发票类型">
-              <el-select v-model="form.invoiceType" class="in_input">
+              <el-select v-model="form.invoiceType" class="in_input" size="small">
                   <el-option v-for="item in categoryList" :key="item.value" :label="item.text" :value="item.value"></el-option>
               </el-select>
           </el-form-item>
           <el-form-item class="form_foot">
-              <el-button type="primary" @click="query">查询</el-button><el-button type="warning" @click="clear">重置</el-button>
+              <el-button type="primary" @click="query" size="small">查询</el-button><el-button @click="clear" size="small">重置</el-button>
           </el-form-item>
       </el-form>
       <div class="t_head">已开发票共计：{{companyData.count}}张，金额共计 {{companyData.amount | formatMoney}}元，税额共计 {{companyData.taxRateAmount | formatMoney}}元，价税合计 {{companyData.taxRateTotalAmount | formatMoney}}元</div>
       <el-table class="table" :data="tableData" border="">
           <el-table-column prop="orderNo" label="申请编号"></el-table-column>
-          <el-table-column prop="customCompanyName" label="客户名称"></el-table-column>
-          <el-table-column prop="invoiceTypeName" label="发票类型"></el-table-column>
-          <el-table-column label="金额">
+          <el-table-column label="待开">
               <template slot-scope="scope">
-                  {{scope.row.totalAmount | formatMoney}}
+                  <el-button type="text" @click="not(scope.row)">{{scope.row.needOpenNum}}</el-button>
               </template>
           </el-table-column>
-          <el-table-column prop="totalNum" label="申请开票数"></el-table-column>
           <el-table-column label="已开">
               <template slot-scope="scope">
                   <el-button type="text" @click="already(scope.row)">{{scope.row.openedNum}}</el-button>
@@ -52,13 +49,23 @@
                   <el-button type="text" @click="open(scope.row)">{{scope.row.openingNum}}</el-button>
               </template>
           </el-table-column>
-          <el-table-column label="待开">
+          <el-table-column prop="serviceCompanyName" label="服务商"></el-table-column>
+          <el-table-column prop="customCompanyName" label="客户名称"></el-table-column>
+          <el-table-column prop="purpose" label="发票用途"></el-table-column>
+          <el-table-column label="金额">
               <template slot-scope="scope">
-                  <el-button type="text" @click="not(scope.row)">{{scope.row.needOpenNum}}</el-button>
+                  {{scope.row.totalAmount | formatMoney}}
               </template>
           </el-table-column>
+          <el-table-column prop="invoiceTypeName" label="发票类型">
+              <template slot-scope="scope">
+                    <div class="bill common" v-if="scope.row.invoiceTypeName.indexOf('普通') > -1">普票</div>
+                    <div class="bill special" v-else>专票</div>
+                </template>
+          </el-table-column>
+          <!-- <el-table-column prop="totalNum" label="申请开票数"></el-table-column> -->
           <el-table-column prop="subjectName" label="发票类目"></el-table-column>
-          <el-table-column label="申请时间">
+          <el-table-column label="操作时间">
               <template slot-scope="scope">
                   {{scope.row.lastTime | formatTime}}
               </template>
@@ -69,17 +76,28 @@
               </template>
           </el-table-column> -->
       </el-table>
-      <div class="page" v-show="total / form.pageSize > 1">
+      <el-pagination
+          style="float: right; margin-top: 20px;"
+          @size-change="setSize"
+          @current-change="query"
+          :background="true"
+          :small="true"
+          :current-page="form.page"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="form.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total">
+      </el-pagination>
+      <!-- <div class="page" v-show="total / form.pageSize > 1">
           <el-pagination
           background
           layout="prev, pager, next"
           :page-size="form.pageSize"
           :total="total"
           @current-change="query"
-          :currentPage="form.page"
-          >
+          :currentPage="form.page">
         </el-pagination>
-      </div>
+      </div> -->
       <el-dialog title="已开发票" :visible.sync="ashow" width="70%">
         <div class="half">
             <span>申请编号： {{invoiceData.orderNo}}</span>
@@ -108,6 +126,12 @@
           <el-table-column prop="paperStatusName" label="状态"></el-table-column>
           <el-table-column prop="invoiceCode" label="发票代码"></el-table-column>
           <el-table-column prop="invoiceNo" label="发票号码"></el-table-column>
+          <el-table-column prop="createByName" label="开票人"></el-table-column>
+          <el-table-column prop="createTime" label="开票时间">
+              <template slot-scope="scope">
+                  {{scope.row.createTime | formatTime}}
+              </template>
+          </el-table-column>
         </el-table>
         <span slot="footer">
             <el-button @click="ashow = false" type="primary">关闭</el-button>
@@ -167,16 +191,16 @@
             <span>开票类型： {{invoiceData.invoiceTypeName}}</span>
         </div>
         <el-table class="table" @selection-change="select" :data="invoiceData.items" border>
-          <el-table-column type="selection"></el-table-column>
+          <!-- <el-table-column type="selection"></el-table-column> -->
           <el-table-column type="index" label="序号"></el-table-column>
           <el-table-column prop="subjectName" label="开票类目"></el-table-column>
           <el-table-column prop="amount" label="开票金额"></el-table-column>
           <el-table-column prop="serviceCompanyName" label="开票公司"></el-table-column>
           <el-table-column prop="paperStatusName" label="状态"></el-table-column>
         </el-table>
-        <span slot="footer">
+        <!-- <span slot="footer">
             <el-button @click="oshow = false" type="primary">确定</el-button>
-        </span>
+        </span> -->
       </el-dialog>
       <el-dialog title="填写" :visible.sync="eshow" width="70%">
           <el-form :inline="true" label-width="80px">
@@ -198,6 +222,8 @@
 import { get, post, formPost, postButNoErrorToast } from "../../store/api";
 export default {
   data() {
+    var time = new Date()
+    var t = `${time.getFullYear()}-${time.getMonth() + 1 > 9 ? time.getMonth() + 1 : '0' + (time.getMonth() + 1)}-${time.getDate()}`
     return {
       companyData: {},
       form: {
@@ -207,10 +233,10 @@ export default {
         orderBy: '',
         orderNo: '',
         page: 1,
-        pageSize: 5,
+        pageSize: 10,
         startAt: ''
       },
-      timeRange: [],
+      timeRange: [t, t],
       categoryList: [],
       tableData: [],
       total: 0,
@@ -240,15 +266,18 @@ export default {
     //  }.bind(this))
   },
   methods: {
-      change() {
-          console.log(this.timeRange)
-          this.form.startAt = this.timeRange[0]
-          this.form.endAt = this.timeRange[1]
-      },
       query(a) {
           this.form.page = 1
           if(a && !isNaN(a)){
               this.form.page = a
+          }
+          if(this.timeRange && this.timeRange.length) {
+              this.form.startAt = this.timeRange[0]
+              this.form.endAt = this.timeRange[1]
+          }
+          else {
+              this.form.startAt = ''
+              this.form.endAt = ''
           }
           post('/api/invoice-web/invoice/paper-invoice-list', this.form).then(function(data){
               console.log(data)
@@ -260,6 +289,10 @@ export default {
               this.companyData = data
           }.bind(this))
       },
+      setSize(a) {
+          this.form.pageSize = a
+          this.query()
+      },
       clear() {
           this.form = {
             customCompanyName: '',
@@ -268,7 +301,7 @@ export default {
             orderBy: '',
             orderNo: '',
             page: 1,
-            pageSize: 5,
+            pageSize: this.form.pageSize,
             startAt: ''
         }
         this.timeRange = []
@@ -364,6 +397,7 @@ export default {
 .r_main {
   padding: 30px 10px;
   background-color: #fff;
+  overflow: hidden;
 }
 .form {
   margin-top: 20px;
@@ -400,5 +434,17 @@ export default {
 }
 .form_footer > button{
     margin: 0px 30px;
+}
+.bill {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 5px;
+    color: #fff;
+}
+.common {
+    background-color:  #6BDDA2;
+}
+.special {
+    background-color: #63D1F2;
 }
 </style>

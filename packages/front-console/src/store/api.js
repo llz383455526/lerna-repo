@@ -3,11 +3,13 @@ import {baseUrl} from '../config/address'
 import {showNotify} from '../plugin/utils-notify'
 import {showLoading, hideLoading} from '../plugin/utils-loading'
 
-function requestBefore(param = {}) {
+function requestBefore(param = {}, withLoading = false) {
     if (param.noLoading) {
         delete param.noLoading;
     } else {
-        showLoading(param.loadingText);
+        if(!withLoading) {
+            showLoading(param.loadingText);
+        }
         delete param.loadingText;
     }
     return param;
@@ -42,7 +44,7 @@ function showErrorToast(show, res, errorCallback, reject) {
 
 function post(url, param, withLoading = false) {
     return new Promise((resolve, reject) => {
-        param = requestBefore(param);
+        param = requestBefore(param, withLoading);
         ajaxAction('post', url, param, resolve, reject, true, false, withLoading);
     });
 }
@@ -91,7 +93,7 @@ function getButNoErrorToast(url, param) {
 }
 
 function ajaxAction(requestType, url, param, resolve, reject, showToast, needCallback, withLoading) {
-    ajax(requestType, `${baseUrl}${url}`, param, res => {       
+    ajax(requestType, url, param, res => {
         if(!withLoading) hideLoading()
         if (res.code === 200) {
             resolve(res.data);
@@ -137,10 +139,12 @@ function formPost(url, param) {
     });
 }
 
-function importPost(url, param) {
+function importPost(url, param, withLoading) {
     return new Promise((resolve, reject) => {
         //param = requestBefore(param);
-        showLoading('上传中')
+        if(!withLoading) {
+            showLoading('上传中')
+        }
         ajaxAction('import', url, param, resolve, reject, true, false);
     });
 }

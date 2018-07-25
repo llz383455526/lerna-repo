@@ -94,7 +94,7 @@ export default {
               amountStart: '',
               amountEnd: '',
               page: 1,
-              pageSize: 5
+              pageSize: 10
           },
           tableData: [],
           total: 0,

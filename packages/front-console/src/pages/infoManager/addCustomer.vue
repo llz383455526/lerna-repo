@@ -23,7 +23,7 @@
             <el-input class="form_input" v-model="form.addr" placeholder="请输入客户地址"></el-input>
         </el-form-item>
         <el-form-item label="电话号码" prop="phone">
-            <el-input class="form_input" v-model="form.phone" placeholder="请输入电话号码"></el-input>
+            <el-input class="form_input" v-model.trim="form.phone" placeholder="请输入电话号码"></el-input>
         </el-form-item>
         <el-form-item label="开户银行" prop="bankName">
             <el-input class="form_input" v-model="form.bankName" placeholder="请输入客户开户行名称"></el-input>
@@ -75,29 +75,19 @@ export default {
         taxIdcd: [
           { required: true, message: '请输入纳税识别号', trigger: 'blur' }
         ],
-        addr: [
-          { required: true, message: '请输入地址', trigger: 'blur' }
-        ],
-        phone: [
-          { required: true, message: '请输入电话号码', trigger: 'blur' },
-          { pattern: /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/, message: '请正确输入号码'}
-        ],
-        bankName: [
-          { required: true, message: '请输入开户银行名称', trigger: 'blur' }
-        ],
-        bankAccount: [
-          { required: true, message: '请输入开户银行账号', trigger: 'blur' },
-          // { pattern: /^([1-9]{1})(\d{12,25})$/, message: '请正确输入银行账号', trigger: 'blur'}
-        ],
-        // collector: [
-        //   { required: true, message: '请输入收票人名字', trigger: 'blur' }
+        // addr: [
+        //   { required: true, message: '请输入地址', trigger: 'blur' }
         // ],
-        // collectorPhone: [
-        //   { required: true, message: '请输入收票人电话号码', trigger: 'blur' },
-        //   { pattern: /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/, message: '请正确输入号码'}
+        // phone: [
+        //   { required: true, message: '请输入电话号码', trigger: 'blur' },
+        //   { pattern: /^[\d\-]+$/, message: '请正确输入号码'}
         // ],
-        // collectorAddr: [
-        //   { required: true, message: '请输入收票人地址', trigger: 'blur' }
+        // bankName: [
+        //   { required: true, message: '请输入开户银行名称', trigger: 'blur' }
+        // ],
+        // bankAccount: [
+        //   { required: true, message: '请输入开户银行账号', trigger: 'blur' },
+        //   { pattern: /^([1-9]{1})(\d{12,25})$/, message: '请正确输入银行账号', trigger: 'blur'}
         // ]
       }
     };

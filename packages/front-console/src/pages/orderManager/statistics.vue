@@ -28,6 +28,14 @@
             <el-table-column prop="totalCount" label="请求总数"></el-table-column>
             <el-table-column prop="failRate" label="失败率"></el-table-column>
         </el-table>
+        <ayg-pagination
+            v-if="total"
+            :total="total"
+            v-on:handleSizeChange="setSize"
+            :currentSize="pageSize"
+            v-on:handleCurrentChange="search"
+            :currentPage="currentPage">
+        </ayg-pagination>
     </div>
 </template>
 
@@ -46,13 +54,24 @@
                 dateValue: '',
                 formSearch: {
 
-                }
+                },
+                total: 0
             }
         },
         methods: {
-            search() {
+            search(a) {
+                if(isNaN(a)) {
+                    a = 1
+                }
+                this.currentPage = a
                 this.currentChangeBySetting = true;
-                this.currentPage = 1;
+                this.requestAction({
+                    page: this.currentPage,
+                    pageSize: this.pageSize,
+                });
+            },
+            setSize(a) {
+                this.pageSize = a
                 this.requestAction({
                     page: 1,
                     pageSize: this.pageSize,
@@ -79,12 +98,12 @@
                 let param = {
                     startAt: startAt,
                     endAt: endAt,
-
                     page: pageInfo.page,
                     pageSize: pageInfo.pageSize,
                 };
                 post('/api/console-dlv/pay-order-statistics/query-list', param).then(data => {
                     this.tableList = data
+                    this.total = data.total
                 })
             },
         },

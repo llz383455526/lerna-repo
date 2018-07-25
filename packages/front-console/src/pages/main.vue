@@ -7,7 +7,7 @@
                          active-text-color="#fff"
                          mode="horizontal"
                          @select="handleSelect"
-                         background-color="#128888" style="float:right;margin-right: 50px;">
+                         background-color="#0283fb" style="float:right;margin-right: 50px;">
                     <el-submenu index="0">
                         <template slot="title">{{userInformation.name}}</template>
                         <!--<el-menu-item index="0-1" style="min-width: 100px">账户中心</el-menu-item>-->
@@ -31,7 +31,7 @@
                          text-color="rgba(255, 255, 255, .7)"
                          active-text-color="#fff"
                          mode="horizontal"
-                         @select="handleSelect" background-color="#128888">
+                         @select="handleSelect" background-color="#0283fb">
                     <div v-for="item in principalMenu" :key="item.orderSeq" style="display: inline-block">
                         <el-menu-item v-if="item.children.length==0" :index="buildMenuIndex(item.orderSeq)">{{item.title}}</el-menu-item>
                         <el-submenu :index="buildMenuIndex(item.orderSeq)" v-else>
@@ -173,12 +173,10 @@ export default {
     },
 
     handleSelect(key, keyPath) {
-      // console.log(keyPath)
-      if (keyPath[0] == "0") {
+      console.log(keyPath)
+      if (keyPath[0] == "0" && key != "0-1") {
         this.activeIndex = "#";
-        if (key == "0-1") {
-          console.log("账户中心");
-        } else if (key == "0-2") {
+        if (key == "0-2") {
           console.log("修改密码");
           this.dialogClientVisible = true;
         } else {
@@ -206,6 +204,7 @@ export default {
                     children[j].orderSeq
                   )
                 ) {
+                  console.log(children)
                   this.$router.push(children[j]["action"]);
                   // console.log(this.principalMenu[i]['title'] + '---' + children[j]['title']);
                   break;

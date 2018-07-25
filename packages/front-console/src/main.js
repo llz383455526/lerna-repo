@@ -5,7 +5,11 @@ import routes from './router'
 import store from './store'
 import './filter'
 
+import 'vue-area-linkage/dist/index.css'
 import './style'
+import './style/iconfont'
+
+import { AreaSelect } from 'vue-area-linkage'
 
 import {
 	Menu,
@@ -113,6 +117,16 @@ Vue.prototype.$notify = Notification
 Vue.prototype.$confirm = MessageBox.confirm
 Vue.prototype.$alert = MessageBox.alert
 Vue.prototype.$message = Message
+Vue.prototype.checkRight = function(url) {
+    if(this.permissions) {
+        return url in this.permissions
+    }
+    else {
+        return false
+    }
+}
+
+Vue.use(AreaSelect)
 
 Date.prototype.toJSON = function () {
 	return Date.parse(this)

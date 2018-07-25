@@ -15,14 +15,31 @@ let backlog = r => require.ensure([], () => r(require('../pages/backlog/list')),
 let index = r => require.ensure([], () => r(require('../pages/public/index.vue')), 'index');
 let creditBill = r => require.ensure([], () => r(require('../pages/accountManager/companyCredit.vue')), 'creditBill');
 
-
+let orderManager = r => require.ensure([], () => r(require('../pages/orderManager/orderManager.vue')), 'orderManager');
 let statistics = r => require.ensure([], () => r(require('../pages/orderManager/statistics.vue')), 'statistics');
+let defrayment = r => require.ensure([], () => r(require('../pages/orderManager/defrayment.vue')), 'defrayment');
+let submitOrder = r => require.ensure([], () => r(require('../pages/orderManager/submitOrder.vue')), 'submitOrder');
+let postalService = r => require.ensure([], () => r(require('../pages/orderManager/postalService.vue')), 'postalService');
+let orderComplete = r => require.ensure([], () => r(require('../pages/orderManager/orderComplete.vue')), 'orderComplete');
+let cancleOrder = r => require.ensure([], () => r(require('../pages/orderManager/cancleOrder.vue')), 'cancleOrder');
+
 let eContractIndex = r => require.ensure([], () => r(require('../pages/eContract/index.vue')), 'eContractIndex');
+let contractManager = r => require.ensure([], () => r(require('../pages/eContract/contractManager.vue')), 'contractManager');
+let addTemplate = r => require.ensure([], () => r(require('../pages/eContract/addTemplate.vue')), 'addTemplate');
+let objectManager = r => require.ensure([], () => r(require('../pages/eContract/objectManager.vue')), 'objectManager');
+let addObject = r => require.ensure([], () => r(require('../pages/eContract/addObject.vue')), 'addObject');
+let signManager = r => require.ensure([], () => r(require('../pages/eContract/signManager.vue')), 'signManager');
+let uploadObject = r => require.ensure([], () => r(require('../pages/eContract/uploadObject.vue')), 'uploadObject');
+let checkObject = r => require.ensure([], () => r(require('../pages/eContract/checkObject.vue')), 'checkObject');
+let signSuccess = r => require.ensure([], () => r(require('../pages/eContract/signSuccess.vue')), 'signSuccess');
+let batchRecord = r => require.ensure([], () => r(require('../pages/eContract/batchRecord.vue')), 'batchRecord');
+
 let rechargeIndex = r => require.ensure([], () => r(require('../pages/recharge/index.vue')), 'rechargeIndex');
 let invoiceList = r => require.ensure([], () => r(require('../pages/invoice/list.vue')), 'invoiceList');
 let invoiceCreate = r => require.ensure([], () => r(require('../pages/invoice/create.vue')), 'invoiceCreate');
 let ticketIssued = r => require.ensure([], () => r(require('../pages/invoice/ticketIssued.vue')), 'ticketIssued');
 let oweTicketManager = r => require.ensure([], () => r(require('../pages/invoice/oweTicketManager.vue')), 'oweTicketManager');
+let batchApply = r => require.ensure([], () => r(require('../pages/invoice/batchApply.vue')), 'batchApply');
 
 let infoManager = r => require.ensure([], () => r(require('../pages/infoManager/infoManager.vue')), 'infoManager');
 let addCustomer = r => require.ensure([], () => r(require('../pages/infoManager/addCustomer.vue')), 'addCustomer');
@@ -35,21 +52,27 @@ let reconTools = r => require.ensure([], () => r(require('../pages/reconTools/re
 let reconDetail = r => require.ensure([], () => r(require('../pages/reconTools/reconDetail.vue')), 'reconDetail');
 let reconDetailError = r => require.ensure([], () => r(require('../pages/reconTools/reconDetailError.vue')), 'reconDetailError');
 
-let templateList =  r => require.ensure([], () => r(require('../pages/contract/templateList')), 'templateList')
-let templateCreate =  r => require.ensure([], () => r(require('../pages/contract/templateCreate')), 'templateCreate')
-let contractList =  r => require.ensure([], () => r(require('../pages/contract/contractList')), 'contractList')
-let contractCreate =  r => require.ensure([], () => r(require('../pages/contract/contractCreate')), 'contractCreate')
-let contractPreview =  r => require.ensure([], () => r(require('../pages/contract/contractPreview')), 'contractPreview')
+let templateList = r => require.ensure([], () => r(require('../pages/contract/templateList')), 'templateList')
+let templateCreate = r => require.ensure([], () => r(require('../pages/contract/templateCreate')), 'templateCreate')
+let contractList = r => require.ensure([], () => r(require('../pages/contract/contractList')), 'contractList')
+let contractCreate = r => require.ensure([], () => r(require('../pages/contract/contractCreate')), 'contractCreate')
+let contractPreview = r => require.ensure([], () => r(require('../pages/contract/contractPreview')), 'contractPreview')
+let serviceInvoiceManager = r => require.ensure([], () => r(require('../pages/contract/serviceInvoiceManager')), 'serviceInvoiceManager')
 
 
-let clientManager =  r => require.ensure([], () => r(require('../pages/clientManager/clientManager')), 'clientManager')
-let appManager =  r => require.ensure([], () => r(require('../pages/clientManager/appManager')), 'appManager')
-let appDetail =  r => require.ensure([], () => r(require('../pages/clientManager/appDetail')), 'appDetail') 
+let clientManager = r => require.ensure([], () => r(require('../pages/clientManager/clientManager')), 'clientManager')
+let appManager = r => require.ensure([], () => r(require('../pages/clientManager/appManager')), 'appManager')
+let appDetail = r => require.ensure([], () => r(require('../pages/clientManager/appDetail')), 'appDetail')
+let addClient = r => require.ensure([], () => r(require('../pages/clientManager/addClient')), 'addClient')
+let addApp = r => require.ensure([], () => r(require('../pages/clientManager/addApp')), 'addApp')
+let serverManager = r => require.ensure([], () => r(require('../pages/clientManager/serverManager')), 'serverManager')
+let addServer = r => require.ensure([], () => r(require('../pages/clientManager/addServer')), 'addServer')
+let serverDetail = r => require.ensure([], () => r(require('../pages/clientManager/serverDetail')), 'serverDetail')
 
-let advertisingList =  r => require.ensure([], () => r(require('../pages/management/advertisingList')), 'advertisingList')
-let advertisingCreate =  r => require.ensure([], () => r(require('../pages/management/advertisingCreate')), 'advertisingCreate')
-let messageList =  r => require.ensure([], () => r(require('../pages/management/messageList')), 'messageList')
-let messageCreate =  r => require.ensure([], () => r(require('../pages/management/messageCreate')), 'messageCreate')
+let advertisingList = r => require.ensure([], () => r(require('../pages/management/advertisingList')), 'advertisingList')
+let advertisingCreate = r => require.ensure([], () => r(require('../pages/management/advertisingCreate')), 'advertisingCreate')
+let messageList = r => require.ensure([], () => r(require('../pages/management/messageList')), 'messageList')
+let messageCreate = r => require.ensure([], () => r(require('../pages/management/messageCreate')), 'messageCreate')
 
 let invoiceListNew = r => require.ensure([], () => r(require('../pages/reconciliationCenter/invoiceList')), 'invoiceList')
 let invoiceDetail = r => require.ensure([], () => r(require('../pages/reconciliationCenter/invoiceDetail')), 'invoiceDetail')
@@ -59,6 +82,30 @@ let rechargeList = r => require.ensure([], () => r(require('../pages/reconciliat
 let billList = r => require.ensure([], () => r(require('../pages/reconciliationCenter/list-flow')), 'billList')
 let payOrderNew = r => require.ensure([], () => r(require('../pages/reconciliationCenter/payOrder')), 'payOrderNew')
 let rechargeIndexNew = r => require.ensure([], () => r(require('../pages/reconciliationCenter/rechargeDetail')), 'rechargeIndexNew')
+
+
+let offlineSalaryUpload = r => require.ensure([], () => r(require('../pages/accountManager/offlineSalaryUpload')), 'offlineSalaryUpload')
+let offlineSalaryImport = r => require.ensure([], () => r(require('../pages/accountManager/offlineSalaryImport')), 'offlineSalaryImport')
+let offlineSalaryManager = r => require.ensure([], () => r(require('../pages/accountManager/offlineSalaryManager')), 'offlineSalaryManager')
+
+
+let individualIndex = r => require.ensure([], () => r(require('../pages/individual/individualIndex')), 'individualIndex')
+
+let taxDiscountHome = r => require.ensure([], () => r(require('../pages/taxDiscount/home')), 'taxDiscountHome')
+let taxDiscountList = r => require.ensure([], () => r(require('../pages/taxDiscount/list')), 'taxDiscountList')
+let taxDiscountDetail = r => require.ensure([], () => r(require('../pages/taxDiscount/detail')), 'taxDiscountDetail')
+let taxDiscountSetting = r => require.ensure([], () => r(require('../pages/taxDiscount/userSetting')), 'taxDiscountSetting')
+
+const documentList = () => import('../pages/management/documentList')
+const documentDetail = () => import('../pages/management/documentDetail')
+const documentCreate = () => import('../pages/management/documentCreate')
+
+const roleList = () => import('../pages/management/roleList')
+const roleCreate = () => import('../pages/management/roleCreate')
+const accountList = () => import('../pages/management/accountList')
+const accountCreate = () => import('../pages/management/accountCreate')
+const accountDetail = () => import('../pages/management/accountDetail')
+
 
 export default [
     {
@@ -70,7 +117,7 @@ export default [
                 path: '/main',
                 component: main,
                 // redirect: '/main/backlog',
-                // redirect: '/main/infoManager/infoManager',
+                // redirect: '/main/individual/individualIndex',
                 children: [
                     {
                         path: 'accountManager',
@@ -79,6 +126,16 @@ export default [
                             path: 'payOrder',
                             component: payOrder
                         }, {
+							path:'offlineSalaryUpload',
+							component:offlineSalaryUpload
+						}, {
+							path:'offlineSalaryImport',
+							component:offlineSalaryImport
+						}, {
+							path:'offlineSalaryManager',
+							component:offlineSalaryManager
+												
+						}, {
                             path: 'index',
                             component: accountIndex
                         }, {
@@ -108,10 +165,54 @@ export default [
                     }, {
                         path: 'orderManager',
                         component: index,
-                        children: [{
-                            path: 'statistics',
-                            component: statistics
-                        }]
+                        children: [
+                            {
+                                path: 'orderManager',
+                                component: orderManager,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'statistics',
+                                component: statistics
+                            },
+                            {
+                                path: 'defrayment',
+                                component: defrayment,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'submitOrder',
+                                component: submitOrder,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'postalService',
+                                component: postalService,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'orderComplete',
+                                component: orderComplete,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'cancleOrder',
+                                component: cancleOrder,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            }
+                        ]
                     }, {
                         path: 'contract',
                         component: index,
@@ -123,79 +224,133 @@ export default [
                             {
                                 path: 'create',
                                 component: r => require.ensure([], () => r(require('../pages/contract/create.vue')), 'create'),
-	                            meta: {
-		                            keepAlive: false
-	                            }
+                                meta: {
+                                    keepAlive: false
+                                }
                             },
                             {
                                 path: 'preview',
                                 component: r => require.ensure([], () => r(require('../pages/contract/preview.vue')), 'preview'),
-	                            meta: {
-		                            keepAlive: false
-	                            }
+                                meta: {
+                                    keepAlive: false
+                                }
                             },
-	                        {
-	                        	path: 'templateList',
-		                        component: templateList,
-		                        meta: {
-			                        keepAlive: false
-		                        }
-	                        },
-	                        {
-	                        	path: 'templateCreate',
-		                        component: templateCreate,
-		                        meta: {
-			                        keepAlive: false
-		                        }
-	                        }, {
-                        	    path: 'contractList',
-		                        component: contractList,
-		                        meta: {
-			                        keepAlive: false
-		                        }
-	                        }, {
-                        	    path: 'contractCreate',
-		                        component: contractCreate,
-		                        meta: {
-			                        keepAlive: false
-		                        }
-	                        }, {
-                        	    path: 'contractPreview',
-		                        component: contractPreview,
-		                        meta: {
-			                        keepAlive: false
-		                        }
-	                        }
+                            {
+                                path: 'templateList',
+                                component: templateList,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'templateCreate',
+                                component: templateCreate,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            }, {
+                                path: 'contractList',
+                                component: contractList,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            }, {
+                                path: 'contractCreate',
+                                component: contractCreate,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            }, {
+                                path: 'contractPreview',
+                                component: contractPreview,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            }, {
+                                path: 'serviceInvoiceManager',
+                                component: serviceInvoiceManager,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
                         ]
-                    },{
-		                path: 'management',
-		                component: index,
-		                children: [{
-			                path: 'advertisingList',
-			                component: advertisingList,
-			                meta: {
-				                keepAlive: false
-			                }
-		                },{
-			                path: 'advertisingCreate',
-			                component: advertisingCreate,
-			                meta: {
-				                keepAlive: false
-			                }
-		                },{
-			                path: 'messageList',
-			                component: messageList,
-			                meta: {
-				                keepAlive: false
-			                }
-		                },{
-			                path: 'messageCreate',
-			                component: messageCreate,
-			                meta: {
-				                keepAlive: false
-			                }
-		                }]
-	                }, {
+                    }, {
+                        path: 'management',
+                        component: index,
+                        children: [{
+                            path: 'advertisingList',
+                            component: advertisingList,
+                            meta: {
+                                keepAlive: false
+                            }
+                        }, {
+                            path: 'advertisingCreate',
+                            component: advertisingCreate,
+                            meta: {
+                                keepAlive: false
+                            }
+                        }, {
+                            path: 'messageList',
+                            component: messageList,
+                            meta: {
+                                keepAlive: false
+                            }
+                        }, {
+                            path: 'messageCreate',
+                            component: messageCreate,
+                            meta: {
+                                keepAlive: false
+                            }
+                        }, {
+                        	path: 'documentList',
+	                        component: documentList,
+	                        meta: {
+		                        keepAlive: false
+	                        }
+                        }, {
+                        	path: 'documentDetail',
+	                        component: documentDetail,
+	                        meta: {
+		                        keepAlive: false
+	                        }
+                        }, {
+	                        path: 'documentCreate',
+	                        component: documentCreate,
+	                        meta: {
+		                        keepAlive: false
+	                        }
+                        }, {
+                        	path: 'roleList',
+	                        component: roleList,
+	                        meta: {
+		                        keepAlive: false
+	                        }
+                        }, {
+	                        path: 'roleCreate',
+	                        component: roleCreate,
+	                        meta: {
+		                        keepAlive: false
+	                        }
+                        }, {
+                        	path: 'accountList',
+	                        component: accountList,
+	                        meta: {
+		                        keepAlive: false
+	                        }
+                        }, {
+	                        path: 'accountCreate',
+	                        component: accountCreate,
+	                        meta: {
+		                        keepAlive: false
+	                        }
+                        }, {
+	                        path: 'accountDetail',
+	                        component: accountDetail,
+	                        meta: {
+		                        keepAlive: false
+	                        }
+                        }]
+                    }, {
                         path: 'bigAmount',
                         component: index,
                         children: [
@@ -224,10 +379,77 @@ export default [
                     }, {
                         path: 'eContract',
                         component: index,
-                        children: [{
-                            path: 'index',
-                            component: eContractIndex
-                        }]
+                        children: [
+                            {
+                                path: 'index',
+                                component: eContractIndex,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'contractManager',
+                                component: contractManager,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'addTemplate',
+                                component: addTemplate,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'objectManager',
+                                component: objectManager,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'addObject',
+                                component: addObject,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'signManager',
+                                component: signManager,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'uploadObject',
+                                component: uploadObject,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },{
+                                path: 'checkObject',
+                                component: checkObject,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'signSuccess',
+                                component: signSuccess,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'batchRecord',
+                                component: batchRecord,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            }
+                        ]
                     }, {
                         path: 'recharge',
                         component: index,
@@ -301,6 +523,13 @@ export default [
                             {
                                 path: 'oweTicketManager',
                                 component: oweTicketManager
+                            },
+                            {
+                                path: 'batchApply',
+                                component: batchApply,
+                                meta: {
+                                    keepAlive: false, //此组件不需要被缓存
+                                }
                             }
                         ]
                     },
@@ -308,12 +537,14 @@ export default [
                         path: 'reconTools',
                         component: index,
                         children: [
-                            {path: 'list', component: reconTools},
-                            {path: 'reconDetail', component: reconDetail, meta: {
+                            { path: 'list', component: reconTools },
+                            {
+                                path: 'reconDetail', component: reconDetail, meta: {
                                     keepAlive: false, //此组件不需要被缓存
                                 }
                             },
-                            {path: 'reconDetailError', component: reconDetailError, meta: {
+                            {
+                                path: 'reconDetailError', component: reconDetailError, meta: {
                                     keepAlive: false, //此组件不需要被缓存
                                 }
                             },
@@ -334,38 +565,111 @@ export default [
                             {
                                 path: 'appDetail',
                                 component: appDetail
-                            }
+                            },
+                            {
+                                path: 'addClient',
+                                component: addClient,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'addApp',
+                                component: addApp,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'serverManager',
+                                component: serverManager
+                            },
+                            {
+                                path: 'addServer',
+                                component: addServer,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'serverDetail',
+                                component: serverDetail,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
                         ]
                     },
-	                {
-		                path: 'reconciliationCenter',
+                    {
+                        path: 'reconciliationCenter',
+                        component: index,
+                        children: [{
+                            path: 'invoiceList',
+                            component: invoiceListNew
+                        }, {
+                            path: 'invoiceDetail',
+                            component: invoiceDetail
+                        }, {
+                            path: 'contractList',
+                            component: contractListNew
+                        }, {
+                            path: 'contractDetail',
+                            component: contractDetail
+                        }, {
+                            path: 'rechargeList',
+                            component: rechargeList
+                        }, {
+                            path: 'rechargeDetail',
+                            component: rechargeIndexNew
+                        }, {
+                            path: 'payOrder',
+                            component: payOrderNew
+                        }, {
+                            path: 'billList',
+                            component: billList
+                        }]
+                    },
+                    {
+                        path: 'individual',
+                        component: index,
+                        children: [
+                            {
+                                path: 'individualIndex',
+                                component: individualIndex,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            }
+                        ]
+                    }, {
+                	    path: 'taxDiscount',
 		                component: index,
 		                children: [{
-			                path: 'invoiceList',
-			                component: invoiceListNew
-		                },{
-			                path: 'invoiceDetail',
-			                component: invoiceDetail
-		                },{
-			                path: 'contractList',
-			                component: contractListNew
-		                },{
-			                path: 'contractDetail',
-			                component: contractDetail
-		                },{
-			                path: 'rechargeList',
-			                component: rechargeList
-		                },{
-			                path: 'rechargeDetail',
-			                component: rechargeIndexNew
-		                },{
-			                path: 'payOrder',
-			                component: payOrderNew
-		                },{
-			                path: 'billList',
-			                component: billList
+                	    	path: 'home',
+			                component: taxDiscountHome,
+			                meta: {
+				                keepAlive: false
+			                }
+		                }, {
+			                path: 'list',
+			                component: taxDiscountList,
+			                meta: {
+				                keepAlive: false
+			                }
+		                }, {
+			                path: 'detail',
+			                component: taxDiscountDetail,
+			                meta: {
+				                keepAlive: false
+			                }
+		                }, {
+			                path: 'setting',
+			                component: taxDiscountSetting,
+			                meta: {
+				                keepAlive: false
+			                }
 		                }]
-	                },
+	                }
                 ],
             },
             {

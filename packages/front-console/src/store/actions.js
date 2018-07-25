@@ -6,13 +6,13 @@ import { showLoading } from '../plugin/utils-loading'
 export default {
 
     login({commit}, param) {
-        post('/api/console-dlv/auth/login', param).then((data) => {
+        post('/api/sysmgr-web/auth/login', param).then((data) => {
             commit(types.LOGIN_ACTION, data);
         });
     },
 
     logout({commit}) {
-        post('/api/console-dlv/auth/logout').then((data) => {
+        post('/api/sysmgr-web/auth/logout').then((data) => {
             //console.log(data);
 	        commit(types.RESET_STATES)
 	        commit(types.SET_USER_TASK_LIST, null)
@@ -21,7 +21,7 @@ export default {
     },
 
     principal({commit},param) {
-        get('/api/console-dlv/auth/principal', param).then((data) => {
+        get('/api/sysmgr-web/auth/principal', param).then((data) => {
             // console.log(this)
             commit(types.LOGOUT_PRINCIPAL, data);
         });
@@ -75,6 +75,9 @@ export default {
 	},
 	resetStates({commit}) {
     	commit(types.RESET_STATES)
+	},
+	setUploadFile({commit}, param) {
+		commit(types.SET_UPLOAD_FILE, param)
 	}
 
 }

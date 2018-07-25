@@ -1,0 +1,1542 @@
+<template> 
+    <div class="r_main">
+        <el-breadcrumb>
+          <el-breadcrumb-item to="/main/clientManager/clientManager">
+            客户管理
+          </el-breadcrumb-item>
+          <el-breadcrumb-item to="/main/clientManager/serverManager">
+              服务商管理
+          </el-breadcrumb-item>
+          <el-breadcrumb-item>
+              服务商详情
+          </el-breadcrumb-item>
+          </el-breadcrumb>
+      <div class="content">
+		<div class="title">基本信息</div><el-button type="primary" style="margin-left: 120px;" size="small" @click="ashow = true">编辑</el-button>
+		<div class="box">
+			<el-row :gutter="20">
+      		    <el-col :span="10">
+					  <el-col :span="8" class="right">渠道别名</el-col><el-col :span="10">{{data.channelAlias }}</el-col>
+				</el-col>
+				<el-col :span="10">
+					  <el-col :span="8" class="right">渠道类型</el-col><el-col :span="10">{{data.thirdpaySystemId}}</el-col>
+				</el-col>
+      		</el-row>
+			<el-row :gutter="20">
+      		    <el-col :span="10">
+					  <el-col :span="8" class="right">单笔限额（元）</el-col><el-col :span="10">{{data.orderLimit}}</el-col>
+				</el-col>
+      		    <el-col :span="10">
+					  <el-col :span="8" class="right">单日限额（元）</el-col><el-col :span="10">{{data.dailyLimit}}</el-col>
+				</el-col>
+      		</el-row>
+            <el-row :gutter="20">
+      		    <el-col :span="10">
+					  <el-col :span="8" class="right">登录账号</el-col><el-col :span="10">{{data.loginAcctno}}</el-col>
+				</el-col>
+      		</el-row>
+      		<template v-if="data.thirdpaySystemId == 'changjie'">
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">商户号</el-col><el-col :span="10">{{data['cj.merchant_id']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">我方私钥</el-col><el-col :span="10">{{data['cj.merchant_private_key']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">畅捷公钥</el-col><el-col :span="10">{{data['cj.merchant_public_key']}}</el-col>
+					</el-col>
+      			</el-row>
+			</template>
+			<template v-if="data.thirdpaySystemId == 'wx'">
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">商户号</el-col><el-col :span="10">{{data['wx.mchid']}}</el-col>
+					</el-col>
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">子商户号</el-col><el-col :span="10">{{data['wx.submchid']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">APPID</el-col><el-col :span="10">{{data['wx.appid']}}</el-col>
+					</el-col>
+					<el-col :span="10">
+						  <el-col :span="8" class="right">WXKEY</el-col><el-col :span="10">{{data['wx.key']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">APIKEY</el-col><el-col :span="10">{{data['wx.apikey']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">证书文件路径</el-col><el-col :span="10">{{data['wx.certlocalpath']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">证书文件密码</el-col><el-col :span="10">{{data['wx.certpassword']}}</el-col>
+					</el-col>
+      			</el-row>
+				  <el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">通知地址</el-col><el-col :span="10">{{data['wx.notify_url']}}</el-col>
+					</el-col>
+      			</el-row>
+			</template>
+			<template v-if="data.thirdpaySystemId == 'alipay'">
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">APPID</el-col><el-col :span="10">{{data['alipay.appid']}}</el-col>
+					</el-col>
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">USERID</el-col><el-col :span="10">{{data['alipay.userid']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">密钥类型</el-col><el-col :span="10">{{data['alipay.rsatype']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">商户私钥</el-col><el-col :span="10">{{data['alipay.app_private_key']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">支付宝公钥</el-col><el-col :span="10">{{data['alipay.alipay_public_key']}}</el-col>
+					</el-col>
+      			</el-row>
+                <el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">MAPI(md5)密钥</el-col><el-col :span="10">{{data['alipay.mapi_md5_key']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">支付宝网关</el-col><el-col :span="10">{{data['alipay.gateway']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">红包通知地址</el-col><el-col :span="10">{{data['alipay.hb.notify_url']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">充值通知地址</el-col><el-col :span="10">{{data['alipay.deposit.notify_url']}}</el-col>
+					</el-col>
+      			</el-row>
+			</template>
+			<template v-if="data.thirdpaySystemId == 'yjf'">
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">APPID</el-col><el-col :span="10">{{data['partner_id']}}</el-col>
+					</el-col>
+      			</el-row>
+                <el-row :gutter="20">
+                    <el-col :span="10">
+						  <el-col :span="8" class="right">密钥类型</el-col><el-col :span="10">{{data['signtype']}}</el-col>
+					</el-col>
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">密钥</el-col><el-col :span="10">{{data['sercurity_key']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">证书文件密码</el-col><el-col :span="10">{{data['pfx_file_pwd']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">证书文件路径</el-col><el-col :span="10">{{data['pfx_file_fullname']}}</el-col>
+					</el-col>
+      			</el-row>
+			</template>
+			<template v-if="data.thirdpaySystemId == 'pingan'">
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">主账号</el-col><el-col :span="10">{{data['pingan.mainacct.no']}}</el-col>
+					</el-col>
+					<el-col :span="10">
+						  <el-col :span="8" class="right">主账号名称</el-col><el-col :span="10">{{data['pingan.mainacct.name']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+					<el-col :span="10">
+						  <el-col :span="8" class="right">外联客户号</el-col><el-col :span="10">{{data['pingan.outercustcode']}}</el-col>
+					</el-col>
+					<el-col :span="10">
+						  <el-col :span="8" class="right">单笔转账限额</el-col><el-col :span="10">{{data['pingan.khkf03.limitamount']}}</el-col>
+					</el-col>
+				</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">影子账户</el-col><el-col :span="10">{{data['pingan.yingziacct.no']}}</el-col>
+					</el-col>
+					<el-col :span="10">
+						  <el-col :span="8" class="right">影子账户名</el-col><el-col :span="10">{{data['pingan.yingziacct.name']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">银行名称</el-col><el-col :span="10">{{data['pingan.bank.name']}}</el-col>
+					</el-col>
+					<el-col :span="10">
+						  <el-col :span="8" class="right">开户银行名称</el-col><el-col :span="10">{{data['pingan.depositbank.name']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">服务器地址</el-col><el-col :span="10">{{data['pingan.b2bic.url']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">上传路径</el-col><el-col :span="10">{{data['pingan.upload.path']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">下载路径</el-col><el-col :span="10">{{data['pingan.download.path']}}</el-col>
+					</el-col>
+      			</el-row>
+			</template>
+			<template v-if="data.thirdpaySystemId == 'cmb'">
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">用户名</el-col><el-col :span="10">{{data['cmb.nteckopr.loginName']}}</el-col>
+					</el-col>
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">主账户</el-col><el-col :span="10">{{data['cmb.nteckopr.eacNbr']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">服务器地址</el-col><el-col :span="10">{{data['cmb.server']}}</el-col>
+					</el-col>
+					<el-col :span="10">
+						  <el-col :span="8" class="right">分行号</el-col><el-col :span="10">{{data['cmb.nteckopr.cmbBkNbr']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">直接支付业务模式</el-col><el-col :span="10">{{data['cmb.dcpaymnt.cmbBusMod']}}</el-col>
+					</el-col>
+					<el-col :span="10">
+						  <el-col :span="8" class="right">移动支票业务模式</el-col><el-col :span="10">{{data['cmb.nteckopr.cmbBusMod']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">授权使用人</el-col><el-col :span="10">{{data['cmb.nteckopr.autUSR']}}</el-col>
+					</el-col>
+      			</el-row>
+			</template>
+			<template v-if="data.thirdpaySystemId == 'hf'">
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">APPID</el-col><el-col :span="10">{{data['mer_id']}}</el-col>
+					</el-col>
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">商户号</el-col><el-col :span="10">{{data['mer_cust_id']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">证书文件密码</el-col><el-col :span="10">{{data['pfx_file_pwd']}}</el-col>
+					</el-col>
+      			</el-row>
+				<el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">证书文件路径</el-col><el-col :span="10">{{data['pfx_file_fullname']}}</el-col>
+					</el-col>
+      			</el-row>
+                <el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">对账sftp地址</el-col><el-col :span="10">{{data['rec.hf.sftp.host']}}</el-col>
+					</el-col>
+      			</el-row>
+                <el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">对账sftp端口</el-col><el-col :span="10">{{data['rec.hf.sftp.port']}}</el-col>
+					</el-col>
+      			</el-row>
+                <el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">对账sftp目录</el-col><el-col :span="10">{{data['rec.hf.sftp.dir']}}</el-col>
+					</el-col>
+      			</el-row>
+                <el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">对帐sftp用户名</el-col><el-col :span="10">{{data['rec.hf.sftp.username']}}</el-col>
+					</el-col>
+      			</el-row>
+                <el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">对帐sftp密码</el-col><el-col :span="10">{{data['rec.hf.sftp.password']}}</el-col>
+					</el-col>
+      			</el-row>
+			</template>
+      	</div>
+        <div class="title">支付渠道</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="addChannel">添加支付渠道</el-button>
+        <el-table :data="payUsers">
+            <el-table-column prop="payeruserName" label="支付用户名称"></el-table-column>
+            <el-table-column prop="thirdpayUserId" label="子账户"></el-table-column>
+            <el-table-column prop="amount" label="当前余额（元）">
+				<template slot-scope="scope">
+					{{scope.row.amount | formatMoney}}
+				</template>
+			</el-table-column>
+            <el-table-column prop="memo" label="备注"></el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+					<el-button type="text" @click="editRow(scope.row)">修改</el-button>
+                    <el-button type="text" @click="deleteRow(scope.row)">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+		<div class="page">
+      	    <el-pagination
+      	    background
+      	    layout="prev, pager, next"
+      	    :page-size="form.pageSize"
+      	    :total="total"
+      	    @current-change="query"
+      	    :currentPage="form.pageNo"
+      	    >
+      	  </el-pagination>
+      	</div>
+      </div>
+      <el-dialog title="编辑" :visible.sync="ashow" width="70%">
+          <el-form label-width="180px" :model="eform" :rules="erule" ref="eform">
+			<el-form-item label="渠道别名" prop="channelAlias">
+				<el-input v-model="eform.channelAlias"></el-input>
+			</el-form-item>
+			<el-form-item label="登录帐号" prop="loginAcctno">
+				<el-input v-model="eform.loginAcctno"></el-input>
+			</el-form-item>
+			<el-form-item label="单笔限额（元）" prop="orderLimit">
+				<el-input v-model="eform.orderLimit"></el-input>
+			</el-form-item>
+			<el-form-item label="单日限额（元）" prop="dailyLimit">
+				<el-input v-model="eform.dailyLimit"></el-input>
+			</el-form-item>
+      		<template v-if="eform.thirdpaySystemId == 'changjie'">
+				<el-form-item label="商户号" prop="cj$merchant_id">
+					<el-input v-model="eform.cj$merchant_id"></el-input>
+				</el-form-item>
+				<el-form-item label="我方私钥" prop="cj$merchant_private_key">
+					<el-input v-model="eform.cj$merchant_private_key"></el-input>
+				</el-form-item>
+				<el-form-item label="畅捷公钥" prop="cj$merchant_public_key">
+					<el-input v-model="eform.cj$merchant_public_key"></el-input>
+				</el-form-item>
+			</template>
+			<template v-if="eform.thirdpaySystemId == 'wx'">
+				<el-form-item label="商户号" prop="wx$mchid">
+					<el-input v-model="eform.wx$mchid"></el-input>
+				</el-form-item>
+				<el-form-item label="子商户号" prop="wx$submchid">
+					<el-input v-model="eform.wx$submchid"></el-input>
+				</el-form-item>
+				<el-form-item label="APPID" prop="wx$appid">
+					<el-input v-model="eform.wx$appid"></el-input>
+				</el-form-item>
+				<el-form-item label="WXKEY" prop="wx$key">
+					<el-input v-model="eform.wx$key"></el-input>
+				</el-form-item>
+				<el-form-item label="APIKEY" prop="wx$apikey">
+					<el-input v-model="eform.wx$apikey"></el-input>
+				</el-form-item>
+				<el-form-item label="证书文件路径" prop="wx$certlocalpath">
+					<el-input v-model="eform.wx$certlocalpath"></el-input>
+				</el-form-item>
+				<el-form-item label="证书文件密码" prop="wx$certpassword">
+					<el-input v-model="eform.wx$certpassword"></el-input>
+				</el-form-item>
+				<el-form-item label="通知地址" prop="wx$notify_url">
+					<el-input v-model="eform.wx$notify_url"></el-input>
+				</el-form-item>
+			</template>
+			<template v-if="eform.thirdpaySystemId == 'alipay'">
+				<el-form-item label="APPID" prop="alipay$appid">
+					<el-input v-model="eform.alipay$appid"></el-input>
+				</el-form-item>
+				<el-form-item label="USERID" prop="alipay$userid">
+					<el-input v-model="eform.alipay$userid"></el-input>
+				</el-form-item>
+				<el-form-item label="密钥类型" prop="alipay$rsatype">
+					<el-input v-model="eform.alipay$rsatype"></el-input>
+				</el-form-item>
+				<el-form-item label="商户私钥" prop="alipay$app_private_key">
+					<el-input v-model="eform.alipay$app_private_key"></el-input>
+				</el-form-item>
+				<el-form-item label="支付宝公钥" prop="alipay$alipay_public_key">
+					<el-input v-model="eform.alipay$alipay_public_key"></el-input>
+				</el-form-item>
+                <el-form-item label="MAPI(md5)密钥" prop="alipay$mapi_md5_key">
+                    <el-input v-model="eform.alipay$mapi_md5_key"></el-input>
+                </el-form-item>
+				<el-form-item label="支付宝网关" prop="alipay$gateway">
+					<el-input  v-model="eform.alipay$gateway"></el-input>
+				</el-form-item>
+				<el-form-item label="红包通知地址" prop="alipay$hb$notify_url">
+					<el-input  v-model="eform.alipay$hb$notify_url"></el-input>
+				</el-form-item>
+				<el-form-item label="充值通知地址" prop="alipay$deposit$notify_url">
+					<el-input  v-model="eform.alipay$deposit$notify_url"></el-input>
+				</el-form-item>
+			</template>
+			<template v-if="eform.thirdpaySystemId == 'yjf'">
+				<el-form-item label="APPID" prop="partner_id">
+					<el-input v-model="eform.partner_id"></el-input>
+				</el-form-item>
+				<el-form-item label="密钥类型" prop="signtype">
+					<el-input v-model="eform.signtype"></el-input>
+				</el-form-item>
+                <el-form-item label="密钥" prop="sercurity_key">
+                    <el-input v-model="eform.sercurity_key"></el-input>
+                </el-form-item>
+				<el-form-item label="证书文件密码" prop="pfx_file_pwd">
+					<el-input v-model="eform.pfx_file_pwd"></el-input>
+				</el-form-item>
+				<el-form-item label="证书文件路径" prop="pfx_file_fullname">
+					<el-input v-model="eform.pfx_file_fullname"></el-input>
+				</el-form-item>
+			</template>
+			<template v-if="eform.thirdpaySystemId == 'pingan'">
+				<el-form-item label="主账号" prop="pingan$mainacct$no">
+					<el-input v-model="eform.pingan$mainacct$no"></el-input>
+				</el-form-item>
+				<el-form-item label="主账号名称" prop="pingan$mainacct$name">
+					<el-input v-model="eform.pingan$mainacct$name"></el-input>
+				</el-form-item>
+				<el-form-item label="外联客户号" prop="pingan$outercustcode">
+					<el-input v-model="eform.pingan$outercustcode"></el-input>
+				</el-form-item>
+				<el-form-item label="单笔转账限额" prop="pingan$khkf03$limitamount">
+					<el-input v-model="eform.pingan$khkf03$limitamount"></el-input>
+				</el-form-item>
+				<el-form-item label="影子账户" prop="pingan$yingziacct$no">
+					<el-input v-model="eform.pingan$yingziacct$no"></el-input>
+				</el-form-item>
+				<el-form-item label="影子账户名" prop="pingan$yingziacct$name">
+					<el-input v-model="eform.pingan$yingziacct$name"></el-input>
+				</el-form-item>
+				<el-form-item label="银行名称" prop="pingan$bank$name">
+					<el-input v-model="eform.pingan$bank$name"></el-input>
+				</el-form-item>
+				<el-form-item label="开户银行名称" prop="pingan$depositbank$name">
+					<el-input v-model="eform.pingan$depositbank$name"></el-input>
+				</el-form-item>
+				<el-form-item label="服务器地址" prop="pingan$b2bic$url">
+					<el-input  v-model="eform.pingan$b2bic$url"></el-input>
+				</el-form-item>
+				<el-form-item label="上传路径" prop="pingan$upload$path">
+					<el-input  v-model="eform.pingan$upload$path"></el-input>
+				</el-form-item>
+				<el-form-item label="下载路径" prop="pingan$download$path">
+					<el-input  v-model="eform.pingan$download$path"></el-input>
+				</el-form-item>
+			</template>
+			<template v-if="eform.thirdpaySystemId == 'cmb'">
+				<el-form-item label="用户名" prop="cmb$nteckopr$loginName">
+					<el-input v-model="eform.cmb$nteckopr$loginName"></el-input>
+				</el-form-item>
+				<el-form-item label="主账号" prop="cmb$nteckopr$eacNbr">
+					<el-input v-model="eform.cmb$nteckopr$eacNbr"></el-input>
+				</el-form-item>
+				<el-form-item label="服务器地址" prop="cmb$server">
+					<el-input v-model="eform.cmb$server"></el-input>
+				</el-form-item>
+				<el-form-item label="分行号" prop="cmb$nteckopr$cmbBkNbr">
+					<el-input v-model="eform.cmb$nteckopr$cmbBkNbr"></el-input>
+				</el-form-item>
+				<el-form-item label="直接支付业务模式" prop="cmb$dcpaymnt$cmbBusMod">
+					<el-input v-model="eform.cmb$dcpaymnt$cmbBusMod"></el-input>
+				</el-form-item>
+				<el-form-item label="移动支票业务模式" prop="cmb$nteckopr$cmbBusMod">
+					<el-input v-model="eform.cmb$nteckopr$cmbBusMod"></el-input>
+				</el-form-item>
+				<el-form-item label="授权使用人" prop="cmb$nteckopr$autUSR">
+					<el-input v-model="eform.cmb$nteckopr$autUSR"></el-input>
+				</el-form-item>
+			</template>
+			<template v-if="eform.thirdpaySystemId == 'hf'">
+				<el-form-item label="APPID" prop="mer_id">
+					<el-input v-model="eform.mer_id"></el-input>
+				</el-form-item>
+				<el-form-item label="商户号" prop="mer_cust_id">
+					<el-input v-model="eform.mer_cust_id"></el-input>
+				</el-form-item>
+				<el-form-item label="证书文件密码" prop="pfx_file_pwd">
+					<el-input v-model="eform.pfx_file_pwd"></el-input>
+				</el-form-item>
+				<el-form-item label="证书文件路径" prop="pfx_file_fullname">
+					<el-input v-model="eform.pfx_file_fullname"></el-input>
+				</el-form-item>
+                <el-form-item label="对账sftp地址" prop="rec$hf$sftp$host">
+                    <el-input class="form_input" v-model="eform.rec$hf$sftp$host"></el-input>
+                </el-form-item>
+                <el-form-item label="对账sftp端口" prop="rec$hf$sftp$port">
+                    <el-input class="form_input" v-model="eform.rec$hf$sftp$port"></el-input>
+                </el-form-item>
+                <el-form-item label="对账sftp目录" prop="rec$hf$sftp$dir">
+                    <el-input class="form_input" v-model="eform.rec$hf$sftp$dir"></el-input>
+                </el-form-item>
+                <el-form-item label="对帐sftp用户名" prop="rec$hf$sftp$username">
+                    <el-input class="form_input" v-model="eform.rec$hf$sftp$username"></el-input>
+                </el-form-item>
+                <el-form-item label="对帐sftp密码" prop="rec$hf$sftp$password">
+                    <el-input class="form_input" v-model="eform.rec$hf$sftp$password"></el-input>
+                </el-form-item>
+			</template>
+		  </el-form>
+          <span class="form_footer" slot="footer">
+              <el-button @click="update" type="primary">保存</el-button>
+              <el-button @click="ashow = false" type="warning">关闭</el-button>
+          </span>
+      </el-dialog>
+      <el-dialog :title="`${isEdit ? '修改' : '添加'}支付用户`" :visible.sync="addShow" width="70%">
+          <el-form :model="aform" :rules="arule" label-width="120px" ref="aform">
+              <el-form-item label="用户名" prop="payeruserName">
+				  <el-input v-model="aform.payeruserName" size="small" type="primary"></el-input>
+              </el-form-item>
+              <el-form-item label="子账号" prop="thirdpayUserId" v-if="eform.thirdpaySystemId != 'changjie' && eform.thirdpaySystemId != 'wx'">
+                  <el-input v-model="aform.thirdpayUserId" size="small" type="primary"></el-input>
+              </el-form-item>
+              <el-form-item label="备注" prop="memo">
+                  <el-input v-model="aform.memo" size="small" type="primary"></el-input>
+              </el-form-item>
+          </el-form>
+          <span class="form_footer" slot="footer">
+              <el-button @click="addRow" type="primary">保存</el-button>
+              <el-button @click="addShow = false" type="warning">关闭</el-button>
+          </span>
+      </el-dialog>
+      <el-dialog title="支付渠道" :visible.sync="dshow" width="50%">
+          <el-form label-width="120px">
+            <div class="center">确定 删除 {{curr.payUserName}}？</div>
+          </el-form>
+          <span class="form_footer" slot="footer">
+              <el-button @click="sure" type="primary">确定</el-button>
+              <el-button @click="dshow = false" type="warning">取消</el-button>
+          </span>
+      </el-dialog>
+      <el-dialog title="获取验证码" :visible.sync="cshow" width="70%">
+          <span class="tip">为了保障您的账号安全，请完成一下身份验证。</span>
+          <el-form label-width="150px">
+              <el-form-item label="手机号码：">
+                  {{phone}}
+              </el-form-item>
+              <el-form-item >
+                  <img :src="`${baseUrl}/api/sysmgr-web/verify-codes/gen-captcha?req_id=${req_id}`">
+                  <el-button type="text" style="margin-left: 30px;" @click="createId">刷新</el-button>
+              </el-form-item>
+              <el-form-item label="请输入图形中字符：">
+                  <el-input v-model="chars" style="width: 300px;"></el-input>
+              </el-form-item>
+              <el-form-item label="短信验证码：">
+                  <el-input v-model="phoneCode" style="width: 300px;"></el-input><el-button type="text" style="margin-left: 30px;" @click="getCode">获取验证码</el-button>
+              </el-form-item>
+          </el-form>
+          <span class="form_footer" slot="footer">
+              <el-button @click="submit" type="primary">提交</el-button>
+              <el-button @click="cshow = false" type="warning">关闭</el-button>
+          </span>
+      </el-dialog>
+    </div>
+</template>
+<script>
+import {
+  get,
+  post,
+  formPost,
+  postButNoErrorToast,
+  postWithErrorCallback
+} from "../../store/api";
+var baseUrl = require("../../config/address.js").baseUrl;
+if (!baseUrl) {
+  baseUrl = "";
+}
+export default {
+  data() {
+    return {
+      form: {
+        channelId: "",
+        pageNo: 1,
+        pageSize: 10
+      },
+      erule: {
+        channelAlias: [
+          {
+            required: true,
+            message: "请输入别名",
+            trigger: "blur"
+          },
+          {
+            max: 256,
+            message: '输入过长',
+            trigger: 'blur'
+          }
+        ],
+        loginAcctno: [
+          {
+            required: true,
+            message: "请输入登录账号",
+            trigger: "blur"
+          },
+          {
+            max: 128,
+            message: '输入过长',
+            trigger: 'blur'
+          }
+        ],
+        orderLimit: [
+          {
+            required: true,
+            message: "请输入单笔限额",
+            trigger: "blur"
+          },
+          {
+            pattern: /^(?:[1-9]+\d*|0)$/,
+            message: '请正确输入单笔限额',
+            trigger: "blur"
+          },
+          {
+            max: 20,
+            message: '输入过长',
+            trigger: 'blur'
+          }
+        ],
+        dailyLimit: [
+          {
+            required: true,
+            message: "请输入每日限额",
+            trigger: "blur"
+          },
+          {
+            pattern: /^(?:[1-9]+\d*|0)$/,
+            message: '请正确输入每日限额',
+            trigger: "blur"
+          },
+          {
+            max: 20,
+            message: '输入过长',
+            trigger: 'blur'
+          }
+        ],
+        memo: [
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        cj$merchant_id: [
+            {
+                required: true,
+                message: '请输入商户号',
+                trigger: 'blur'
+            },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        cj$merchant_public_key: [
+            {
+                required: true,
+                message: '请输入私钥',
+                trigger: 'blur'
+            },
+            {
+                max: 2048,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        cj$merchant_private_key: [
+            {
+                required: true,
+                message: '请输入公钥',
+                trigger: 'blur'
+            },
+            {
+                max: 2048,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        wx$mchid: [
+            {
+                required: true,
+                message: '请输入商户号',
+                trigger: 'blur'
+            },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        wx$submchid: [
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        wx$appid: [
+            {
+                required: true,
+                message: '请输入AppId',
+                trigger: 'blur'
+            },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        wx$key: [
+            {
+                required: true,
+                message: '请输入WxKey',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        wx$apikey: [
+            {
+                required: true,
+                message: '请输入ApiKey',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        wx$certlocalpath: [
+            {
+                required: true,
+                message: '请输入证书文件路径',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        wx$certpassword: [
+            {
+                required: true,
+                message: '请输入证书文件密码',
+                trigger: 'blur'
+            },
+            {
+                max: 32,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        wx$notify_url: [
+            // {
+            //     required: true,
+            //     message: '请输入通知地址',
+            //     trigger: 'blur'
+            // },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        alipay$appid: [
+            {
+                required: true,
+                message: '请输入AppId',
+                trigger: 'blur'
+            },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        alipay$userid: [
+            {
+                required: true,
+                message: '请输入UserId',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        alipay$rsatype: [
+            {
+                required: true,
+                message: '请输入密钥类型',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        alipay$app_private_key: [
+            {
+                required: true,
+                message: '请输入私钥',
+                trigger: 'blur'
+            },
+            {
+                max: 2048,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        alipay$alipay_public_key: [
+            {
+                required: true,
+                message: '请输入公钥',
+                trigger: 'blur'
+            },
+            {
+                max: 2048,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        alipay$mapi_md5_key: [
+            {
+                required: true,
+                message: '请输入密钥',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        alipay$gateway: [
+            {
+                required: true,
+                message: '请输入支付宝网关',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        alipay$hb$notify_url: [
+            {
+                required: true,
+                message: '请输入红包通知地址',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        alipay$deposit$notify_url: [
+            {
+                required: true,
+                message: '请输入充值通知地址',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        partner_id: [
+            // {
+            //     required: true,
+            //     message: '请输入商户号',
+            //     trigger: 'blur'
+            // },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        signtype: [
+            {
+                required: true,
+                message: '请输入密钥类型',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        sercurity_key: [
+            {
+                required: true,
+                message: '请输入密钥',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        pfx_file_pwd: [
+            {
+                required: true,
+                message: '请输入密钥文件密码',
+                trigger: 'blur'
+            },
+            {
+                max: 32,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        pfx_file_fullname: [
+            {
+                required: true,
+                message: '请输入密钥文件路径',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        pingan$outercustcode: [
+            {
+                required: true,
+                message: '请输入外联客户号',
+                trigger: 'blur'
+            },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        pingan$mainacct$no: [
+            {
+                required: true,
+                message: '请输入主账号',
+                trigger: 'blur'
+            },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        pingan$mainacct$name: [
+            {
+                required: true,
+                message: '请输入主账号名',
+                trigger: 'blur'
+            },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        pingan$yingziacct$no: [
+            {
+                required: true,
+                message: '请输入影子账户',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        pingan$yingziacct$name: [
+            {
+                required: true,
+                message: '请输入影子账户名',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        pingan$khkf03$limitamount: [
+            {
+                required: true,
+                message: '请输入单笔转账限额',
+                trigger: 'blur'
+            },
+            {
+                pattern: /^(?:[1-9]+\d*|0)$/,
+                message: '请正确输入转账限额',
+                trigger: "blur"
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        pingan$bank$name: [
+            {
+                required: true,
+                message: '请输入银行名称',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        pingan$depositbank$name: [
+            {
+                required: true,
+                message: '请输入开户银行名称',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        pingan$b2bic$url: [
+            {
+                required: true,
+                message: '请输入服务器地址',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        pingan$upload$path: [
+            {
+                required: true,
+                message: '请输入上传路径',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        pingan$download$path: [
+            {
+                required: true,
+                message: '请输入下载路径',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        cmb$server: [
+            {
+                required: true,
+                message: '请输入服务器地址',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        cmb$nteckopr$loginName: [
+            {
+                required: true,
+                message: '请输入登录用户名',
+                trigger: 'blur'
+            },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        cmb$nteckopr$eacNbr: [
+            {
+                required: true,
+                message: '请输入主账号',
+                trigger: 'blur'
+            },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        cmb$nteckopr$cmbBkNbr: [
+            {
+                required: true,
+                message: '请输入分行号',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        cmb$nteckopr$autUSR: [
+            {
+                required: true,
+                message: '请输入授权使用人',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        cmb$dcpaymnt$cmbBusMod: [
+            {
+                required: true,
+                message: '请输入直接支付业务模式',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        cmb$nteckopr$cmbBusMod: [
+            {
+                required: true,
+                message: '请输入移动支票业务模式',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        mer_id: [
+            {
+                required: true,
+                message: '请输入商户号',
+                trigger: 'blur'
+            },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        mer_cust_id: [
+            {
+                required: true,
+                message: '请输入客户号',
+                trigger: 'blur'
+            },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        rec$hf$sftp$host: [
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        rec$hf$sftp$port: [
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        rec$hf$sftp$dir: [
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        rec$hf$sftp$username: [
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        rec$hf$sftp$password: [
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ]
+      },
+      eform: {},
+      appId: "",
+      ashow: false,
+      aform: {
+        channelId: "",
+        memo: "",
+        payeruserName: "",
+        thirdpaySystemId: "",
+        thirdpayUserId: "",
+        userId: ""
+      },
+      arule: {
+          payeruserName: [
+            {
+                required: true,
+                message: '请输入用户名',
+                trigger: 'blur'
+            },
+          ],
+          thirdpayUserId: [
+            {
+                required: true,
+                message: '请输入子账号',
+                trigger: 'blur'
+            },
+          ]
+      },
+      baseUrl: baseUrl,
+      addShow: false,
+      dshow: false,
+      data: [],
+      result: "",
+      types: [],
+      paymentThirdType: "",
+      paymentUserId: "",
+      others: [],
+      curr: {},
+      cshow: false,
+      authCode: "",
+      phone: "",
+      req_id: "",
+      chars: "",
+      phoneCode: "",
+      currEvent: "",
+      id: "",
+      //   channelAlias: '',
+      total: 0,
+      payUsers: [],
+      isEdit: false
+    };
+  },
+  mounted() {
+    this.form.channelId = sessionStorage.getItem("id");
+    this.aform.channelId = this.form.channelId;
+    this.getMsg();
+    this.query();
+    // this.getPhone();
+    // this.createId();
+    // this.authCode = localStorage.getItem("authCode");
+  },
+  methods: {
+    getMsg() {
+      post(
+        `/api/paymentmgt/front/channel/qrydetail?channelId=${
+          this.form.channelId
+        }`
+      ).then(data => {
+        var form = {}
+        for( var k in data ) {
+            var newKey = k.replace(/\./g, '$')
+            form[newKey] = data[k]
+        }
+        this.data = data;
+        this.eform = form;
+        console.log(this.eform);
+        this.aform.thirdpaySystemId = data.thirdpaySystemId;
+        if(this.data.thirdpaySystemId == 'yjf') {
+            if(this.erule.signtype[0].required) {
+                this.erule.signtype.shift()
+            }
+            if(this.erule.sercurity_key[0].required) {
+                this.erule.sercurity_key.shift()
+            }
+            if(this.erule.pfx_file_pwd[0].required) {
+                this.erule.pfx_file_pwd.shift()
+            }
+            if(this.erule.pfx_file_fullname[0].required) {
+                this.erule.pfx_file_fullname.shift()
+            }
+        }
+      });
+    },
+    query() {
+      post("/api/paymentmgt/front/channel/payuser/qrylist", this.form).then(
+        data => {
+          this.payUsers = data.data;
+          this.total = data.total;
+        }
+      );
+    },
+    update() {
+        this.$refs['eform'].validate(valid => {
+            if(valid) {
+                var form = {}
+                for(var k in this.eform) {
+                    var newKey = k.replace(/\$/g, '.')
+                    form[newKey] = this.eform[k]
+                }
+                post("/api/paymentmgt/front/channel/update", form).then(data => {
+                    this.$message({
+                      type: "success",
+                      message: "修改成功！"
+                    });
+                    this.ashow = false;
+                    this.getMsg();
+                });
+            }
+        })
+    },
+    getList() {
+      this.others = [];
+      this.result = "";
+      this.paymentUserId = "";
+      post("/api/sysmgr-web/company-app/query-service-company-payuser", {
+        serviceCompanyId: this.data.serviceCompanyId,
+        thirdPaymentType: this.paymentThirdType
+      }).then(data => {
+        console.log(data);
+        this.others = data;
+      });
+    },
+    pick() {
+      var arr = this.others.filter(e => {
+        return e.payUserId == this.paymentUserId;
+      });
+      console.log(arr);
+      this.result = arr[0];
+    },
+    addChannel() {
+      this.isEdit = false;
+      this.addShow = true;
+      this.paymentThirdType = "";
+      this.paymentUserId = "";
+      this.others = [];
+      this.result = "";
+      this.aform.payeruserName = ''
+      this.aform.thirdpayUserId = ''
+      this.aform.memo = ''
+    },
+    addRow() {
+        this.$refs['aform'].validate(valid => {
+            if(valid) {
+                post(`/api/paymentmgt/front/channel/payuser/${this.isEdit ? "update" : "add"}`, this.aform).then(data => {
+                    this.$message({
+                      type: "success",
+                      message: `${this.isEdit ? "修改" : "添加"}成功！`
+                    });
+                    this.addShow = false;
+                    this.query();
+                });
+            }
+        })
+    },
+    editRow(e) {
+      Object.assign(this.aform, e);
+      delete this.aform.amount;
+      this.isEdit = true;
+      this.addShow = true;
+      console.log(e);
+    },
+    deleteRow(e) {
+      delete e.amount;
+      post(`/api/paymentmgt/front/channel/payuser/delete`, e).then(data => {
+        this.$message({
+          type: "success",
+          message: "删除成功！"
+        });
+        this.query();
+      });
+    },
+    sure() {
+      if (this.authCode) {
+        console.log(this.curr);
+        postWithErrorCallback("/api/sysmgr-web/company-app/del-payment-user", {
+          appId: this.appId,
+          paymentThirdType: this.curr.thirdPaymentType,
+          paymentUserId: this.curr.payUserId,
+          authCode: this.authCode
+        })
+          .then(data => {
+            this.dshow = false;
+            this.$message({
+              type: "success",
+              message: "删除成功"
+            });
+            this.query();
+          })
+          .catch(err => {
+            if (err.message == "无效的授权码！") {
+              this.getAccredit(this.sure);
+            }
+          });
+      } else {
+        this.getAccredit(this.sure);
+      }
+    },
+    getPhone() {
+      post("/api/sysmgr-web/company-app/get-two-step-phone").then(data => {
+        this.phone = data;
+      });
+    },
+    guid() {
+      function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+      }
+      return `${S4()}${S4()}-${S4()}-${S4()}-${S4()}-${S4()}${S4()}${S4()}`;
+    },
+    createId() {
+      this.req_id = this.guid();
+      console.log(this.req_id);
+    },
+    getCode() {
+      if (this.chars) {
+        postWithErrorCallback("/api/sysmgr-web/company-app/send-phone-code", {
+          captcha: this.chars,
+          reqId: this.req_id
+        })
+          .then(data => {
+            console.log(data);
+            this.$message({
+              type: "success",
+              message: "验证码已发送，请注意查收"
+            });
+          })
+          .catch(err => {
+            this.createId();
+          });
+      } else {
+        this.$message({
+          type: "info",
+          message: "请正确输入图片中的字符"
+        });
+      }
+    },
+    getAccredit(a) {
+      if (this.phone) {
+        this.cshow = true;
+        this.currEvent = a;
+      } else {
+        this.$message({
+          type: "error",
+          message: "未绑定手机号码，无法获取权限！"
+        });
+      }
+    },
+    submit() {
+      if (this.phoneCode) {
+        post("/api/sysmgr-web/company-app/get-auth-code-by-phone-code", {
+          phoneCode: this.phoneCode
+        }).then(data => {
+          console.log(data);
+          this.cshow = false;
+          this.authCode = data;
+          localStorage.setItem("authCode", data);
+          if (this.currEvent && typeof this.currEvent == "function") {
+            this.currEvent();
+          }
+        });
+      } else {
+        this.$message({
+          type: "info",
+          message: "请填写验证码后提交"
+        });
+      }
+    }
+  }
+};
+</script>
+<style scoped>
+.r_main {
+  padding: 30px 10px;
+  background-color: #fff;
+}
+.content {
+  margin-left: 30px;
+}
+.form {
+  margin-top: 20px;
+}
+.title {
+  display: inline-block;
+  margin-top: 30px;
+  font-weight: bold;
+}
+.f_input {
+  width: 400px;
+}
+.form_footer > button {
+  margin: 0px 30px;
+}
+.center {
+  text-align: center;
+  font-size: 24px;
+}
+.box {
+  font-size: 14px;
+  padding: 20px;
+  /* background-color: #fff; */
+  color: #909399;
+}
+/* .box > div:nth-child(1) {
+	margin-bottom: 20px;
+} */
+.right {
+  font-weight: bold;
+  text-align: right;
+}
+.page {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-around;
+}
+</style>

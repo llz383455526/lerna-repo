@@ -18,6 +18,13 @@
                     </el-checkbox-group>
                 </el-form-item>
 
+                <el-form-item label="合同类型" prop="tplType" required>
+                    <el-select v-model="templateForm.tplType" placeholder="请选择" style="width:100%;">
+                        <el-option v-for="item in searchOptions.ContractTplType" :key="item.value" :label="item.text"
+                                   :value="item.value"></el-option>
+                    </el-select>
+                </el-form-item>
+
                 <el-form-item label="合同备注" prop="remark">
                     <el-input type="textarea" v-model="templateForm.remark"></el-input>
                 </el-form-item>
@@ -136,7 +143,8 @@
 				searchOptions: {},
                 templateForm: {
 	                contractType: '',
-	                industryTypes: [],
+                    industryTypes: [],
+                    tplType: '',
 	                remark: '',
 	                usage: '',
 	                status: '有效'
@@ -148,6 +156,9 @@
 					industryTypes: [
 						{ type: 'array', required: true, message: '请至少选择一种行业类型', trigger: 'change' }
                     ],
+                    tplType: [
+						{required: true, message: '请选择合同类型', trigger: 'change'}
+					],
                     remark: [
 	                    { required: true, message: '请输入模板备注', trigger: 'blur' },
 	                    // { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
@@ -188,14 +199,15 @@
                     this.templateForm = {
 	                    contractType: result.contractType,
 	                    industryTypes: result.industryTypeNames.split('/'),
+                        tplType:result.tplType,
 	                    remark: result.remark,
-	                    usage: result.usage,
+                        usage: result.usage,
 	                    status: _.find(this.searchOptions.ValidationType, item => item.value === result.status).text
                     }
 		        })
 	        },
 	        getSearchOptions() {
-		        post('/api/sysmgr-web/commom/options?enumTypes=BusinessType,IndustryType,ValidationType', {})
+		        post('/api/sysmgr-web/commom/options?enumTypes=BusinessType,IndustryType,ValidationType,ContractTplType', {})
 			        .then(result => {
 				        this.searchOptions = result
 

@@ -37,6 +37,7 @@ let proxypath = config.dev.proxypath
 let options = {
     target: proxypath,
     changeOrigin: true,
+	cookieDomainRewrite: 'localhost'
 }
 if (context.length) {
     server.use(proxyMiddleware(context, options))

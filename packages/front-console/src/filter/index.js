@@ -17,6 +17,7 @@ Vue.filter('formatTime', (time, format = 'yyyy-MM-dd hh:mm:ss') => {
 	/*time = new Date(time * 1000)*/
 	if(!time) return ''
 	
+	if(typeof time === 'string') time = time.replace(/\-/g, "/")
 	time = new Date(time)
 	
 	let o = {

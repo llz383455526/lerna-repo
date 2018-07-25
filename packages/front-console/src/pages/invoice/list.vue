@@ -2,9 +2,8 @@
     <div class="content">
         <el-form :inline="true">
             <el-form-item label="服务公司" size="small">
-                <el-select v-model="serviceCompanyId" placeholder="请选择开票公司" @change="getCompanyInfo">
-                    <el-option v-for="item in companyList" :key="item.value" :label="item.text"
-                               :value="item.value"></el-option>
+                <el-select v-model="serviceCompanyId" placeholder="查看落地公司剩余票量" @change="getCompanyInfo">
+                    <el-option v-for="item in companyList" :key="item.value" :label="item.text":value="item.value"></el-option>
                 </el-select>
             </el-form-item>
             <div v-if="companyInfo" style="display: inline-block;vertical-align: middle;">
@@ -27,6 +26,11 @@
             <el-form-item label="申请编号" size="small">
                 <el-input v-model="formSearch.orderNo"></el-input>
             </el-form-item>
+            <el-form-item label="开票公司" size="small">
+                <el-select v-model="formSearch.serviceCompanyName" placeholder="请选择开票公司">
+                    <el-option v-for="item in companyList" :key="item.value" :label="item.text":value="item.text"></el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item label="开票金额" size="small">
                 <el-col :span="11">
                     <el-input v-model="formSearch.amountStart"></el-input>
@@ -36,7 +40,6 @@
                     <el-input v-model="formSearch.amountEnd"></el-input>
                 </el-col>
             </el-form-item>
-            <br>
             <el-form-item label="申请状态" size="small">
                 <el-select v-model="formSearch.status" placeholder="请选择" style="width:100%;">
                     <el-option label="全部" value=""></el-option>
@@ -66,30 +69,39 @@
             </el-form-item>
         </el-form>
 
-        <div class="title">发票申请列表
-            <el-button size="small" @click="dialogClientVisible = true;">申请开票</el-button>
-        </div>
-
+        <div class="title">发票申请列表</div>
+        <el-button type="primary" size="small" @click="dialogClientVisible = true;">单张申请</el-button>
+        <router-link to="batchApply">
+            <el-button type="primary" size="small" @click="dialogClientVisible = true;">批量申请</el-button>
+        </router-link>
+        <el-button size="small" style="margin-left: 240px">待审批：{{wait}}</el-button>
         <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
          	<el-table-column label="操作" width="120">
                 <template slot-scope="scope">
-                    <el-button @click="showDetail(scope.row.id)" type="text" size="medium" style="padding:0;">查看详情
-                    </el-button>
+                    <el-button v-if="scope.row.cancelFlag == 0" @click="showDetail(scope.row.id, true)" type="text" size="medium" style="padding:0;">作废</el-button>
                 </template>
             </el-table-column>
-            <el-table-column prop="orderNo" label="申请编号" width="100"></el-table-column>
+            <el-table-column prop="orderNo" label="申请编号" width="100">
+                <template slot-scope="scope">
+                    <el-button size="small" type="text" @click="showDetail(scope.row.id)">{{scope.row.orderNo}}</el-button>
+                </template>
+            </el-table-column>
+            <el-table-column prop="statusName" label="申请状态" width="120"></el-table-column>
             <el-table-column prop="customCompanyName" label="客户名称" width="220"></el-table-column>
+            <el-table-column prop="purpose" label="发票用途" width="220"></el-table-column>
             <el-table-column prop="amount" label="申请金额" width="120"></el-table-column>
-            <el-table-column prop="num" label="待审票数" width="120"></el-table-column>
+            <el-table-column prop="num" label="申请票数" width="120"></el-table-column>
             <el-table-column prop="realAmount" label="实开金额" width="120"></el-table-column>
-            <el-table-column prop="realNum" label="实际开票" width="120"></el-table-column>
+            <el-table-column prop="realNum" label="实开票数" width="120"></el-table-column>
             <el-table-column prop="rejectAmount" label="拒开金额" width="120"></el-table-column>
             <el-table-column prop="rejectNum" label="拒开票数" width="120"></el-table-column>
-            <el-table-column prop="invoiceTypeName" label="发票类型" width="120"></el-table-column>
+            <el-table-column prop="invoiceTypeName" label="发票类型" width="120">
+                <template slot-scope="scope">
+                    <div class="bill common" v-if="scope.row.invoiceTypeName.indexOf('普通') > -1">普票</div>
+                    <div class="bill special" v-else>专票</div>
+                </template>
+            </el-table-column>
             <el-table-column prop="serviceCompanyName" label="开票公司" width="220"></el-table-column>
-            <el-table-column prop="subjectName" label="开票类目" width="120"></el-table-column>
-            <el-table-column prop="purpose" label="发票用途（对内查看使用）" width="220"></el-table-column>
-            <el-table-column prop="remark" label="申请备注（会打印在发票内）" width="220"></el-table-column>
             <el-table-column prop="createByName" label="申请人" width="120"></el-table-column>
             <el-table-column prop="createTime" label="申请时间" width="220">
                 <template slot-scope="scope">
@@ -102,11 +114,12 @@
                     <span>{{scope.row.checkTime | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="statusName" label="申请状态" width="120"></el-table-column>
         </el-table>
+
         <ayg-pagination v-if="tableList.total" :total="tableList.total"
                         v-on:handleSizeChange="handleSizeChange"
-                        v-on:handleCurrentChange="handleCurrentChange" :currentPage="currentPage"></ayg-pagination>
+                        v-on:handleCurrentChange="handleCurrentChange" :currentPage="currentPage">
+        </ayg-pagination>
 
         <el-dialog title="选择发票类型和开票公司" :visible.sync="dialogClientVisible" width="35%">
             <el-form :rules="rulesClient" :model="formClient" ref="formClient">
@@ -159,38 +172,25 @@
                 <span>纳税人识别号:</span>
                 <span>{{formDetail.customTaxIdcd}}</span>
             </div>
-            <div class="detailContext">
-                <span>开户行:</span>
-                <span>{{formDetail.customBankName}}</span>
-            </div>
-            <div class="detailContext">
-                <span>银行账号:</span>
-                <span>{{formDetail.customBankAccount}}</span>
-            </div>
-            <div class="detailContext">
-                <span>地址:</span>
-                <span>{{formDetail.customAddr}}</span>
-            </div>
-            <div class="detailContext">
-                <span>电话:</span>
-                <span>{{formDetail.customPhone}}</span>
-            </div>
-            <div class="detailContext">
-                <span>开票类型:</span>
-                <span>{{formDetail.invoiceTypeName}}</span>
-            </div>
-            <div class="detailContext">
-                <span>备注:</span>
-                <span>{{formDetail.remark}}</span>
-            </div>
-            <div class="detailContext">
-                <span>申请发票数:</span>
-                <span><span class="red">{{formDetail.applyInvoiceNum}}</span>张</span>
-            </div>
-            <div class="detailContext">
-                <span>开票金额合计:</span>
-                <span>{{formDetail.applyInvoiceAmount}}</span>
-            </div>
+            <el-button size="small" type="text" @click="dshow = !dshow">{{dshow ? '收起' : '详情'}}</el-button>
+            <template v-if="dshow">
+                <div class="detailContext">
+                    <span>公司地址:</span>
+                    <span>{{formDetail.customAddr}}</span>
+                </div>
+                <div class="detailContext">
+                    <span>公司电话:</span>
+                    <span>{{formDetail.customPhone}}</span>
+                </div>
+                <div class="detailContext">
+                    <span>开户行名称:</span>
+                    <span>{{formDetail.customBankName}}</span>
+                </div>
+                <div class="detailContext">
+                    <span>账号:</span>
+                    <span>{{formDetail.customBankAccount}}</span>
+                </div>
+            </template>
             <div class="detailContext">
                 <span>剩余票数:</span>
                 <span><span class="red">{{formDetail.leftInvoiceNum}}</span>张</span>
@@ -199,22 +199,42 @@
                 <span>可开票金额:</span>
                 <span class="red">{{formDetail.leftInvoiceAmount}}</span>
             </div>
+            <div class="detailContext">
+                <span>申请发票数:</span>
+                <span><span class="red">{{formDetail.applyInvoiceNum}}</span>张</span>
+            </div>
+            <div class="detailContext">
+                <span>开票类型:</span>
+                <span>{{formDetail.invoiceTypeName}}</span>
+            </div>
+            <div class="detailContext">
+                <span>开票金额合计:</span>
+                <span>{{formDetail.applyInvoiceAmount}}</span>
+            </div>
+            <div class="detailContext">
+                <span>发票用途:</span>
+                <span>{{formDetail.remark}}</span>
+            </div>
 
             <el-table :data="formDetail.items" style="width: 100%;margin-top: 20px;"
                       @selection-change="handleSelectionChange">
-                <el-table-column type="selection" v-if="formDetail.status == '1'"></el-table-column>
+                <el-table-column type="selection" v-if="formDetail.status == '1' && !isCancel"></el-table-column>
                 <el-table-column type="index" :index="indexMethod" width="70"></el-table-column>
-                <!--<el-table-column prop="name" label="名字"></el-table-column>-->
                 <el-table-column prop="subjectName" label="开票类目"></el-table-column>
                 <el-table-column prop="amount" label="开票金额（含税）" width="150"></el-table-column>
                 <el-table-column prop="serviceCompanyName" label="开票公司" width="220"></el-table-column>
                 <el-table-column prop="statusName" label="状态"></el-table-column>
             </el-table>
 
-            <div slot="footer" class="dialog-footer" v-if="formDetail.status == '1'">
-            	<el-button @click="previewForm">生成预览</el-button>
-                <el-button @click="dialogDetailVisible = false;dialogRejectVisible = true;">整单拒开</el-button>
-                <el-button @click="showOpenDialog">提交开票</el-button>
+            <div slot="footer" class="dialog-footer" v-if="formDetail.status == '1' || isCancel">
+            	<el-button size="small" @click="dialogDetailVisible = false">关闭</el-button>
+                <template v-if="!isCancel">
+                    <el-button size="small" @click="dialogDetailVisible = false;dialogRejectVisible = true" v-if="isCan">整单拒开</el-button>
+                    <el-button size="small" type="primary" @click="showOpenDialog" v-if="isCan">审核通过</el-button>
+                </template>
+                <template v-else>
+                    <el-button size="small" type="primary" @click="cancel">申请作废</el-button>
+                </template>
             </div>
         </el-dialog>
 
@@ -245,29 +265,28 @@
                 <el-button @click="dialogOpenVisible=false;submitInvoice();">确认提交</el-button>
             </div>
         </el-dialog>
-
     </div>
 </template>
 
 <script>
     import _ from 'lodash';
     import {post, get} from '../../store/api';
-
+    import {mapGetters} from 'vuex';
     export default {
         name: "list",
         data() {
             return {
                 serviceCompanyId: '',
-
                 companyList: [],
                 companyInfo: '',
-
                 InvoiceState: [],
                 InvoiceType: [],
                 dateValue: '',
                 formSearch: {
                     customCompanyName: '',
+                    serviceCompanyName: '',
                     orderNo: '',
+                    company: '',
                     amountStart: '',
                     amountEnd: '',
                     status: '',
@@ -275,14 +294,11 @@
                     startAt: '',
                     endAt: '',
                 },
-
                 pageSize: 10,
                 currentPage: parseInt(this.$route.query.page) || 1,
                 tableList: [],
-
                 dialogDetailVisible: false,
                 formDetail: {},
-
                 dialogClientVisible: false,
                 formClient: {
                     type: "",
@@ -304,7 +320,6 @@
                         }
                     ]
                 },
-
                 dialogRejectVisible: false,
                 formInvoice: {
                     allReject: false,
@@ -312,14 +327,34 @@
                     memo: '',
                     orderNo: '',
                 },
-
                 ChooseList: [],
                 dialogOpenVisible: false,
                 formOpen: {
                     lengthAll: 0,
                     lengthChoose: 0,
                     amount: 0,
-                }
+                },
+                isCan: false,
+                dshow: false,
+                isCancel: false,
+                wait: 0
+            }
+        },
+        computed: {
+            ...mapGetters({
+                userInformation: 'userInformation'
+            })
+        },
+        mounted() {
+            this.checkRight()
+            get('/api/invoice-web/invoice/applying-invoice-num').then(data => {
+                this.wait = data
+            })
+        },
+        watch: {
+            userInformation() {
+                console.log('w')
+                this.checkRight()
             }
         },
         methods: {
@@ -369,6 +404,7 @@
             resetForm(formName) {
                 this.$refs[formName].resetFields();
                 this.formSearch.customCompanyName = '';
+                this.formSearch.serviceCompanyName = ''
                 this.formSearch.orderNo = '';
                 this.formSearch.amountStart = '';
                 this.formSearch.amountEnd = '';
@@ -385,6 +421,7 @@
                 }
                 let param = {
                     customCompanyName: this.formSearch.customCompanyName,
+                    serviceCompanyName: this.formSearch.serviceCompanyName,
                     orderNo: this.formSearch.orderNo,
                     amountStart: this.formSearch.amountStart,
                     amountEnd: this.formSearch.amountEnd,
@@ -441,9 +478,11 @@
                     }
                 })
             },
-            showDetail(orderNo) {
+            showDetail(orderNo, isCancel) {
                 this.dialogDetailVisible = true;
                 this.formInvoice.orderNo = orderNo;
+                this.isCancel = isCancel
+                console.log(this.isCancel)
 
                 let url = '/api/invoice-web/invoice/get-invoice-approve-info';
                 let param = {
@@ -453,6 +492,67 @@
                 get(url, param).then(data => {
                     self.formDetail = data;
                 })
+            },
+            reject() {
+                this.dialogRejectVisible = true
+                if(!this.ChooseList.length) {
+                    return
+                }
+                this.$confirm('您确认要整单拒批吗？', '确认拒批', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.formInvoice.allReject = true;
+                    this.submitInvoice()
+                }).catch(() => {})
+            },
+            pass() {
+                this.$confirm('您确认审核通过吗？', '确认通过', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.formInvoice.allReject = false;
+                    this.formOpen.lengthAll = this.formDetail.items.length;
+                    this.formOpen.lengthChoose = this.ChooseList.length;
+
+                    let allAmount = 0;
+                    _.foreach(this.formDetail.items, function (item) {
+                        allAmount += item.amount;
+                    });
+
+                    let self = this;
+                    let allAmountMinus = 0;
+                    self.formInvoice.approvedIds = [];
+                    _.foreach(this.ChooseList, function (item) {
+                        allAmountMinus += item.amount;
+                        self.formInvoice.approvedIds.push(item.id);
+                    });
+                    this.formOpen.amount = parseFloat((allAmount - allAmountMinus).toPrecision(12));
+                    this.submitInvoice()
+                }).catch(() => {})
+            },
+            cancel() {
+                this.$confirm('您确认要作废当前申请吗？', '申请作废', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    post('/api/invoice-web/invoice/cancel-invoice-order', {
+                        orderId: this.formInvoice.orderNo 
+                    }).then(() => {
+                        // this.$message({
+                        //     type: 'success',
+                        //     message: '申请成功！'
+                        // })
+                        this.dialogDetailVisible = false
+                        this.requestAction({
+                            page: 1,
+                            pageSize: this.pageSize,
+                        });
+                    })
+                }).catch(() => {})
             },
             showOpenDialog() {
                 this.dialogDetailVisible = false;
@@ -484,6 +584,7 @@
                 });
             },
             submitInvoice() {
+                this.dialogDetailVisible = false
                 let url = '/api/invoice-web/invoice/invoice-approve-submit';
                 let param = this.formInvoice;
                 let self = this;
@@ -494,6 +595,15 @@
                     });
                 })
             },
+            checkRight() {
+                console.log('1')
+                this.userInformation && this.userInformation.roles.forEach(e => {
+                    console.log(e.name)
+                    if(e.name == "发票管理员" || e.name == "开票审批") {
+                        this.isCan = true
+                    }
+                })
+            }
         },
         created() {
             this.requestAction({
@@ -536,5 +646,17 @@
         text-align: right;
         width: 100px;
         vertical-align: top;
+    }
+    .bill {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 5px;
+        color: #fff;
+    }
+    .common {
+        background-color:  #6BDDA2;
+    }
+    .special {
+        background-color: #63D1F2;
     }
 </style>

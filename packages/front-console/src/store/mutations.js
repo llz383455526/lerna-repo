@@ -19,6 +19,8 @@ function resetState(state, moduleState) {
 const mutations = {
 
     [types.LOGIN_ACTION](state, payload) {
+        window.localStorage.setItem('userProfiles', payload.userProfiles[0].id)
+        document.cookie = `x-sec-profile=${payload.userProfiles[0].id}`
         state.userInformation = payload;
     },
     [types.LOGOUT_ACTION](state, payload) {
@@ -101,7 +103,10 @@ const mutations = {
 		for (const moduleState in state) {
 			resetState(state, moduleState)
 		}
-	}
+    },
+    [types.SET_UPLOAD_FILE](state, payload) {
+    	state.uploadFile = payload
+	},
 	
 }
 
