@@ -54,10 +54,8 @@
                         </el-radio-group>
                     </el-col>
                     <el-col :span="8">
-                        <el-select v-model="settleExpDay" placeholder="请选择" style="width: 100%;"
-                                   :disabled="showSelectExpDay">
-                            <el-option v-for="item in options" :key="item.value" :label="item.label"
-                                       :value="item.value"></el-option>
+                        <el-select v-model="settleExpDay" placeholder="请选择" style="width: 100%;" :disabled="showSelectExpDay">
+                            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
                         </el-select>
                     </el-col>
                 </el-row>
@@ -68,18 +66,14 @@
                         </el-radio-group>
                     </el-col>
                     <el-col :span="8">
-                        <el-select v-model="settleExpStart" placeholder="请选择" style="width: 100%;"
-                                   :disabled="showSelectExpStart">
-                            <el-option v-for="item in options" :key="item.value" :label="item.label"
-                                       :value="item.value"></el-option>
+                        <el-select v-model="settleExpStart" placeholder="请选择" style="width: 100%;" :disabled="showSelectExpStart">
+                            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
                         </el-select>
                     </el-col>
                     <el-col class="line" :span="2">-</el-col>
                     <el-col :span="8">
-                        <el-select v-model="settleExpEnd" placeholder="请选择" style="width: 100%;"
-                                   :disabled="showSelectExpStart">
-                            <el-option v-for="item in options" :key="item.value" :label="item.label"
-                                       :value="item.value"></el-option>
+                        <el-select v-model="settleExpEnd" placeholder="请选择" style="width: 100%;" :disabled="showSelectExpStart">
+                            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
                         </el-select>
                     </el-col>
                 </el-row>
@@ -104,8 +98,7 @@
                         </el-input>
                     </el-col>
                     <el-col :span="1" style="text-align: right;">
-                        <i class="el-icon-question" title="表示按照固定金额来收取服务费。
-计算公式：固定收费金额 = 服务费"></i>
+                        <i class="el-icon-question" title="表示按照固定金额来收取服务费。计算公式：固定收费金额 = 服务费"></i>
                     </el-col>
                 </el-row>
                 <el-row class="mb15">
@@ -121,8 +114,7 @@
                         </el-input>
                     </el-col>
                     <el-col :span="1" style="text-align: right;">
-                        <i class="el-icon-question" title="表示按照固定比例来收取服务费。
-计算公式：实发发金额 * 收费比例 = 服务费"></i>
+                        <i class="el-icon-question" title="表示按照固定比例来收取服务费。计算公式：实发发金额 * 收费比例 = 服务费"></i>
                     </el-col>
                 </el-row>
                 <el-row>
@@ -143,8 +135,7 @@
                         </el-input>
                     </el-col>
                     <el-col :span="1" style="text-align: right;">
-                        <i class="el-icon-question" title="表示按照固定比例来收取服务费。
-计算公式：实发发金额 * 收费比例 = 服务费"></i>
+                        <i class="el-icon-question" title="表示按照固定比例来收取服务费。计算公式：实发发金额 * 收费比例 = 服务费"></i>
                     </el-col>
                 </el-row>
                 <el-row class="mb15" v-show="contractForm.settleType == 'month'">
@@ -177,16 +168,16 @@
         </el-form>
         <el-form :model="invoiceForm" :rules="irule" label-width="200px" class="demo-contractForm" ref="invoice">
             <h4 class="ml50 mt50">发票信息</h4>
-            <el-form-item label="开票类型" prop="openInvoiceType" required>
+            <el-form-item label="开票类型" prop="openInvoiceType">
                 <el-select v-model="invoiceForm.openInvoiceType" placeholder="请选择" style="width:100%;">
                     <el-option v-for="item in invoiceType" :key="item.value" :label="item.text" :value="item.value"></el-option>
                 </el-select>
                 <!-- <el-input v-model="invoiceForm.openInvoiceType"></el-input> -->
             </el-form-item>
-            <el-form-item label="公司名称" prop="name" required>
+            <el-form-item label="公司名称" prop="name">
                 <el-input v-model="invoiceForm.name"></el-input>
             </el-form-item>
-            <el-form-item label="纳税人识别号" prop="taxIdcd" required>
+            <el-form-item label="纳税人识别号" prop="taxIdcd">
                 <el-input v-model="invoiceForm.taxIdcd"></el-input>
             </el-form-item>
             <el-form-item label="地址" prop="addr">
@@ -299,25 +290,25 @@
             return {
                 rules: {
                     customerName: [
-                        {required: true, message: '请输入客户名称', trigger: 'change'}
+                        {required: true, message: '请输入客户名称', trigger: 'blur'}
                     ],
                     serviceCompanyName: [
-                        {required: true, message: '请输入公司名称', trigger: 'change'}
+                        {required: true, message: '请输入公司名称', trigger: 'blur'}
                     ],
                     serviceCompanyId: [
-                        {required: true, message: '请输入服务商名称', trigger: 'change'}
+                        {required: true, message: '请输入服务商名称', trigger: 'blur'}
                     ],
                     cotractType: [
-                        {required: true, message: '请选择合同类型', trigger: 'change'}
+                        {required: true, message: '请选择合同类型', trigger: 'blur'}
                     ],
                     settleType: [
-                        {required: true, message: '请选择结算方式', trigger: 'change'}
+                        {required: true, message: '请选择结算方式', trigger: 'blur'}
                     ],
                     settleExp: [
-                        {validator: validatorSettleExp, trigger: 'change'}
+                        {validator: validatorSettleExp, trigger: 'blur'}
                     ],
                     invoiceType: [
-                        {required: true, message: '请选择发票类型', trigger: 'change'}
+                        {required: true, message: '请选择发票类型', trigger: 'blur'}
                     ],
                     serviceFee: [
                         {type: 'number', required: true, message: '请输入正确的服务费收费', trigger: 'blur'}
@@ -390,7 +381,7 @@
                 ],
                 contractForm: {
                     type: 'customer',
-                    serviceFeeType: 'ratio',
+                    serviceFeeType: 'fixed',
                     serviceFee: '',
                     settleExp: '',
                     serviceFeeRate: '',
@@ -424,7 +415,7 @@
                 },
                 irule: {
                     openInvoiceType: [
-                        {required: true, message: '请输入公司名称', trigger: 'blur'}
+                        {required: true, message: '请输入开票类型', trigger: 'blur'}
                     ],
                     name: [
                         {required: true, message: '请输入公司名称', trigger: 'blur'}
@@ -484,11 +475,20 @@
                     id: id
                 }).then(data => {
                     if(data) {
-                        this.invoiceForm = data
+                        // this.invoiceForm = data
+                        for (var k in this.invoiceForm) {
+                            if(data[k]) {
+                                this.invoiceForm[k] = data[k]
+                            }
+                        }
                     }
                     else {
+                        for (var k in this.invoiceForm) {
+                            this.invoiceForm[k] = ''
+                        }
                         this.invoiceForm.id = id
                     }
+                    this.$refs['invoice'].clearValidate()
                 })
             },
             getType() {
@@ -756,7 +756,7 @@
             handleBeforeUpload(file) {
                 var AllImgExt = ".doc|.docx|.pdf";
                 var extName = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();//（把路径中的所有字母全部转换为小写）
-                if (AllImgExt.indexOf(extName + "|") == -1) {
+                if (AllImgExt.indexOf(extName) == -1) {
                     showNotify('error', '文件类型错误');
                     return false;
                 }
