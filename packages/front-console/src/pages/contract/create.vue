@@ -9,13 +9,13 @@
                 <input v-model="contractForm.referIds">
             </el-form-item>
             <el-form-item label="客户名称" prop="customerName" placeholder="请输入内容">
-                <el-select v-model="contractForm.customerName" placeholder="请选择" @change="getInvoice" style="width:100%;">
+                <el-select v-model="contractForm.customerName" filterable placeholder="请选择" @change="getInvoice" style="width:100%;">
                     <el-option v-for="item in customerCompaniesList" :key="item.companyId" :label="item.companyName"
                                :value="item.companyName"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="服务商名称" prop="serviceCompanyName" placeholder="请输入内容">
-                <el-select v-model="contractForm.serviceCompanyName" placeholder="请选择" style="width:100%;">
+                <el-select v-model="contractForm.serviceCompanyName" filterable placeholder="请选择" style="width:100%;">
                     <el-option v-for="item in serviceCompaniesList" :key="item.companyId" :label="item.companyName"
                                :value="item.companyName"></el-option>
                 </el-select>

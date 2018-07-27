@@ -74,7 +74,7 @@
         <router-link to="batchApply">
             <el-button type="primary" size="small" @click="dialogClientVisible = true;">批量申请</el-button>
         </router-link>
-        <el-button size="small" style="margin-left: 240px">待审批：{{wait}}</el-button>
+        <el-button size="small" style="margin-left: 240px" @click="isWait">待审批：{{wait}}</el-button>
         <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
          	<el-table-column label="操作" width="120">
                 <template slot-scope="scope">
@@ -595,14 +595,19 @@
                     });
                 })
             },
-            checkRight() {
-                console.log('1')
-                this.userInformation && this.userInformation.roles.forEach(e => {
-                    console.log(e.name)
-                    if(e.name == "发票管理员" || e.name == "开票审批") {
-                        this.isCan = true
-                    }
-                })
+            // checkRight() {
+            //     console.log('1')
+            //     this.userInformation && this.userInformation.roles.forEach(e => {
+            //         console.log(e.name)
+            //         if(e.name == "发票管理员" || e.name == "开票审批") {
+            //             this.isCan = true
+            //         }
+            //     })
+            // },
+            isWait() {
+                this.resetForm('formSearch')
+                this.formSearch.status = '1'
+                this.search()
             }
         },
         created() {
