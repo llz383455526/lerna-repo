@@ -347,9 +347,7 @@
         },
         mounted() {
             this.checkRight()
-            get('/api/invoice-web/invoice/applying-invoice-num').then(data => {
-                this.wait = data
-            })
+            this.getWait()
         },
         watch: {
             userInformation() {
@@ -358,6 +356,11 @@
             }
         },
         methods: {
+            getWait() {
+                get('/api/invoice-web/invoice/applying-invoice-num').then(data => {
+                    this.wait = data
+                })
+            },
             indexMethod(index) {
                 return '发票' + parseInt(index + 1);
             },
@@ -551,6 +554,7 @@
                             page: 1,
                             pageSize: this.pageSize,
                         });
+                        this.getWait()
                     })
                 }).catch(() => {})
             },
@@ -593,6 +597,7 @@
                         page: 1,
                         pageSize: self.pageSize,
                     });
+                    this.getWait()
                 })
             },
             // checkRight() {
