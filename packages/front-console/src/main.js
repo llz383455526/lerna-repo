@@ -117,9 +117,10 @@ Vue.prototype.$notify = Notification
 Vue.prototype.$confirm = MessageBox.confirm
 Vue.prototype.$alert = MessageBox.alert
 Vue.prototype.$message = Message
-Vue.prototype.checkRight = function(url) {
-    if(this.permissions) {
-        return url in this.permissions
+Vue.prototype.checkRight = function(permissions, url) {
+    console.log(permissions)
+    if(permissions) {
+        return url in permissions
     }
     else {
         return false

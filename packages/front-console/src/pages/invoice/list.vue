@@ -342,17 +342,20 @@
         },
         computed: {
             ...mapGetters({
-                userInformation: 'userInformation'
+                permissions: 'permissions'
             })
         },
         mounted() {
-            this.checkRight()
+            if(this.permissions) {
+                this.isCan = this.checkRight(this.permissions, 'invoice-web:/invoice/invoice-approve-submit')
+            }
             this.getWait()
         },
         watch: {
-            userInformation() {
-                console.log('w')
-                this.checkRight()
+            permissions() {
+                console.log('right')
+                this.isCan = this.checkRight(this.permissions, 'invoice-web:/invoice/invoice-approve-submit')
+                console.log(this.isCan)
             }
         },
         methods: {

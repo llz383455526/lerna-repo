@@ -24,7 +24,7 @@ module.exports = {
         context: [ //代理路径
 	        '/api'
         ],
-        proxypath: 'http://openadmintest94.aiyuangong.com',
+        proxypath: 'https://openadmintest.aiyuangong.com',
         cssSourceMap: false
     }
 }
