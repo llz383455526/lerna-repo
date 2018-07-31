@@ -496,11 +496,11 @@ export default {
             }
         ],
         alipay$mapi_md5_key: [
-            {
-                required: true,
-                message: '请输入密钥',
-                trigger: 'blur'
-            },
+            // {
+            //     required: true,
+            //     message: '请输入密钥',
+            //     trigger: 'blur'
+            // },
             {
                 max: 512,
                 message: '输入过长',
