@@ -201,7 +201,7 @@
                     :before-upload="handleBeforeUpload"
                     :http-request="hanldleHttpRequest"
                     multiple
-                    accept=".pdf,.doc,.docx"
+                    accept=".pdf,.doc,.docx,.jpg,.png,.gif"
                     :show-file-list=false
                     :file-list="fileList">
                 <el-button size="small" type="primary">点击上传</el-button>
@@ -754,7 +754,7 @@
                 }
             },
             handleBeforeUpload(file) {
-                var AllImgExt = ".doc|.docx|.pdf";
+                var AllImgExt = ".doc|.docx|.pdf|.jpg|.png|.gif";
                 var extName = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();//（把路径中的所有字母全部转换为小写）
                 if (AllImgExt.indexOf(extName) == -1) {
                     showNotify('error', '文件类型错误');
