@@ -18,7 +18,7 @@
           </el-form-item>
           <el-form-item label="商户类型" prop="isFromOutApp">
 			  <el-radio v-model="form.isFromOutApp" label="1">API对接</el-radio>
-  			  <el-radio v-model="form.isFromOutApp" label="0">SASS系统</el-radio>
+  			  <el-radio v-model="form.isFromOutApp" label="0">SAAS系统</el-radio>
           </el-form-item>
 		  <el-form-item label="企业负责人" prop="chargeBy" size="small">
               <el-select v-model="form.chargeBy" class="form_input" @change="getName">
