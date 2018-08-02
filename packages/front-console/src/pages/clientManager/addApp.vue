@@ -16,9 +16,9 @@
           <el-form-item label="appId" prop="appId" size="small">
               <el-input class="form_input" v-model="form.appId"></el-input>
           </el-form-item>
-          <el-form-item label="是否为外部App" prop="isFromOutApp">
-			  <el-radio v-model="form.isFromOutApp" label="1">外部</el-radio>
-  			  <el-radio v-model="form.isFromOutApp" label="0">内部</el-radio>
+          <el-form-item label="商户类型" prop="isFromOutApp">
+			  <el-radio v-model="form.isFromOutApp" label="1">API对接</el-radio>
+  			  <el-radio v-model="form.isFromOutApp" label="0">SASS系统</el-radio>
           </el-form-item>
 		  <el-form-item label="企业负责人" prop="chargeBy" size="small">
               <el-select v-model="form.chargeBy" class="form_input" @change="getName">
