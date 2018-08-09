@@ -50,7 +50,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="请求起止时间:" size="small">
-                <el-date-picker v-model="dateValue" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+                <el-date-picker v-model="dateValue" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" @change="getTime_req"></el-date-picker>
             </el-form-item>
 			<el-form-item label="发放时间:" size="small">
                 <el-date-picker v-model="paymentResTime" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
@@ -79,7 +79,7 @@
                 <el-table-column prop="outOrderNo" label="客户订单号" width="120"></el-table-column>
                 <el-table-column prop="serviceCompanyName" label="服务公司" width="140"></el-table-column>
                 <el-table-column prop="paymentThirdTypeName" label="发放渠道" width="80"></el-table-column>
-                <el-table-column prop="sourceTypeName" label="发放方式" width="80"></el-table-column>sourceTypeName
+                <el-table-column prop="sourceTypeName" label="发放方式" width="80"></el-table-column>
                 <el-table-column prop="paymentThirdTradeNo" label="渠道交易流水号" width="120"></el-table-column>
                 <el-table-column prop="createAt" label="请求时间" width="160">
                     <template slot-scope="scope">

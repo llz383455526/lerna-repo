@@ -10,8 +10,7 @@
             </el-form-item>
             <el-form-item label="结算周期" size="small" prop="settleType">
                 <el-select v-model="formSearch.settleType" placeholder="请选择" style="width:100%;">
-                    <el-option v-for="item in options" :key="item.value" :label="item.text"
-                               :value="item.value"></el-option>
+                    <el-option v-for="item in options" :key="item.value" :label="item.text" :value="item.value"></el-option>
                 </el-select>
             </el-form-item>
             <br>

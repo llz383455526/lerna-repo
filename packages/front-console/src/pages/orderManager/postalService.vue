@@ -15,12 +15,10 @@
                 {{msg.createByName}} 创建于 {{msg.createAt}}
             </div>
         </div>
-        <el-steps id="steps" :active="4" align-center size="small">
-            <el-step title="提交订单"></el-step>
+        <el-steps id="steps" :active="2" align-center size="small">
             <el-step title="支付费用"></el-step>
-            <el-step title="服务商受理"></el-step>
-            <el-step title="业务办理"></el-step>
-            <el-step title="订单完成"></el-step>
+            <el-step title="执行发放"></el-step>
+            <el-step title="查看结果"></el-step>
         </el-steps>
         <div id="orderCost">
             <div class="mtitle">
@@ -52,9 +50,21 @@
             </div>
             <el-table :data="result">
                 <el-table-column label="总人数" prop="totalCount"></el-table-column>
-                <el-table-column label="发放中" prop="procCount"></el-table-column>
-                <el-table-column label="发放成功" prop="successCount"></el-table-column>
-                <el-table-column label="发放失败" prop="failCount"></el-table-column>
+                <el-table-column label="发放中" prop="procCount">
+                    <template slot-scope="scope">
+                        {{scope.row.procCount}}笔 {{scope.row.procAmount | formatMoney}}
+                    </template>
+                </el-table-column>
+                <el-table-column label="发放成功" prop="successCount">
+                    <template slot-scope="scope">
+                        {{scope.row.successCount}}笔 {{scope.row.successAmount | formatMoney}}
+                    </template>
+                </el-table-column>
+                <el-table-column label="发放失败" prop="failCount">
+                    <template slot-scope="scope">
+                        {{scope.row.failCount}}笔 {{scope.row.failAmount | formatMoney}}
+                    </template>
+                </el-table-column>
             </el-table>
         </div> 
         <div id="detail">
@@ -80,7 +90,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-button size="small" @click="query">查询</el-button>
+                    <el-button size="small" type="primary" @click="query">查询</el-button>
                     <el-button size="small" @click="reset('query')">清空所有条件</el-button>
                 </el-form-item>
             </el-form>
@@ -89,7 +99,7 @@
                 <el-table-column label="收款方账号名称" prop="accountName"></el-table-column>
                 <el-table-column label="身份证" prop="idCard"></el-table-column>
                 <el-table-column label="收款方账号" prop="accountNo"></el-table-column>
-                <el-table-column label="开户行" prop="depositBank"></el-table-column>
+                <!-- <el-table-column label="开户行" prop="depositBank"></el-table-column> -->
                 <el-table-column label="款项属性备注" prop="fund"></el-table-column>
                 <el-table-column label="实发金额">
                     <template slot-scope="scope">

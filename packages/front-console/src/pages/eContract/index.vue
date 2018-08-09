@@ -75,6 +75,7 @@
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="search" size="small">查询</el-button>
                 <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
+                <el-button size="small" @click="download" class="btn">导出xls</el-button>
             </el-form-item>
         </el-form>
 
@@ -187,6 +188,20 @@
 			this.getList()
 		},
 		methods: {
+            download() {
+                var url = '', isFirst = true
+                for(var k in this.formSearch) {
+                    if(isFirst) {
+                        isFirst = false
+                        url += `?${k}=${this.formSearch[k]}`
+                    }
+                    else {
+                        url += `&${k}=${this.formSearch[k]}`
+                    }
+                    console.log(url)
+                }
+                window.open(`/api/econtract/inner/export${url}`)
+	        },
 			getOrderStateList() {
 				get('/api/econtract/order/statelist', {})
 					.then(result => {

@@ -21,7 +21,7 @@ const store = {
     actions: {
         getPayOrderState({commit}) {
             get('/api/console-dlv/option/get-by-type', {
-                type: 'PayOrderState'
+                type: 'SalaryOrderItemState'
             }).then(data => {
                 commit('setPayOrderState', data)
             })

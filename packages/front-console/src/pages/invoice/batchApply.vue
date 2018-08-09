@@ -164,7 +164,7 @@ export default {
     },
     progress() {
         this.frame = requestAnimationFrame(this.progress)
-		if(this.isEnd && (!this.date || this.date < new Date().getTime() - 200)) {
+		if(this.isEnd && (!this.date || this.date < new Date().getTime() - 1000)) {
             this.isEnd = false
 			post('/api/sysmgr-web/file/progress', {
 				id: this.referId

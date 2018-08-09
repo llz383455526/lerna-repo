@@ -12,7 +12,7 @@
                 </el-autocomplete>
             </el-form-item>
             <el-form-item size="small">
-                <el-radio-group v-model="formSearch.billType">
+                <el-radio-group v-model="formSearch.billType" @change="search">
                     <el-radio label="month">月账单</el-radio>
                 </el-radio-group>
             </el-form-item>
@@ -25,7 +25,7 @@
                 </el-date-picker>
             </el-form-item>
             <el-form-item size="small">
-                <el-radio-group v-model="formSearch.billType">
+                <el-radio-group v-model="formSearch.billType" @change="search">
                     <el-radio label="day">日账单</el-radio>
                 </el-radio-group>
             </el-form-item>
@@ -37,6 +37,11 @@
                         value-format="yyyy-MM-dd">
                 </el-date-picker>
             </el-form-item>
+            <el-form-item label="服务商名称" size="small" prop="serviceCompanyId">
+                <el-select v-model="formSearch.serviceCompanyId" placeholder="请选择">
+                    <el-option v-for="item in serviceCompanies" :label="item.companyName" :value="item.companyId" :key="item.companyId"></el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="search" size="small">查询</el-button>
                 <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
@@ -44,36 +49,42 @@
         </el-form>
         <el-table :data="tableData.list">
             <el-table-column prop="appName" label="客户名称"></el-table-column>
-            <el-table-column prop="settleDate" label="记账时间">
+            <el-table-column prop="settleDate" label="入账时间">
                 <template slot-scope="scope">
                     <span v-if="scope.row.billType === 'month'">{{scope.row.settleDate | formatTime('yyyy-MM')}}</span>
                     <span v-if="scope.row.billType === 'day'">{{scope.row.settleDate | formatTime('yyyy-MM-dd')}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="发放统计">
+            <el-table-column prop="serviceCompanyName" label="服务商名称"></el-table-column>
+            <el-table-column prop="settleTypeName" label="结算方式"></el-table-column>
+            <el-table-column label="计费标准" prop="serviceFeeName">
+                <!-- <template slot-scope="scope">
+                    <span>{{scope.row.serviceFeeType == 'ratio' ? '发放金额 *' + scope.row.serviceFeeRate + '%' : scope.row.serviceFeeRate + '元/笔'}} </span>
+                </template> -->
+            </el-table-column>
+            <el-table-column label="计费依据">
                 <template slot-scope="scope">
                     <div>发放成功金额 {{scope.row.amount}}</div>
-                    <div>发放成功笔数 {{scope.row.count}}</div>
-                </template>
-            </el-table-column>
-            <el-table-column label="服务费收取标准">
-                <template slot-scope="scope">
-                    <span>{{scope.row.serviceFeeType == 'ratio' ? '发放金额 *' + scope.row.serviceFeeRate + '%' : scope.row.serviceFeeRate + '元/笔'}} </span>
+                    <div>发放成功笔数 {{scope.row.count}}笔</div>
                 </template>
             </el-table-column>
             <el-table-column prop="serviceFee" label="服务费金额"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button @click="handleDownload(scope.row.appId, scope.row.billType, scope.row.settleDate)"
-                               type="text" size="medium" style="padding:0;">
+                    <el-button type="text" size="medium" @click="handleDownload(scope.row)" v-if="scope.row.reconciled != '0'">
                         账单下载
                     </el-button>
+                    <div v-else>未出帐</div>
                 </template>
             </el-table-column>
         </el-table>
-        <ayg-pagination v-if="tableData.total" :total="tableData.total"
-                        v-on:handleSizeChange="handleSizeChange"
-                        v-on:handleCurrentChange="handleCurrentChange" :currentPage="currentPage"></ayg-pagination>
+        <ayg-pagination 
+            v-if="tableData.total"
+            :total="tableData.total"
+            v-on:handleSizeChange="handleSizeChange"
+            v-on:handleCurrentChange="handleCurrentChange"
+            :currentPage="currentPage">
+        </ayg-pagination>
     </div>
 </template>
 
@@ -88,6 +99,7 @@
             return {
                 formSearch: {
                     appId: '',
+                    serviceCompanyId: '',
                     billType: 'month',
                     startAt: '',
                     endAt: '',
@@ -99,6 +111,7 @@
                 appName: '',
                 pageSize: 10,
                 tableData: [],
+                serviceCompanies: []
             }
         },
         methods: {
@@ -165,6 +178,7 @@
                     endAt: endAt,
                     appId: this.formSearch.appId,
                     billType: this.formSearch.billType,
+                    serviceCompanyId: this.formSearch.serviceCompanyId,
                     page: pageInfo.page,
                     pageSize: pageInfo.pageSize,
                 };
@@ -172,12 +186,11 @@
                     this.tableData = data;
                 })
             },
-            handleDownload(appId, billType, settledTime) {
-                console.log(settledTime)
-                settledTime = formatTime(settledTime, 'yyyy-MM-dd');
+            handleDownload(a) {
+                var settledTime = formatTime(a.settleDate, 'yyyy-MM-dd');
                 window.location.href = baseUrl + '/api/console-dlv/settled/service-free-order-download'
-                    + '?appId=' + appId + '&billType=' + billType
-                    + '&settledTime=' + settledTime;
+                    + '?appId=' + a.appId + '&billType=' + a.billType
+                    + '&settledTime=' + settledTime + (this.formSearch.billType == 'month' ? '&settledOrderServiceFeeNpttMonthId=' + a.id : '&settledOrderServiceFeeNpttId=' + a.id)
             },
             handleSizeChange(value) {
                 this.pageSize = value;
@@ -195,12 +208,19 @@
                     pageSize: this.pageSize,
                 });
             },
+            getServiceCompany() {
+        	    get('/api/console-dlv/option/get-option-service-companies')
+                    .then(result => {
+                    	this.serviceCompanies = result
+                    })
+            }
         },
         created() {
             this.requestAction({
                 page: 1,
                 pageSize: this.pageSize,
             });
+            this.getServiceCompany()
             this.getAllApp();
         }
     }

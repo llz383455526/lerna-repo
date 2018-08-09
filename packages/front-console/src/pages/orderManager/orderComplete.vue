@@ -15,12 +15,10 @@
                 {{msg.createByName}} 创建于 {{msg.createAt}}
             </div>
         </div>
-        <el-steps id="steps" :active="5" align-center size="small">
-            <el-step title="提交订单"></el-step>
+        <el-steps id="steps" :active="3" align-center size="small">
             <el-step title="支付费用"></el-step>
-            <el-step title="服务商受理"></el-step>
-            <el-step title="业务办理"></el-step>
-            <el-step title="订单完成"></el-step>
+            <el-step title="执行发放"></el-step>
+            <el-step title="查看结果"></el-step>
         </el-steps>
         <div id="orderCost">
             <div class="mtitle">
@@ -80,7 +78,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-button size="small" @click="query">查询</el-button>
+                    <el-button size="small" type="primary" @click="query">查询</el-button>
                     <el-button size="small" @click="reset('query')">清空所有条件</el-button>
                 </el-form-item>
             </el-form>
@@ -89,7 +87,7 @@
                 <el-table-column label="收款方账号名称" prop="accountName"></el-table-column>
                 <el-table-column label="身份证" prop="idCard"></el-table-column>
                 <el-table-column label="收款方账号" prop="accountNo"></el-table-column>
-                <el-table-column label="开户行" prop="depositBank"></el-table-column>
+                <!-- <el-table-column label="开户行" prop="depositBank"></el-table-column> -->
                 <el-table-column label="款项属性备注" prop="fund"></el-table-column>
                 <el-table-column label="实发金额">
                     <template slot-scope="scope">
@@ -109,7 +107,7 @@
                 :currentPage="form.page">
             </ayg-pagination>
         </div>
-        <div id="list">
+        <!-- <div id="list">
             <div>
                 <div class="mtitle">订单发放明细表</div>
                 <span>[薪酬发放] [{{data.id}}].xls</span>
@@ -120,7 +118,7 @@
                 <span>[薪酬发放] [{{data.id}}].xls</span>
                 <a target="_bank" :href="`${baseUrl}/api/console-dlv/company/salary-online-order/download-original-item-details?orderId=${form.orderId}`"><el-button type="text">点击下载</el-button></a>
             </div>
-        </div>
+        </div> -->
         <!-- <el-dialog title="选择发放委托方" :visible.sync="show">
             <div class="dtitle">发放委托方</div>
             <el-radio v-model="clientId" :label="1">西瓜小视频-爱洋发放</el-radio>

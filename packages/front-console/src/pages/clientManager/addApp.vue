@@ -162,6 +162,7 @@ export default {
       console.log(data);
       this.charges = data;
     });
+    this.authCode = localStorage.getItem('authCode')
   },
   methods: {
     back() {

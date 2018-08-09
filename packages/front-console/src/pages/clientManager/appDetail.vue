@@ -19,7 +19,7 @@
 					  <el-col :span="8" class="right">商户名称</el-col><el-col :span="10">{{data.appName}}</el-col>
 				</el-col>
       		    <el-col :span="10">
-					  <el-col :span="8" class="right">Company ID</el-col><el-col :span="10">{{data.id}}</el-col>
+					  <el-col :span="8" class="right">Company ID</el-col><el-col :span="10">{{data.companyId}}</el-col>
 				</el-col>
       		</el-row>
 			<el-row :gutter="20">
@@ -102,13 +102,16 @@
           </el-form> -->
           <div class="title">支付渠道</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="addChannel">添加支付渠道</el-button>
           <el-table :data="data.payUsers">
-              <el-table-column prop="thirdPaymentType" label="支付渠道"></el-table-column>
+              <el-table-column prop="thirdPaymentTypeName" label="支付渠道"></el-table-column>
               <el-table-column prop="payUserId" label="支付账户"></el-table-column>
               <el-table-column prop="payUserName" label="子账号名称"></el-table-column>
               <el-table-column prop="payUserNo" label="子账号"></el-table-column>
+              <el-table-column prop="channelTypeName" label="渠道类型"></el-table-column>
               <el-table-column label="操作">
                   <template slot-scope="scope">
                       <el-button type="text" @click="deleteRow(scope.row)">删除</el-button>
+                      <el-button type="text" @click="setDefault(scope.row)" v-if="!scope.row.isDefault">设为默认</el-button>
+                      <el-button type="text" v-else disabled>已设为默认渠道</el-button>
                   </template>
               </el-table-column>
           </el-table>
@@ -161,10 +164,13 @@
               <el-form-item v-show="result" label="子账号" style="color: red;">
                   <template>{{result.thirdpayUserId}}</template>
               </el-form-item>
+              <el-form-item label="是否默认">
+                  <el-checkbox checked @change="defa"></el-checkbox>
+              </el-form-item>
           </el-form>
           <span class="form_footer" slot="footer">
-              <el-button @click="addRow" type="primary">保存</el-button>
-              <el-button @click="addShow = false" type="warning">关闭</el-button>
+              <el-button size="small" @click="addRow" type="primary">保存</el-button>
+              <el-button size="small" @click="addShow = false">关闭</el-button>
           </span>
       </el-dialog>
       <el-dialog title="支付渠道" :visible.sync="dshow" width="50%">
@@ -172,8 +178,8 @@
             <div class="center">确定 删除 {{curr.payUserName}}？</div>
           </el-form>
           <span class="form_footer" slot="footer">
-              <el-button @click="sure" type="primary">确定</el-button>
-              <el-button @click="dshow = false" type="warning">取消</el-button>
+              <el-button size="small" @click="sure" type="primary">确定</el-button>
+              <el-button size="small" @click="dshow = false">取消</el-button>
           </span>
       </el-dialog>
       <el-dialog title="获取验证码" :visible.sync="cshow" width="70%">
@@ -194,8 +200,8 @@
               </el-form-item>
           </el-form>
           <span class="form_footer" slot="footer">
-              <el-button @click="submit" type="primary">提交</el-button>
-              <el-button @click="cshow = false" type="warning">关闭</el-button>
+              <el-button size="small" @click="submit" type="primary">提交</el-button>
+              <el-button size="small" @click="cshow = false">关闭</el-button>
           </span>
       </el-dialog>
     </div>
@@ -272,7 +278,8 @@ export default {
       req_id: "",
       chars: "",
       phoneCode: "",
-      currEvent: ""
+      currEvent: "",
+      isDefault: 1
     };
   },
   activated() {
@@ -380,7 +387,8 @@ export default {
           paymentThirdType: this.result.thirdpaySystemId,
           payeruserName: this.result.payeruserName,
           paymentUserId: this.result.userId,
-          authCode: this.authCode
+          authCode: this.authCode,
+          isDefault: this.isDefault
         })
           .then(data => {
             this.addShow = false;
@@ -498,6 +506,42 @@ export default {
           message: "请填写验证码后提交"
         });
       }
+    },
+    defa(a) {
+        if(a) {
+            this.isDefault = 1
+        }
+        else {
+            this.isDefault = 0
+        }
+        console.log(this.isDefault)
+    },
+    setDefault(a) {
+        if(a) {
+            this.curr = a
+        }
+        if (this.authCode) {
+            postWithErrorCallback('/api/sysmgr-web/company-app/set-default-payment-user', {
+                appId: this.appId,
+                authCode: this.authCode,
+                paymentThirdType: this.curr.thirdPaymentType,
+                paymentUserId: this.curr.payUserId
+            }).then(data => {
+                this.$message({
+                  type: "success",
+                  message: "设置成功"
+                });
+                this.query()
+            }).catch(err => {
+                console.log(err)
+                if (err.message == "无效的授权码！") {
+                  this.getAccredit(this.setDefault);
+                }
+            })
+        }
+        else {
+          this.getAccredit(this.setDefault);
+        }
     }
   }
 };

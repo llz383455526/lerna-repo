@@ -24,12 +24,10 @@
                 {{msg.createByName}} 创建于 {{msg.createAt}}
             </div>
         </div>
-        <el-steps id="steps" :active="2" align-center size="small">
-            <el-step title="提交订单"></el-step>
+        <el-steps id="steps" :active="1" align-center size="small">
             <el-step title="支付费用"></el-step>
-            <el-step title="服务商受理"></el-step>
-            <el-step title="业务办理"></el-step>
-            <el-step title="订单完成"></el-step>
+            <el-step title="执行发放"></el-step>
+            <el-step title="查看结果"></el-step>
         </el-steps>
         <div id="orderCost">
             <div class="mtitle">
@@ -78,7 +76,7 @@
                     <el-input v-model="form.phone" size="small"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button size="small" @click="query">查询</el-button>
+                    <el-button size="small" type="primary" @click="query">查询</el-button>
                     <el-button size="small" @click="reset('query')">清空所有条件</el-button>
                 </el-form-item>
             </el-form>
@@ -88,9 +86,9 @@
                 <el-table-column label="身份证" prop="idCard"></el-table-column>
                 <el-table-column label="手机号" prop="phone"></el-table-column>
                 <el-table-column label="收款方账号" prop="accountNo"></el-table-column>
-                <el-table-column label="开户行" prop="depositBank"></el-table-column>
+                <!-- <el-table-column label="开户行" prop="depositBank"></el-table-column> -->
                 <el-table-column label="款项属性备注" prop="fund"></el-table-column>
-                <el-table-column label="外籍人员信息备注" prop="foreignNationality"></el-table-column>
+                <!-- <el-table-column label="外籍人员信息备注" prop="foreignNationality"></el-table-column> -->
                 <el-table-column label="实发金额">
                     <template slot-scope="scope">
                         {{scope.row.shouldAmount | formatMoney}}

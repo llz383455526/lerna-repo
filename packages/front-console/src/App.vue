@@ -67,6 +67,9 @@ html, body {
 .el-col {
     word-break: break-all;
 }
+.hidden_label .el-radio__label {
+    display: none;
+}
 </style>
 
 
