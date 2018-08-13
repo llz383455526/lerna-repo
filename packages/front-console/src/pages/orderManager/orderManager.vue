@@ -41,6 +41,7 @@
                 </template>
             </el-table-column>
             <el-table-column label="申请时间" prop="createAt"></el-table-column>
+            <el-table-column label="完成时间" prop=""></el-table-column>
             <el-table-column label="客户公司" prop="submitCompanyName"></el-table-column>
             <el-table-column label="商户名称" prop="appName"></el-table-column>
             <el-table-column label="业务类型" prop="channelTypeName"></el-table-column>
@@ -49,6 +50,11 @@
             <el-table-column label="订单金额">
                 <template slot-scope="scope">
                     {{scope.row.totalFee | formatMoney}}
+                </template>
+            </el-table-column>
+            <el-table-column label="服务费">
+                <template slot-scope="scope">
+                    {{scope.row.serviceFee | formatMoney}}
                 </template>
             </el-table-column>
             <el-table-column label="业务处理情况" prop="resultMemo"></el-table-column>
