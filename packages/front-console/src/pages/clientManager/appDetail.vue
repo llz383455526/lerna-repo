@@ -146,10 +146,15 @@
               <el-button @click="ashow = false">关闭</el-button>
           </span>
       </el-dialog>
-      <el-dialog title="appid配置信息" :visible.sync="addShow" width="70%">
+      <el-dialog title="添加支付渠道" :visible.sync="addShow" width="70%">
           <el-form label-width="180px">
               <el-form-item label="接入应用：">
                   <template>{{data.appName}}</template>
+              </el-form-item>
+              <el-form-item label="支付渠道">
+                  <el-select class="f_input" v-model="serviceCompanyId">
+                      <el-option v-for="e in data.serviceCompanyList" :value="e.serviceCompanyId" :label="e.serviceCompanyName"></el-option>
+                  </el-select>
               </el-form-item>
               <el-form-item label="支付渠道">
                   <el-select class="f_input" v-model="paymentThirdType" @change="getList">
@@ -282,7 +287,8 @@ export default {
       chars: "",
       phoneCode: "",
       currEvent: "",
-      isDefault: 1
+      isDefault: 1,
+      serviceCompanyId: ''
     };
   },
   activated() {
@@ -397,7 +403,8 @@ export default {
               isDefault: this.isDefault,
               channelAlias: data.channelAlias,
               channelLoginAcctNo: data.loginAcctno,
-              channelMerCustId: data['cj.merchant_id'] || data['wx.mchid'] || data['partner_id'] || data['mer_id'] || ''
+              channelMerCustId: data['cj.merchant_id'] || data['wx.mchid'] || data['partner_id'] || data['mer_id'] || '',
+              serviceCompanyId: this.serviceCompanyId
             }).then(data => {
               this.addShow = false;
               this.$message({
@@ -428,7 +435,8 @@ export default {
           appId: this.appId,
           paymentThirdType: this.curr.thirdPaymentType,
           paymentUserId: this.curr.payUserId,
-          authCode: this.authCode
+          authCode: this.authCode,
+          serviceCompanyId: this.curr.serviceCompanyId
         })
           .then(data => {
             this.dshow = false;
