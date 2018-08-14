@@ -18,13 +18,13 @@ module.exports = {
         env: {
             NODE_ENV: '"development"'
         },
-        port: 8022,
+        port: 8021,
         assetsSubDirectory: 'static',
         assetsPublicPath: '/',
         context: [ //代理路径
 	        '/api'
         ],
-        proxypath: 'https://openadmintest92.aiyuangong.com',
+        proxypath: 'http://openadmintest94.aiyuangong.com',
         cssSourceMap: false
     }
 }

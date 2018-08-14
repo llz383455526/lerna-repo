@@ -6,6 +6,11 @@ let account = r => require.ensure([], () => r(require('../pages/account/basic.vu
 let payOrder = r => require.ensure([], () => r(require('../pages/accountManager/payOrder.vue')), 'payOrder');
 let accountIndex = r => require.ensure([], () => r(require('../pages/account/index.vue')), 'accountIndex');
 let payOrderReject = r => require.ensure([], () => r(require('../pages/accountManager/payOrderReject.vue')), 'payOrderReject');
+let fundDetail = r => require.ensure([], () => r(require('../pages/account/fundDetail.vue')), 'fundDetail');
+let payManager = r => require.ensure([], () => r(require('../pages/account/payManager.vue')), 'payManager');
+let regulation = r => require.ensure([], () => r(require('../pages/account/regulation.vue')), 'regulation');
+let clientDetail = r => require.ensure([], () => r(require('../pages/account/clientDetail.vue')), 'clientDetail');
+let serviceDetail = r => require.ensure([], () => r(require('../pages/account/serviceDetail.vue')), 'serviceDetail');
 
 let amountManager = r => require.ensure([], () => r(require('../pages/accountManager/amountManager.vue')), 'amountManager');
 let companyCreditRecord = r => require.ensure([], () => r(require('../pages/accountManager/companyCreditRecord.vue')), 'companyCreditRecord');
@@ -150,6 +155,21 @@ export default [
                         }, {
                             path: 'creditBill',
                             component: creditBill
+                        }, {
+                            path: 'fundDetail',
+                            component: fundDetail
+                        }, {
+                            path: 'payManager',
+                            component: payManager
+                        }, {
+                            path: 'regulation',
+                            component: regulation
+                        }, {
+                            path: 'clientDetail',
+                            component: clientDetail
+                        }, {
+                            path: 'serviceDetail',
+                            component: serviceDetail
                         }]
                     }, {
                         path: 'amountManager',

@@ -22,9 +22,13 @@
             <el-table-column prop="updateByName" label="操作人"></el-table-column>
         </el-table>
 
-        <ayg-pagination v-if="amountTable.total" :total="amountTable.total" :currentPage="currentPage"
-                v-on:handleSizeChange="handleSizeChange"
-                v-on:handleCurrentChange="handleCurrentChange"></ayg-pagination>
+        <ayg-pagination
+            v-if="amountTable.total"
+            :total="amountTable.total"
+            :currentPage="currentPage"
+            v-on:handleSizeChange="handleSizeChange"
+            v-on:handleCurrentChange="handleCurrentChange">
+        </ayg-pagination>
 
         <el-dialog :title="formEditTitle" :visible.sync="formEditVisible" width="30%">
             <el-form :model="formEdit" ref="formEdit">

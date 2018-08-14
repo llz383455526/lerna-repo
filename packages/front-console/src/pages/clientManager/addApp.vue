@@ -31,9 +31,12 @@
               </el-select>
           </el-form-item> -->
           <el-form-item label="选择服务商" prop="serviceCompanyId" size="small">
-              <el-select v-model="form.serviceCompanyId" class="form_input" filterable>
+              <!-- <el-select v-model="form.serviceCompanyId" class="form_input" filterable>
                   <el-option v-for="item in company" :value="item.companyId" :label="item.companyName"></el-option>
-              </el-select>
+              </el-select> -->
+              <el-checkbox-group v-model="form.serviceCompanyIds">
+                  <el-checkbox v-for="item in company" :label="item.companyId" :key="item.companyId">{{item.companyName}}</el-checkbox>
+              </el-checkbox-group>
           </el-form-item>
           <!-- <el-form-item label="企业负责人" prop="legalPerson" size="small">
               <el-button type="primary">选择负责人</el-button>
@@ -80,7 +83,7 @@ export default {
         companyId: "",
         appId: "",
         appName: "",
-        serviceCompanyId: "",
+        serviceCompanyIds: [],
         authCode: "",
         chargeBy: "",
         chargeByName: ""
@@ -114,7 +117,7 @@ export default {
             trigger: "change"
           }
         ],
-        serviceCompanyId: [
+        serviceCompanyIds: [
           {
             required: true,
             message: "请选择服务公司",
@@ -176,6 +179,7 @@ export default {
       });
     },
     sure(e) {
+        console.log(this.form)
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.authCode) {
