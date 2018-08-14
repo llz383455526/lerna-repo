@@ -32,7 +32,9 @@
       		</el-row>
 			<el-row :gutter="20">
 				<el-col :span="10">
-					  <el-col :span="8" class="right">服务商</el-col><el-col :span="10">{{data.serviceCompanyName}}</el-col>
+					  <el-col :span="8" class="right">服务商</el-col><el-col :span="10">
+                          <span v-for="e in data.serviceCompanyList">{{e.serviceCompanyName}},</span>
+                      </el-col>
 				</el-col>
       		    <el-col :span="10">
 					  <el-col :span="8" class="right">负责人电话</el-col><el-col :span="10">{{data.phone}}</el-col>
@@ -102,6 +104,7 @@
           </el-form> -->
           <div class="title">支付渠道</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="addChannel">添加支付渠道</el-button>
           <el-table :data="data.payUsers">
+              <el-table-column prop="serviceCompanyName" label="服务商"></el-table-column>
               <el-table-column prop="thirdPaymentTypeName" label="支付渠道"></el-table-column>
               <el-table-column prop="payUserId" label="支付账户"></el-table-column>
               <el-table-column prop="payUserName" label="子账号名称"></el-table-column>

@@ -35,7 +35,7 @@
                   <el-option v-for="item in company" :value="item.companyId" :label="item.companyName"></el-option>
               </el-select> -->
               <el-checkbox-group v-model="form.serviceCompanyIds">
-                  <el-checkbox v-for="item in company" :label="item.companyId" :key="item.companyId">{{item.companyName}}</el-checkbox>
+                  <el-checkbox v-for="item in company" :label="item.value" :key="item.value">{{item.text}}</el-checkbox>
               </el-checkbox-group>
           </el-form-item>
           <!-- <el-form-item label="企业负责人" prop="legalPerson" size="small">
