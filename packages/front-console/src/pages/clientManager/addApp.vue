@@ -156,9 +156,12 @@ export default {
       this.phone = data;
     });
     this.createId();
-    get("/api/console-dlv/option/get-option-service-companies").then(data => {
-      this.company = data;
-    });
+    // get("/api/console-dlv/option/get-option-service-companies").then(data => {
+    //   this.company = data;
+    // });
+    get(`/api/sysmgr-web/company-app/get-app-service-company-options?customCompanyId=${this.form.companyId}`).then(data => {
+        this.company = data;
+    })
     get(
       `/api/sysmgr-web/user/get-platform-users?platformType=console-company`
     ).then(data => {
