@@ -385,27 +385,33 @@ export default {
     },
     addRow() {
       if (this.authCode) {
-        postWithErrorCallback("/api/sysmgr-web/company-app/add-payment-user", {
-          appId: this.appId,
-          paymentThirdType: this.result.thirdpaySystemId,
-          payeruserName: this.result.payeruserName,
-          paymentUserId: this.result.userId,
-          authCode: this.authCode,
-          isDefault: this.isDefault
-        })
-          .then(data => {
-            this.addShow = false;
-            this.$message({
-              type: "success",
-              message: "添加成功"
+        post(`/api/paymentmgt/front/channel/qrydetail?channelId=${this.result.channelId}`).then(data => {
+            console.log(data['cj.merchant_id'] || data['wx.mchid'] || data['partner_id'] || data['mer_id'])
+            postWithErrorCallback("/api/sysmgr-web/company-app/add-payment-user", {
+              appId: this.appId,
+              payUserNo: this.result.thirdpayUserId,
+              paymentThirdType: this.result.thirdpaySystemId,
+              payeruserName: this.result.payeruserName,
+              paymentUserId: this.result.userId,
+              authCode: this.authCode,
+              isDefault: this.isDefault,
+              channelAlias: data.channelAlias,
+              channelLoginAcctNo: data.loginAcctno,
+              channelMerCustId: data['cj.merchant_id'] || data['wx.mchid'] || data['partner_id'] || data['mer_id'] || ''
+            }).then(data => {
+              this.addShow = false;
+              this.$message({
+                type: "success",
+                message: "添加成功"
+              });
+              this.query();
+            })
+            .catch(err => {
+              if (err.message == "无效的授权码！") {
+                this.getAccredit(this.addRow);
+              }
             });
-            this.query();
-          })
-          .catch(err => {
-            if (err.message == "无效的授权码！") {
-              this.getAccredit(this.addRow);
-            }
-          });
+        })
       } else {
         this.getAccredit(this.addRow);
       }

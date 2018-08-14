@@ -86,7 +86,7 @@
             v-on:handleSizeChange="sizeChange"
             v-on:handleCurrentChange="query">
         </ayg-pagination>
-    <el-dialog title="创建充值申请" :before-close="closeEditDialog"  :visible.sync="dialogCreateVisible" width="50%">
+        <el-dialog title="创建充值申请" :before-close="closeEditDialog"  :visible.sync="dialogCreateVisible" width="50%">
             <el-form :model="dialogCreateForm" :rules="dialogCreateFormRules" ref="dialogCreateForm">
                 <div class="input-container">
                     <div class="label">客户公司：<span>*</span></div>
@@ -97,8 +97,8 @@
                             </el-select>
                         </el-form-item>
                     </div>
-               </div>
-               <div class="input-container">
+                </div>
+                <div class="input-container">
                     <div class="label">商户名称：<span>*</span></div>
                     <div class="input">
                         <el-form-item prop="appId">
@@ -109,6 +109,16 @@
                     </div>
                 </div>
                 <div class="input-container">
+                     <div class="label">服务商名称：<span>*</span></div>
+                     <div class="input">
+                         <el-form-item prop="serviceCompanyId">
+                             <el-select filterable v-model="dialogCreateForm.serviceCompanyId" no-data-text="请先选择商户" @change="getChannlType">
+                                 <el-option v-for="(item, index) in serviceName" :label="item.text" :value="item.value" :key="item.value"></el-option>
+                             </el-select>
+                         </el-form-item>
+                     </div>
+                </div>
+                <div class="input-container">
                     <div class="label">业务类型：<span>*</span></div>
                     <div class="input">
                         <el-form-item prop="channelBusinessType">
@@ -117,16 +127,6 @@
                             </el-select>
                         </el-form-item>
                     </div>
-                </div>
-                <div class="input-container">
-                     <div class="label">充值到服务商：<span>*</span></div>
-                     <div class="input">
-                         <el-form-item prop="serviceCompanyId">
-                             <el-select filterable v-model="dialogCreateForm.serviceCompanyId" no-data-text="请先选择商户" @change="getServiceFee">
-                                 <el-option v-for="(item, index) in curServiceCompanies" :label="item.companyName" :value="item.companyId" :key="item.companyId"></el-option>
-                             </el-select>
-                         </el-form-item>
-                     </div>
                 </div>
                 <div class="input-container">
                     <div class="label">充值用途：<span>*</span></div>
@@ -356,7 +356,8 @@ export default {
       attachmentUrl: '',
       calc: '',
       calcServiceFee: '',
-      serviceFee: ''
+      serviceFee: '',
+      serviceName: []
     };
   },
   watch: {
@@ -432,14 +433,24 @@ export default {
         this.dialogCreateForm.serviceCompanyId = ''
     },
     getService() {
-        get('/api/balance-web/recharge-order/pre-recharge', {
+        get('/api/sysmgr-web/commom/app-service-company-list', {
             appId: this.dialogCreateForm.appId
         }).then(data => {
             console.log(data)
             this.dialogCreateForm.channelBusinessType = ''
             this.dialogCreateForm.serviceCompanyId = ''
+            this.serviceName = data
+        })
+    },
+    getChannlType() {
+        get('/api/balance-web/recharge-order/pre-recharge', {
+            appId: this.dialogCreateForm.appId,
+            companyId: this.dialogCreateForm.companyId,
+            serviceCompanyId: this.dialogCreateForm.serviceCompanyId
+        }).then(data => {
             this.channelTypes = data.channelTypes
             this.calcServiceFee = data.calcServiceFee
+            this.getServiceFee()
         })
     },
     getServiceFee() {

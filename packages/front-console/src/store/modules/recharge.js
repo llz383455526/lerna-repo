@@ -15,6 +15,7 @@ const store = {
         curServiceCompanies: state => state.curServiceCompanies,
         rechargeConfirm: state => state.rechargeConfirm,
         productName: state => state.productName,
+        serviceName: state => state.serviceName,
         customCompanies: state => state.customCompanies
     },
     mutations: {
@@ -32,6 +33,9 @@ const store = {
         },
         setProductName (state, payload) {
             state.productName = payload
+        },
+        setServiceName (state, payload) {
+            state.serviceName = payload
         },
         setCustomCompanies (state, payload) {
             state.customCompanies = payload
@@ -70,9 +74,15 @@ const store = {
                 })
         },
         getProductName({commit}, param) {
-            post('/api/balance-web/recharge-order/query-app', param)
+            get('/api/sysmgr-web/commom/app-list', param)
                 .then(result => {
                     commit('setProductName', result)
+                })
+        },
+        getServiceName({commit}, param) {
+            get('/api/sysmgr-web/commom/app-service-company-list', param)
+                .then(result => {
+                    commit('setServiceName', result)
                 })
         },
         getCustomCompanies({commit}, param) {
