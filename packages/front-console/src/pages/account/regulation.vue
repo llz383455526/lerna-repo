@@ -1,12 +1,15 @@
 <template>
     <div class="company-build-container company-container">
         <div class="title">调账管理</div>
-        <el-form :inline="true">
+        <el-form :model="form" :inline="true">
             <el-form-item label="服务商名称">
-                <el-input size="small"></el-input>
+                <el-select size="small" filterable v-model="form.serviceCompanyId">
+                    <el-option v-for="e in serviceCompanys"></el-option>
+                </el-select>
             </el-form-item>
             <el-form-item label="操作时间">
-                <el-date-picker size="small" v-model="dateValue" type="dateRange" start-placeholder="开始日期" end-placeholder="结束日期" @change="getTime"></el-date-picker>
+                <!-- <el-date-picker v-model="dateValue" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker> -->
+                <el-date-picker size="small" v-model="dateValue" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" @change="getTime"></el-date-picker>
             </el-form-item>
             <el-form-item>
                 <el-button size="small" type="primary">查询</el-button>
@@ -28,80 +31,288 @@
             v-on:handleSizeChange="setSize"
             v-on:handleCurrentChange="query">
         </ayg-pagination>
-        <el-dialog title="余额调账操作" :visible.sync="show" width="60%">
-            <el-form label-width="140px">
-                <el-form-item label="选择商户">
-                    <el-select size="small" placeholder="请选择商户名称"></el-select>
+        <el-dialog title="余额调账操作" :visible.sync="show" width="800px">
+            <el-form :model="regForm" :rules="rules" label-width="150px" ref="regForm">
+                <el-form-item label="选择商户" prop="appId">
+                    <el-select filterable v-model="regForm.appId" size="small" placeholder="请选择商户名称" @change="getService">
+                        <el-option v-for="e in productName" :label="e.text" :value="e.value" :key="e.value"></el-option>
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="选择服务商">
-                    <el-select size="small" placeholder="请选择服务商名称"></el-select>
+                <el-form-item label="选择服务商" prop="serviceCompanyId">
+                    <el-select filterable v-model="regForm.serviceCompanyId" size="small" placeholder="请选择服务商名称" @change="getChannel">
+                        <el-option v-for="e in serviceName" :label="e.text" :value="e.value" :key="e.value"></el-option>
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="选择渠道">
-                    <el-select size="small" placeholder="请选择渠道"></el-select>
+                <el-form-item label="选择渠道" prop="bankType">
+                    <el-select filterable v-model="regForm.bankType" size="small" placeholder="请选择渠道" @change="getChannel">
+                        <el-option v-for="e in channelType" :label="e.text" :value="e.value" :key="e.value"></el-option>
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="选择转出的渠道帐号">
-                    <el-select size="small" placeholder="选择转出的渠道帐号"></el-select>
+                <el-form-item label="选择转出的渠道帐号" prop="fromBalanceAccountId">
+                    <el-select v-model="regForm.fromBalanceAccountId" size="small" placeholder="选择转出的渠道帐号" @change="outChannel">
+                        <el-option v-for="e in channels" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}/${e.payUserId}`" :value="e.balanceAccountId" :key="e.balanceAccountId"></el-option>
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="选择转入的渠道帐号">
-                    <el-select size="small" placeholder="选择转入的渠道帐号"></el-select>
+                <template v-if="outMsg">
+                    <div class="half">
+                        <span>帐号今日可充建议：{{outMsg.allowAvailBalance | formatMoney}}元</span>
+                        <span>帐号当前余额：{{outMsg.currentAvailBalance | formatMoney}}元</span>
+                    </div>
+                    <div class="half">
+                        <span>日发放限额：{{outMsg.limitAvailBalance | formatMoney}}元</span>
+                        <span>当日已发：{{outMsg.outAvailBalance | formatMoney}}元</span>
+                    </div>
+                </template>
+                <el-form-item label="选择转入的渠道帐号" prop="toBalanceAccountId">
+                    <el-select v-model="regForm.toBalanceAccountId" size="small" placeholder="选择转入的渠道帐号" @change="inChannel">
+                        <el-option v-for="e in channels_0" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}/${e.payUserId}`" :value="e.balanceAccountId" :key="e.balanceAccountId"></el-option>
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="输入调账金额（元）">
-                    <el-input size="small" style="width: 215px;"></el-input>
+                <template v-if="inMsg">
+                    <div class="half">
+                        <span>帐号今日可充建议：{{inMsg.allowAvailBalance | formatMoney}}元</span>
+                        <span>帐号当前余额：{{inMsg.currentAvailBalance | formatMoney}}元</span>
+                    </div>
+                    <div class="half">
+                        <span>日发放限额：{{inMsg.limitAvailBalance | formatMoney}}元</span>
+                        <span>当日已发：{{inMsg.outAvailBalance | formatMoney}}元</span>
+                    </div>
+                </template>
+                <el-form-item label="输入调账金额（元）" prop="tradeAmount">
+                    <el-input v-model="regForm.tradeAmount" size="small" style="width: 215px;"></el-input>
+                </el-form-item>
+                <el-form-item label="调账备注" prop="remarks">
+                    <el-input v-model="regForm.remarks" size="small" style="width: 215px;"></el-input>
                 </el-form-item>
             </el-form>
-            <div class="half">
-                <span>帐号当前余额：12345.00元</span>
-                <span>帐号当前余额：12345.00元</span>
-            </div>
-            <div class="half">
-                <span>日发放限额：1000000.00元</span>
-                <span>日发放限额：1000000.00元</span>
-            </div>
-            <div class="half">
-                <span>当日已发：550000.00元</span>
-                <span>当日已发：550000.00元</span>
-            </div>
             <div>选择转入帐号后，系统自动切换当前发放渠道帐号到所选的帐号，请确保帐号内金额充足。</div>
-            <span slot-scope="footer">
-                <el-button size="small" type="primary"></el-button>
-                <el-button size="small"></el-button>
+            <span slot="footer">
+                <el-button size="small" @click="show = false">取消</el-button>
+                <el-button size="small" type="primary" @click="sure">确认</el-button>
             </span>
         </el-dialog>
     </div>
 </template>
 <script>
+import { post, get, postWithErrorCallback } from "../../store/api";
+import { mapGetters } from "vuex";
 export default {
     data() {
         return {
             form: {
-                page: 1
+                serviceCompanyId: '',
+                tradeAtBegin: '',
+                tradeAtEnd: '',
+                page: 1,
+                pageSize: 10
             },
             dateValue: [],
             total: 0,
-            show: false
+            show: false,
+            data: '',
+            serviceName: [],
+            channelType: [],
+            channels: [],
+            channels_0: [],
+            regForm: {
+                appId: '',
+                appName: '',
+                serviceCompanyId: '',
+                serviceCompanyName: '',
+                bankType: '',
+                fromBalanceAccountId: '',
+                toBalanceAccountId: '',
+                tradeAmount: '',
+                remarks: ''
+            },
+            rules: {
+                appId: [
+                    {
+                        required: true,
+                        message: "请选择商户",
+                        trigger: "blur"
+                    }
+                ],
+                serviceCompanyId: [
+                    {
+                        required: true,
+                        message: "请选择服务商",
+                        trigger: "blur"
+                    }
+                ],
+                bankType: [
+                    {
+                        required: true,
+                        message: "请选择渠道",
+                        trigger: "blur"
+                    }
+                ],
+                fromBalanceAccountId: [
+                    {
+                        required: true,
+                        message: "请选择转出渠道",
+                        trigger: "blur"
+                    }
+                ],
+                toBalanceAccountId: [
+                    {
+                        required: true,
+                        message: "请选择转入渠道",
+                        trigger: "blur"
+                    }
+                ],
+                tradeAmount: [
+                    {
+                        required: true,
+                        message: "请输入金额",
+                        trigger: "blur"
+                    }
+                ],
+                remarks: [
+                    {
+                        required: true,
+                        message: "请填写备注",
+                        trigger: "blur"
+                    }
+                ]
+            },
+            outMsg: '',
+            inMsg: ''
         }
+    },
+    computed: {
+        ...mapGetters({
+            productName: 'productName',
+            // customCompanies: "customCompanies"
+        })
+    },
+    mounted() {
+        // get('/api/sysmgr-web/commom/service').then(data => {
+        //     console.log(data)
+        // })
+        this.query()
+        this.$store.dispatch("getProductName");
+        get('/api/balance-web/commom/option?enumType=ChannelType').then(data => {
+            this.channelType = data
+        })
     },
     methods: {
         getTime() {
             if(this.dateValue.length) {
-
+                this.form.tradeAtBegin = this.dateValue[0]
+                this.form.tradeAtEnd = this.dateValue[1]
             }
         },
         query() {
-
+            post('/api/balance-web/balance-trade-recon/get-trade-recon-list', this.form).then(data => {
+                this.data = data
+            })
         },
         setSize() {
 
+        },
+        getService() {
+            this.productName.forEach(e => {
+                if(e.value == this.regForm.appId) {
+                    this.regForm.appName = e.text
+                }
+            })
+            get('/api/sysmgr-web/commom/app-service-company-list', {
+                appId: this.regForm.appId
+            }).then(data => {
+                this.serviceName = data
+            })
+            this.getChannel()
+        },
+        getChannel() {
+            this.serviceName.forEach(e => {
+                if(e.value == this.regForm.serviceCompanyId) {
+                    this.regForm.serviceCompanyName = e.text
+                }
+            })
+            if(this.regForm.appId && this.regForm.serviceCompanyId && this.regForm.bankType) {
+                get('/api/balance-web/balance-account/query-balance-account-channel-list', {
+                    appId: this.regForm.appId,
+                    serviceCompanyId: this.regForm.serviceCompanyId,
+                    bankType: this.regForm.bankType
+                }).then(data => {
+                    this.channels = data
+                })
+            }
+        },
+        outChannel() {
+            this.filterChannels()
+            var a
+            this.channels.forEach(e => {
+                if(e.balanceAccountId == this.regForm.fromBalanceAccountId) {
+                    a = e
+                }
+            })
+            get('/api/balance-web/balance-account/get-avail-balance-info', {
+                balanceAccountId: a.balanceAccountId,
+                payUserId: a.payUserId,
+                paymentThirdType: a.paymentThirdType
+            }).then(data => {
+                this.outMsg = data
+            })
+        },
+        inChannel() {
+            var a
+            this.channels.forEach(e => {
+                if(e.balanceAccountId == this.regForm.toBalanceAccountId) {
+                    a = e
+                }
+            })
+            get('/api/balance-web/balance-account/get-avail-balance-info', {
+                balanceAccountId: a.balanceAccountId,
+                payUserId: a.payUserId,
+                paymentThirdType: a.paymentThirdType
+            }).then(data => {
+                this.inMsg = data
+            })
+        },
+        filterChannels() {
+            this.regForm.toBalanceAccountId = ''
+            this.channels_0 = this.channels.filter(e => {
+                return this.regForm.fromBalanceAccountId != e.balanceAccountId
+            })
+        },
+        sure() {
+            if(this.outMsg && this.outMsg.currentAvailBalance > this.regForm.tradeAmount) {
+                this.$refs["regForm"].validate(valid => {
+                    if(valid) {
+                        var bankType = this.regForm.bankType
+                        delete this.regForm.bankType
+                        postWithErrorCallback('/api/balance-web/balance-trade-recon/do-trade-recon', this.regForm).then(data => {
+                            this.show = false
+                            this.regForm.bankType = bankType
+                            this.query()
+                        }).catch(err => {
+                            this.regForm.bankType = bankType
+                        })
+                    }
+                })
+            }
+            else {
+                this.$message({
+                    type: 'warning',
+                    message: '当前所渠道余额不足！'
+                })
+            }
         }
     }
 }
 </script>
 <style scoped>
 .title {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
+}
+.half {
+  margin-bottom: 15px;
+  padding-left: 20px;
 }
 .half > span {
   display: inline-block;
-  width: 40%;
+  width: 45%;
 }
 </style>
