@@ -207,34 +207,57 @@
                 <el-button type="primary" @click="submitConfirmOrder">确 定</el-button>
             </div>
         </el-dialog>
-        <el-dialog title="到账操作"  :visible.sync="show">
+        <el-dialog title="到账操作"  :visible.sync="show" width="960px">
             <div class="title">客户充值凭证</div>
-            <div class="det">实发金额：{{detail.amount | formatMoney}}</div>
+            <div class="det">充值金额：{{detail.amount | formatMoney}}</div>
             <div class="det" v-if="detail.serviceFee">服务费金额：{{detail.serviceFee | formatMoney}}</div>
-            <img style="width: 400px" :src="`/api/sysmgr-web/file/download?downloadCode=${detail.customDownloadCode}`" alt="">
-            <div class="det" v-if="detail.payUser">充值渠道：{{detail.payUser.thirdPaymentTypeName}}</div>
-            <div class="det red" v-if="detail.payUser">子账号名称：{{detail.payUser.payUserName}}</div>
-            <div class="det red" v-if="detail.payUser">子账号：{{detail.payUser.payUserNo}}</div>
-            <div class="det">业务类型：{{detail.channelBusinessTypeName}}</div>
-            <el-upload
-                v-if="detail.state != 30 && detail.state != 40"
-                class="det"
-                :file-list="fileList"
-                ref="upload"
-                :show-file-list="false"
-                :action="`/api/sysmgr-web/file/upload`"
-                :auto-upload="false"
-                :on-change="getImg"
-                :multiple="false"
-                name="file"
-                accept=".jpg, .png">
-                <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            </el-upload>
-            <img style="width: 400px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${detail.financeDownloadCode}`" alt="">
+            <div class="det">企业名称：{{detail.companyName}}</div>
+            <div class="det">商户名称：{{detail.appName}}</div>
+            <div class="title">服务商信息</div>
+            <div class="det">名称：{{detail.serviceCompanyName}}</div>
+            <div class="det">所属银行：{{detail.depositBank}}</div>
+            <div class="det">开户行：{{detail.depositBank}}</div>
+            <div class="det">账户名：{{detail.accountName}}</div>
+            <div class="det">账号：{{detail.accountNo}}</div>
+            <div class="det" v-if="detail.payUser">业务渠道：{{detail.payUser.thirdPaymentTypeName}}</div>
+            <div class="voucher">
+                <div class="title">转账凭证</div>
+                <img style="width: 400px" :src="`/api/sysmgr-web/file/download?downloadCode=${detail.customDownloadCode}`" alt="">
+            </div>
+            <!-- <div class="det red" v-if="detail.payUser">子账号名称：{{detail.payUser.payUserName}}</div>
+            <div class="det red" v-if="detail.payUser">子账号：{{detail.payUser.payUserNo}}</div> -->
+            <!-- <div class="det">业务类型：{{detail.channelBusinessTypeName}}</div> -->
+            <div class="title">渠道金额充值</div>
+            <div class="det">
+                <div style="float: left;">上传充值凭证：</div>
+                <el-upload
+                    v-if="detail.state != 30 && detail.state != 40"
+                    class="upload"
+                    :file-list="fileList"
+                    ref="upload"
+                    :show-file-list="false"
+                    :action="`/api/sysmgr-web/file/upload`"
+                    :auto-upload="false"
+                    :on-change="getImg"
+                    :multiple="false"
+                    name="file"
+                    accept=".jpg, .png">
+                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
+                <img style="width: 400px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${detail.financeDownloadCode}`" alt="">
+            </div>
             <div class="det">备注：
-                <el-input v-model="memo" style="width: 300px" v-if="detail.state != 30 && detail.state != 40"></el-input>
+                <el-input size="small" v-model="memo" style="width: 300px" v-if="detail.state != 30 && detail.state != 40"></el-input>
                 <span>{{detail.memo}}</span>
+            </div>
+            <div class="det">选择渠道帐号：
+                <el-select size="small" v-model="balanceAccountId" @change="getSuggest">
+                    <el-option v-for="e in channlList" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}`" :value="e.balanceAccountId"></el-option>
+                </el-select>
+            </div>
+            <div class="det" v-if="suggest">帐号今日可充建议：{{suggest.allowAvailBalance | formatMoney}}元 帐号当前余额：{{suggest.currentAvailBalance | formatMoney}}元
+                日发放限额：{{suggest.limitAvailBalance | formatMoney}}元 当日已发：{{suggest.outAvailBalance | formatMoney}}元
             </div>
             <div slot="footer" class="dialog-footer">
                 <el-button size="small" @click="show = false">取消</el-button>
@@ -271,7 +294,7 @@ export default {
         channelBusinessType: "",
         amount: "",
         purpose: "",
-        serviceCompanyId: null,
+        serviceCompanyId: '',
         attachmentId: ''
       },
       dialogCreateFormRules: {
@@ -357,7 +380,10 @@ export default {
       calc: '',
       calcServiceFee: '',
       serviceFee: '',
-      serviceName: []
+      serviceName: [],
+      channlList: [],
+      balanceAccountId: '',
+      suggest: ''
     };
   },
   watch: {
@@ -425,6 +451,29 @@ export default {
             console.log(data)
             this.detail = data
             this.show = true
+            this.getChannlList()
+        })
+    },
+    getChannlList() {
+        get('/api/balance-web/balance-account/query-balance-account-channel-list', {
+            serviceCompanyId: this.detail.serviceCompanyId,
+            appId: this.detail.appId,
+            bankType: this.detail.channelBusinessType
+        }).then(data => {
+            this.channlList = data
+        })
+    },
+    getSuggest() {
+        this.channlList.forEach(e => {
+            if(e.balanceAccountId == this.balanceAccountId) {
+                get('/api/balance-web/balance-account/get-avail-balance-info', {
+                    balanceAccountId: e.balanceAccountId,
+                    payUserId: e.payUserId,
+                    paymentThirdType: e.paymentThirdType
+                }).then(data => {
+                    this.suggest = data
+                })
+            }
         })
     },
     clearApp() {
@@ -443,6 +492,7 @@ export default {
         })
     },
     getChannlType() {
+        console.log(this.dialogCreateForm.serviceCompanyId)
         get('/api/balance-web/recharge-order/pre-recharge', {
             appId: this.dialogCreateForm.appId,
             companyId: this.dialogCreateForm.companyId,
@@ -591,6 +641,7 @@ export default {
       });
     },
     submitDialogCreateForm() {
+        console.log(this.dialogCreateForm)
       this.$refs["dialogCreateForm"].validate(valid => {
         if (valid) {
           post("/api/balance-web/recharge-order/comfirm", this.dialogCreateForm).then(data => {
@@ -608,6 +659,7 @@ export default {
       });
     },
     closeEditDialog(next) {
+      this.attachmentUrl = ''
       this.$refs["dialogCreateForm"].resetFields();
       next();
     },
@@ -659,5 +711,15 @@ export default {
 .det {
     margin-bottom: 10px;
     padding-left: 20px;
+}
+.voucher {
+    position: absolute;
+    top: 75px;
+    right: 50px;
+}
+.upload {
+    position: relative;
+    top: -5px;
+    display: inline-block;
 }
 </style>
