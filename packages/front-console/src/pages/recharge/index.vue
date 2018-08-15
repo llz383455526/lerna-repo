@@ -383,7 +383,8 @@ export default {
       serviceName: [],
       channlList: [],
       balanceAccountId: '',
-      suggest: ''
+      suggest: '',
+      payUserId: ''
     };
   },
   watch: {
@@ -466,6 +467,7 @@ export default {
     getSuggest() {
         this.channlList.forEach(e => {
             if(e.balanceAccountId == this.balanceAccountId) {
+                this.payUserId = e.payUserId
                 get('/api/balance-web/balance-account/get-avail-balance-info', {
                     balanceAccountId: e.balanceAccountId,
                     payUserId: e.payUserId,
@@ -547,7 +549,7 @@ export default {
             attachmentId: this.attachmentId,
             memo: this.memo,
             orderNo: this.detail.orderNo,
-            payUserId: this.detail.payUserId,
+            payUserId: this.payUserId,
             state: state
         }).then(
           data => {

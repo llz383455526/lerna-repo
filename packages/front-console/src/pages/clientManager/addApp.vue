@@ -30,12 +30,12 @@
                   <el-option v-for="e in types" :label="e.text" :value="e.value" :key="e.value"></el-option>
               </el-select>
           </el-form-item> -->
-          <el-form-item label="选择服务商" prop="serviceCompanyId" size="small">
+          <el-form-item label="选择服务商" prop="serviceCompanyList" size="small">
               <!-- <el-select v-model="form.serviceCompanyId" class="form_input" filterable>
                   <el-option v-for="item in company" :value="item.companyId" :label="item.companyName"></el-option>
               </el-select> -->
-              <el-checkbox-group v-model="form.serviceCompanyIds">
-                  <el-checkbox v-for="item in company" :label="item.value" :key="item.value">{{item.text}}</el-checkbox>
+              <el-checkbox-group v-model="form.serviceCompanyList">
+                  <el-checkbox v-for="item in company" :label="item" :key="item.value">{{item.text}}</el-checkbox>
               </el-checkbox-group>
           </el-form-item>
           <!-- <el-form-item label="企业负责人" prop="legalPerson" size="small">
@@ -83,7 +83,7 @@ export default {
         companyId: "",
         appId: "",
         appName: "",
-        serviceCompanyIds: [],
+        serviceCompanyList: [],
         authCode: "",
         chargeBy: "",
         chargeByName: ""
@@ -117,7 +117,7 @@ export default {
             trigger: "change"
           }
         ],
-        serviceCompanyIds: [
+        serviceCompanyList: [
           {
             required: true,
             message: "请选择服务公司",
@@ -182,11 +182,17 @@ export default {
       });
     },
     sure(e) {
-        console.log(this.form)
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.authCode) {
             this.form.authCode = this.authCode;
+            this.form.serviceCompanyList.forEach(e => {
+                e.serviceCompanyId = e.value
+                e.serviceCompanyName = e.text
+                delete e.value
+                delete e.text
+            })
+            console.log(this.form)
             postWithErrorCallback(
               "/api/sysmgr-web/company-app/add-app",
               this.form
