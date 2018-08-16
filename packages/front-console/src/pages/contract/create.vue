@@ -29,11 +29,10 @@
             </el-form-item>
             <el-form-item label="结算方式" prop="settleType" required>
                 <el-select v-model="contractForm.settleType" placeholder="请选择" @change="showType" style="width:100%;">
-                	<!-- <el-option label="实时" value="each"></el-option>
+                	<el-option label="预收" value="each"></el-option>
                     <el-option label="日结" value="day"></el-option>
                     <el-option label="周结" value="week"></el-option>
-                    <el-option label="月结" value="month"></el-option> -->
-                    <el-option v-for="item in options" :key="item.value" :label="item.text" :value="item.value"></el-option>
+                    <el-option label="月结" value="month"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="结算日期" v-if="weekVisible" prop="settleExp">
@@ -87,7 +86,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="服务费收费比例" prop="serviceFee">
-                <el-row class="mb15" v-show="contractForm.settleType != 'each'">
+                <el-row class="mb15">
                     <el-col :span="6">
                         <el-radio label="fixed" v-model="contractForm.serviceFeeType" @change="calcuServiceFee(0)">固定金额收费
                         </el-radio>
@@ -449,9 +448,7 @@
                         index: 1
                     }
                 ],
-                invoiceType: [],
-                options: [],
-                isInit: true
+                invoiceType: []
             }
         },
         created() {
@@ -465,16 +462,15 @@
             else {
                 this.getOptionCustomerCompanies();
             }
-            get('/api/contract-web/commom/option', {enumType: 'SettleType'}).then(data => {
-                this.options = data
-            })
         },
         methods: {
             getInvoice() {
                 var id = ''
                 this.customerCompaniesList.forEach(e => {
+                    console.log(e.companyName == this.contractForm.customerName)
                     if(e.companyName == this.contractForm.customerName) {
                         id = e.companyId
+                        console.log(id)
                     }
                 })
                 get('/api/invoice-web/custom-company/detail', {
@@ -494,6 +490,7 @@
                         }
                         this.invoiceForm.id = id
                     }
+                    this.invoiceForm.openInvoiceType = this.contractForm.openInvoiceType
                     this.$refs['invoice'].clearValidate()
                 })
             },
@@ -524,7 +521,11 @@
                     url = '/api/contract-web/contract/add-contract';
                 }
                 let self = this;
+                console.log('this:')
+                console.log(self.contractForm.customerName)
                 _.foreach(this.customerCompaniesList, function (value) {
+                    console.log('arr:')
+                    console.log(value['companyName'])
                     if (value['companyName'] == self.contractForm.customerName) {
                         self.contractForm.customerId = value['companyId'];
                         return false;
@@ -561,6 +562,8 @@
                                     showNotify('error', '收费比例在0%到100%之间！')
                                     return
                                 }
+                                this.contractForm.openInvoiceType = this.invoiceForm.openInvoiceType
+                                delete this.invoiceForm.openInvoiceType
                                 post(url, this.contractForm).then(data => {
                                     this.invoiceUpdate(data)
                                 });
@@ -593,19 +596,6 @@
                 }
             },
             showType(val) {
-                if(!this.isInit) {
-                    if(val == 'each') {
-                        this.contractForm.serviceFeeType = 'ratio'
-                        this.calcuServiceFee(1)
-                    }
-                    else {
-                        this.contractForm.serviceFeeType = 'fixed'
-                        this.calcuServiceFee(0)
-                    }
-                }
-                else {
-                    this.isInit = false
-                }
                 if (val == 'day' || val == 'each') {
                     this.contractForm.settleExp = '每天';
                     this.weekVisible = false;
@@ -814,30 +804,24 @@
                     delete this.contractForm.invoicePhone
                     delete this.contractForm.invoiceBank
                     delete this.contractForm.invoiceAccount
-                    console.log(data)
-                    console.log(this.contractForm)
                     this.getOptionCustomerCompanies()
                     if(!this.contractForm.stepwiseList) {
                         this.contractForm.stepwiseList = [
-                            {
-                                startAmount: 0,
-                                endAmount: 28000,
-                                sequence: 0,
-                                percent: ''
+                        {
+                            startAmount: 0,
+                            endAmount: 30000,
+                            sequence: 0,
+                            percent: ''
 
-                            },
-                            {
-                                startAmount: 28000,
-                                endAmount: 999999999,
-                                sequence: 1,
-                                percent: ''
+                        },
+                        {
+                            startAmount: 30000,
+                            endAmount: 999999999,
+                            sequence: 1,
+                            percent: ''
 
-                            }
-                        ]
-                    }
-                    else {
-                        this.contractForm.stepwiseList[0].endAmount = 2800
-                        this.contractForm.stepwiseList[1].startAmount = 2800
+                        }
+                    ]
                     }
                     this.calcuServiceFeeReverse();
                     this.handdleChangeReverse();
