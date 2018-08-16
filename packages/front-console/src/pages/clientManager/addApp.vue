@@ -159,7 +159,7 @@ export default {
     // get("/api/console-dlv/option/get-option-service-companies").then(data => {
     //   this.company = data;
     // });
-    get(`/api/sysmgr-web/company-app/get-app-service-company-options?customCompanyId=${this.form.companyId}`).then(data => {
+    get(`/api/sysmgr-web/commom/contract-service-company-options?customCompanyId=${this.form.companyId}`).then(data => {
         this.company = data;
     })
     get(

@@ -4,29 +4,36 @@
         <el-form :model="form" :inline="true">
             <el-form-item label="服务商名称">
                 <el-select size="small" filterable v-model="form.serviceCompanyId">
-                    <el-option v-for="e in serviceCompanys"></el-option>
+                    <el-option v-for="e in companys" :value="e.id" :label="e.name" :key="e.id"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="操作时间">
                 <!-- <el-date-picker v-model="dateValue" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker> -->
-                <el-date-picker size="small" v-model="dateValue" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" @change="getTime"></el-date-picker>
+                <el-date-picker size="small"
+                    v-model="dateValue"
+                    type="daterange"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    value-format='yyyy-MM-dd'
+                    @change="getTime">
+                </el-date-picker>
             </el-form-item>
             <el-form-item>
-                <el-button size="small" type="primary">查询</el-button>
+                <el-button size="small" type="primary" @click="query">查询</el-button>
             </el-form-item>
         </el-form>
         <el-button size="small" type="primary" @click="show = true">调账申请</el-button>
-        <el-table :data="[]">
-            <el-table-column label="操作人"></el-table-column>
-            <el-table-column label="服务商信息"></el-table-column>
-            <el-table-column label="转出渠道信息"></el-table-column>
-            <el-table-column label="转入渠道信息"></el-table-column>
-            <el-table-column label="金额（元）"></el-table-column>
-            <el-table-column label="处理时间"></el-table-column>
-            <el-table-column label="调账备注"></el-table-column>
+        <el-table :data="data.list">
+            <el-table-column label="操作人" prop="createByName"></el-table-column>
+            <el-table-column label="服务商信息" prop="serviceCompanyName"></el-table-column>
+            <el-table-column label="转出渠道信息" prop="fromPaymentThirdType"></el-table-column>
+            <el-table-column label="转入渠道信息" prop="toPaymentThirdType"></el-table-column>
+            <el-table-column label="金额（元）" prop="tradeAmount"></el-table-column>
+            <el-table-column label="处理时间" prop="tradeAtStr"></el-table-column>
+            <el-table-column label="调账备注" prop="remarks"></el-table-column>
         </el-table>
         <ayg-pagination
-            :total="total"
+            :total="data.total"
             :currentPage="form.page"
             v-on:handleSizeChange="setSize"
             v-on:handleCurrentChange="query">
@@ -177,7 +184,8 @@ export default {
                 ]
             },
             outMsg: '',
-            inMsg: ''
+            inMsg: '',
+            companys: []
         }
     },
     computed: {
@@ -195,6 +203,9 @@ export default {
         get('/api/balance-web/commom/option?enumType=ChannelType').then(data => {
             this.channelType = data
         })
+        get('/api/sysmgr-web/commom/company').then(data => {
+          this.companys = data
+      })
     },
     methods: {
         getTime() {
@@ -203,13 +214,18 @@ export default {
                 this.form.tradeAtEnd = this.dateValue[1]
             }
         },
-        query() {
+        query(a) {
+            if(isNaN(a)) {
+                a = 1
+            }
+            this.form.page = a
             post('/api/balance-web/balance-trade-recon/get-trade-recon-list', this.form).then(data => {
                 this.data = data
             })
         },
-        setSize() {
-
+        setSize(a) {
+            this.form.pageSize = a
+            this.query()
         },
         getService() {
             this.productName.forEach(e => {

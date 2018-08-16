@@ -1,38 +1,57 @@
 <template>
     <div class="company-build-container company-container">
         <div>资金明细</div>
-        <el-form :model="form" :inline="true">
-            <el-form-item label="企业">
-                <el-input size="small" v-model="form.companyId"></el-input>
+        <el-form :model="form" :inline="true" ref="form">
+            <el-form-item label="企业" prop="serviceCompanyId">
+                <el-select size="small" filterable v-model="form.serviceCompanyId">
+                    <el-option v-for="e in companys" :value="e.id" :label="e.name" :key="e.id"></el-option>
+                </el-select>
             </el-form-item>
-            <el-form-item label="商户">
-                <el-input size="small" v-model="form.serviceCompanyId"></el-input>
+            <el-form-item label="商户" prop="appId">
+                <el-select size="small" filterable v-model="form.appId">
+                    <el-option v-for="e in apps" :value="e.value" :label="e.text" :key="e.value"></el-option>
+                </el-select>
             </el-form-item>
-            <el-form-item label="操作">
-                <el-input size="small" v-model="form.bizTradeName"></el-input>
+            <el-form-item label="操作" prop="bizTradeName">
+                <el-select size="small" filterable v-model="form.bizTradeName">
+                    <el-option v-for="e in handles" :value="e.value" :label="e.text" :key="e.value"></el-option>
+                </el-select>
+                <!-- <el-input size="small" v-model="form.bizTradeName"></el-input> -->
             </el-form-item>
             <el-form-item label="完成时间">
-                <el-date-picker size="small" v-model="dateValue" type="dateRange" start-placeholder="开始日期" end-placeholder="结束日期" @change="getTime"></el-date-picker>
+                <el-date-picker
+                    size="small"
+                    v-model="range"
+                    type="daterange"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    value-format='yyyy-MM-dd'
+                    @change="getTime">
+                </el-date-picker>
             </el-form-item>
             <el-form-item>
                 <el-button size="small" type="primary" @click="query">查询</el-button>
-                <el-button size="small">清除</el-button>
+                <el-button size="small" @click="reset">清除</el-button>
                 <el-button size="small">导出</el-button>
             </el-form-item>
         </el-form>
-        <el-table :data="[]">
-            <el-table-column label="关联订单号"></el-table-column>
-            <el-table-column label="商户"></el-table-column>
-            <el-table-column label="企业"></el-table-column>
-            <el-table-column label="服务商"></el-table-column>
-            <el-table-column label="渠道"></el-table-column>
-            <el-table-column label="支付账号"></el-table-column>
-            <el-table-column label="金额"></el-table-column>
-            <el-table-column label="操作"></el-table-column>
-            <el-table-column label="完成时间"></el-table-column>
+        <el-table :data="data.list">
+            <el-table-column label="关联订单号" prop="orderNo"></el-table-column>
+            <el-table-column label="商户" prop="appName"></el-table-column>
+            <el-table-column label="企业" prop="companyName"></el-table-column>
+            <el-table-column label="服务商" prop="serviceCompanyName"></el-table-column>
+            <el-table-column label="渠道" prop="paymentThirdType"></el-table-column>
+            <el-table-column label="支付账号" prop="payUserName"></el-table-column>
+            <el-table-column label="金额" prop="tradeAmount">
+                <template slot-scope="scope">
+                    {{scope.row.tradeAmount | formatMoney}}
+                </template>
+            </el-table-column>
+            <el-table-column label="操作" prop="bizTradeName"></el-table-column>
+            <el-table-column label="完成时间" prop="tradeAtStr"></el-table-column>
         </el-table>
         <ayg-pagination
-            :total="total"
+            :total="data.total"
             :currentPage="form.page"
             v-on:handleSizeChange="setSize"
             v-on:handleCurrentChange="query">
@@ -54,11 +73,23 @@ export default {
         pageSize: 10,
         serviceCompanyId: ""
       },
-      dateRange: [],
-      total: 0
+      range: [],
+      data: {},
+      companys: [],
+      apps: [],
+      handles: []
     };
   },
   mounted() {
+      get('/api/sysmgr-web/commom/company').then(data => {
+          this.companys = data
+      })
+      get('/api/sysmgr-web/commom/app-list').then(data => {
+          this.apps = data
+      })
+      get('/api/balance-web/commom/option?enumType=BalanceTradeType').then(data => {
+          this.handles = data
+      })
       this.query()
   },
   methods: {
@@ -68,17 +99,24 @@ export default {
           }
           this.form.page = a
           post('/api/balance-web/balance-account/query-fund', this.form).then(data => {
-              console.log(data)
+              this.data = data
           })
       },
       setSize(a) {
           this.form.pageSize = a
           this.query()
       },
+      reset() {
+        //   console.log(this.$refs['form'])
+          this.$refs['form'].resetFields()
+          this.range = []
+          this.form.createAtBegin = ''
+          this.form.createAtEnd = ''
+      },
       getTime() {
-          if(this.dateRange.length) {
-              this.form.createAtBegin = this.dateRange[0]
-              this.form.createAtEnd = this.dateRange[1]
+          if(this.range.length) {
+              this.form.createAtBegin = this.range[0]
+              this.form.createAtEnd = this.range[1]
           }
       }
   }

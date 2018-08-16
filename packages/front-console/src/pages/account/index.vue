@@ -66,19 +66,19 @@
                     <h2>{{account.balanceAmount | formatMoney}}</h2>
                 </div>
                 <el-form :inline="true" :model="clientForm">
-                    <el-form-item label="企业" prop="appId" ref="clientForm">
-                        <el-select size="small" filterable v-model="clientForm.appId">
-
+                    <el-form-item label="企业" prop="serviceCompanyId" ref="clientForm">
+                        <el-select size="small" filterable v-model="clientForm.serviceCompanyId">
+                            <el-option v-for="e in companys" :value="e.id" :label="e.name" :key="e.id"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="商户" prop="serviceCompanyId">
-                        <el-select size="small" filterable v-model="clientForm.serviceCompanyId">
-
+                    <el-form-item label="商户" prop="appId">
+                        <el-select size="small" filterable v-model="clientForm.appId">
+                            <el-option v-for="e in apps" :value="e.value" :label="e.text" :key="e.value"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item>
-                        <el-button size="small" type="primary">查询</el-button>
-                        <el-button size="small" @click="reset">清除</el-button>
+                        <el-button size="small" type="primary" @click="clientBalance">查询</el-button>
+                        <el-button size="small" @click="reset('clientForm')">清除</el-button>
                         <el-button size="small" style="margin-left: 60px">导出搜索结果</el-button>
                     </el-form-item>
                 </el-form>
@@ -152,15 +152,15 @@
                     <p>账户总余额（元）： </p>
                     <h2>{{account.balanceAmount | formatMoney}}</h2>
                 </div>
-                <el-form :inline="true" :model="serviceForm">
+                <el-form :inline="true" :model="serviceForm" ref="serviceForm">
                     <el-form-item label="服务商" prop="serviceCompanyId">
                         <el-select size="small" filterable v-model="serviceForm.serviceCompanyId">
                             <el-option v-for="e in serviceOption" :value="e.value" :label="e.text" :key="e.value"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item>
-                        <el-button size="small" type="primary">查询</el-button>
-                        <el-button size="small" @click="reset">清除</el-button>
+                        <el-button size="small" type="primary" @click="serviceBalance">查询</el-button>
+                        <el-button size="small" @click="reset('serviceForm')">清除</el-button>
                         <el-button size="small" style="margin-left: 60px">导出搜索结果</el-button>
                     </el-form-item>
                 </el-form>
@@ -264,7 +264,9 @@ export default {
         pageSize: 10,
         serviceCompanyId: ''
       },
-      serviceData: {}
+      serviceData: {},
+      companys: [],
+      apps: []
     };
   },
   computed: {
@@ -288,7 +290,6 @@ export default {
   mounted() {
     post("/api/balance-web/balance-account/query-account").then(
       function(data) {
-        console.log(data);
         this.aData = data;
       }.bind(this)
     );
@@ -301,6 +302,12 @@ export default {
     this.getService()
     this.clientBalance()
     this.serviceBalance()
+    get('/api/sysmgr-web/commom/company').then(data => {
+        this.companys = data
+    })
+    get('/api/sysmgr-web/commom/app-list').then(data => {
+        this.apps = data
+    })
   },
   methods: {
     handleSizeChange(value) {
@@ -334,9 +341,12 @@ export default {
       this.$store.dispatch("account", param);
     },
     getService() {
-        get('/api/invoice-web/invoice/service-company-options').then(data => {
+        get('/api/sysmgr-web/commom/app-service-company-list').then(data => {
             this.serviceOption = data
         })
+        // get('/api/invoice-web/invoice/service-company-options').then(data => {
+        //     this.serviceOption = data
+        // })
     },
     clientBalance(a) {
         if(isNaN(a)) {
@@ -372,8 +382,10 @@ export default {
         sessionStorage.setItem('serviceDetail', JSON.stringify(a))
         this.$router.push('serviceDetail')
     },
-    reset() {
-
+    reset(name) {
+        console.log(name)
+        this.$refs[name].resetField()
+        // this.$refs[name].resetFields()
     }
   },
 
