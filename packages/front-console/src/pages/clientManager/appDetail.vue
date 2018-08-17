@@ -404,12 +404,19 @@ export default {
         if (valid) {
           if (this.authCode) {
             this.aform.authCode = this.authCode;
-            this.aform.serviceCompanyList.forEach(e => {
-                e.serviceCompanyId = e.value
-                e.serviceCompanyName = e.text
-                delete e.value
-                delete e.text
+            var arr = [], oldArr = this.aform.serviceCompanyList
+            this.aform.serviceCompanyList.forEach((e, i) => {
+                // if(e.value) {
+                    arr[i] = {}
+                    arr[i].serviceCompanyId = e.value
+                    // delete e.value
+                // }
+                // if(e.text) {
+                    arr[i].serviceCompanyName = e.text
+                    // delete e.text
+                // }
             })
+            this.aform.serviceCompanyList = arr
             console.log(this.aform)
             postWithErrorCallback(
               "/api/sysmgr-web/company-app/update-app",
@@ -432,7 +439,10 @@ export default {
                 if (err.message == "无效的授权码！") {
                   this.getAccredit(this.update);
                 }
-              });
+              }).finally(() => {
+                  console.log('finally')
+                  this.aform.serviceCompanyList = oldArr
+              })
           } else {
             this.getAccredit(this.update);
           }
@@ -473,7 +483,7 @@ export default {
               appId: this.appId,
               payUserNo: this.result.thirdpayUserId,
               paymentThirdType: this.result.thirdpaySystemId,
-              payeruserName: this.result.payeruserName,
+              payUserName: this.result.payeruserName,
               paymentUserId: this.result.userId,
               authCode: this.authCode,
               isDefault: this.isDefault,

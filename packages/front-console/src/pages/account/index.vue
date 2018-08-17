@@ -155,7 +155,7 @@
                 <el-form :inline="true" :model="serviceForm" ref="serviceForm">
                     <el-form-item label="服务商" prop="serviceCompanyId">
                         <el-select size="small" filterable v-model="serviceForm.serviceCompanyId">
-                            <el-option v-for="e in serviceOption" :value="e.value" :label="e.text" :key="e.value"></el-option>
+                            <el-option v-for="e in serviceOption" :value="e.id" :label="e.name" :key="e.id"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item>
@@ -299,11 +299,18 @@ export default {
       }.bind(this),
       10
     );
-    this.getService()
+    // this.getService()
     this.clientBalance()
     this.serviceBalance()
-    get('/api/sysmgr-web/commom/company').then(data => {
+    get('/api/sysmgr-web/commom/company', {
+        companyIdentity: 'custom'
+    }).then(data => {
         this.companys = data
+    })
+    get('/api/sysmgr-web/commom/company', {
+        companyIdentity: 'service'
+    }).then(data => {
+        this.serviceOption = data
     })
     get('/api/sysmgr-web/commom/app-list').then(data => {
         this.apps = data
@@ -340,14 +347,14 @@ export default {
       // this.$store.dispatch('companyBuildList', param);
       this.$store.dispatch("account", param);
     },
-    getService() {
-        get('/api/sysmgr-web/commom/app-service-company-list').then(data => {
-            this.serviceOption = data
-        })
-        // get('/api/invoice-web/invoice/service-company-options').then(data => {
-        //     this.serviceOption = data
-        // })
-    },
+    // getService() {
+    //     get('/api/sysmgr-web/commom/app-service-company-list').then(data => {
+    //         this.serviceOption = data
+    //     })
+    //     // get('/api/invoice-web/invoice/service-company-options').then(data => {
+    //     //     this.serviceOption = data
+    //     // })
+    // },
     clientBalance(a) {
         if(isNaN(a)) {
             a = 1

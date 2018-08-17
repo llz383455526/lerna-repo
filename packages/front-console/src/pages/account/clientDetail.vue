@@ -78,6 +78,9 @@ export default {
             this.form.page = a
             post('/api/balance-web/balance-account/query-app-balance-account-detail', this.form).then(data => {
                 this.data = data
+                this.data.list = this.data.list.filter(e => {
+                    return e.payUserName
+                })
             })
         },
         setSize(a) {

@@ -41,11 +41,29 @@
             </el-tab-pane>
             <el-tab-pane label="关联商户明细" name="relevance">
                 <el-table v-if="data.list" :data="data.list">
-                    <el-table-column label="商户名称" prop="bankType"></el-table-column>
-                    <el-table-column label="归属企业" prop="channelAlias"></el-table-column>
-                    <el-table-column label="银行卡余额（元）" prop="paymentThirdType"></el-table-column>
-                    <el-table-column label="支付宝余额（元）" prop="paymentThirdType"></el-table-column>
-                    <el-table-column label="微信余额（元）" prop="paymentThirdType"></el-table-column>
+                    <el-table-column label="商户名称" prop="appName"></el-table-column>
+                    <el-table-column label="归属企业" prop="companyName"></el-table-column>
+                    <el-table-column label="银行卡余额（元）" prop="bankList">
+                        <template slot-scope="scope">
+                            <div v-for="e in scope.row.bankList" v-if="e.name">
+                                {{e.name}}：{{e.value | formatMoney}}
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="支付宝余额（元）" prop="alipayList">
+                        <template slot-scope="scope">
+                            <div v-for="e in scope.row.alipayList" v-if="e.name">
+                                {{e.name}}：{{e.value | formatMoney}}
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="微信余额（元）" prop="wxList">
+                        <template slot-scope="scope">
+                            <div v-for="e in scope.row.wxList" v-if="e.name">
+                                {{e.name}}：{{e.value | formatMoney}}
+                            </div>
+                        </template>
+                    </el-table-column>
                     <!-- <el-table-column label="关键标识">
                         <template slot-scope="scope">
                             <div>登录账号：{{scope.row.channelLoginAcctNo}}</div>
@@ -103,6 +121,9 @@ export default {
             this.form.page = a
             post(`/api/balance-web/balance-account/${this.tabName == 'channel' ? 'query-service-company-balance-account-channel-detail' : 'query-service-company-balance-account-app-detail'}`, this.form).then(data => {
                 this.data = data
+                this.data.list = this.data.list.filter(e => {
+                    return this.tabName == 'channel' ? e.payUserName : e.appName
+                })
             })
         },
         setSize(a) {
