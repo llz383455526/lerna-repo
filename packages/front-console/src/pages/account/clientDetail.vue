@@ -31,7 +31,7 @@
             </el-table-column>
             <el-table-column label="余额">
                 <template slot-scope="scope">
-                    {{scope.row.totalAvailBalance | formatMoney}}
+                    {{scope.row.availBalance | formatMoney}}
                 </template>
             </el-table-column>
         </el-table>

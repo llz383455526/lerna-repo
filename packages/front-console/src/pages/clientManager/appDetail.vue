@@ -104,12 +104,13 @@
           </el-form> -->
           <div class="title">支付渠道</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="addChannel">添加支付渠道</el-button>
           <el-table :data="data.payUsers">
-              <el-table-column prop="serviceCompanyName" label="服务商"></el-table-column>
-              <el-table-column prop="thirdPaymentTypeName" label="支付渠道"></el-table-column>
-              <el-table-column prop="payUserId" label="支付账户"></el-table-column>
-              <el-table-column prop="payUserName" label="子账号名称"></el-table-column>
-              <el-table-column prop="payUserNo" label="子账号"></el-table-column>
-              <el-table-column prop="channelTypeName" label="渠道类型"></el-table-column>
+              <el-table-column prop="payUserId" label="支付用户ID"></el-table-column>
+              <el-table-column prop="thirdPaymentTypeName" label="渠道名称"></el-table-column>
+              <el-table-column prop="serviceCompanyName" label="关联服务商"></el-table-column>
+              <el-table-column prop="payUserId" label="支付账号"></el-table-column>
+              <!-- <el-table-column prop="payUserName" label="子账号名称"></el-table-column>
+              <el-table-column prop="payUserNo" label="子账号"></el-table-column> -->
+              <!-- <el-table-column prop="channelTypeName" label="渠道类型"></el-table-column> -->
               <el-table-column label="操作">
                   <template slot-scope="scope">
                       <el-button type="text" @click="deleteRow(scope.row)">删除</el-button>

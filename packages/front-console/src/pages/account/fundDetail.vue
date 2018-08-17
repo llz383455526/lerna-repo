@@ -1,6 +1,6 @@
 <template>
     <div class="company-build-container company-container">
-        <div>资金明细</div>
+        <div class="title">资金明细</div>
         <el-form :model="form" :inline="true" ref="form">
             <el-form-item label="企业" prop="serviceCompanyId">
                 <el-select size="small" filterable v-model="form.serviceCompanyId">
@@ -32,7 +32,7 @@
             <el-form-item>
                 <el-button size="small" type="primary" @click="query">查询</el-button>
                 <el-button size="small" @click="reset">清除</el-button>
-                <el-button size="small">导出</el-button>
+                <el-button size="small" @click="exportDetail">导出</el-button>
             </el-form-item>
         </el-form>
         <el-table :data="data.list">
@@ -47,7 +47,7 @@
                     {{scope.row.tradeAmount | formatMoney}}
                 </template>
             </el-table-column>
-            <el-table-column label="操作" prop="bizTradeName"></el-table-column>
+            <el-table-column label="操作" prop="bizTradeNameName"></el-table-column>
             <el-table-column label="完成时间" prop="tradeAtStr"></el-table-column>
         </el-table>
         <ayg-pagination
@@ -118,7 +118,24 @@ export default {
               this.form.createAtBegin = this.range[0]
               this.form.createAtEnd = this.range[1]
           }
+      },
+      exportDetail() {
+          var str = ''
+          for (var k in this.form) {
+              if(!str) {
+                  str += `?${k}=${this.form[k]}`
+              }
+              else {
+                  str += `&${k}=${this.form[k]}`
+              }
+          }
+          window.open(`/api/balance-web/balance-account/export-fund-list${str}`)
       }
   }
 };
 </script>
+<style scoped>
+.title {
+    margin-bottom: 20px;
+}
+</style>

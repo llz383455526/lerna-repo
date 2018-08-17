@@ -1,6 +1,6 @@
 <template>
     <div class="company-build-container company-container">
-        <div class="title">{{data.appName}}账户余额明细（{{data.companyName}}）</div>
+        <div class="title">账户余额明细（{{data.serviceCompanyName}}）</div>
         <div class="collect">
             <div>
                 <span>总余额（元）</span>
@@ -33,7 +33,7 @@
                     <el-table-column label="业务类型" prop="bankType"></el-table-column>
                     <el-table-column label="余额">
                         <template slot-scope="scope">
-                            {{scope.row.totalAvailBalance | formatMoney}}
+                            {{scope.row.availBalance | formatMoney}}
                         </template>
                     </el-table-column>
                 </el-table>
@@ -53,7 +53,7 @@
                     </el-table-column> -->
                     <el-table-column label="总余额（元）">
                         <template slot-scope="scope">
-                            {{scope.row.totalAvailBalance | formatMoney}}
+                            {{scope.row.availBalance | formatMoney}}
                         </template>
                     </el-table-column>
                 </el-table>

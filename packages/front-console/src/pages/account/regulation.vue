@@ -1,8 +1,8 @@
 <template>
     <div class="company-build-container company-container">
         <div class="title">调账管理</div>
-        <el-form :model="form" :inline="true">
-            <el-form-item label="服务商名称">
+        <el-form :model="form" :inline="true" ref="form">
+            <el-form-item label="服务商名称" prop="serviceCompanyId">
                 <el-select size="small" filterable v-model="form.serviceCompanyId">
                     <el-option v-for="e in companys" :value="e.id" :label="e.name" :key="e.id"></el-option>
                 </el-select>
@@ -20,14 +20,23 @@
             </el-form-item>
             <el-form-item>
                 <el-button size="small" type="primary" @click="query">查询</el-button>
+                <el-button size="small" @click="reset">清除</el-button>
             </el-form-item>
         </el-form>
         <el-button size="small" type="primary" @click="show = true">调账申请</el-button>
         <el-table :data="data.list">
             <el-table-column label="操作人" prop="createByName"></el-table-column>
             <el-table-column label="服务商信息" prop="serviceCompanyName"></el-table-column>
-            <el-table-column label="转出渠道信息" prop="fromPaymentThirdType"></el-table-column>
-            <el-table-column label="转入渠道信息" prop="toPaymentThirdType"></el-table-column>
+            <el-table-column label="转出渠道信息" prop="fromPaymentThirdType">
+                <template slot-scope="scope">
+                    {{`${scope.row.fromBankTypeName}/${scope.row.fromChannelLoginAcctNo}/${scope.row.fromChannelMerCustId}/${scope.row.fromPayUserName}`}}
+                </template>
+            </el-table-column>
+            <el-table-column label="转入渠道信息" prop="toPaymentThirdType">
+                <template slot-scope="scope">
+                    {{`${scope.row.toBankTypeName}/${scope.row.toChannelLoginAcctNo}/${scope.row.toChannelMerCustId}/${scope.row.toPayUserName}`}}
+                </template>
+            </el-table-column>
             <el-table-column label="金额（元）" prop="tradeAmount"></el-table-column>
             <el-table-column label="处理时间" prop="tradeAtStr"></el-table-column>
             <el-table-column label="调账备注" prop="remarks"></el-table-column>
@@ -226,6 +235,12 @@ export default {
         setSize(a) {
             this.form.pageSize = a
             this.query()
+        },
+        reset() {
+            this.$refs['form'].resetFields()
+            this.dateValue = []
+            this.form.tradeAtBegin = ''
+            this.form.tradeAtEnd = ''
         },
         getService() {
             this.productName.forEach(e => {

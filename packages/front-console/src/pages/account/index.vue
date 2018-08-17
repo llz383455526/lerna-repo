@@ -59,14 +59,14 @@
                     </el-table-column>
                 </el-table>
             </el-tab-pane>
-            <el-tab-pane label="客户账户余额" name="client" v-loading="load">
+            <el-tab-pane label="客户账户余额（新）" name="client" v-loading="load">
                 <div style="padding: 30px;">
                     <img src="../../image/money.png" style="width: 120px;height: 120px;float: left; margin-right: 50px;"/>
                     <p>账户总余额（元）： </p>
                     <h2>{{account.balanceAmount | formatMoney}}</h2>
                 </div>
-                <el-form :inline="true" :model="clientForm">
-                    <el-form-item label="企业" prop="serviceCompanyId" ref="clientForm">
+                <el-form :inline="true" :model="clientForm" ref="clientForm">
+                    <el-form-item label="企业" prop="serviceCompanyId">
                         <el-select size="small" filterable v-model="clientForm.serviceCompanyId">
                             <el-option v-for="e in companys" :value="e.id" :label="e.name" :key="e.id"></el-option>
                         </el-select>
@@ -79,7 +79,7 @@
                     <el-form-item>
                         <el-button size="small" type="primary" @click="clientBalance">查询</el-button>
                         <el-button size="small" @click="reset('clientForm')">清除</el-button>
-                        <el-button size="small" style="margin-left: 60px">导出搜索结果</el-button>
+                        <el-button size="small" style="margin-left: 60px" @click="exportClient">导出搜索结果</el-button>
                     </el-form-item>
                 </el-form>
                 <el-table v-if="clientData.list" :data="clientData.list" style="width: 100%;margin-top: 20px;">
@@ -146,7 +146,7 @@
                     v-on:handleCurrentChange="clientBalance">
                 </ayg-pagination>
             </el-tab-pane>
-            <el-tab-pane label="服务商账户余额" name="service" v-loading="load">
+            <el-tab-pane label="服务商账户余额（新）" name="service" v-loading="load">
                 <div style="padding: 30px;">
                     <img src="../../image/money.png" style="width: 120px;height: 120px;float: left; margin-right: 50px;"/>
                     <p>账户总余额（元）： </p>
@@ -161,7 +161,7 @@
                     <el-form-item>
                         <el-button size="small" type="primary" @click="serviceBalance">查询</el-button>
                         <el-button size="small" @click="reset('serviceForm')">清除</el-button>
-                        <el-button size="small" style="margin-left: 60px">导出搜索结果</el-button>
+                        <el-button size="small" style="margin-left: 60px" @click="exportService">导出搜索结果</el-button>
                     </el-form-item>
                 </el-form>
                 <el-table :data="serviceData.list" style="width: 100%;margin-top: 20px;">
@@ -247,7 +247,7 @@ export default {
       aData: "",
       load: true,
       clientForm: {
-        appId: "",
+        appId: '',
         companyId: '',
         page: 1,
         pageSize: 10,
@@ -357,6 +357,18 @@ export default {
             this.clientData = data
         })
     },
+    exportClient() {
+        var str = ''
+        for (var k in this.clientForm) {
+            if(!str) {
+                str += `?${k}=${this.clientForm[k]}`
+            }
+            else {
+                str += `&${k}=${this.clientForm[k]}`
+            }
+        }
+        window.open(`/api/balance-web/balance-account/export-app-balance-account-list${str}`)
+    },
     setSizeClient(a) {
         this.clientForm.pageSize = a
         this.clientBalance()
@@ -374,6 +386,18 @@ export default {
             this.serviceData = data
         })
     },
+    exportService() {
+        var str = ''
+        for (var k in this.serviceForm) {
+            if(!str) {
+                str += `?${k}=${this.serviceForm[k]}`
+            }
+            else {
+                str += `&${k}=${this.serviceForm[k]}`
+            }
+        }
+        window.open(`/api/balance-web/balance-account/export-service-company-balance-account-list${str}`)
+    },
     setSizeService(a) {
         this.serviceForm.pageSize = a
         this.serviceBalance()
@@ -384,7 +408,7 @@ export default {
     },
     reset(name) {
         console.log(name)
-        this.$refs[name].resetField()
+        this.$refs[name].resetFields()
         // this.$refs[name].resetFields()
     }
   },
