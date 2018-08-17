@@ -186,12 +186,13 @@ export default {
         if (valid) {
           if (this.authCode) {
             this.form.authCode = this.authCode;
-            this.form.serviceCompanyList.forEach(e => {
-                e.serviceCompanyId = e.value
-                e.serviceCompanyName = e.text
-                delete e.value
-                delete e.text
+            var arr = [], oldArr = this.form.serviceCompanyList
+            this.form.serviceCompanyList.forEach((e, i) => {
+                arr[i] = {}
+                arr[i].serviceCompanyId = e.value
+                arr[i].serviceCompanyName = e.text
             })
+            this.form.serviceCompanyList = arr
             console.log(this.form)
             postWithErrorCallback(
               "/api/sysmgr-web/company-app/add-app",
@@ -210,7 +211,10 @@ export default {
                 if (err.message == "无效的授权码！") {
                   this.getAccredit(this.sure);
                 }
-              });
+              }).finally(() => {
+                  console.log('finally')
+                  this.form.serviceCompanyList = oldArr
+              })
           } else {
             this.getAccredit(this.sure);
           }
