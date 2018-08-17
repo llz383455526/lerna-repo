@@ -66,8 +66,8 @@
                     <h2>{{account.balanceAmount | formatMoney}}</h2>
                 </div>
                 <el-form :inline="true" :model="clientForm" ref="clientForm">
-                    <el-form-item label="企业" prop="serviceCompanyId">
-                        <el-select size="small" filterable v-model="clientForm.serviceCompanyId">
+                    <el-form-item label="企业" prop="companyId">
+                        <el-select size="small" filterable v-model="clientForm.companyId">
                             <el-option v-for="e in companys" :value="e.id" :label="e.name" :key="e.id"></el-option>
                         </el-select>
                     </el-form-item>
@@ -175,7 +175,7 @@
                             prop="bankAvailBalance"
                             label='银行卡余额（元）'>
                         <template slot-scope="scope">
-                            <span>{{0 | formatMoney}}</span>
+                            <span>{{scope.row.bankAvailBalance | formatMoney}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -183,7 +183,7 @@
                             prop="alipayAvailBalance"
                             label='支付宝余额（元）'>
                         <template slot-scope="scope">
-                            <span>{{0 | formatMoney}}</span>
+                            <span>{{scope.row.alipayAvailBalance | formatMoney}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -191,7 +191,7 @@
                             prop="wxAvailBalance"
                             label='微信余额（元）'>
                         <template slot-scope="scope">
-                            <span>{{0 | formatMoney}}</span>
+                            <span>{{scope.row.wxAvailBalance | formatMoney}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -199,7 +199,7 @@
                             prop="totalAvailBalance"
                             label='总余额（元）'>
                         <template slot-scope="scope">
-                            <span>{{0 | formatMoney}}</span>
+                            <span>{{scope.row.totalAvailBalance | formatMoney}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -250,8 +250,7 @@ export default {
         appId: '',
         companyId: '',
         page: 1,
-        pageSize: 10,
-        serviceCompanyId: ''
+        pageSize: 10
       },
       clientData: {},
       clientTotal: 0,

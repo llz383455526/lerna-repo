@@ -47,7 +47,7 @@
             v-on:handleSizeChange="setSize"
             v-on:handleCurrentChange="query">
         </ayg-pagination>
-        <el-dialog title="余额调账操作" :visible.sync="show" width="800px">
+        <el-dialog title="余额调账操作" @close="resetReg" :visible.sync="show" width="800px">
             <el-form :model="regForm" :rules="rules" label-width="150px" ref="regForm">
                 <el-form-item label="选择商户" prop="appId">
                     <el-select filterable v-model="regForm.appId" size="small" placeholder="请选择商户名称" @change="getService">
@@ -243,6 +243,12 @@ export default {
             this.form.tradeAtEnd = ''
         },
         getService() {
+            this.regForm.serviceCompanyId = ''
+            this.regForm.bankType = ''
+            this.regForm.fromBalanceAccountId = ''
+            this.outMsg = ''
+            this.regForm.toBalanceAccountId = ''
+            this.inMsg = ''
             this.productName.forEach(e => {
                 if(e.value == this.regForm.appId) {
                     this.regForm.appName = e.text
@@ -256,6 +262,10 @@ export default {
             this.getChannel()
         },
         getChannel() {
+            this.regForm.fromBalanceAccountId = ''
+            this.outMsg = ''
+            this.regForm.toBalanceAccountId = ''
+            this.inMsg = ''
             this.serviceName.forEach(e => {
                 if(e.value == this.regForm.serviceCompanyId) {
                     this.regForm.serviceCompanyName = e.text
@@ -272,6 +282,8 @@ export default {
             }
         },
         outChannel() {
+            this.regForm.toBalanceAccountId = ''
+            this.inMsg = ''
             this.filterChannels()
             var a
             this.channels.forEach(e => {
@@ -307,6 +319,11 @@ export default {
             this.channels_0 = this.channels.filter(e => {
                 return this.regForm.fromBalanceAccountId != e.balanceAccountId
             })
+        },
+        resetReg() {
+            this.$refs['regForm'].resetFields()
+            this.outMsg = ''
+            this.inMsg = ''
         },
         sure() {
             if(this.outMsg && this.outMsg.currentAvailBalance > this.regForm.tradeAmount) {
