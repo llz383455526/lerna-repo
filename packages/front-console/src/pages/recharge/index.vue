@@ -462,6 +462,12 @@ export default {
             bankType: this.detail.channelBusinessType
         }).then(data => {
             this.channlList = data
+            this.channlList.forEach(e => {
+                if(e.payUserId = this.detail.payUser.payUserId) {
+                    this.balanceAccountId = e.balanceAccountId
+                    this.getSuggest()
+                }
+            })
         })
     },
     getSuggest() {
