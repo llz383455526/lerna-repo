@@ -228,7 +228,7 @@
             <div class="det red" v-if="detail.payUser">子账号：{{detail.payUser.payUserNo}}</div> -->
             <!-- <div class="det">业务类型：{{detail.channelBusinessTypeName}}</div> -->
             <div class="title">渠道金额充值</div>
-            <div class="det">
+            <div class="det" v-if="(detail.state != 30 && detail.state != 40) || detail.financeDownloadCode ">
                 <div style="float: left;">上传充值凭证：</div>
                 <el-upload
                     v-if="detail.state != 30 && detail.state != 40"
