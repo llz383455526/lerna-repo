@@ -121,6 +121,32 @@
               </el-pagination>
           </div>
       </div>
+      <div class="content">
+          <div class="title">签约信息</div>
+          <el-table class="table" :data="contractData.list" border="">
+              <el-table-column label="合同编号" prop="id"></el-table-column>
+              <el-table-column label="签约服务商" prop="serviceCompanyName"></el-table-column>
+              <el-table-column label="结算方式" prop="settleTypeName"></el-table-column>
+              <el-table-column label="服务费比例" prop="serviceFeeName"></el-table-column>
+              <el-table-column label="发票类型" prop="invoiceTypeName"></el-table-column>
+              <el-table-column label="合同起止时间" prop="lastUpdateAt">
+                  <template slot-scope="scope">
+                      {{scope.row.contractStartDate}} 至 {{scope.row.contractEndDate}}
+                  </template>
+              </el-table-column>
+          </el-table>
+          <div class="page" v-show="contractData.total / contractForm.pageSize > 1">
+            <el-pagination
+            background
+            layout="prev, pager, next"
+            :page-size="contractForm.pageSize"
+            :total="contractData.total"
+            @current-change="contractQuery"
+            :currentPage="contractForm.page"
+            >
+          </el-pagination>
+          </div>
+      </div>
       <el-dialog title="修改信息" :visible.sync="coshow" width="70%">
           <el-form label-width="120px" :rules="crules" :model="cform" ref="cform">
               <el-form-item label="企业名称" prop="fullName" size="small">
@@ -337,7 +363,13 @@ export default {
       chars: "",
       phoneCode: "",
 	  currEvent: "",
-	  msg: ''
+      msg: '',
+      contractForm: {
+          customerId: '',
+          page: 1,
+          pageSize: 10
+      },
+      contractData: {}
     };
   },
   activated() {
@@ -370,6 +402,8 @@ export default {
                   console.log(data)
                   this.charges = data
             })
+            this.contractForm.customerId = this.msg.id
+            this.contractQuery()
         })
     },
     change() {
@@ -559,6 +593,16 @@ export default {
           message: "请填写验证码后提交"
         });
       }
+    },
+    contractQuery(a) {
+        if(isNaN(a)) {
+            a = 1
+        }
+        console.log(a)
+        this.contractForm.page = a
+        post('/api/contract-web/contract/query-contracts', this.contractForm).then(data => {
+            this.contractData = data
+        })
     }
   }
 };

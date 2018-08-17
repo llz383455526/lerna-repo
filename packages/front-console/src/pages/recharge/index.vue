@@ -463,7 +463,7 @@ export default {
         }).then(data => {
             this.channlList = data
             this.channlList.forEach(e => {
-                if(e.payUserId = this.detail.payUser.payUserId) {
+                if(e.payUserId == this.detail.payUser.payUserId) {
                     this.balanceAccountId = e.balanceAccountId
                     this.getSuggest()
                 }
@@ -472,8 +472,10 @@ export default {
     },
     getSuggest() {
         this.channlList.forEach(e => {
+            console.log(e.balanceAccountId, this.balanceAccountId)
             if(e.balanceAccountId == this.balanceAccountId) {
                 this.payUserId = e.payUserId
+                console.log(e)
                 get('/api/balance-web/balance-account/get-avail-balance-info', {
                     balanceAccountId: e.balanceAccountId,
                     payUserId: e.payUserId,
