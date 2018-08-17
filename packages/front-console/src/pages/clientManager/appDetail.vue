@@ -31,10 +31,8 @@
 				</el-col>
       		</el-row>
 			<el-row :gutter="20">
-				<el-col :span="10">
-					  <el-col :span="8" class="right">服务商</el-col><el-col :span="10">
-                          <span v-for="e in data.serviceCompanyList">{{e.serviceCompanyName}},</span>
-                      </el-col>
+				<el-col :span="20">
+					  <el-col :span="4" class="right">异步通知appid</el-col><el-col :span="10" style="word-wrap: break-word;">{{data.notifyAppId}}</el-col>
 				</el-col>
       		    <el-col :span="10">
 					  <el-col :span="8" class="right">负责人电话</el-col><el-col :span="10">{{data.phone}}</el-col>
@@ -49,8 +47,10 @@
 				</el-col>
       		</el-row>
 			<el-row :gutter="20">
-      		    <el-col :span="20">
-					  <el-col :span="4" class="right">异步通知appid</el-col><el-col :span="10" style="word-wrap: break-word;">{{data.notifyAppId}}</el-col>
+                <el-col :span="10">
+					  <el-col :span="8" class="right">服务商</el-col><el-col :span="10">
+                          <div v-for="e in data.serviceCompanyList">{{e.serviceCompanyName}}</div>
+                      </el-col>
 				</el-col>
       		</el-row>
 			<el-row :gutter="20">
@@ -141,6 +141,11 @@
                     <el-input class="f_input" v-model="aform.phone"></el-input>
                 </el-form-item>
               </template>
+              <el-form-item label="服务商">
+                  <el-checkbox-group v-model="aform.serviceCompanyList">
+                      <el-checkbox v-for="item in company" :label="item" :key="item.value">{{item.text}}</el-checkbox>
+                  </el-checkbox-group>
+              </el-form-item>
           </el-form>
           <span class="form_footer" slot="footer">
               <el-button @click="update" type="primary">保存</el-button>
@@ -152,7 +157,7 @@
               <el-form-item label="接入应用：">
                   <template>{{data.appName}}</template>
               </el-form-item>
-              <el-form-item label="支付渠道">
+              <el-form-item label="服务商">
                   <el-select class="f_input" v-model="serviceCompanyId">
                       <el-option v-for="e in data.serviceCompanyList" :value="e.serviceCompanyId" :label="e.serviceCompanyName"></el-option>
                   </el-select>
@@ -239,7 +244,8 @@ export default {
         notifyAppId: "",
         notifyUrl: "",
         phone: "",
-        authCode: ""
+        authCode: "",
+        serviceCompanyList: ''
       },
       arule: {
         notifyAppId: [
@@ -318,7 +324,15 @@ export default {
         console.log(data);
         this.data = data;
         !this.data.payUsers && (this.data.payUsers = []);
+        this.aform.serviceCompanyList = data.serviceCompanyList
+        this.getService()
+        console.log(this.aform.serviceCompanyList)
       });
+    },
+    getService() {
+        get(`/api/sysmgr-web/commom/contract-service-company-options?customCompanyId=${this.data.companyId}`).then(data => {
+            this.company = data;
+        })
     },
     open() {
       this.ashow = true;
@@ -369,7 +383,7 @@ export default {
       this.result = "";
       this.payeruserName = "";
       post("/api/paymentmgt/front/payuser/qrybycompany", {
-        companyId: this.data.serviceCompanyId,
+        companyId: this.serviceCompanyId,
         thirdpaySystemId: this.paymentThirdType
       }).then(data => {
         console.log(data);
