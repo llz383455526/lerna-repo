@@ -122,6 +122,14 @@
       </div>
       <el-dialog title="appid配置信息" :visible.sync="ashow" width="70%">
           <el-form label-width="180px" :model="aform" :rules="arule" ref="aform">
+              <!-- <el-form-item label="商品名称：" prop="appName">
+                  <el-input class="f_input" v-model="aform.appName"></el-input>
+              </el-form-item> -->
+              <el-form-item label="商户负责人：" prop="chargeBy">
+                  <el-select v-model="aform.chargeBy" class="form_input" @change="getName">
+                  <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
+              </el-select>
+              </el-form-item>
               <template v-if="data.isFromOutApp">
                 <el-form-item label="异步通知appId：" prop="notifyAppId">
                     <el-input class="f_input" v-model="aform.notifyAppId"></el-input>
@@ -142,8 +150,8 @@
                 </el-form-item>
               </template>
               <el-form-item label="服务商">
-                  <el-checkbox-group v-model="aform.serviceCompanyList">
-                      <el-checkbox v-for="item in company" :label="item" :key="item.value">{{item.text}}</el-checkbox>
+                  <el-checkbox-group v-model="aform.serviceCompanyList" @change="change">
+                      <el-checkbox v-for="item in company" :checked="isChecked(item)" :label="item" :key="item.value">{{item.text}}</el-checkbox>
                   </el-checkbox-group>
               </el-form-item>
           </el-form>
@@ -239,15 +247,32 @@ export default {
       ashow: false,
       aform: {
         allowIp: "",
+        // appName: '',
         appId: "",
+        chargeBy: '',
+        chargeByName: '',
         appRsaPublickKey: "",
         notifyAppId: "",
         notifyUrl: "",
         phone: "",
         authCode: "",
-        serviceCompanyList: ''
+        serviceCompanyList: []
       },
       arule: {
+        // appName: [
+        //   {
+        //     required: true,
+        //     message: "请输入商户名称",
+        //     trigger: "change"
+        //   }
+        // ],
+        chargeBy: [
+            {
+            required: true,
+            message: "请选择商户负责人",
+            trigger: "change"
+          }
+        ],
         notifyAppId: [
           {
             required: true,
@@ -280,7 +305,7 @@ export default {
       baseUrl: baseUrl,
       addShow: false,
       dshow: false,
-      data: [],
+      data: '',
       result: "",
       types: [],
       paymentThirdType: "",
@@ -295,7 +320,8 @@ export default {
       phoneCode: "",
       currEvent: "",
       isDefault: 1,
-      serviceCompanyId: ''
+      serviceCompanyId: '',
+      charges: []
     };
   },
   activated() {
@@ -304,7 +330,6 @@ export default {
     this.query();
     get("/api/console-dlv/option/get-by-type?type=ThirdPaymentType").then(
       data => {
-        console.log(data);
         this.types = data;
       }
     );
@@ -315,18 +340,29 @@ export default {
     this.getPhone();
     this.createId();
     this.authCode = localStorage.getItem("authCode");
+    get(`/api/sysmgr-web/user/get-platform-users?platformType=console-company`).then(data => {
+      console.log(data);
+      this.charges = data;
+    });
   },
   methods: {
     query() {
       post("/api/sysmgr-web/company-app/detail", {
         appId: this.appId
       }).then(data => {
-        console.log(data);
         this.data = data;
         !this.data.payUsers && (this.data.payUsers = []);
-        this.aform.serviceCompanyList = data.serviceCompanyList
+        // data.serviceCompanyList.forEach(e => {
+        //     this.aform.serviceCompanyList.push({
+        //         text: e.serviceCompanyName,
+        //         value: e.serviceCompanyId.toString()
+        //     })
+        // })
+        // this.aform.serviceCompanyList
+        // this.aform.appName = data.appName
+        this.aform.chargeBy = data.chargeBy
+        this.aform.chargeByName = data.chargeByName
         this.getService()
-        console.log(this.aform.serviceCompanyList)
       });
     },
     getService() {
@@ -334,22 +370,47 @@ export default {
             this.company = data;
         })
     },
+    getName() {
+      this.charges.forEach(e => {
+        if (e.id == this.aform.chargeBy) {
+          this.aform.chargeByName = e.name;
+        }
+      });
+    },
+    isChecked(a) {
+        var arr = this.data.serviceCompanyList.filter(e => {
+            return e.serviceCompanyId == a.value
+        })
+        return arr.length > 0 ? true : false
+    },
+    change() {
+        console.log(this.aform.serviceCompanyList)
+    },
     open() {
       this.ashow = true;
-      this.aform = {
+      Object.assign(this.aform, {
         allowIp: this.data.allowIp,
         appId: this.appId,
         appRsaPublickKey: this.data.appRsaPublickKey,
         notifyAppId: this.data.notifyAppId,
         notifyUrl: this.data.notifyUrl,
         phone: this.data.phone
-      };
+      })
+      console.log(this.aform)
+      this.$forceUpdate()
     },
     update() {
       this.$refs["aform"].validate(valid => {
         if (valid) {
           if (this.authCode) {
             this.aform.authCode = this.authCode;
+            this.aform.serviceCompanyList.forEach(e => {
+                e.serviceCompanyId = e.value
+                e.serviceCompanyName = e.text
+                delete e.value
+                delete e.text
+            })
+            console.log(this.aform)
             postWithErrorCallback(
               "/api/sysmgr-web/company-app/update-app",
               this.aform

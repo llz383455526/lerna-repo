@@ -20,9 +20,10 @@
             </div>
         </div>
         <el-table v-if="data.list" :data="data.list">
-            <el-table-column label="业务类型" prop="bankType"></el-table-column>
+            <el-table-column label="子账号名称" prop="payUserName"></el-table-column>
+            <el-table-column label="业务类型" prop="bankTypeName"></el-table-column>
             <el-table-column label="渠道别名" prop="channelAlias"></el-table-column>
-            <el-table-column label="渠道类型" prop="paymentThirdType"></el-table-column>
+            <el-table-column label="渠道类型" prop="paymentThirdTypeName"></el-table-column>
             <el-table-column label="关键标识">
                 <template slot-scope="scope">
                     <div>登录账号：{{scope.row.channelLoginAcctNo}}</div>

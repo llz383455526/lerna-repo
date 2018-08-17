@@ -22,15 +22,16 @@
         <el-tabs v-model="tabName" @tab-click="tab">
             <el-tab-pane label="渠道明细" name="channel">
                 <el-table v-if="data.list" :data="data.list">
+                    <el-table-column label="子账号名称" prop="payUserName"></el-table-column>
                     <el-table-column label="渠道别名" prop="channelAlias"></el-table-column>
-                    <el-table-column label="渠道类型" prop="paymentThirdType"></el-table-column>
+                    <el-table-column label="渠道类型" prop="paymentThirdTypeName"></el-table-column>
                     <el-table-column label="关键标识">
                         <template slot-scope="scope">
                             <div>登录账号：{{scope.row.channelLoginAcctNo}}</div>
                             <div>商户号：{{scope.row.channelMerCustId}}</div>
                         </template>
                     </el-table-column>
-                    <el-table-column label="业务类型" prop="bankType"></el-table-column>
+                    <el-table-column label="业务类型" prop="bankTypeName"></el-table-column>
                     <el-table-column label="余额">
                         <template slot-scope="scope">
                             {{scope.row.availBalance | formatMoney}}
@@ -109,6 +110,7 @@ export default {
             this.query()
         },
         tab(a) {
+            this.query()
             console.log(a)
         }
     }
