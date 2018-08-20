@@ -149,7 +149,7 @@
                     <el-input class="f_input" v-model="aform.phone"></el-input>
                 </el-form-item>
               </template>
-              <el-form-item label="服务商">
+              <el-form-item label="服务商" v-if="isQuery">
                   <el-checkbox-group v-model="aform.serviceCompanyList" @change="change">
                       <el-checkbox v-for="item in company" :checked="isChecked(item)" :label="item" :key="item.value">{{item.text}}</el-checkbox>
                   </el-checkbox-group>
@@ -166,7 +166,7 @@
                   <template>{{data.appName}}</template>
               </el-form-item>
               <el-form-item label="服务商">
-                  <el-select class="f_input" v-model="serviceCompanyId">
+                  <el-select class="f_input" v-model="serviceCompanyId" @change="clear">
                       <el-option v-for="e in data.serviceCompanyList" :value="e.serviceCompanyId" :label="e.serviceCompanyName"></el-option>
                   </el-select>
               </el-form-item>
@@ -258,6 +258,7 @@ export default {
         authCode: "",
         serviceCompanyList: []
       },
+      isQuery: true,
       arule: {
         // appName: [
         //   {
@@ -347,6 +348,7 @@ export default {
   },
   methods: {
     query() {
+      this.isQuery = false
       post("/api/sysmgr-web/company-app/detail", {
         appId: this.appId
       }).then(data => {
@@ -363,6 +365,7 @@ export default {
         this.aform.chargeBy = data.chargeBy
         this.aform.chargeByName = data.chargeByName
         this.getService()
+        this.isQuery = true
       });
     },
     getService() {
@@ -448,6 +451,13 @@ export default {
           }
         }
       });
+    },
+    clear() {
+        this.paymentThirdType = ''
+        this.types = [];
+        this.others = [];
+        this.result = "";
+        this.payeruserName = "";
     },
     getList() {
       this.others = [];
