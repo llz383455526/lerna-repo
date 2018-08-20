@@ -92,8 +92,8 @@
                     <div class="label">客户公司：<span>*</span></div>
                     <div class="input">
                         <el-form-item prop="companyId">
-                            <el-select filterable v-model="dialogCreateForm.companyId" @change="clearApp">
-                                <el-option v-for="(item, index) in customCompanies" :label="item.companyName" :value="item.companyId" :key="item.companyId"></el-option>
+                            <el-select filterable v-model="dialogCreateForm.companyId" no-data-text="请选择" @change="clearApp">
+                                <el-option style="width: 100%;" v-for="(item, index) in customCompanies" :label="item.companyName" :value="item.companyId" :key="item.companyId"></el-option>
                             </el-select>
                         </el-form-item>
                     </div>
@@ -502,7 +502,7 @@ export default {
         })
     },
     getChannlType() {
-        console.log(this.dialogCreateForm.serviceCompanyId)
+        this.dialogCreateForm.channelBusinessType = ''
         get('/api/balance-web/recharge-order/pre-recharge', {
             appId: this.dialogCreateForm.appId,
             companyId: this.dialogCreateForm.companyId,

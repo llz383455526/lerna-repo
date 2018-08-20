@@ -70,6 +70,9 @@ html, body {
 .hidden_label .el-radio__label {
     display: none;
 }
+.el-select-dropdown {
+    width: 300px;
+}
 </style>
 
 
