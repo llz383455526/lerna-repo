@@ -256,8 +256,8 @@
                     <el-option v-for="e in channlList" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}`" :value="e.balanceAccountId"></el-option>
                 </el-select>
             </div>
-            <div class="det" v-if="suggest">帐号今日可充建议：{{suggest.allowAvailBalance | formatMoney}}元 帐号当前余额：{{suggest.currentAvailBalance | formatMoney}}元
-                日发放限额：{{suggest.limitAvailBalance | formatMoney}}元 当日已发：{{suggest.outAvailBalance | formatMoney}}元
+            <div class="det" v-if="suggest">帐号今日可充建议：{{suggest.allowAvailBalance | formatMoney}}元&#x3000;帐号当前余额：{{suggest.currentAvailBalance | formatMoney}}元&#x3000;
+                日发放限额：{{suggest.limitAvailBalance | formatMoney}}元&#x3000;当日已发：{{suggest.outAvailBalance | formatMoney}}元
             </div>
             <div slot="footer" class="dialog-footer">
                 <el-button size="small" @click="show = false">取消</el-button>

@@ -432,11 +432,12 @@ export default {
                   type: "success",
                   message: "操作成功"
                 });
-                this.data.notifyAppId = this.aform.notifyAppId;
-                this.data.appRsaPublickKey = this.aform.appRsaPublickKey;
-                this.data.allowIp = this.aform.allowIp;
-                this.data.notifyUrl = this.aform.notifyUrl;
-                this.data.phone = this.aform.phone;
+                // this.data.notifyAppId = this.aform.notifyAppId;
+                // this.data.appRsaPublickKey = this.aform.appRsaPublickKey;
+                // this.data.allowIp = this.aform.allowIp;
+                // this.data.notifyUrl = this.aform.notifyUrl;
+                // this.data.phone = this.aform.phone;
+                this.query()
               })
               .catch(err => {
                 if (err.message == "无效的授权码！") {
