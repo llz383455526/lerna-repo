@@ -453,12 +453,15 @@ export default {
       });
     },
     clear() {
+        this.paymentThirdType = ''
         this.others = [];
         this.result = "";
         this.payeruserName = "";
     },
     getList() {
-      this.clear()
+      this.others = [];
+      this.result = "";
+      this.payeruserName = "";
       post("/api/paymentmgt/front/payuser/qrybycompany", {
         companyId: this.serviceCompanyId,
         thirdpaySystemId: this.paymentThirdType
@@ -626,6 +629,7 @@ export default {
         console.log(this.isDefault)
     },
     setDefault(a) {
+        console.log(a)
         if(a) {
             this.curr = a
         }
@@ -634,7 +638,8 @@ export default {
                 appId: this.appId,
                 authCode: this.authCode,
                 paymentThirdType: this.curr.thirdPaymentType,
-                paymentUserId: this.curr.payUserId
+                paymentUserId: this.curr.payUserId,
+                serviceCompanyId: this.curr.serviceCompanyId
             }).then(data => {
                 this.$message({
                   type: "success",
