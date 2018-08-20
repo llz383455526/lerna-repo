@@ -453,16 +453,12 @@ export default {
       });
     },
     clear() {
-        this.paymentThirdType = ''
-        this.types = [];
         this.others = [];
         this.result = "";
         this.payeruserName = "";
     },
     getList() {
-      this.others = [];
-      this.result = "";
-      this.payeruserName = "";
+      this.clear()
       post("/api/paymentmgt/front/payuser/qrybycompany", {
         companyId: this.serviceCompanyId,
         thirdpaySystemId: this.paymentThirdType
