@@ -60,11 +60,11 @@
                 </el-table>
             </el-tab-pane>
             <el-tab-pane label="客户账户余额（新）" name="client" v-loading="load">
-                <div style="padding: 30px;">
+                <!-- <div style="padding: 30px;">
                     <img src="../../image/money.png" style="width: 120px;height: 120px;float: left; margin-right: 50px;"/>
                     <p>账户总余额（元）： </p>
                     <h2>{{account.balanceAmount | formatMoney}}</h2>
-                </div>
+                </div> -->
                 <el-form :inline="true" :model="clientForm" ref="clientForm">
                     <el-form-item label="企业" prop="companyId">
                         <el-select size="small" filterable v-model="clientForm.companyId">
@@ -147,11 +147,11 @@
                 </ayg-pagination>
             </el-tab-pane>
             <el-tab-pane label="服务商账户余额（新）" name="service" v-loading="load">
-                <div style="padding: 30px;">
+                <!-- <div style="padding: 30px;">
                     <img src="../../image/money.png" style="width: 120px;height: 120px;float: left; margin-right: 50px;"/>
                     <p>账户总余额（元）： </p>
                     <h2>{{account.balanceAmount | formatMoney}}</h2>
-                </div>
+                </div> -->
                 <el-form :inline="true" :model="serviceForm" ref="serviceForm">
                     <el-form-item label="服务商" prop="serviceCompanyId">
                         <el-select size="small" filterable v-model="serviceForm.serviceCompanyId">

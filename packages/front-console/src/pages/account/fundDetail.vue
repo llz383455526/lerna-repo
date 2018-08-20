@@ -44,7 +44,7 @@
             <!-- <el-table-column label="支付账号" prop="payUserName"></el-table-column> -->
             <el-table-column label="金额" prop="tradeAmount">
                 <template slot-scope="scope">
-                    {{scope.row.tradeAmount | formatMoney}}
+                    ￥{{scope.row.tradeAmount > 0 ? '+' : ''}}{{scope.row.tradeAmount.toFixed(2)}}
                 </template>
             </el-table-column>
             <el-table-column label="操作" prop="bizTradeNameName"></el-table-column>

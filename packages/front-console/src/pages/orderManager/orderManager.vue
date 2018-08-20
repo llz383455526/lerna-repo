@@ -47,9 +47,9 @@
             <el-table-column label="业务类型" prop="channelTypeName"></el-table-column>
             <el-table-column label="服务名称" prop="productTypeName"></el-table-column>
             <el-table-column label="服务商名称" prop="serviceCompanyName"></el-table-column>
-            <el-table-column label="订单金额">
+            <el-table-column label="实发金额">
                 <template slot-scope="scope">
-                    {{scope.row.totalFee | formatMoney}}
+                    {{scope.row.totalFee - scope.row.serviceFee | formatMoney}}
                 </template>
             </el-table-column>
             <el-table-column label="服务费">
