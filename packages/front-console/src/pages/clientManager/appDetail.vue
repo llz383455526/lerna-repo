@@ -500,7 +500,7 @@ export default {
               isDefault: this.isDefault,
               channelAlias: data.channelAlias,
               channelLoginAcctNo: data.loginAcctno,
-              channelMerCustId: data['cj.merchant_id'] || data['wx.mchid'] || data['partner_id'] || data['mer_id'] || '',
+              channelMerCustId: data['cj.merchant_id'] || data['wx.mchid'] || data['partner_id'] || data['mer_id'] || data['alipay.userid'] || '',
               serviceCompanyId: this.serviceCompanyId
             }).then(data => {
               this.addShow = false;
