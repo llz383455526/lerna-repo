@@ -102,7 +102,7 @@
                     <div class="label">商户名称：<span>*</span></div>
                     <div class="input">
                         <el-form-item prop="appId">
-                            <el-select filterable v-model="dialogCreateForm.appId" no-data-text="请先选择客户公司" @change="getService">
+                            <el-select filterable v-model="dialogCreateForm.appId" :no-data-text="dialogCreateForm.companyId ? '无数据' : '请先选择客户公司'" @change="getService">
                                 <el-option v-for="(item, index) in productName" :label="item.text" :value="item.value" :key="item.value"></el-option>
                             </el-select>
                         </el-form-item>
@@ -112,7 +112,7 @@
                      <div class="label">服务商名称：<span>*</span></div>
                      <div class="input">
                          <el-form-item prop="serviceCompanyId">
-                             <el-select filterable v-model="dialogCreateForm.serviceCompanyId" no-data-text="请先选择商户" @change="getChannlType">
+                             <el-select filterable v-model="dialogCreateForm.serviceCompanyId" :no-data-text="dialogCreateForm.appId ? '无数据' : '请先选择商户'" @change="getChannlType">
                                  <el-option v-for="(item, index) in serviceName" :label="item.text" :value="item.value" :key="item.value"></el-option>
                              </el-select>
                          </el-form-item>
@@ -122,7 +122,7 @@
                     <div class="label">业务类型：<span>*</span></div>
                     <div class="input">
                         <el-form-item prop="channelBusinessType">
-                            <el-select filterable v-model="dialogCreateForm.channelBusinessType" no-data-text="请先选择商户" @change="getServiceFee">
+                            <el-select filterable v-model="dialogCreateForm.channelBusinessType" :no-data-text="dialogCreateForm.serviceCompanyId ? '无数据' : '请先选择商户'" @change="getServiceFee">
                                 <el-option v-for="(item, index) in channelTypes" :label="item.text" :value="item.value" :key="item.value"></el-option>
                             </el-select>
                         </el-form-item>
