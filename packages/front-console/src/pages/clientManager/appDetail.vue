@@ -421,7 +421,7 @@ export default {
             var arr = [], form = {}
             this.company.forEach((e, i) => {
                 if(this.aform.serviceCompanyList.indexOf(e.value.toString()) > -1) {
-                    arr[i] = {
+                    arr[arr.length] = {
                         serviceCompanyId: e.value,
                         serviceCompanyName: e.text
                     }
@@ -430,12 +430,8 @@ export default {
             for(var k in this.aform) {
                 form[k] = this.aform[k]
             }
-            console.log(arr)
             form.serviceCompanyList = arr
-            console.log(form)
-            postWithErrorCallback("/api/sysmgr-web/company-app/update-app", form)
-              .then(data => {
-                console.log(data);
+            postWithErrorCallback("/api/sysmgr-web/company-app/update-app", form).then(data => {
                 this.ashow = false;
                 this.$message({
                   type: "success",
