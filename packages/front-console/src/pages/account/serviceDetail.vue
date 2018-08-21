@@ -72,7 +72,7 @@
                     </el-table-column> -->
                     <el-table-column label="总余额（元）">
                         <template slot-scope="scope">
-                            {{scope.row.availBalance | formatMoney}}
+                            {{scope.row.totalAvailBalance | formatMoney}}
                         </template>
                     </el-table-column>
                 </el-table>

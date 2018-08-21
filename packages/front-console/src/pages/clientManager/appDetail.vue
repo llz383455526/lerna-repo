@@ -149,9 +149,11 @@
                     <el-input class="f_input" v-model="aform.phone"></el-input>
                 </el-form-item>
               </template>
-              <el-form-item label="服务商" v-if="isQuery">
+              <!-- v-if="isQuery" -->
+              <el-form-item label="服务商">
+                  <!-- :checked="isChecked(item)" -->
                   <el-checkbox-group v-model="aform.serviceCompanyList" @change="change">
-                      <el-checkbox v-for="item in company" :checked="isChecked(item)" :label="item" :key="item.value">{{item.text}}</el-checkbox>
+                      <el-checkbox v-for="item in company" :label="item.value" :key="item.value">{{item.text}}</el-checkbox>
                   </el-checkbox-group>
               </el-form-item>
           </el-form>
@@ -258,7 +260,7 @@ export default {
         authCode: "",
         serviceCompanyList: []
       },
-      isQuery: true,
+    //   isQuery: true,
       arule: {
         // appName: [
         //   {
@@ -348,24 +350,21 @@ export default {
   },
   methods: {
     query() {
-      this.isQuery = false
+    //   this.isQuery = false
       post("/api/sysmgr-web/company-app/detail", {
         appId: this.appId
       }).then(data => {
         this.data = data;
         !this.data.payUsers && (this.data.payUsers = []);
-        // data.serviceCompanyList.forEach(e => {
-        //     this.aform.serviceCompanyList.push({
-        //         text: e.serviceCompanyName,
-        //         value: e.serviceCompanyId.toString()
-        //     })
-        // })
+        this.data.serviceCompanyList.forEach(e => {
+            this.aform.serviceCompanyList.push(e.serviceCompanyId.toString())
+        })
         // this.aform.serviceCompanyList
         // this.aform.appName = data.appName
         this.aform.chargeBy = data.chargeBy
         this.aform.chargeByName = data.chargeByName
         this.getService()
-        this.isQuery = true
+        // this.isQuery = true
       });
     },
     getService() {
@@ -380,12 +379,12 @@ export default {
         }
       });
     },
-    isChecked(a) {
-        var arr = this.data.serviceCompanyList.filter(e => {
-            return e.serviceCompanyId == a.value
-        })
-        return arr.length > 0 ? true : false
-    },
+    // isChecked(a) {
+    //     var arr = this.data.serviceCompanyList.filter(e => {
+    //         return e.serviceCompanyId == a.value
+    //     })
+    //     return arr.length > 0 ? true : false
+    // },
     change() {
         console.log(this.aform.serviceCompanyList)
     },
@@ -407,24 +406,17 @@ export default {
         if (valid) {
           if (this.authCode) {
             this.aform.authCode = this.authCode;
-            var arr = [], oldArr = this.aform.serviceCompanyList
-            this.aform.serviceCompanyList.forEach((e, i) => {
-                // if(e.value) {
-                    arr[i] = {}
-                    arr[i].serviceCompanyId = e.value
-                    // delete e.value
-                // }
-                // if(e.text) {
-                    arr[i].serviceCompanyName = e.text
-                    // delete e.text
-                // }
+            var arr = [], form = {}
+            var arr = this.data.serviceCompanyList.filter(e => {
+                console.log(this.aform.serviceCompanyList.indexOf(e.serviceCompanyId.toString()))
+                return this.aform.serviceCompanyList.indexOf(e.serviceCompanyId.toString()) > -1
             })
-            this.aform.serviceCompanyList = arr
-            console.log(this.aform)
-            postWithErrorCallback(
-              "/api/sysmgr-web/company-app/update-app",
-              this.aform
-            )
+            for(var k in this.aform) {
+                form[k] = this.aform[k]
+            }
+            form.serviceCompanyList = arr
+            console.log(form)
+            postWithErrorCallback("/api/sysmgr-web/company-app/update-app", form)
               .then(data => {
                 console.log(data);
                 this.ashow = false;
@@ -432,20 +424,12 @@ export default {
                   type: "success",
                   message: "操作成功"
                 });
-                // this.data.notifyAppId = this.aform.notifyAppId;
-                // this.data.appRsaPublickKey = this.aform.appRsaPublickKey;
-                // this.data.allowIp = this.aform.allowIp;
-                // this.data.notifyUrl = this.aform.notifyUrl;
-                // this.data.phone = this.aform.phone;
                 this.query()
               })
               .catch(err => {
                 if (err.message == "无效的授权码！") {
                   this.getAccredit(this.update);
                 }
-              }).finally(() => {
-                  console.log('finally')
-                  this.aform.serviceCompanyList = oldArr
               })
           } else {
             this.getAccredit(this.update);
