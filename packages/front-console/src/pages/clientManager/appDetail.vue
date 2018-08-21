@@ -120,7 +120,7 @@
               </el-table-column>
           </el-table>
       </div>
-      <el-dialog title="appid配置信息" :visible.sync="ashow" width="70%">
+      <el-dialog title="appid配置信息" :before-close="listInit" :visible.sync="ashow" width="70%">
           <el-form label-width="180px" :model="aform" :rules="arule" ref="aform">
               <!-- <el-form-item label="商品名称：" prop="appName">
                   <el-input class="f_input" v-model="aform.appName"></el-input>
@@ -356,9 +356,7 @@ export default {
       }).then(data => {
         this.data = data;
         !this.data.payUsers && (this.data.payUsers = []);
-        this.data.serviceCompanyList.forEach(e => {
-            this.aform.serviceCompanyList.push(e.serviceCompanyId.toString())
-        })
+        this.listInit()
         // this.aform.serviceCompanyList
         // this.aform.appName = data.appName
         this.aform.chargeBy = data.chargeBy
@@ -366,6 +364,15 @@ export default {
         this.getService()
         // this.isQuery = true
       });
+    },
+    listInit(next) {
+        this.aform.serviceCompanyList = []
+        this.data.serviceCompanyList.forEach(e => {
+            this.aform.serviceCompanyList.push(e.serviceCompanyId.toString())
+        })
+        if(next) {
+            next()
+        }
     },
     getService() {
         get(`/api/sysmgr-web/commom/contract-service-company-options?customCompanyId=${this.data.companyId}`).then(data => {
