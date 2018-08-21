@@ -212,7 +212,7 @@ export default {
         get('/api/balance-web/commom/option?enumType=ChannelType').then(data => {
             this.channelType = data
         })
-        get('/api/sysmgr-web/commom/company').then(data => {
+        get('/api/sysmgr-web/commom/company?companyIdentity=service').then(data => {
           this.companys = data
       })
     },

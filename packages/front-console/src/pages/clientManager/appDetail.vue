@@ -485,7 +485,7 @@ export default {
     addRow() {
       if (this.authCode) {
         post(`/api/paymentmgt/front/channel/qrydetail?channelId=${this.result.channelId}`).then(data => {
-            console.log(data['cj.merchant_id'] || data['wx.mchid'] || data['partner_id'] || data['mer_id'])
+            // console.log(data['cj.merchant_id'] || data['wx.mchid'] || data['partner_id'] || data['mer_id'])
             postWithErrorCallback("/api/sysmgr-web/company-app/add-payment-user", {
               appId: this.appId,
               payUserNo: this.result.thirdpayUserId,
@@ -496,7 +496,7 @@ export default {
               isDefault: this.isDefault,
               channelAlias: data.channelAlias,
               channelLoginAcctNo: data.loginAcctno,
-              channelMerCustId: data['cj.merchant_id'] || data['wx.mchid'] || data['partner_id'] || data['mer_id'] || data['alipay.userid'] || '',
+              channelMerCustId: data['cj.merchant_id'] || data['wx.mchid'] || data['partner_id'] || data['mer_id'] || data['alipay.appid'] || data['pingan.mainacct.no'] || data['cmb.nteckopr.eacNbr'] || '',
               serviceCompanyId: this.serviceCompanyId
             }).then(data => {
               this.addShow = false;
