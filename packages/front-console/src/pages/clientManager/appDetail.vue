@@ -53,6 +53,11 @@
                       </el-col>
 				</el-col>
       		</el-row>
+            <el-row :gutter="20">
+      		    <el-col :span="20">
+					  <el-col :span="4" class="right">IP白名单（固定IP）</el-col><el-col :span="10" style="word-wrap: break-word;">{{data.allowIp}}</el-col>
+				</el-col>
+      		</el-row>
 			<el-row :gutter="20">
       		    <el-col :span="20">
 					  <el-col :span="4" class="right">异步通知接口</el-col><el-col :span="10" style="word-wrap: break-word;">{{data.notifyUrl}}</el-col>
@@ -291,11 +296,11 @@ export default {
           }
         ],
         allowIp: [
-          {
-            required: true,
-            message: "请输入白名单IP",
-            trigger: "change"
-          }
+        //   {
+        //     required: true,
+        //     message: "请输入白名单IP",
+        //     trigger: "change"
+        //   }
         ],
         notifyUrl: [
           {
@@ -324,7 +329,8 @@ export default {
       currEvent: "",
       isDefault: 1,
       serviceCompanyId: '',
-      charges: []
+      charges: [],
+      company: []
     };
   },
   activated() {
@@ -405,7 +411,6 @@ export default {
         notifyUrl: this.data.notifyUrl,
         phone: this.data.phone
       })
-      console.log(this.aform)
       this.$forceUpdate()
     },
     update() {
@@ -414,13 +419,18 @@ export default {
           if (this.authCode) {
             this.aform.authCode = this.authCode;
             var arr = [], form = {}
-            var arr = this.data.serviceCompanyList.filter(e => {
-                console.log(this.aform.serviceCompanyList.indexOf(e.serviceCompanyId.toString()))
-                return this.aform.serviceCompanyList.indexOf(e.serviceCompanyId.toString()) > -1
+            this.company.forEach((e, i) => {
+                if(this.aform.serviceCompanyList.indexOf(e.value.toString()) > -1) {
+                    arr[i] = {
+                        serviceCompanyId: e.value,
+                        serviceCompanyName: e.text
+                    }
+                }
             })
             for(var k in this.aform) {
                 form[k] = this.aform[k]
             }
+            console.log(arr)
             form.serviceCompanyList = arr
             console.log(form)
             postWithErrorCallback("/api/sysmgr-web/company-app/update-app", form)

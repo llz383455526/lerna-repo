@@ -41,7 +41,7 @@
                 </template>
             </el-table-column>
             <el-table-column label="申请时间" prop="createAt"></el-table-column>
-            <el-table-column label="完成时间" prop=""></el-table-column>
+            <el-table-column label="完成时间" prop="completeAt"></el-table-column>
             <el-table-column label="客户公司" prop="submitCompanyName"></el-table-column>
             <el-table-column label="商户名称" prop="appName"></el-table-column>
             <el-table-column label="业务类型" prop="channelTypeName"></el-table-column>
