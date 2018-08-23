@@ -280,7 +280,7 @@
                 <span>{{detail.memo}}</span>
             </div>
             <div class="det">选择渠道帐号：
-                <el-select size="small" v-model="balanceAccountId" @change="getSuggest" style="width: 500px" :disabled="detail.financeDownloadCode ? true : false">
+                <el-select size="small" v-model="balanceAccountId" @change="getSuggest" style="width: 500px" :disabled="detail.state != 20 ? true : false">
                     <el-option v-for="e in channlList" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}`" :value="e.balanceAccountId"></el-option>
                 </el-select>
             </div>
