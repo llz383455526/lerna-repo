@@ -2,8 +2,8 @@
     <div class="company-build-container company-container">
         <div class="title">资金明细</div>
         <el-form :model="form" :inline="true" ref="form">
-            <el-form-item label="企业" prop="serviceCompanyId">
-                <el-select size="small" filterable v-model="form.serviceCompanyId">
+            <el-form-item label="企业" prop="companyId">
+                <el-select size="small" filterable v-model="form.companyId">
                     <el-option v-for="e in companys" :value="e.id" :label="e.name" :key="e.id"></el-option>
                 </el-select>
             </el-form-item>
@@ -87,7 +87,7 @@ export default {
       get('/api/sysmgr-web/commom/app-list').then(data => {
           this.apps = data
       })
-      get('/api/balance-web/commom/option?enumType=BalanceTradeType').then(data => {
+      get('/api/balance-web/commom/option?enumType=BalanceAppTradeType').then(data => { //1
           this.handles = data
       })
       this.query()

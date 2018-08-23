@@ -7,14 +7,12 @@
                     <el-option v-for="item in customCompanyList" :label="item.name" :value="item.id" :key="item.id"></el-option>
                 </el-select>
             </el-form-item>
-
             <el-form-item label="接入应用" size="small" prop="appId">
                 <el-select v-model="formSearch.appId" placeholder="请选择" style="width:100%;">
                     <el-option v-for="item in extrSystemOptions" :key="item.value" :label="item.text"
                                :value="item.value"></el-option>
                 </el-select>
             </el-form-item>
-
             <el-form-item label="发起时间" size="small">
                 <el-date-picker
                         v-model="dateValue"
@@ -25,14 +23,12 @@
                         value-format="yyyy-MM-dd">
                 </el-date-picker>
             </el-form-item>
-
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="search" size="small">查询</el-button>
                 <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
                 <el-button size="small" @click="exportFile">导出</el-button>
             </el-form-item>
         </el-form>
-
         <div class="table-container">
             <el-table :data="tableList.list">
                 <el-table-column prop="contractStartDate" label="充值时间">
@@ -44,26 +40,24 @@
                 <el-table-column prop="stateName" label="处理状态"></el-table-column>
             </el-table>
         </div>
-
+        <ayg-pagination
+            v-if="tableList.total"
+            :total="tableList.total"
+            :currentPage="pageIndex"
+            v-on:handleSizeChange="handleSizeChange"
+            v-on:handleCurrentChange="handleCurrentChange">
+        </ayg-pagination>
     </div>
-
 </template>
 
 <script>
 	import { post, get } from "../../store/api"
-
 	import _ from 'lodash'
-
 	import { showNotify } from '../../plugin/utils-notify'
-
 	import { baseUrl } from '../../config/address'
-
 	import { urlEncode } from '../../plugin/utils-functions'
-
 	export default {
 		created() {
-            // this.getClient()
-
             this.getList()
             this.getCompanyList()
         },
@@ -72,7 +66,6 @@
 				extrSystemOptions: [],
 				formSearch: {
 					appId: '',
-					// companyId: ''
                 },
 				companyId: '',
 				tableList: {},
@@ -127,7 +120,6 @@
 			        startAt = this.dateValue[0]
 			        endAt = this.dateValue[1]
 		        }
-
 		        let formSearch = _.cloneDeep(this.formSearch)
 		        formSearch.createAtBegin = startAt
 		        formSearch.createAtEnd = endAt
@@ -136,7 +128,6 @@
 			        page: this.pageIndex,
 			        pageSize: this.pageSize
 		        })
-
 		        post('/api/balance-web/recharge-order/statistics-list', options)
 			        .then(result => {
 				        this.tableList = result
@@ -149,7 +140,6 @@
 			        startAt = this.dateValue[0]
 			        endAt = this.dateValue[1]
 		        }
-
 		        let formSearch = _.cloneDeep(this.formSearch)
 		        formSearch.startTime = startAt
 		        formSearch.endTime = endAt
@@ -165,7 +155,6 @@
         background-color:#fff;
         padding:15px;
     }
-
     .table-container {
         width: 100%;
         margin-top: 20px;

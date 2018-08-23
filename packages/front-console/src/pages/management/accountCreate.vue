@@ -30,6 +30,24 @@
                         </el-checkbox-group>
                     </el-tab-pane>
 
+                    <el-tab-pane label="配置客户" name="fourth" v-if="systemType">
+                        <el-button @click="openDialog('新增客户', 'company')">新增</el-button>
+                        <el-checkbox v-model="isCompanyAll" style="margin-left: 15px;">全部</el-checkbox>
+
+                        <div class="table-container" v-if="!isCompanyAll">
+                            <el-table
+                                    :data="selectedCompanyList">
+                                <el-table-column prop="fullName" label="名称"></el-table-column>
+
+                                <el-table-column label="操作">
+                                    <template slot-scope="scope">
+                                        <el-button @click="deleteSelection('company', scope.$index)" type="text" size="medium" style="padding:0;">删除</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </el-tab-pane>
+
                     <el-tab-pane label="配置商户" name="second" v-if="systemType">
                         <el-button @click="openDialog('新增商户', 'app')">新增</el-button>
                         <el-checkbox v-model="isAppAll" style="margin-left: 15px;">全部</el-checkbox>
@@ -39,7 +57,7 @@
                                     :data="selectedAppList">
                                 <el-table-column prop="appName" label="商户名称"></el-table-column>
                                 <el-table-column prop="companyName" label="企业名称"></el-table-column>
-                                <el-table-column prop="serviceCompanyName" label="服务商名称"></el-table-column>
+                                <!--<el-table-column prop="serviceCompanyName" label="服务商名称"></el-table-column>-->
 
                                 <el-table-column label="操作">
                                     <template slot-scope="scope">
@@ -67,6 +85,7 @@
                             </el-table>
                         </div>
                     </el-tab-pane>
+
                 </el-tabs>
             </el-form-item>
 
@@ -106,6 +125,20 @@
                     <el-button size="small" @click="resetForm('formService')">清除</el-button>
                 </el-form-item>
             </el-form>
+            <el-form :inline="true" :model="formCompany" ref="formCompany" v-else-if="dialogType === 'company'" @submit.native.prevent>
+                <el-form-item label="简称" size="small" prop="name">
+                    <el-input v-model="formCompany.name"></el-input>
+                </el-form-item>
+
+                <el-form-item label="全称" size="small" prop="fullName">
+                    <el-input v-model="formCompany.fullName"></el-input>
+                </el-form-item>
+
+                <el-form-item style="margin-top: -4px">
+                    <el-button type="primary" @click="search" size="small">查询</el-button>
+                    <el-button size="small" @click="resetForm('formService')">清除</el-button>
+                </el-form-item>
+            </el-form>
 
             <div class="table-container">
                 <el-table
@@ -120,11 +153,12 @@
                     </el-table-column>
 
                     <el-table-column prop="appName" label="商户名称"></el-table-column>
+                    <el-table-column prop="companyName" label="公司名称"></el-table-column>
                     <!--<el-table-column prop="companyName" label="企业名称"></el-table-column>
                     <el-table-column prop="serviceCompanyName" label="服务商名称"></el-table-column>-->
                 </el-table>
                 <el-table
-                        v-else-if="dialogType === 'service'"
+                        v-else-if="dialogType === 'service' || dialogType === 'company'"
                         ref="multipleTable"
                         :data="tableList.list"
                         height="250"
@@ -196,15 +230,21 @@
                 formService: {
 	                fullName: ''
                 },
+                formCompany: {
+                    name: '',
+                    fullName: ''
+                },
 				multipleSelection: [],
                 selectedAppList: [],
 				selectedServiceList: [],
+                selectedCompanyList: [],
                 isAppAll: false,
-                isProviderAll: false
+                isProviderAll: false,
+                isCompanyAll: false
             }
         },
         computed: {
-            
+
         },
         methods: {
 			querySysList() {
@@ -227,6 +267,7 @@
             handleSystemType(val) {
 	            this.selectedAppList = []
 	            this.selectedServiceList = []
+	            this.selectedCompanyList = []
             	this.queryRoleList(val)
             },
             handleRoleChange(val) {
@@ -277,6 +318,21 @@
 	                })
                 }
 
+                if(this.isCompanyAll) {
+	                userContextList.push({
+		                isAllSubject: true,
+		                subjectType: 'company'
+	                })
+                }else {
+	                _.forEach(this.selectedCompanyList, item => {
+		                userContextList.push({
+			                subjectId: item.id,
+			                subjectName: item.fullName,
+			                subjectType: 'company'
+		                })
+	                })
+                }
+
 		        formData.userContextList = userContextList
                 formData.platformType = this.systemType
 
@@ -316,21 +372,30 @@
 		        this.getList()
 	        },
             getList() {
-            	let isApp = this.dialogType === 'app'
-
-	            let formSearch = _.cloneDeep(isApp ? this.formApp : this.formService)
+            	let url
+                let formSearch
 	            let options = _.assign(formSearch, {
 		            page: this.pageIndex,
 		            pageSize: this.pageSize
 	            })
 
-	            let url
-	            if(isApp) {
-		            url = '/api/sysmgr-web/company-app/query-app'
-	            }else {
-		            url = '/api/sysmgr-web/company/query-company'
-		            options.companyType = 'provider'
-	            }
+                switch (this.dialogType) {
+                    case 'app':
+	                    url = '/api/sysmgr-web/company-app/query-app'
+	                    formSearch = _.cloneDeep(this.formApp)
+                        break
+	                case 'service':
+		                url = '/api/sysmgr-web/company/query-company'
+		                formSearch = _.cloneDeep(this.formService)
+		                formSearch.companyType = 'provider'
+		                break
+	                case 'company':
+		                url = '/api/sysmgr-web/company/query-customer-company'
+		                formSearch = _.cloneDeep(this.formCompany)
+		                break
+                }
+
+	            options = _.assign(formSearch, options)
 
                 post(url, options)
                     .then(result => {
@@ -341,30 +406,26 @@
 	        handleSelectionChange(val) {
                 this.multipleSelection = val
             },
+	        firstUpperCase(str) {
+		        return str.toLowerCase().replace(/^\S/g,function(s){return s.toUpperCase();});
+	        },
 	        confirmSelection() {
-		        let isApp = this.dialogType === 'app'
+		        let keyName = this.firstUpperCase(this.dialogType)
+		        let selectedList = _.cloneDeep(this[`selected${keyName}List`])
 
-                let selectedList = _.cloneDeep(isApp ? this.selectedAppList : this.selectedServiceList)
                 _.forEach(this.multipleSelection, item => {
                     if(!_.find(selectedList, function (o) {return o.id === item.id})) {
 	                    selectedList.push(item)
                     }
                 })
 
-                if(isApp) this.selectedAppList = selectedList
-                else this.selectedServiceList = selectedList
+		        this[`selected${keyName}List`] = selectedList
 
                 this.dialogVisible = false
             },
             deleteSelection(type, index) {
-                switch (type) {
-                    case 'app':
-                    	this.selectedAppList.splice(index, 1)
-                    	break
-	                case 'service':
-		                this.selectedServiceList.splice(index, 1)
-		                break
-                }
+	            let keyName = this.firstUpperCase(type)
+	            this[`selected${keyName}List`].splice(index, 1)
             }
         }
     }

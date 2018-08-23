@@ -55,7 +55,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="选择服务商" prop="serviceCompanyId">
-                    <el-select filterable v-model="regForm.serviceCompanyId" size="small" placeholder="请选择服务商名称" @change="getChannel">
+                    <el-select filterable v-model="regForm.serviceCompanyId" size="small" placeholder="请选择服务商名称" @change="getChannelType">
                         <el-option v-for="e in serviceName" :label="e.text" :value="e.value" :key="e.value"></el-option>
                     </el-select>
                 </el-form-item>
@@ -209,9 +209,9 @@ export default {
         // })
         this.query()
         this.$store.dispatch("getProductName");
-        get('/api/balance-web/commom/option?enumType=ChannelType').then(data => {
-            this.channelType = data
-        })
+        // get('/api/balance-web/commom/option?enumType=ChannelType').then(data => {
+        //     this.channelType = data
+        // })
         get('/api/sysmgr-web/commom/company?companyIdentity=service').then(data => {
           this.companys = data
       })
@@ -258,6 +258,15 @@ export default {
                 appId: this.regForm.appId
             }).then(data => {
                 this.serviceName = data
+            })
+            this.getChannel()
+        },
+        getChannelType() {
+            get('/api/balance-web/balance-trade-recon/select-bank-type', {
+                appId: this.regForm.appId,
+                serviceCompanyId: this.regForm.serviceCompanyId
+            }).then(data => {
+                this.channelType = data
             })
             this.getChannel()
         },

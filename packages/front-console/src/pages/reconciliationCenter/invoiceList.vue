@@ -7,21 +7,18 @@
                     <el-option v-for="item in customCompanyList" :label="item.name" :value="item.id" :key="item.id"></el-option>
                 </el-select>
             </el-form-item>
-
             <el-form-item label="发票类目" size="small" prop="subjectId">
                 <el-select v-model="formSearch.subjectId" placeholder="请选择" style="width:100%;">
                     <el-option v-for="item in invoiceOptions" :key="item.id" :label="item.name"
                                :value="item.id"></el-option>
                 </el-select>
             </el-form-item>
-
             <el-form-item label="发票类型" size="small" prop="invoiceType">
                 <el-select v-model="formSearch.invoiceType" placeholder="请选择" style="width:100%;">
                     <el-option v-for="item in searchOptions.InvoiceType" :key="item.value" :label="item.text"
                                :value="item.value"></el-option>
                 </el-select>
             </el-form-item>
-
             <el-form-item label="开票时间" size="small">
                 <el-date-picker
                         v-model="dateValue"
@@ -32,16 +29,13 @@
                         value-format="yyyy-MM-dd">
                 </el-date-picker>
             </el-form-item>
-
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="search" size="small">查询</el-button>
                 <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
                 <el-button size="small" @click="exportFile">导出</el-button>
             </el-form-item>
         </el-form>
-
         <div class="t_head">已开发票共计：{{companyData.count}}张，金额共计 {{companyData.amount | formatMoney}}元，税额共计 {{companyData.taxRateAmount | formatMoney}}元，价税合计 {{companyData.taxRateTotalAmount | formatMoney}}元</div>
-
         <div class="table-container">
             <el-table :data="tableList.list">
                 <el-table-column prop="contractStartDate" label="开票时间">
@@ -58,34 +52,28 @@
                 </el-table-column>
             </el-table>
         </div>
-
-        <ayg-pagination v-if="tableList.total" :total="tableList.total"
-                        v-on:handleSizeChange="handleSizeChange" :currentSize="pageSize"
-                        v-on:handleCurrentChange="handleCurrentChange" :currentPage="pageIndex"></ayg-pagination>
-
+        <ayg-pagination 
+            v-if="tableList.total"
+            :total="tableList.total"
+            v-on:handleSizeChange="handleSizeChange"
+            :currentSize="pageSize"
+            v-on:handleCurrentChange="handleCurrentChange"
+            :currentPage="pageIndex">
+        </ayg-pagination>
     </div>
-
 </template>
-
 <script>
 	import { post, get } from "../../store/api"
-
 	import _ from 'lodash'
-
 	import { showNotify } from '../../plugin/utils-notify'
-
 	import { baseUrl } from '../../config/address'
-
 	import { urlEncode } from '../../plugin/utils-functions'
-
 	export default {
 		created() {
 			this.getSearchOptions()
             this.getInvoiceOptions()
-
 			this.getList()
             this.getCompanyData()
-
             this.getCompanyList()
         },
         data() {

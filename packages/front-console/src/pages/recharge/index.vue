@@ -42,41 +42,45 @@
         </el-form>
         <el-button type="primary" @click="dialogCreateVisible=true">创建充值申请</el-button>
         <el-table :data="rechargeApplyList.list" style="width: 100%;margin-top: 20px;">
-            <el-table-column prop="companyName" label="充值单号" width="120px">
-                <template slot-scope="scope">
-                    <el-button @click="getDetail(scope.row)" type="text">{{scope.row.orderNo}}</el-button>
-                </template>
-            </el-table-column>
-            <!-- <el-table-column label="申请时间">
-                <template slot-scope="scope">
-                    <span>{{scope.row.createAt |formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
-                </template>
-            </el-table-column> -->
-            <el-table-column prop="stateName" label="处理状态"></el-table-column>
-            <el-table-column prop="channelBusinessTypeName" label="业务类型"></el-table-column>
-            <el-table-column prop="payUser.thirdPaymentTypeName" label="充值渠道"></el-table-column>
-            <el-table-column label="充值金额">
-                <template slot-scope="scope">
-                    <span>{{scope.row.amount |formatMoney}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column prop="companyName" label="客户公司"></el-table-column>
-            <el-table-column prop="appName" label="商户名称"></el-table-column>
-            <el-table-column prop="accountName" label="账户名称"></el-table-column>
-            <el-table-column prop="depositBank" label="开户行"></el-table-column>
-            <el-table-column prop="accountNo" label="账号"></el-table-column>
-            <el-table-column prop="purpose" label="充值用途"></el-table-column>
-            <el-table-column prop="createByNme" label="申请人"></el-table-column>
-            <el-table-column prop="createAt" label="申请时间"></el-table-column>
-            <el-table-column prop="approveByNme" label="审批人"></el-table-column>
-            <el-table-column prop="approveAt" label="审批时间"></el-table-column>
-            <!-- <el-table-column prop="rechargeCode" label="充值码"></el-table-column>
-            <el-table-column prop="" label="操作">
-                <template slot-scope="scope">
-                    <span class="operation" v-if="scope.row.state == 20" @click="receiveMoney(scope.row.orderNo)">已到账</span>
-                    <span class="operation" v-if="scope.row.state == 20" @click="unReceiveMoney(scope.row.orderNo)">未到账</span>
-                </template>
-            </el-table-column> -->
+                <el-table-column prop="companyName" label="充值单号" width="120px">
+                    <template slot-scope="scope">
+                        <el-button @click="getDetail(scope.row)" type="text">{{scope.row.orderNo}}</el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="appName" label="商户名称"></el-table-column>
+                <el-table-column prop="companyName" label="公司名称"></el-table-column>
+                <el-table-column label="服务商信息" width="240px">
+                    <template slot-scope="scope">
+                        <div>名称：{{scope.row.serviceCompanyName}}</div>
+                        <div>开户行：{{scope.row.depositBank}}</div>
+                        <div>账户名称：{{scope.row.accountNo}}</div>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="channelBusinessTypeName" label="充值渠道"></el-table-column>
+                <el-table-column label="充值金额" width="160px">
+                    <template slot-scope="scope">
+                        <span>{{scope.row.amount + scope.row.serviceFee | formatMoney}}</span>
+                        <el-tooltip class="item" effect="dark" placement="right">
+                            <div slot="content">
+                                <div>实发金额：{{scope.row.amount | formatMoney}}</div>
+                                <div>服务费：{{scope.row.serviceFee | formatMoney}}</div>
+                            </div>
+                            <i class="iconfont icon-xinxi"></i>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="purpose" label="备注"></el-table-column>
+                <el-table-column label="提交时间">
+                    <template slot-scope="scope">
+                        <span>{{scope.row.createAt |formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
+                    </template>
+                </el-table-column>
+                <!-- <el-table-column label="查看凭证">
+                    <template slot-scope="scope">
+                        <el-button size="small" type="text" @click="getArrt(scope.row)">查看凭证</el-button>
+                    </template>
+                </el-table-column> -->
+                <el-table-column prop="stateName" label="处理状态" width="100px"></el-table-column>
         </el-table>
 
         <ayg-pagination 
@@ -267,6 +271,9 @@
                 </template>
             </div>
         </el-dialog>
+        <div class="v-modal" v-if="detail" v-show="showAttr" @click="showAttr = false" :style="{ backgroundImage: `url(/api/sysmgr-web/file/download?downloadCode=${detail.customDownloadCode}`}">
+            
+        </div>
     </div>
 </template>
 
@@ -384,7 +391,9 @@ export default {
       channlList: [],
       balanceAccountId: '',
       suggest: '',
-      payUserId: ''
+      payUserId: '',
+      showAttr: false,
+      detail: ''
     };
   },
   watch: {
@@ -681,7 +690,15 @@ export default {
           this.search();
         }
       );
-    }
+    },
+    // getArrt(a) {
+    //     get('/api/balance-web/recharge-order/query-detail', {
+    //         orderNo: a.orderNo
+    //     }).then(data => {
+    //         this.showAttr = true
+    //         this.detail = data
+    //     })
+    // }
   }
 };
 </script>
@@ -731,5 +748,14 @@ export default {
     position: relative;
     top: -5px;
     display: inline-block;
+}
+.v-modal {
+    z-index: 2001;
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+    background-repeat: no-repeat;
+    background-size: auto 612px;
+    background-position: center center;
+    transition: all 0.3s;
 }
 </style>
