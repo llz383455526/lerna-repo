@@ -53,7 +53,7 @@
                     <template slot-scope="scope">
                         <div>名称：{{scope.row.serviceCompanyName}}</div>
                         <div>开户行：{{scope.row.depositBank}}</div>
-                        <div>账户名称：{{scope.row.accountNo}}</div>
+                        <div>账户：{{scope.row.accountNo}}</div>
                     </template>
                 </el-table-column>
                 <el-table-column prop="channelBusinessTypeName" label="业务类型"></el-table-column>

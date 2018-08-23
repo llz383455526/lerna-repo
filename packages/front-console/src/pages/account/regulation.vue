@@ -114,6 +114,14 @@ import { post, get, postWithErrorCallback } from "../../store/api";
 import { mapGetters } from "vuex";
 export default {
     data() {
+        var moreThenZero = (rule, value, cb) => {
+            if(isNaN(value) || value <= 0) {
+                return cb(new Error('实发金额必须大于零'))
+            }
+            else {
+                return cb()
+            }
+        }
         return {
             form: {
                 serviceCompanyId: '',
@@ -182,6 +190,15 @@ export default {
                         required: true,
                         message: "请输入金额",
                         trigger: "blur"
+                    },
+                    {
+                        pattern: /^\d+(\.\d{1,2})?$/,
+                        message: '请正确填写实发金额',
+                        trigger: 'blur'
+                    },
+                    {
+                        validator: moreThenZero,
+                        trigger: 'blur'
                     }
                 ],
                 remarks: [
@@ -249,6 +266,9 @@ export default {
             this.outMsg = ''
             this.regForm.toBalanceAccountId = ''
             this.inMsg = ''
+            this.channelType = []
+            this.channels = []
+            this.channels_0 = []
             this.productName.forEach(e => {
                 if(e.value == this.regForm.appId) {
                     this.regForm.appName = e.text
@@ -262,6 +282,9 @@ export default {
             this.getChannel()
         },
         getChannelType() {
+            this.regForm.bankType = ''
+            this.channels = []
+            this.channels_0 = []
             get('/api/balance-web/balance-trade-recon/select-bank-type', {
                 appId: this.regForm.appId,
                 serviceCompanyId: this.regForm.serviceCompanyId
@@ -275,6 +298,8 @@ export default {
             this.outMsg = ''
             this.regForm.toBalanceAccountId = ''
             this.inMsg = ''
+            this.channels = []
+            this.channels_0 = []
             this.serviceName.forEach(e => {
                 if(e.value == this.regForm.serviceCompanyId) {
                     this.regForm.serviceCompanyName = e.text

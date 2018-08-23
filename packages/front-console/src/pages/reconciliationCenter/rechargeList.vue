@@ -90,7 +90,8 @@
 	        },
 	        getClient() {
                 this.formSearch.appId = ''
-		        post('/api/balance-web/recharge-order/query-app', {
+                // /api/balance-web/recharge-order/query-app
+		        get('/api/sysmgr-web/commom/app-list', {
 			        companyId: this.companyId
 		        }).then(result => {
 			        this.extrSystemOptions = result
