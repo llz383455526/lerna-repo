@@ -299,6 +299,9 @@ export default {
   data() {
     var time = new Date();
     var t = `${time.getFullYear()}-${time.getMonth() + 1 > 9 ? time.getMonth() + 1 : "0" + (time.getMonth() + 1) }-${time.getDate()}`
+    time = time.getTime() - 1000 * 60 * 60 * 24 * 7
+    time = new Date(time);
+    var t_0 = `${time.getFullYear()}-${time.getMonth() + 1 > 9 ? time.getMonth() + 1 : "0" + (time.getMonth() + 1) }-${time.getDate()}`
     return {
       pageSize: 10,
       currentPage: 1,
@@ -379,7 +382,7 @@ export default {
         pageSize: 10,
         state: ''
       },
-      dateValue: [t, t],
+      dateValue: [t_0, t],
       orderInfo: "",
       dialogConfirmVisible: false,
       rechargeApplyList: {},
