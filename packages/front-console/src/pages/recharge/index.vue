@@ -81,6 +81,8 @@
                     </template>
                 </el-table-column> -->
                 <el-table-column prop="stateName" label="处理状态" width="100px"></el-table-column>
+                <el-table-column prop="updateByNme" label="处理人" width="100px"></el-table-column>
+                <el-table-column prop="updateAt" label="处理时间" width="100px"></el-table-column>
         </el-table>
 
         <ayg-pagination 
