@@ -81,7 +81,7 @@ export default {
     };
   },
   mounted() {
-      get('/api/sysmgr-web/commom/company').then(data => {
+      get('/api/sysmgr-web/commom/company?companyIdentity=custom').then(data => {
           this.companys = data
       })
       get('/api/sysmgr-web/commom/app-list').then(data => {
