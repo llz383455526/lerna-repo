@@ -129,6 +129,15 @@
                          </el-form-item>
                      </div>
                 </div>
+                <div class="input-container" v-if="msg">
+                    <div class="label"></div>
+                    <div class="input">
+                        <div>开户行：{{msg.depositBank}}</div>
+                        <div>账户名称：{{msg.serviceCompanyName}}</div>
+                        <div>账号：{{msg.serviceCompanyAccountNo}}</div>
+                        <div>(请通过线下支付方式支付费用到该收款账号)</div>
+                    </div>
+                </div>
                 <div class="input-container">
                     <div class="label">业务类型：<span>*</span></div>
                     <div class="input">
@@ -136,14 +145,6 @@
                             <el-select filterable v-model="dialogCreateForm.channelBusinessType" :no-data-text="dialogCreateForm.serviceCompanyId ? '无数据' : '请先选择商户'" @change="getServiceFee">
                                 <el-option v-for="(item, index) in channelTypes" :label="item.text" :value="item.value" :key="item.value"></el-option>
                             </el-select>
-                        </el-form-item>
-                    </div>
-                </div>
-                <div class="input-container">
-                    <div class="label">充值用途：<span>*</span></div>
-                    <div class="input">
-                        <el-form-item prop="purpose">
-                            <el-input :maxlength=50 v-model="dialogCreateForm.purpose" placeholder=""></el-input>
                         </el-form-item>
                     </div>
                 </div>
@@ -183,10 +184,26 @@
                        </el-form-item>
                    </div>
                 </div>
+                <div class="input-container">
+                    <div class="label">备注：<span>*</span></div>
+                    <div class="input">
+                        <el-form-item prop="purpose">
+                            <el-input :maxlength=50 v-model="dialogCreateForm.purpose" placeholder=""></el-input>
+                        </el-form-item>
+                    </div>
+                </div>
+                <div class="input-container">
+                    <div class="label"></div>
+                    <div class="input">
+                        <el-checkbox checked @change="setSmsOpen">
+                            <span class="f14">目前支持线下转账充值，充值到账处理成功，免费短信通知至手机</span>
+                        </el-checkbox>
+                    </div>
+                </div>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogCreateVisible = false;$refs['dialogCreateForm'].resetFields()">取 消</el-button>
-                <el-button type="primary" @click="submitDialogCreateForm()">确 定</el-button>
+                <el-button size="small" @click="dialogCreateVisible = false;$refs['dialogCreateForm'].resetFields()">取 消</el-button>
+                <el-button size="small" type="primary" @click="submitDialogCreateForm()">确 定</el-button>
             </div>
         </el-dialog>
         <el-dialog title=""  :visible.sync="dialogConfirmVisible" width="40%">
@@ -263,7 +280,7 @@
                 <span>{{detail.memo}}</span>
             </div>
             <div class="det">选择渠道帐号：
-                <el-select size="small" v-model="balanceAccountId" @change="getSuggest" style="width: 500px">
+                <el-select size="small" v-model="balanceAccountId" @change="getSuggest" style="width: 500px" :disabled="detail.financeDownloadCode ? true : false">
                     <el-option v-for="e in channlList" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}`" :value="e.balanceAccountId"></el-option>
                 </el-select>
             </div>
@@ -312,7 +329,8 @@ export default {
         amount: "",
         purpose: "",
         serviceCompanyId: '',
-        attachmentId: ''
+        attachmentId: '',
+        smsOpen: true
       },
       dialogCreateFormRules: {
         companyId: [
@@ -403,7 +421,8 @@ export default {
       suggest: '',
       payUserId: '',
       showAttr: false,
-      detail: ''
+      detail: '',
+      msg: ''
     };
   },
   watch: {
@@ -509,6 +528,7 @@ export default {
         this.dialogCreateForm.appId = ''
         this.dialogCreateForm.channelBusinessType = ''
         this.dialogCreateForm.serviceCompanyId = ''
+        this.msg = ''
     },
     getService() {
         get('/api/sysmgr-web/commom/app-service-company-list', {
@@ -517,6 +537,7 @@ export default {
             console.log(data)
             this.dialogCreateForm.channelBusinessType = ''
             this.dialogCreateForm.serviceCompanyId = ''
+            this.msg = ''
             this.serviceName = data
         })
     },
@@ -527,6 +548,7 @@ export default {
             companyId: this.dialogCreateForm.companyId,
             serviceCompanyId: this.dialogCreateForm.serviceCompanyId
         }).then(data => {
+            this.msg = data.serviceInfos[0]
             this.channelTypes = data.channelTypes
             this.calcServiceFee = data.calcServiceFee
             this.getServiceFee()
@@ -701,6 +723,9 @@ export default {
         }
       );
     },
+    setSmsOpen(a) {
+        this.dialogCreateForm.smsOpen = a
+    }
     // getArrt(a) {
     //     get('/api/balance-web/recharge-order/query-detail', {
     //         orderNo: a.orderNo

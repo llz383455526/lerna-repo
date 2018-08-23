@@ -50,7 +50,11 @@
                         {{scope.row.serviceFee | formatMoney}}
                     </template>
                 </el-table-column>
-                <el-table-column label="发放委托方" prop="appName"></el-table-column>
+                <el-table-column label="发放渠道">
+                    <template slot-scope="scope">
+                        {{scope.row.serviceCompanyName}} - {{scope.row.channelTypeName}}
+                    </template>
+                </el-table-column>
                 <!-- <el-table-column label="操作">
                     <template slot-scope="scope">
                         <el-button type="text" @click="show = true">修改</el-button>

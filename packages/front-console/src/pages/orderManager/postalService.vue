@@ -41,7 +41,11 @@
                         {{scope.row.serviceFee | formatMoney}}
                     </template>
                 </el-table-column>
-                <el-table-column label="发放委托方" prop="appName"></el-table-column>
+                <el-table-column label="发放渠道">
+                    <template slot-scope="scope">
+                        {{scope.row.serviceCompanyName}} - {{scope.row.channelTypeName}}
+                    </template>
+                </el-table-column>
             </el-table>
         </div>
         <div id="result">

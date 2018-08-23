@@ -360,9 +360,9 @@ export default {
             this.inMsg = ''
         },
         sure() {
-            if(this.outMsg && this.outMsg.currentAvailBalance > this.regForm.tradeAmount) {
-                this.$refs["regForm"].validate(valid => {
-                    if(valid) {
+            this.$refs["regForm"].validate(valid => {
+                if(valid) {
+                    if(this.outMsg && this.outMsg.currentAvailBalance > this.regForm.tradeAmount) {
                         var bankType = this.regForm.bankType
                         delete this.regForm.bankType
                         postWithErrorCallback('/api/balance-web/balance-trade-recon/do-trade-recon', this.regForm).then(data => {
@@ -373,14 +373,14 @@ export default {
                             this.regForm.bankType = bankType
                         })
                     }
-                })
-            }
-            else {
-                this.$message({
-                    type: 'warning',
-                    message: '当前所渠道余额不足！'
-                })
-            }
+                    else {
+                        this.$message({
+                            type: 'warning',
+                            message: '当前所渠道余额不足！'
+                        })
+                    }
+                }
+            })
         }
     }
 }
