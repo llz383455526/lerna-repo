@@ -56,7 +56,12 @@
                         <div>账户名称：{{scope.row.accountNo}}</div>
                     </template>
                 </el-table-column>
-                <el-table-column prop="channelBusinessTypeName" label="充值渠道"></el-table-column>
+                <el-table-column prop="channelBusinessTypeName" label="业务类型"></el-table-column>
+                <el-table-column label="充值渠道">
+                    <template slot-scope="scope">
+                        {{scope.row.payUser.thirdPaymentTypeName}}
+                    </template>
+                </el-table-column>
                 <el-table-column label="充值金额" width="160px">
                     <template slot-scope="scope">
                         <span>{{scope.row.amount + scope.row.serviceFee | formatMoney}}</span>

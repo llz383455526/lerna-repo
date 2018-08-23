@@ -3,7 +3,7 @@
     <div class="main-container">
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
             <el-form-item label="客户公司:"   size="small" prop="companyId">
-                <el-select filterable v-model="companyId">
+                <el-select filterable v-model="companyId" @change="getClient">
                     <el-option v-for="item in customCompanyList" :label="item.name" :value="item.id" :key="item.id"></el-option>
                 </el-select>
             </el-form-item>
@@ -75,11 +75,11 @@
 				customCompanyList: []
             }
         },
-        watch: {
-	        companyId() {
-                if(this.companyId) this.getClient(this.companyId)
-            }
-        },
+        // watch: {
+	    //     companyId() {
+        //         if(this.companyId) 
+        //     }
+        // },
         methods: {
 	        getCompanyList() {
 		        get('/api/sysmgr-web/commom/company', {
@@ -88,9 +88,10 @@
 			        this.customCompanyList = result
 		        })
 	        },
-	        getClient(companyId) {
+	        getClient() {
+                this.formSearch.appId = ''
 		        post('/api/balance-web/recharge-order/query-app', {
-			        companyId: companyId
+			        companyId: this.companyId
 		        }).then(result => {
 			        this.extrSystemOptions = result
 		        })
@@ -99,6 +100,7 @@
 		        this.$refs[formName].resetFields()
 		        this.dateValue = ''
                 this.companyId = ''
+                this.extrSystemOptions = []
 	        },
 	        search() {
 		        this.pageIndex = 1
