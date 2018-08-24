@@ -51,7 +51,7 @@
                 <el-table-column prop="companyName" label="公司名称"></el-table-column>
                 <el-table-column label="服务商信息" width="240px">
                     <template slot-scope="scope">
-                        <div>账户名称：{{scope.row.serviceCompanyName}}</div>
+                        <div>账户名称：{{scope.row.accountName}}</div>
                         <div>开户行：{{scope.row.depositBank}}</div>
                         <div>账号：{{scope.row.accountNo}}</div>
                     </template>
