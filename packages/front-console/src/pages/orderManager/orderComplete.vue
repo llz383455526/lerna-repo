@@ -90,6 +90,7 @@
             <el-table :data="detail" >
                 <el-table-column label="收款方账号名称" prop="accountName"></el-table-column>
                 <el-table-column label="身份证" prop="idCard"></el-table-column>
+                <el-table-column label="手机号" prop="phone"></el-table-column>
                 <el-table-column label="收款方账号" prop="accountNo"></el-table-column>
                 <!-- <el-table-column label="开户行" prop="depositBank"></el-table-column> -->
                 <el-table-column label="款项属性备注" prop="fund"></el-table-column>

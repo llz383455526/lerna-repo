@@ -38,12 +38,12 @@
                 </el-date-picker>
             </el-form-item>
             <el-form-item label="服务商名称" size="small" prop="serviceCompanyId">
-                <el-select v-model="formSearch.serviceCompanyId" placeholder="请选择">
+                <el-select v-model="formSearch.serviceCompanyId" placeholder="请选择" @change="getStatusList">
                     <el-option v-for="item in serviceCompanies" :label="item.companyName" :value="item.companyId" :key="item.companyId"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="状态" size="small" prop="status">
-                <el-select v-model="formSearch.status" placeholder="请选择">
+                <el-select v-model="formSearch.status" placeholder="请选择" @change="getStatusList">
                     <el-option v-for="item in statusList" :label="item.text" :value="item.value" :key="item.value"></el-option>
                 </el-select>
             </el-form-item>
@@ -131,12 +131,12 @@
                     appId: '',
                     serviceCompanyId: '',
                     status: '',
-                    billType: 'month',
+                    billType: 'day',
                     startAt: '',
                     endAt: '',
                 },
                 restaurants1: [],
-                showDatePick: 'month',
+                showDatePick: 'day',
                 valueMonth: '',
                 valueDate: '',
                 appName: '',
@@ -194,6 +194,7 @@
                     page: 1,
                     pageSize: this.pageSize,
                 });
+                this.getStatusList()
             },
             requestAction(pageInfo) {
                 let url = '/api/console-dlv/settled/flow-order-list';
@@ -259,16 +260,23 @@
                     })
             },
             getStatusList() {
-	            get('/api/console-dlv/option/get-by-type', {
-		            type: 'OpenInvoiceStatus'
-                }).then(result => {
-                    // this.statusList = result
-                    // _.forEach(result, item => {
-	                //     this.statusList[item.value] = item
-                    // })
-                    this.statusList = result
-                    console.log(this.statusList)
+                get('/api/console-dlv/option/get-invoice-status', {
+                    appId: this.formSearch.appId,
+                    serviceCompanyId: this.formSearch.serviceCompanyId,
+                    billType: this.formSearch.billType
+                }).then(data => {
+                    this.statusList = data
                 })
+	            // get('/api/console-dlv/option/get-by-type', {
+		        //     type: 'OpenInvoiceStatus'
+                // }).then(result => {
+                //     // this.statusList = result
+                //     // _.forEach(result, item => {
+	            //     //     this.statusList[item.value] = item
+                //     // })
+                //     this.statusList = result
+                //     console.log(this.statusList)
+                // })
             }
         },
         created() {

@@ -21,42 +21,42 @@
                         </el-form-item>
                     </div>
                 </div>
-                <div class="input-container">
+                <div class="input-container" >
                     <div class="label">纳税识别号<span>*</span></div>
                     <div class="input">
-                        <el-form-item>
+                        <el-form-item prop="taxIdcd">
                             <el-input v-model="formBuy.taxIdcd" style="width: 250px;" readonly></el-input>
                         </el-form-item>
                     </div>
                 </div>
                 <div class="input-container">
-                    <div class="label">地址<span>*</span></div>
+                    <div class="label">地址<span v-if="$route.query.invoiceType == 'ZP'">*</span></div>
                     <div class="input">
-                        <el-form-item>
+                        <el-form-item prop="addr">
                             <el-input v-model="formBuy.addr" style="width: 250px;" readonly></el-input>
                         </el-form-item>
                     </div>
                 </div>
                 <div class="input-container">
-                    <div class="label">电话号码<span>*</span></div>
+                    <div class="label">电话号码<span v-if="$route.query.invoiceType == 'ZP'">*</span></div>
                     <div class="input">
-                        <el-form-item>
+                        <el-form-item prop="phone">
                             <el-input v-model="formBuy.phone" style="width: 250px;" readonly></el-input>
                         </el-form-item>
                     </div>
                 </div>
                 <div class="input-container">
-                    <div class="label">开户银行<span>*</span></div>
+                    <div class="label">开户银行<span v-if="$route.query.invoiceType == 'ZP'">*</span></div>
                     <div class="input">
-                        <el-form-item>
+                        <el-form-item prop="bankName">
                             <el-input v-model="formBuy.bankName" style="width: 250px;" readonly></el-input>
                         </el-form-item>
                     </div>
                 </div>
                 <div class="input-container">
-                    <div class="label">银行账号<span>*</span></div>
+                    <div class="label">银行账号<span v-if="$route.query.invoiceType == 'ZP'">*</span></div>
                     <div class="input">
-                        <el-form-item>
+                        <el-form-item prop="bankAccount">
                             <el-input v-model="formBuy.bankAccount" style="width: 250px;" readonly></el-input>
                         </el-form-item>
                     </div>
@@ -320,9 +320,16 @@
                         {
                             required: true,
                             message: "请选择客户名称",
-                            trigger: "change"
+                            trigger: "blur"
                         }
                     ],
+                    taxIdcd: [
+                        {
+                            required: true,
+                            message: "请输入纳税识别号",
+                            trigger: "blur"
+                        }
+                    ]
                     // remark: [
                     //     {
                     //         required: true,
@@ -439,6 +446,7 @@
                 };
                 get(url, param).then(res => {
                     self.formBuy = res;
+                    console.log(self.formBuy)
                     self.getHistoryDebt(val, pageInfo);
                     self.getHistoryInfo(val);
                 })
@@ -501,12 +509,17 @@
                 param.items[0].subjectId = this.formCategory.subjectId;
 
                 param.historyIds = this.historyIds;
-
+                Object.assign(this.formData, this.formBuy)
                 this.$refs['formData'].validate((valid) => {
                     if (valid) {
                         validData = true;
                     }
                 });
+                delete this.formData.taxIdcd
+                delete this.formData.addr
+                delete this.formData.phone
+                delete this.formData.bankName
+                delete this.formData.bankAccount
                 // if (this.tableShow) {
                 //     this.subjectShow = false;
                 //     this.$refs['formCategory'].validate((valid) => {
@@ -537,12 +550,17 @@
                 param.items[0].subjectId = this.formCategory.subjectId;
 
                 param.historyIds = this.historyIds;
-
+                Object.assign(this.formData, this.formBuy)
                 this.$refs['formData'].validate((valid) => {
                     if (valid) {
                         validData = true;
                     }
                 });
+                delete this.formData.taxIdcd
+                delete this.formData.addr
+                delete this.formData.phone
+                delete this.formData.bankName
+                delete this.formData.bankAccount
                 // if (this.tableShow) {
                 //     this.subjectShow = false;
                 //     this.$refs['formCategory'].validate((valid) => {
@@ -557,8 +575,7 @@
                 // if (validData && validCategory) {
                 if (validData) {
                     post(url, param).then(data => {
-                		let newWindow = window.open();
-                        newWindow.location.href = data;
+                		window.open(data);
                     });
                 }
             },
@@ -610,6 +627,38 @@
         created() {
             this.getCustomCompanies();
             this.formData.serviceCompanyId = this.$route.query.serviceCompanyId;
+            if(this.$route.query.invoiceType == 'ZP') {
+                Object.assign(this.rulesData, {
+                    addr: [
+                        {
+                            required: true,
+                            message: "请输入地址",
+                            trigger: "blur"
+                        }
+                    ],
+                    phone: [
+                        {
+                            required: true,
+                            message: "请输入电话号码",
+                            trigger: "blur"
+                        }
+                    ],
+                    bankName: [
+                        {
+                            required: true,
+                            message: "请输入开户行名称",
+                            trigger: "blur"
+                        }
+                    ],
+                    bankAccount: [
+                        {
+                            required: true,
+                            message: "请输入银行账号",
+                            trigger: "blur"
+                        }
+                    ]
+                })
+            }
             this.getServiceDetail(this.formData.serviceCompanyId);
 
             // 获取发票类目下拉列表

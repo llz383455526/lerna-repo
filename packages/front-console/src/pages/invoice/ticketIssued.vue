@@ -5,11 +5,11 @@
               纸票开具
           </el-breadcrumb-item>
       </el-breadcrumb>
-      <el-form class="form" :model="form" :inline="true" label-width="100px">
-          <el-form-item label="客户名称">
+      <el-form class="form" :model="form" :inline="true" label-width="100px" ref="form">
+          <el-form-item label="客户名称" prop="customCompanyName">
               <el-input v-model="form.customCompanyName" class="in_input" size="small"></el-input>
           </el-form-item>
-          <el-form-item label="申请编号">
+          <el-form-item label="申请编号" prop="orderNo">
               <el-input v-model="form.orderNo" class="in_input" size="small"></el-input>
           </el-form-item>
           <el-form-item label="申请日期">
@@ -22,10 +22,22 @@
               value-format="yyyy-MM-dd"
               ></el-date-picker>
           </el-form-item>
-          <el-form-item label="发票类型">
+          <el-form-item label="发票类型" prop="invoiceType">
               <el-select v-model="form.invoiceType" class="in_input" size="small">
                   <el-option v-for="item in categoryList" :key="item.value" :label="item.text" :value="item.value"></el-option>
               </el-select>
+          </el-form-item>
+          <el-form-item label="申请类型" size="small" prop="applyType">
+                <el-select v-model="form.applyType" placeholder="请选择" style="width:100%;">
+                    <el-option label="全部" value=""></el-option>
+                    <el-option v-for="item in applyState" :key="item.value" :label="item.text" :value="item.value"></el-option>
+                </el-select>
+          </el-form-item>
+          <el-form-item label="客户开票类型" size="small" prop="customerInvoiceType">
+                <el-select v-model="form.customerInvoiceType" placeholder="请选择" style="width:100%;">
+                    <el-option label="全部" value=""></el-option>
+                    <el-option v-for="item in customerInvoiceTypes" :key="item.value" :label="item.text" :value="item.value"></el-option>
+                </el-select>
           </el-form-item>
           <el-form-item class="form_foot">
               <el-button type="primary" @click="query" size="small">查询</el-button><el-button @click="clear" size="small">重置</el-button>
@@ -33,7 +45,12 @@
       </el-form>
       <div class="t_head">已开发票共计：{{companyData.count}}张，金额共计 {{companyData.amount | formatMoney}}元，税额共计 {{companyData.taxRateAmount | formatMoney}}元，价税合计 {{companyData.taxRateTotalAmount | formatMoney}}元</div>
       <el-table class="table" :data="tableData" border="">
-          <el-table-column prop="orderNo" label="申请编号"></el-table-column>
+          <el-table-column prop="orderNo" label="申请编号">
+              <template slot-scope="scope">
+                  <el-button type="text" size="small" @click="showDetail(scope.row)">{{scope.row.orderNo}}</el-button>
+              </template>
+          </el-table-column>
+          <el-table-column prop="applyType" label="申请类型" width="120"></el-table-column>
           <el-table-column label="待开">
               <template slot-scope="scope">
                   <el-button type="text" @click="not(scope.row)">{{scope.row.needOpenNum}}</el-button>
@@ -65,6 +82,7 @@
           </el-table-column>
           <!-- <el-table-column prop="totalNum" label="申请开票数"></el-table-column> -->
           <el-table-column prop="subjectName" label="发票类目"></el-table-column>
+          <el-table-column prop="customerInvoiceType" label="客户开票类型"></el-table-column>
           <el-table-column label="操作时间">
               <template slot-scope="scope">
                   {{scope.row.lastTime | formatTime}}
@@ -152,7 +170,7 @@
         </div>
         <div class="half">
             <span>地址： {{invoiceData.customAddr}}</span>
-            <span>电话： {{invoiceData.customPhone || '暂无'}}</span>   
+            <span>电话： {{invoiceData.customPhone || '暂无'}}</span>
         </div>
         <div class="half">
             <span>开票类型： {{invoiceData.invoiceTypeName}}</span>
@@ -167,7 +185,8 @@
         </el-table>
         <span slot="footer">
         	<el-button @click="preview" type="primary">预览</el-button>
-            <el-button @click="make" type="primary">开票</el-button>
+            <!-- make -->
+            <el-button @click="needSure" type="primary">开票</el-button>
         </span>
       </el-dialog>
       <el-dialog title="申请中" :visible.sync="oshow" width="70%">
@@ -202,24 +221,116 @@
             <el-button @click="oshow = false" type="primary">确定</el-button>
         </span> -->
       </el-dialog>
-      <el-dialog title="填写" :visible.sync="eshow" width="70%">
-          <el-form :inline="true" label-width="80px">
-              <el-form-item label="快递渠道">
-                  <el-input class="f_input"></el-input>
-              </el-form-item>
-              <el-form-item label="快递单号">
-                  <el-input class="f_input"></el-input>
-              </el-form-item>
-          </el-form>
-          <span class="form_footer" slot="footer">
-              <el-button @click="sure" type="primary">确定</el-button>
-              <el-button @click="sure" type="warning">取消</el-button>
+      <el-dialog title="开票确认" :visible.sync="sureShow" width="35%">
+          <p v-if="invoiceData.items">申请发票数：<span class="red">{{invoiceData.items.length}}</span>张</p>
+          <p>确认开票数 <span class="red">{{mform.invoiceIds.length}}</span>张</p>
+          <template v-if="invoiceData.items && invoiceData.items.length != mform.invoiceIds.length">
+              <p>未勾选发票的备注原因</p>
+              <el-input v-model="mform.memo"></el-input>
+          </template>
+          <div slot="footer" class="dialog-footer">
+              <el-button size="small" type="primary" @click="make">确认提交</el-button>
+          </div>
+      </el-dialog>
+      <el-dialog title="发票详情" :visible.sync="dShow" width="70%">
+          <div class="title">邮寄地址</div>
+          <div class="half">
+            <span>收票人：{{billDatail.collector}}</span>
+            <span>收票人电话：{{billDatail.collectorPhone}}</span>
+          </div>
+          <div class="half">
+            <span>收票人地址：{{billDatail.collectorAddr}}</span>
+          </div>
+          <div class="title">填写物流单号</div>
+          <el-table :data="express">
+              <el-table-column label="添加时间" prop="addExpressTime">
+                  <template slot-scope="scope">
+                      {{scope.row.addExpressTime | formatTime}}
+                  </template>
+              </el-table-column>
+              <el-table-column label="物流公司" prop="expressCompany"></el-table-column>
+              <el-table-column label="物流单号" prop="expressNo"></el-table-column>
+              <el-table-column label="操作">
+                  <template slot-scope="scope">
+                      <el-button type="text" size="small" @click="eshow = true">{{scope.row.addExpressTime ? '编辑' : '添加'}}</el-button>
+                  </template>
+              </el-table-column>
+          </el-table>
+          <div class="title">发票扫描件</div>
+          <el-button size="small" type="primary" @click="addBill">上传文件</el-button>
+          <el-table :data="billDatail.attachments">
+              <el-table-column label="发票代码" prop="invoiceCode"></el-table-column>
+              <el-table-column label="发票号码" prop="invoiceNo"></el-table-column>
+              <el-table-column label="文件名" prop="name"></el-table-column>
+              <el-table-column label="操作">
+                  <template slot-scope="scope">
+                      <el-button type="text" size="small" @click="editorBill(scope.row)">编辑</el-button>
+                      <el-button type="text" size="small" @click="prevBill(scope.row)">预览</el-button>
+                      <el-button type="text" size="small" @click="deleteBill(scope.row)">删除</el-button>
+                  </template>
+              </el-table-column>
+          </el-table>
+          <span slot="footer">
+              <!-- <el-button size="small" @click="dShow = false" type="primary">确定</el-button> -->
+              <el-button size="small" @click="dShow = false">关闭</el-button>
           </span>
       </el-dialog>
+      <el-dialog title="修改" @close="showDetail" :visible.sync="eshow" width="70%">
+          <el-form label-width="80px" :model="express[0]" :rules="erules" v-if="express[0]" ref="express">
+              <el-form-item label="添加时间">
+                  {{express[0].addExpressTime | formatTime}}
+              </el-form-item>
+              <el-form-item label="物流公司" prop="expressCompany">
+                  <el-select size="small" filterable v-model="express[0].expressCompany" class="f_input">
+                      <el-option v-for="e in companys" :value="e.value" :label="e.label" :key="e.value"></el-option>
+                  </el-select>
+              </el-form-item>
+              <el-form-item label="物流单号" prop="expressNo">
+                  <el-input size="small" v-model="express[0].expressNo" class="f_input"></el-input>
+              </el-form-item>
+          </el-form>
+          <span slot="footer">
+              <el-button size="small" @click="sure" type="primary">确定</el-button>
+              <el-button size="small" @click="eshow = false">取消</el-button>
+          </span>
+      </el-dialog>
+      <el-dialog title="扫描件" @close="imgUrl = '';showDetail()" :visible.sync="attrShow">
+          <el-form :model="attrForm" :rules="arules" ref="attrForm">
+              <el-form-item label="发票代码：" prop="invoiceCode">
+                  <el-input class="f_input" size="small" v-model="attrForm.invoiceCode"></el-input>
+              </el-form-item>
+              <el-form-item label="发票号码：" prop="invoiceNo">
+                  <el-input class="f_input" size="small" v-model="attrForm.invoiceNo"></el-input>
+              </el-form-item>
+              <el-form-item label="上传文件：" prop="file">
+                  <el-upload
+                    class="form_input"
+                    :action="`/api/econtract/template/parsefile`"
+                    :auto-upload="false"
+                    :on-change="save"
+                    :multiple="false"
+                    :show-file-list="false"
+                    accept=".jpg, .png">
+                      <!-- <img v-if="attrForm.attachmentId" :src="`https://openadmintest92.aiyuangong.com/api/invoice-web/invoice/attachment/preview/${attrForm.attachmentId}`" alt="" width="200px"> -->
+                      <!-- <template v-else> -->
+                    <el-button v-if="!imgUrl" size="small" type="primary">上传文件</el-button>
+                    <img v-else :src="this.imgUrl" alt="" width="200px">
+                      <!-- </template> -->
+                  </el-upload>
+              </el-form-item>
+          </el-form>
+          <span slot="footer">
+              <el-button size="small" @click="attrShow = false">取消</el-button>
+              <el-button size="small" @click="upload" type="primary">确定</el-button>
+          </span>
+      </el-dialog>
+      <div class="v-modal" v-if="showDown" @click.self="showDown = false" :style="{ backgroundImage: `url(/api/invoice-web/invoice/attachment/preview/${attachmentId})`}">
+            <a class="abtn" :href="`/api/invoice-web/invoice/attachment/download/${attachmentId}`" target="_blank">下载发票</a>
+      </div>
   </div>
 </template>
 <script>
-import { get, post, formPost, postButNoErrorToast } from "../../store/api";
+import { get, post, formPost, importPost, postButNoErrorToast } from "../../store/api";
 export default {
   data() {
     var time = new Date()
@@ -228,15 +339,37 @@ export default {
       companyData: {},
       form: {
         customCompanyName: '',
+        startAt: '',
         endAt: '',
         invoiceType: '',
         orderBy: '',
         orderNo: '',
+        applyType: '',
+        customerInvoiceType: '',
         page: 1,
-        pageSize: 10,
-        startAt: ''
+        pageSize: 10
       },
       timeRange: [t, t],
+      applyState: [
+          {
+              text: '客户申请',
+              value: 20
+          },
+          {
+              text: '交付申请',
+              value: 10
+          }
+      ],
+      customerInvoiceTypes: [
+          {
+              text: '账单开票',
+              value: 10
+          },
+          {
+              text: '预开票',
+              value: 20
+          }
+      ],
       categoryList: [],
       tableData: [],
       total: 0,
@@ -245,10 +378,67 @@ export default {
       nshow: false,
       mform: {
           invoiceIds: [],
+          memo: '',
           orderNo: ''
       },
       oshow: false,
-      eshow: false
+      eshow: false,
+      sureShow: false,
+      dShow: false,
+      billDatail: {},
+      express: [],
+      erules: {
+          expressCompany: [
+              {
+                  required: true,
+                  message: "请选择物流公司",
+                  trigger: "blur"
+              }
+          ],
+          expressNo: [
+              {
+                  required: true,
+                  message: "请填写物流单号",
+                  trigger: "blur"
+              }
+          ]
+      },
+      orderNo: '',
+      companys: [],
+      attrShow: false,
+      attrForm: {
+          orderId: '',
+          attachmentId: '',
+          invoiceCode: '',
+          invoiceNo: '',
+          file: ''
+      },
+      imgUrl: '',
+      showDown: false,
+      attachmentId: '',
+      arules: {
+          invoiceCode: [
+              {
+                  required: true,
+                  message: "请填写发票代码",
+                  trigger: "blur"
+              }
+          ],
+          invoiceNo: [
+              {
+                  required: true,
+                  message: "请填写发票号码",
+                  trigger: "blur"
+              }
+          ],
+          file: [
+              {
+                  required: true,
+                  message: "请上传文件",
+                  trigger: "blur"
+              }
+          ]
+      }
     };
   },
   activated() {
@@ -260,6 +450,7 @@ export default {
          console.log(data)
          this.categoryList = data
      }.bind(this))
+     this.getCompany()
     //  get('/api/invoice-web/invoice/opened-paper-invoice-info?serviceCompanyId=' + serviceCompanyId).then(function(data){
     //      console.log(data)
     //      this.companyData = data
@@ -294,17 +485,10 @@ export default {
           this.query()
       },
       clear() {
-          this.form = {
-            customCompanyName: '',
-            endAt: '',
-            invoiceType: '',
-            orderBy: '',
-            orderNo: '',
-            page: 1,
-            pageSize: this.form.pageSize,
-            startAt: ''
-        }
-        this.timeRange = []
+          this.$refs['form'].resetFields();
+          this.form.startAt = ''
+          this.form.endAt = ''
+          this.timeRange = []
       },
       already(a) {
           console.log(a)
@@ -347,17 +531,11 @@ export default {
              this.mform.invoiceIds.push(e.id)
           }, this)
       },
-      make(a) {
+      needSure() {
           if(this.mform.invoiceIds.length){
-            post('/api/invoice-web/invoice/open-paper-invoice', this.mform).then(function(data){
-                console.log(data)
-                this.nshow = false
-                this.$message({
-                    type: 'success',
-                    message: '开票成功！'
-                })
-                this.query()
-            }.bind(this))
+            this.nshow = false
+            this.sureShow = true
+            this.mform.memo = '将在月底最后一周开具'
           }
           else{
               this.$message({
@@ -365,6 +543,23 @@ export default {
                   message: '请至少选择一项'
               })
           }
+      },
+      make(a) {
+        if(this.invoiceData.items.length != this.mform.invoiceIds.length && !this.mform.memo) {
+            this.$message({
+                type: 'warning',
+                message: '请填写原因！'
+            })
+            return
+        }
+        post('/api/invoice-web/invoice/open-paper-invoice', this.mform).then(function(data){
+            this.sureShow = false
+            this.$message({
+                type: 'success',
+                message: '开票成功！'
+            })
+            this.query()
+        }.bind(this))
       },
       preview(a) {
       	  let url = '/api/invoice-web/invoice/open-paper-preview';
@@ -383,12 +578,106 @@ export default {
               })
           }
       },
+      showDetail(a) {
+        //   a.orderNo
+          if(a) {
+              this.orderNo = a.orderNo
+          }
+          get(`/api/invoice-web/invoice/invoice-note-info/${this.orderNo}`).then(data => {
+              console.log(data)
+              this.dShow = true
+              this.billDatail = data
+              var time = new Date()
+            //   this.billDatail.addExpressTime = this.billDatail.addExpressTime || time.getFullYear() + '-' + (time.getMonth() + 1 > 9 ? time.getMonth() + 1 : '0' + (time.getMonth() + 1)) + '-' +(time.getDay() > 9 ? time.getDay() : '0' + time.getDay())
+              this.express = [
+                  {
+                      addExpressTime: this.billDatail.addExpressTime,
+                      expressCompany: this.billDatail.expressCompany,
+                      expressNo: this.billDatail.expressNo
+                  }
+              ]
+          })
+      },
       expressage(a) {
           console.log(a)
           this.eshow = true
       },
       sure(e) {
-          console.log(e)
+          this.$refs['express'].validate(valid => {
+              if(valid) {
+                  post('/api/invoice-web/invoice/save-express-info', {
+                      id: this.orderNo,
+                      expressCompany: this.express[0].expressCompany,
+                      expressNo: this.express[0].expressNo
+                  }).then(data => {
+                      console.log(data)
+                      this.eshow = false
+                      this.showDetail()
+                  })
+              }
+          })
+      },
+      getCompany() {
+          get('/api/invoice-web/commom/express-company-list').then(data => {
+              this.companys = data
+              console.log('companys', this.companys)
+          })
+      },
+      save(a) {
+          var reader = new FileReader()
+          this.attrForm.file = a.raw
+          reader.onload = e => {
+              this.imgUrl = e.target.result
+          }
+          reader.readAsDataURL(a.raw)
+          this.$refs['attrForm'].clearValidate()
+      },
+      upload() {
+          this.$refs['attrForm'].validate(valid => {
+              if(valid) {
+                  this.attrForm.orderId = this.orderNo
+                  var formData = new FormData()
+                  for(var k in this.attrForm) {
+                      formData.append(k, this.attrForm[k])
+                  }
+                  importPost('/api/invoice-web/invoice/attachment/upload', formData, true).then(data => {
+                      console.log(data)
+                      this.attrShow = false
+                      this.showDetail()
+                  })
+              }
+          })
+      },
+      prevBill(a) {
+          this.showDown = true
+          this.attachmentId = a.id
+      },
+      addBill() {
+          this.attrShow = true
+          this.attrForm.attachmentId = ''
+          this.attrForm.invoiceCode = ''
+          this.attrForm.invoiceNo = ''
+          this.attrForm.file = ''
+          this.imgUrl = ''
+      },
+      editorBill(a) {
+          this.attrShow = true
+          this.attrForm.attachmentId = a.id
+          this.attrForm.invoiceCode = a.invoiceCode
+          this.attrForm.invoiceNo = a.invoiceNo
+      },
+      deleteBill(a) {
+          this.$confirm('是否确认删除?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+              post('/api/invoice-web/invoice/attachment/delete', {
+                  id: a.id
+              }).then(data => {
+                  this.showDetail()
+              })
+          }).catch(err => {})
       }
   }
 };
@@ -425,12 +714,15 @@ export default {
   display: flex;
   justify-content: space-around;
 }
+.half {
+    margin-bottom: 10px;
+}
 .half > span{
     display: inline-block;
     width: 40%;
 }
 .f_input{
-    width: 400px;
+    width: 300px;
 }
 .form_footer > button{
     margin: 0px 30px;
@@ -446,5 +738,38 @@ export default {
 }
 .special {
     background-color: #63D1F2;
+}
+.title {
+    font-weight: bold;
+    margin: 10px 0px 20px;
+}
+.v-modal {
+    z-index: 4280;
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+    background-repeat: no-repeat;
+    background-size: 900px 600px;
+    background-position: center center;
+    transition: all 0.3s;
+}
+.abtn {
+    position: absolute;
+    top: calc(50% - 346px);
+    left: calc(50% - 450px);
+    display: inline-block;
+    width: 80px;
+    height: 22px;
+    font-size: 12px;
+    color: #666666;
+    text-decoration: none;
+    background-image: url(../../image/download_logo.png);
+    background-color: #fff;
+    background-size: 10px 10px;
+    background-repeat: no-repeat;
+    background-position: 7px center;
+    border: 1px solid #D9D9D9;
+    border-radius: 4px;
+    text-indent: 22px;
+    line-height: 20px;
 }
 </style>

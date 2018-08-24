@@ -93,12 +93,12 @@
             return {
                 formSearch: {
                     appId: '',
-                    billType: 'month',
+                    billType: 'day',
                     startAt: '',
                     endAt: '',
                 },
                 restaurants1: [],
-                showDatePick: 'month',
+                showDatePick: 'day',
                 valueMonth: '',
                 valueDate: '',
                 appName: '',
@@ -132,7 +132,7 @@
             },
             resetForm(formName) {
                 this.$refs[formName].resetFields();
-                this.formSearch.billType = 'month';
+                this.formSearch.billType = 'day';
                 this.valueDate = '';
                 this.valueMonth = '';
                 this.appName = '';

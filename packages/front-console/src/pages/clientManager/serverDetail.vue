@@ -1309,13 +1309,15 @@ export default {
         }
       });
     },
-    query() {
-      post("/api/paymentmgt/front/channel/payuser/qrylist", this.form).then(
-        data => {
-          this.payUsers = data.data;
-          this.total = data.total;
+    query(a) {
+        if(isNaN(a)) {
+            a = 1
         }
-      );
+        this.form.pageNo = a
+        post("/api/paymentmgt/front/channel/payuser/qrylist", this.form).then(data => {
+            this.payUsers = data.data;
+            this.total = data.total;
+        });
     },
     update() {
         this.$refs['eform'].validate(valid => {

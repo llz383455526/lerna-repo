@@ -57,6 +57,10 @@
             <el-col :span="8">{{invoiceMsg.taxIdcd}}</el-col>
         </el-row>
         <el-row class="mb15" style="font-weight: normal;">
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">开票类型：</el-col>
+            <el-col :span="8">{{detail.openInvoiceType == '20' ? '预开票' : '账单开票'}}</el-col>
+        </el-row>
+        <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">地址：</el-col>
             <el-col :span="8">{{invoiceMsg.addr}}</el-col>
         </el-row>

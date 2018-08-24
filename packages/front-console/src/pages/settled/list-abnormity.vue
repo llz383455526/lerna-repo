@@ -86,12 +86,12 @@
             return {
                 formSearch: {
                     appId: '',
-                    billType: 'month',
+                    billType: 'day',
                     startAt: '',
                     endAt: '',
                 },
                 restaurants1: [],
-                showDatePick: 'month',
+                showDatePick: 'day',
                 valueMonth: '',
                 valueDate: '',
                 appName: '',
