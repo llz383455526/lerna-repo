@@ -610,6 +610,13 @@ export default {
             })
             return
         }
+        if(!this.balanceAccountId && state == 30) {
+            this.$message({
+                type: 'warning',
+                message: '请选择渠道账号！'
+            })
+            return
+        }
         post("/api/balance-web/recharge-order/approve", {
             attachmentId: this.attachmentId,
             memo: this.memo,
