@@ -133,7 +133,7 @@
                     <div class="label"></div>
                     <div class="input">
                         <div>开户行：{{msg.depositBank}}</div>
-                        <div>账户名称：{{msg.serviceCompanyName}}</div>
+                        <div>账户名称：{{msg.accountName}}</div>
                         <div>账号：{{msg.serviceCompanyAccountNo}}</div>
                         <div>(请通过线下支付方式支付费用到该收款账号)</div>
                     </div>
@@ -571,6 +571,7 @@ export default {
     },
     getServiceFee() {
         var digit = this.dialogCreateForm.amount.toString().split('.')[1]
+        this.serviceFee = 0
         if(this.calcServiceFee && this.dialogCreateForm.companyId && this.dialogCreateForm.serviceCompanyId && !isNaN(this.dialogCreateForm.amount) && (!digit || (digit && digit.length <= 2))) {
             get('/api/contract-web/contract/calc-serviceFee', {
                 amount: this.dialogCreateForm.amount,
@@ -726,6 +727,7 @@ export default {
     },
     closeEditDialog(next) {
       this.attachmentUrl = ''
+      this.msg = ''
       this.$refs["dialogCreateForm"].resetFields();
       next();
     },
