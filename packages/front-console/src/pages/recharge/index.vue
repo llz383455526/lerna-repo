@@ -156,11 +156,25 @@
                         </el-form-item>
                     </div>
                 </div>
-                <div class="input-container" v-if="calcServiceFee">
+                <div class="input-container">
+                    <div class="label"></div>
+                    <div class="input auto">
+                        当前合作方式：充值金额=实发金额+实发金额*服务费收费比例；
+                    </div>
+                </div>
+                <div class="input-container">
                     <div class="label">服务费金额：<span>*</span></div>
                     <div class="input">
-                        <el-form-item v-if="calcServiceFee">
+                        <el-form-item>
                             <el-input placeholder="实发金额*服务费收费比例" disabled v-model="serviceFee"></el-input>
+                        </el-form-item>
+                    </div>
+                </div>
+                <div class="input-container">
+                    <div class="label">总金额金额：<span>*</span></div>
+                    <div class="input">
+                        <el-form-item>
+                            <el-input disabled :value="dialogCreateForm.amount - 0 + serviceFee"></el-input>
                         </el-form-item>
                     </div>
                 </div>
@@ -414,7 +428,7 @@ export default {
       attachmentUrl: '',
       calc: '',
       calcServiceFee: '',
-      serviceFee: '',
+      serviceFee: 0,
       serviceName: [],
       channlList: [],
       balanceAccountId: '',
@@ -487,7 +501,6 @@ export default {
         get('/api/balance-web/recharge-order/query-detail', {
             orderNo: a.orderNo
         }).then(data => {
-            console.log(data)
             this.detail = data
             this.show = true
             this.getChannlList()
@@ -500,7 +513,9 @@ export default {
             bankType: this.detail.channelBusinessType
         }).then(data => {
             this.channlList = data
+            this.balanceAccountId = ''
             this.channlList.forEach(e => {
+                console.log(e.payUserId == this.detail.payUser.payUserId)
                 if(e.payUserId == this.detail.payUser.payUserId) {
                     this.balanceAccountId = e.balanceAccountId
                     this.getSuggest()
@@ -792,5 +807,8 @@ export default {
     background-size: auto 612px;
     background-position: center center;
     transition: all 0.3s;
+}
+.auto {
+    width: auto;
 }
 </style>

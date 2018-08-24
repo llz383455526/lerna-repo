@@ -101,7 +101,7 @@
                     <el-input v-model="regForm.remarks" size="small" style="width: 215px;"></el-input>
                 </el-form-item>
             </el-form>
-            <div>选择转入帐号后，系统自动切换当前发放渠道帐号到所选的帐号，请确保帐号内金额充足。</div>
+            <!-- <div>选择转入帐号后，系统自动切换当前发放渠道帐号到所选的帐号，请确保帐号内金额充足。</div> -->
             <span slot="footer">
                 <el-button size="small" @click="show = false">取消</el-button>
                 <el-button size="small" type="primary" @click="sure">确认</el-button>
