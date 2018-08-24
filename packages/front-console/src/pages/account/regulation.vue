@@ -362,7 +362,7 @@ export default {
         sure() {
             this.$refs["regForm"].validate(valid => {
                 if(valid) {
-                    if(this.outMsg && this.outMsg.currentAvailBalance > this.regForm.tradeAmount) {
+                    if(this.outMsg && this.outMsg.currentAvailBalance >= this.regForm.tradeAmount) {
                         var bankType = this.regForm.bankType
                         delete this.regForm.bankType
                         postWithErrorCallback('/api/balance-web/balance-trade-recon/do-trade-recon', this.regForm).then(data => {
