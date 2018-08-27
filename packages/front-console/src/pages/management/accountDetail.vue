@@ -70,7 +70,7 @@
                     </el-checkbox-group>
                 </el-tab-pane>
 
-                <!--<el-tab-pane label="配置客户" name="fourth" v-if="systemType">
+                <el-tab-pane label="配置客户" name="fourth" v-if="systemType">
                     <el-button @click="openDialog('新增客户', 'company')">新增</el-button>
                     <el-checkbox v-model="isCompanyAll" style="margin-left: 15px;">全部</el-checkbox>
 
@@ -87,7 +87,7 @@
                             </el-table-column>
                         </el-table>
                     </div>
-                </el-tab-pane>-->
+                </el-tab-pane>
 
                 <el-tab-pane label="配置商户" name="second" v-if="systemType">
                     <el-button @click="openDialog('新增商户', 'app')">新增</el-button>
