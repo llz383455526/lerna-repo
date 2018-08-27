@@ -14,7 +14,7 @@
                     size="small">
                     <el-option
                         v-for="e in platform"
-                        :key="e.extrSystemName"
+                        :key="e.extrSystemId"
                         :label="e.extrSystemName"
                         :value="e.extrSystemName">
                     </el-option>

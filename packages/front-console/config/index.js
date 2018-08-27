@@ -18,7 +18,7 @@ module.exports = {
         env: {
             NODE_ENV: '"development"'
         },
-        port: 8021,
+        port: 8022,
         assetsSubDirectory: 'static',
         assetsPublicPath: '/',
         context: [ //代理路径

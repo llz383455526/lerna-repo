@@ -33,7 +33,7 @@
                     <el-option label="日结" value="day"></el-option>
                     <el-option label="周结" value="week"></el-option>
                     <el-option label="月结" value="month"></el-option> -->
-                    <el-option v-for="item in options" :key="item.value" :label="item.text" :value="item.value"></el-option>
+                    <el-option v-for="item in options_0" :key="item.value" :label="item.text" :value="item.value"></el-option>
                     </el-select>
             </el-form-item>
             <el-form-item label="结算日期" v-if="weekVisible" prop="settleExp">
@@ -74,7 +74,7 @@
                     <el-col class="line" :span="2">-</el-col>
                     <el-col :span="8">
                         <el-select v-model="settleExpEnd" placeholder="请选择" style="width: 100%;" :disabled="showSelectExpStart">
-                            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                            <el-option v-if="item.value > settleExpStart" v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
                         </el-select>
                     </el-col>
                 </el-row>
@@ -450,7 +450,7 @@
                     }
                 ],
                 invoiceType: [],
-                options: [],
+                options_0: [],
                 isInit: true
             }
         },
@@ -466,7 +466,7 @@
                 this.getOptionCustomerCompanies();
             }
             get('/api/contract-web/commom/option', {enumType: 'SettleType'}).then(data => {
-                this.options = data
+                this.options_0 = data
             })
         },
         methods: {
@@ -620,6 +620,7 @@
                     }
                     this.weekVisible = true;
                     this.monthVisible = false;
+                    this.contractForm.settleExp = '每周一'
                 }
                 if (val == 'month') {
                     if (this.contractForm.settleExp.split(',')[1] != undefined) {
