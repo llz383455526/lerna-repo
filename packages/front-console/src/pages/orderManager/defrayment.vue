@@ -327,7 +327,6 @@ export default {
     },
     getBalance() {
       post('/api/balance-web/balance-account/query-app-account', {
-        companyId: this.userInformation.companyId,
         appId: this.cost[0].appId
       }).then(data => {
         console.log(data)
