@@ -98,8 +98,8 @@
                                 height="250"
                                 :data="selectedAppList">
                             <el-table-column prop="subjectName" label="商户名称"></el-table-column>
-                            <!--<el-table-column prop="companyName" label="企业名称"></el-table-column>
-                            <el-table-column prop="serviceCompanyName" label="服务商名称"></el-table-column>-->
+                            <el-table-column prop="companyName" label="公司名称"></el-table-column>
+                            <!-- <el-table-column prop="serviceCompanyName" label="服务商名称"></el-table-column> -->
 
                             <el-table-column label="操作">
                                 <template slot-scope="scope">
@@ -485,15 +485,15 @@
 		        let selectedList = _.cloneDeep(this[`selected${keyName}List`])
 		        _.forEach(this.multipleSelection, item => {
 			        if(!_.find(selectedList, function (o) {return o.subjectId === (isApp ? item.appId : item.id).toString()})) {
-				        // selectedList.push(item)
+				        console.log(item)
 				        selectedList.push({
 					        subjectId: (isApp ? item.appId : item.id).toString(),
 					        subjectName: isApp ? item.appName : item.fullName,
-					        subjectType: this.dialogType === 'service' ? 'provider' : this.dialogType
+                            subjectType: this.dialogType === 'service' ? 'provider' : this.dialogType,
+                            companyName: item.companyName
                         })
 			        }
 		        })
-
 		        /*if(isApp) this.selectedAppList = selectedList
 		        else this.selectedServiceList = selectedList*/
 		        this[`selected${keyName}List`] = selectedList
@@ -536,7 +536,8 @@
 			                        this[`selected${type.bindKey}List`].push({
 				                        subjectId: item.subjectId,
 				                        subjectName: item.subjectName,
-				                        subjectType: item.subjectType
+                                        subjectType: item.subjectType,
+                                        companyName: item.lvl1SubjectName
 			                        })
 		                        })
 	                        }
