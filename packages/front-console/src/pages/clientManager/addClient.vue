@@ -26,6 +26,11 @@
                   <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
               </el-select>
           </el-form-item>
+          <el-form-item label="税优地" prop="taxLandingId" size="small">
+              <el-select v-model="form.taxLandingId" class="form_input">
+                  <el-option v-for="e in list" :label="e.taxLandingName" :value="e.id" :key="e.id"></el-option>
+              </el-select>
+          </el-form-item>
           <el-form-item label="企业地址" prop="areaName" size="small">
               <el-input class="form_input" v-model="form.areaName"></el-input>
           </el-form-item>
@@ -44,108 +49,125 @@
 <script>
 import { get, post } from "../../store/api";
 export default {
-  data() {
-    return {
-      form: {
-        fullName: "",
-        name: "",
-        companyType: "",
-        chargeBy: '',
-        chargeByName: '',
-        legalPerson: "",
-        areaName: "",
-        registerDate: ""
-      },
-      rule: {
-        fullName: [
-          {
-            required: true,
-            message: "请输入名称",
-            trigger: "change"
-          }
-        ],
-        name: [
-          {
-            required: true,
-            message: "请输入简称",
-            trigger: "change"
-          }
-        ],
-        companyType: [
-          {
-            required: true,
-            message: "请选择类型",
-            trigger: "change"
-          }
-        ],
-        chargeBy: [
-          {
-            required: true,
-            message: "请选择负责人",
-            trigger: "change"
-          }
-        ],
-        areaName: [
-          {
-            required: true,
-            message: "请输入地址",
-            trigger: "change"
-          }
-        ],
-        registerDate: [
-          {
-            required: true,
-            message: "请输入注册日期",
-            trigger: "change"
-          }
-        ]
-      },
-      types: [
-          {
-              text: '客户',
-              value: 'company'
-          },
-          {
-              text: '服务商',
-              value: 'provider'
-          }
-      ],
-      charges: []
-    };
-  },
-  methods: {
-      back() {
-          this.$router.back()
-      },
-      getPeople() {
-          this.form.chargeBy = ''
-          this.form.chargeByName = ''
-          get(`/api/sysmgr-web/user/get-platform-users?platformType=${this.form.companyType == 'company' ? 'console-company' : 'console-admin'}`).then(data => {
-              console.log(data)
-              this.charges = data
-          })
-      },
-      getName() {
-          this.charges.forEach(e => {
-              if(e.id == this.form.chargeBy) {
-                  this.form.chargeByName = e.name
-              }
-          })
-      },
-      submit() {
-          this.$refs['form'].validate((valid) => {
-              if(valid) {
-                  post('/api/sysmgr-web/company/add-company', this.form).then(() => {
-                      this.$message({
-                          type: 'success',
-                          message: '添加成功！'
-                      })
-                      this.back()
-                  })
-              }
-          })
-      }
-  }
+    data() {
+        return {
+            form: {
+                fullName: "",
+                name: "",
+                companyType: "",
+                taxLandingId: "",
+                chargeBy: '',
+                chargeByName: '',
+                legalPerson: "",
+                areaName: "",
+                registerDate: ""
+            },
+            rule: {
+                fullName: [
+                    {
+                        required: true,
+                        message: "请输入名称",
+                        trigger: "change"
+                    }
+                ],
+                name: [
+                    {
+                        required: true,
+                        message: "请输入简称",
+                        trigger: "change"
+                    }
+                ],
+                companyType: [
+                    {
+                        required: true,
+                        message: "请选择类型",
+                        trigger: "change"
+                    }
+                ],
+                chargeBy: [
+                    {
+                        required: true,
+                        message: "请选择负责人",
+                        trigger: "change"
+                    }
+                ],
+                taxLandingId: [
+                    {
+                        required: true,
+                        message: "请选择税优地",
+                        trigger: "change"
+                    }
+                ],
+                areaName: [
+                    {
+                        required: true,
+                        message: "请输入地址",
+                        trigger: "change"
+                    }
+                ],
+                registerDate: [
+                    {
+                        required: true,
+                        message: "请输入注册日期",
+                        trigger: "change"
+                    }
+                ]
+            },
+            types: [
+                {
+                    text: '客户',
+                    value: 'company'
+                },
+                {
+                    text: '服务商',
+                    value: 'provider'
+                }
+            ],
+            charges: [],
+            list: []
+        };
+    },
+    mounted() {
+        this.getList()
+    },
+    methods: {
+        back() {
+            this.$router.back()
+        },
+        getPeople() {
+            this.form.chargeBy = ''
+            this.form.chargeByName = ''
+            get(`/api/sysmgr-web/user/get-platform-users?platformType=${this.form.companyType == 'company' ? 'console-company' : 'console-admin'}`).then(data => {
+                console.log(data)
+                this.charges = data
+            })
+        },
+        getName() {
+            this.charges.forEach(e => {
+                if(e.id == this.form.chargeBy) {
+                    this.form.chargeByName = e.name
+                }
+            })
+        },
+        getList() {
+            get('/api/console-dlv/tax-landing/all-tax-landing').then(data => {
+                this.list = data
+            })
+        },
+        submit() {
+            this.$refs['form'].validate((valid) => {
+                if(valid) {
+                    post('/api/sysmgr-web/company/add-company', this.form).then(() => {
+                        this.$message({
+                            type: 'success',
+                            message: '添加成功！'
+                        })
+                        this.back()
+                    })
+                }
+            })
+        }
+    }
 };
 </script>
 <style scoped>

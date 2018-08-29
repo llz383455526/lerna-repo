@@ -1,242 +1,219 @@
 <template> 
-  <div class="r_main">
-      <el-breadcrumb>
-          <el-breadcrumb-item to="/main/clientManager/clientManager">
-            客户管理
-          </el-breadcrumb-item>
-          <el-breadcrumb-item>
-              应用管理
-          </el-breadcrumb-item>
-      </el-breadcrumb>
-      <div class="content">
-          <div class="title">基本信息</div><el-button type="primary" style="margin-left: 120px;" size="small" @click="editCompany">编辑</el-button>
-	        <div class="box">
-            	<el-row :gutter="20">
-            	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">企业名称</el-col><el-col :span="10">{{msg.fullName}}</el-col>
-	        		  </el-col>
-            	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">Company ID</el-col><el-col :span="10">{{msg.id}}</el-col>
-	        		</el-col>
-            	</el-row>
-	        	  <el-row :gutter="20">
-            	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">企业简称</el-col><el-col :span="10">{{msg.name}}</el-col>
-	        		  </el-col>
-            	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">创建人</el-col><el-col :span="10">{{msg.createByName}}</el-col>
-	        		</el-col>
-            	</el-row>
-	        	  <el-row :gutter="20">
-            	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">企业地址</el-col><el-col :span="10">{{msg.areaName}}</el-col>
-	        		  </el-col>
-            	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">创建时间</el-col><el-col :span="10">{{msg.createTime}}</el-col>
-	        		</el-col>
-            	</el-row>
-	        	  <el-row :gutter="20">
-            	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">企业类型</el-col><el-col :span="10">{{msg.custom ? '客户' : msg.service ? '服务商' : '' }}</el-col>
-	        		  </el-col>
-            	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">更新人</el-col><el-col :span="10">{{msg.updateByName}}</el-col>
-	        		</el-col>
-            	</el-row>
-	        	  <el-row :gutter="20">
-            	    <!-- <el-col :span="10">
-	        			  <el-col :span="5" class="right">所属行业</el-col><el-col :span="10">服务业</el-col>
-	        		</el-col> -->
-            	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">更新时间</el-col><el-col :span="10">{{msg.updateTime}}</el-col>
-	        		</el-col>
-            	</el-row>
-	        	  <el-row :gutter="20">
-            	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">注册日期</el-col><el-col :span="10">{{msg.registerDate}}</el-col>
-	        		  </el-col>
-            	</el-row>
-	        	<el-row :gutter="20">
-            	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">负责人</el-col><el-col :span="10">{{msg.chargeByName}}</el-col>
-	        		  </el-col>
-            	</el-row>
-	        	<!-- <el-row :gutter="20">
-            	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">负责人电话</el-col><el-col :span="10">18699887766</el-col>
-	        		  </el-col>
-            	</el-row> -->
-	        	</el-row>
-	        	  <!-- <el-row :gutter="20">
-            	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">企业状态</el-col><el-col :span="10">正常</el-col>
-	        		  </el-col>
-            	</el-row> -->
-	        </div>
-            <el-button style="margin-top: 30px" type="primary" @click="add">添加商户</el-button>
-            <el-table class="table" :data="tableData" border="">
-                <!-- <el-table-column prop="orderNo" label="申请编号"></el-table-column> -->
-                <el-table-column prop="appName" label="商户名称"></el-table-column>
-                <!-- <el-table-column prop="appName" label="接入应用"></el-table-column> -->
-                <el-table-column label="商户状态">
-                    <template slot-scope="scope">
-                        {{scope.row.isEnable ? '已开通' : '未开通'}}
-                    </template>
-                </el-table-column>
-	        	  <el-table-column prop="updateByName" label="更新人"></el-table-column>
-	        	  <el-table-column prop="updateTime" label="更新时间"></el-table-column>
-                <!-- <el-table-column label="应用类型">
-                    <template slot-scope="scope">
-                        {{scope.row.isFromOutApp ? '外' : '内'}}部应用
-                        <el-button type="text" @click="already(scope.row)">{{scope.row.openedNum}}</el-button>
-                    </template>
-                </el-table-column> -->
-                <!-- <el-table-column prop="serviceCompanyName" label="服务商名称"></el-table-column> -->
-                <!-- <template slot-scope="scope">
-                    {{scope.row.lastTime | formatTime}}
-                </template> -->
-                <el-table-column label="操作">
-                    <template slot-scope="scope">
-                        <el-button @click="edit(scope.row)" type="text">
-                            配置
-                        </el-button>
-                        <el-button v-show="scope.row.isEnable" @click="set(scope.row)" type="text">
-                            关闭
-                        </el-button>
-                        <el-button v-show="!scope.row.isEnable" @click="set(scope.row)" type="text">
-                            开启
-                        </el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <div class="page" v-show="total / form.pageSize > 1">
-                <el-pagination
-                background
-                layout="prev, pager, next"
-                :page-size="form.pageSize"
-                :total="total"
-                @current-change="query"
-                :currentPage="form.page"
-                >
-              </el-pagination>
-          </div>
-      </div>
-      <div class="content">
-          <div class="title">签约信息</div>
-          <el-table class="table" :data="contractData.list" border="">
-              <el-table-column label="合同编号" prop="id"></el-table-column>
-              <el-table-column label="签约服务商" prop="serviceCompanyName"></el-table-column>
-              <el-table-column label="结算方式" prop="settleTypeName"></el-table-column>
-              <el-table-column label="服务费比例" prop="serviceFeeName"></el-table-column>
-              <el-table-column label="发票类型" prop="invoiceTypeName"></el-table-column>
-              <el-table-column label="合同起止时间" prop="lastUpdateAt">
-                  <template slot-scope="scope">
-                      {{scope.row.contractStartDate}} 至 {{scope.row.contractEndDate}}
-                  </template>
-              </el-table-column>
-          </el-table>
-          <div class="page" v-show="contractData.total / contractForm.pageSize > 1">
-            <el-pagination
-            background
-            layout="prev, pager, next"
-            :page-size="contractForm.pageSize"
-            :total="contractData.total"
-            @current-change="contractQuery"
-            :currentPage="contractForm.page"
-            >
-          </el-pagination>
-          </div>
-      </div>
-      <el-dialog title="修改信息" :visible.sync="coshow" width="70%">
-          <el-form label-width="120px" :rules="crules" :model="cform" ref="cform">
-              <el-form-item label="企业名称" prop="fullName" size="small">
-                  <el-input v-model="cform.fullName" class="f_input"></el-input>
-              </el-form-item>
-              <el-form-item label="企业简称" prop="name" size="small">
-                  <el-input v-model="cform.name" class="f_input"></el-input>
-              </el-form-item>
-              <el-form-item label="企业负责人" prop="chargeBy" size="small">
-                  <el-select v-model="cform.chargeBy" class="f_input" @change="getName">
-                    <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
-                  </el-select>
-              </el-form-item>
-              <el-form-item label="企业地址" prop="areaName" size="small">
-                  <el-input v-model="cform.areaName" class="f_input"></el-input>
-              </el-form-item>
-              <el-form-item label="注册日期" prop="registerDate" size="small">
-                  <el-date-picker
-                    class="f_input"
-                    v-model="cform.registerDate"
-                    type="date"
-                    value-format="yyyy-MM-dd">
-                  </el-date-picker>
-              </el-form-item>
-          </el-form>
-          <span class="form_footer" slot="footer">
-              <el-button @click="upDate" type="primary" size="small">保存</el-button>
-              <el-button @click="coshow = false" size="small">关闭</el-button>
-          </span>
-      </el-dialog>
-      <el-dialog title="添加应用" :visible.sync="eshow" width="70%">
-          <el-form label-width="120px" :rules="rules" :model="aform">
-              <el-form-item label="客户名称" size="small">
-                  {{fullName}}
-              </el-form-item>
-              <el-form-item label="服务商名称" prop="serviceCompanyId" size="small">
-                  <el-select v-model="aform.serviceCompanyId" class="f_input" filterable>
-                      <el-option v-for="item in company" :value="item.companyId" :label="item.companyName"></el-option>
-                  </el-select>
-              </el-form-item>
-              <el-form-item label="应用类型" prop="isFromOutApp" size="small">
-                  <el-select v-model="aform.isFromOutApp" class="f_input" filterable @change="isOut">
-                      <el-option value="1" label="外部"></el-option>
-                      <el-option value="0" label="内部"></el-option>
-                  </el-select>
-              </el-form-item>
-              <el-form-item label="appId" prop="appId" size="small">
-                  <el-input v-model="aform.appId" class="f_input"></el-input>
-              </el-form-item>
-              <el-form-item label="接入应用" prop="appName" size="small">
-                  <el-input v-model="aform.appName" class="f_input"></el-input>
-              </el-form-item>
-          </el-form>
-          <span class="form_footer" slot="footer">
-              <el-button @click="sure" type="primary" size="small">保存</el-button>
-              <el-button @click="eshow = false" size="small">关闭</el-button>
-          </span>
-      </el-dialog>
-      <el-dialog title="开通状态" :visible.sync="sshow" width="50%">
-          <el-form label-width="120px" size="small">
-              <div class="center">确定 {{curr.isEnable ? '关闭' : '开启'}} {{curr.appName}}？</div>
-          </el-form>
-          <span class="form_footer" slot="footer">
-              <el-button @click="sureSet" type="primary" size="small">确定</el-button>
-              <el-button @click="sshow = false" size="small">取消</el-button>
-          </span>
-      </el-dialog>
-      <el-dialog title="获取验证码" :visible.sync="cshow" width="70%">
-          <span class="tip">为了保障您的账号安全，请完成一下身份验证。</span>
-          <el-form label-width="150px">
-              <el-form-item label="手机号码：">
-                  {{phone}}
-              </el-form-item>
-              <el-form-item >
-                  <img :src="`${baseUrl}/api/sysmgr-web/verify-codes/gen-captcha?req_id=${req_id}`">
-                  <el-button type="text" style="margin-left: 30px;" @click="createId">刷新</el-button>
-              </el-form-item>
-              <el-form-item label="请输入图形中字符：">
-                  <el-input v-model="chars" style="width: 300px;"></el-input>
-              </el-form-item>
-              <el-form-item label="短信验证码：">
-                  <el-input v-model="phoneCode" style="width: 300px;"></el-input><el-button type="text" style="margin-left: 30px;" @click="getCode">获取验证码</el-button>
-              </el-form-item>
-          </el-form>
-          <span class="form_footer" slot="footer">
-              <el-button @click="submit" type="primary">提交</el-button>
-              <el-button @click="cshow = false" type="warning">关闭</el-button>
-          </span>
-      </el-dialog>
-  </div>
+  	<div class="r_main">
+  	    <el-breadcrumb>
+  	        <el-breadcrumb-item to="/main/clientManager/clientManager">
+  	          	客户管理
+  	        </el-breadcrumb-item>
+  	        <el-breadcrumb-item>
+  	            应用管理
+  	        </el-breadcrumb-item>
+  	    </el-breadcrumb>
+  	    <div class="content">
+  	        <div class="title">基本信息</div><el-button type="primary" style="margin-left: 120px;" size="small" @click="editCompany">编辑</el-button>
+		    <div class="box">
+  	        	<el-row :gutter="20">
+  	        	    <el-col :span="10">
+		    			<el-col :span="5" class="right">企业名称</el-col><el-col :span="10">{{msg.fullName}}</el-col>
+		    		</el-col>
+  	        	    <el-col :span="10">
+		    			<el-col :span="5" class="right">Company ID</el-col><el-col :span="10">{{msg.id}}</el-col>
+		    		</el-col>
+  	        	</el-row>
+		    	<el-row :gutter="20">
+  	        	    <el-col :span="10">
+		    			<el-col :span="5" class="right">企业简称</el-col><el-col :span="10">{{msg.name}}</el-col>
+		    		</el-col>
+  	        	    <el-col :span="10">
+		    			<el-col :span="5" class="right">创建人</el-col><el-col :span="10">{{msg.createByName}}</el-col>
+		    		</el-col>
+  	        	</el-row>
+		    	<el-row :gutter="20">
+  	        	    <el-col :span="10">
+		    			<el-col :span="5" class="right">企业地址</el-col><el-col :span="10">{{msg.areaName}}</el-col>
+		    		</el-col>
+  	        	    <el-col :span="10">
+		    			<el-col :span="5" class="right">创建时间</el-col><el-col :span="10">{{msg.createTime}}</el-col>
+		    		</el-col>
+  	        	</el-row>
+		    	<el-row :gutter="20">
+  	        	    <el-col :span="10">
+		    			<el-col :span="5" class="right">企业类型</el-col><el-col :span="10">{{msg.custom ? '客户' : msg.service ? '服务商' : '' }}</el-col>
+		    		</el-col>
+  	        	    <el-col :span="10">
+		    			<el-col :span="5" class="right">更新人</el-col><el-col :span="10">{{msg.updateByName}}</el-col>
+		    		</el-col>
+  	        	</el-row>
+		    	<el-row :gutter="20">
+  	        	    <el-col :span="10">
+		    			<el-col :span="5" class="right">更新时间</el-col><el-col :span="10">{{msg.updateTime}}</el-col>
+		    		</el-col>
+  	        	</el-row>
+		    	<el-row :gutter="20">
+  	        	    <el-col :span="10">
+		    			<el-col :span="5" class="right">注册日期</el-col><el-col :span="10">{{msg.registerDate}}</el-col>
+		    		</el-col>
+  	        	</el-row>
+		    	<el-row :gutter="20">
+  	        	    <el-col :span="10">
+		    			<el-col :span="5" class="right">负责人</el-col><el-col :span="10">{{msg.chargeByName}}</el-col>
+		    		</el-col>
+  	        	</el-row>
+		    </div>
+  	        <el-button style="margin-top: 30px" type="primary" @click="add">添加商户</el-button>
+  	        <el-table class="table" :data="tableData" border="">
+  	            <el-table-column prop="appName" label="商户名称"></el-table-column>
+  	            <el-table-column label="商户状态">
+  	                <template slot-scope="scope">
+  	                    {{scope.row.isEnable ? '已开通' : '未开通'}}
+  	                </template>
+  	            </el-table-column>
+		      	  <el-table-column prop="updateByName" label="更新人"></el-table-column>
+		      	  <el-table-column prop="updateTime" label="更新时间"></el-table-column>
+  	            <el-table-column label="操作">
+  	                <template slot-scope="scope">
+  	                    <el-button @click="edit(scope.row)" type="text">
+  	                        配置
+  	                    </el-button>
+  	                    <el-button v-show="scope.row.isEnable" @click="set(scope.row)" type="text">
+  	                        关闭
+  	                    </el-button>
+  	                    <el-button v-show="!scope.row.isEnable" @click="set(scope.row)" type="text">
+  	                        开启
+  	                    </el-button>
+  	                </template>
+  	            </el-table-column>
+  	        </el-table>
+  	        <div class="page" v-show="total / form.pageSize > 1">
+  	            <el-pagination
+  	            	background
+  	            	layout="prev, pager, next"
+  	            	:page-size="form.pageSize"
+  	            	:total="total"
+  	            	@current-change="query"
+  	            	:currentPage="form.page">
+  	            </el-pagination>
+  	        </div>
+  	    </div>
+  	    <div class="content">
+  	        <div class="title">签约信息</div>
+  	        <el-table class="table" :data="contractData.list" border="">
+  	            <el-table-column label="合同编号" prop="id"></el-table-column>
+  	            <el-table-column label="签约服务商" prop="serviceCompanyName"></el-table-column>
+  	            <el-table-column label="结算方式" prop="settleTypeName"></el-table-column>
+  	            <el-table-column label="服务费比例" prop="serviceFeeName"></el-table-column>
+  	            <el-table-column label="发票类型" prop="invoiceTypeName"></el-table-column>
+  	            <el-table-column label="合同起止时间" prop="lastUpdateAt">
+  	                <template slot-scope="scope">
+  	                    {{scope.row.contractStartDate}} 至 {{scope.row.contractEndDate}}
+  	                </template>
+  	            </el-table-column>
+  	        </el-table>
+  	        <div class="page" v-show="contractData.total / contractForm.pageSize > 1">
+  	        	<el-pagination
+  	        		background
+  	        		layout="prev, pager, next"
+  	        		:page-size="contractForm.pageSize"
+  	        		:total="contractData.total"
+  	        		@current-change="contractQuery"
+  	        		:currentPage="contractForm.page">
+  	        	</el-pagination>
+  	        </div>
+  	    </div>
+  	    <el-dialog title="修改信息" :visible.sync="coshow" width="70%">
+  	        <el-form label-width="120px" :rules="crules" :model="cform" ref="cform">
+  	            <el-form-item label="企业名称" prop="fullName" size="small">
+  	                <el-input v-model="cform.fullName" class="f_input"></el-input>
+  	            </el-form-item>
+  	            <el-form-item label="企业简称" prop="name" size="small">
+  	                <el-input v-model="cform.name" class="f_input"></el-input>
+  	            </el-form-item>
+  	            <el-form-item label="企业负责人" prop="chargeBy" size="small">
+  	                <el-select v-model="cform.chargeBy" class="f_input" @change="getName">
+  	                	<el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
+  	                </el-select>
+  	            </el-form-item>
+				<el-form-item label="税优地" prop="taxLandingId" size="small">
+  	                <el-select v-model="cform.taxLandingId" class="f_input">
+  	                	<el-option v-for="e in list" :value="e.id" :label="e.taxLandingName" :key="e.id"></el-option>
+  	                </el-select>
+  	            </el-form-item>
+  	            <el-form-item label="企业地址" prop="areaName" size="small">
+  	                <el-input v-model="cform.areaName" class="f_input"></el-input>
+  	            </el-form-item>
+  	            <el-form-item label="注册日期" prop="registerDate" size="small">
+  	                <el-date-picker
+  	                	class="f_input"
+  	                	v-model="cform.registerDate"
+  	                	type="date"
+  	                	value-format="yyyy-MM-dd">
+  	                </el-date-picker>
+  	            </el-form-item>
+  	        </el-form>
+  	        <span class="form_footer" slot="footer">
+  	            <el-button @click="upDate" type="primary" size="small">保存</el-button>
+  	            <el-button @click="coshow = false" size="small">关闭</el-button>
+  	        </span>
+  	    </el-dialog>
+  	    <el-dialog title="添加应用" :visible.sync="eshow" width="70%">
+  	        <el-form label-width="120px" :rules="rules" :model="aform">
+  	            <el-form-item label="客户名称" size="small">
+  	                {{fullName}}
+  	            </el-form-item>
+  	            <el-form-item label="服务商名称" prop="serviceCompanyId" size="small">
+  	                <el-select v-model="aform.serviceCompanyId" class="f_input" filterable>
+  	                    <el-option v-for="item in company" :value="item.companyId" :label="item.companyName"></el-option>
+  	                </el-select>
+  	            </el-form-item>
+  	            <el-form-item label="应用类型" prop="isFromOutApp" size="small">
+  	                <el-select v-model="aform.isFromOutApp" class="f_input" filterable @change="isOut">
+  	                    <el-option value="1" label="外部"></el-option>
+  	                    <el-option value="0" label="内部"></el-option>
+  	                </el-select>
+  	            </el-form-item>
+  	            <el-form-item label="appId" prop="appId" size="small">
+  	                <el-input v-model="aform.appId" class="f_input"></el-input>
+  	            </el-form-item>
+  	            <el-form-item label="接入应用" prop="appName" size="small">
+  	                <el-input v-model="aform.appName" class="f_input"></el-input>
+  	            </el-form-item>
+  	        </el-form>
+  	        <span class="form_footer" slot="footer">
+  	            <el-button @click="sure" type="primary" size="small">保存</el-button>
+  	            <el-button @click="eshow = false" size="small">关闭</el-button>
+  	        </span>
+  	    </el-dialog>
+  	    <el-dialog title="开通状态" :visible.sync="sshow" width="50%">
+  	        <el-form label-width="120px" size="small">
+  	            <div class="center">确定 {{curr.isEnable ? '关闭' : '开启'}} {{curr.appName}}？</div>
+  	        </el-form>
+  	        <span class="form_footer" slot="footer">
+  	            <el-button @click="sureSet" type="primary" size="small">确定</el-button>
+  	            <el-button @click="sshow = false" size="small">取消</el-button>
+  	        </span>
+  	    </el-dialog>
+  	    <el-dialog title="获取验证码" :visible.sync="cshow" width="70%">
+  	        <span class="tip">为了保障您的账号安全，请完成一下身份验证。</span>
+  	        <el-form label-width="150px">
+  	            <el-form-item label="手机号码：">
+  	                {{phone}}
+  	            </el-form-item>
+  	            <el-form-item >
+  	                <img :src="`${baseUrl}/api/sysmgr-web/verify-codes/gen-captcha?req_id=${req_id}`">
+  	                <el-button type="text" style="margin-left: 30px;" @click="createId">刷新</el-button>
+  	            </el-form-item>
+  	            <el-form-item label="请输入图形中字符：">
+  	                <el-input v-model="chars" style="width: 300px;"></el-input>
+  	            </el-form-item>
+  	            <el-form-item label="短信验证码：">
+  	                <el-input v-model="phoneCode" style="width: 300px;"></el-input><el-button type="text" style="margin-left: 30px;" @click="getCode">获取验证码</el-button>
+  	            </el-form-item>
+  	        </el-form>
+  	        <span class="form_footer" slot="footer">
+  	            <el-button @click="submit" type="primary">提交</el-button>
+  	            <el-button @click="cshow = false" type="warning">关闭</el-button>
+  	        </span>
+  	    </el-dialog>
+  	</div>
 </template>
 <script>
 import {
@@ -369,7 +346,8 @@ export default {
           page: 1,
           pageSize: 10
       },
-      contractData: {}
+	  contractData: {},
+	  list: []
     };
   },
   activated() {
@@ -386,12 +364,9 @@ export default {
     this.createId();
     this.authCode = localStorage.getItem("authCode");
   },
-  mounted() {},
-  // computed: {
-  //     ...mapGetters({
-  //         userInformation: 'userInformation'
-  //     })
-  // },
+  mounted() {
+	  this.getList()
+  },
   methods: {
     getDetail() {
         get('/api/sysmgr-web/company/get-company-detail', {
@@ -410,6 +385,11 @@ export default {
       console.log(this.timeRange);
       this.form.startAt = this.timeRange[0];
       this.form.endAt = this.timeRange[1];
+	},
+	getList() {
+        get('/api/console-dlv/tax-landing/all-tax-landing').then(data => {
+            this.list = data
+        })
     },
     query(a) {
       this.form.page = 1;
@@ -430,7 +410,7 @@ export default {
             id: this.msg.id,
             fullName: this.msg.fullName,
             name: this.msg.name,
-            // companyType: "",
+            taxLandingId: this.msg.taxLandingId,
             chargeBy: this.msg.chargeBy,
             chargeByName: this.msg.chargeByName,
             legalPerson: this.msg.legalPerson,

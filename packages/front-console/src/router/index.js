@@ -73,6 +73,7 @@ let addApp = r => require.ensure([], () => r(require('../pages/clientManager/add
 let serverManager = r => require.ensure([], () => r(require('../pages/clientManager/serverManager')), 'serverManager')
 let addServer = r => require.ensure([], () => r(require('../pages/clientManager/addServer')), 'addServer')
 let serverDetail = r => require.ensure([], () => r(require('../pages/clientManager/serverDetail')), 'serverDetail')
+let report = r => require.ensure([], () => r(require('../pages/clientManager/report')), 'report')
 
 let advertisingList = r => require.ensure([], () => r(require('../pages/management/advertisingList')), 'advertisingList')
 let advertisingCreate = r => require.ensure([], () => r(require('../pages/management/advertisingCreate')), 'advertisingCreate')
@@ -618,6 +619,13 @@ export default [
                                     keepAlive: false
                                 }
                             },
+                            {
+                                path: 'report',
+                                component: report,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            }
                         ]
                     },
                     {
