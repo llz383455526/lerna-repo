@@ -36,6 +36,7 @@
                 <el-button @click="reset">重置</el-button>
             </el-form-item>
         </el-form>
+        <el-button style="float: right;" size="small" type="primary" @click="down">下载导出</el-button>
         <el-table :data="data.list">
             <el-table-column label="排名">
                 <template slot-scope="scope">
@@ -127,6 +128,18 @@ export default {
             this.$refs.form.resetFields()
             this.form.statisticsType = 'years'
             this.form.year = this.years[10]
+        },
+        down() {
+            var str = ''
+            for(var k in this.form) {
+                if(!str) {
+                    str += `?${k}=${this.form[k]}`
+                }
+                else {
+                    str += `&${k}=${this.form[k]}`
+                }
+            }
+            window.open(`/api/console-dlv/tax-landing/download-user-amount-statistics${str}`)
         }
     }
 }
