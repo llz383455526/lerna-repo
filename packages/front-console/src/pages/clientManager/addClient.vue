@@ -26,7 +26,7 @@
                   <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
               </el-select>
           </el-form-item>
-          <el-form-item label="税优地" prop="taxLandingId" size="small">
+          <el-form-item label="税优地" prop="taxLandingId" size="small" v-if="form.companyType == 'provider'">
               <el-select v-model="form.taxLandingId" class="form_input">
                   <el-option v-for="e in list" :label="e.taxLandingName" :value="e.id" :key="e.id"></el-option>
               </el-select>

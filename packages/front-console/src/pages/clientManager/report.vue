@@ -11,7 +11,7 @@
                     <el-option v-for="e in years" :label="`${e}年`" :value="e" :key="e"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="月" prop="month">
+            <el-form-item label="月" prop="month" v-if="form.statisticsType == 'month'">
                 <el-select v-model="form.month">
                     <el-option v-for="e in months" :label="`${e.replace(/^0/, '')}月`" :value="e" :key="e"></el-option>
                 </el-select>
@@ -120,6 +120,7 @@ export default {
                 a = 1
             }
             this.form.page = a
+            this.form.statisticsType == 'year' && (this.form.month = '')
             post('/api/console-dlv/tax-landing/user-amount-statistics', this.form).then(data => {
                 this.data = data
             })
