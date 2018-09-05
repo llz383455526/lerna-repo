@@ -47,8 +47,8 @@
             <el-table-column label="收款方名称" prop="name"></el-table-column>
             <el-table-column label="身份证号" prop="idcd"></el-table-column>
             <el-table-column label="收款方账号" prop="accountNo"></el-table-column>
-            <el-table-column label="年收入" prop="yearAmountStr"></el-table-column>
-            <el-table-column label="月收入" prop="monthAmountStr"></el-table-column>
+            <el-table-column label="年收入" prop="yearAmount" v-if="form.statisticsType == 'year'"></el-table-column>
+            <el-table-column label="月收入" prop="monthAmount" v-if="form.statisticsType == 'month'"></el-table-column>
             <el-table-column label="客户公司" prop="customCompanyName"></el-table-column>
             <el-table-column label="税优地" prop="taxLandingName"></el-table-column>
             <el-table-column label="服务商公司" prop="serviceCompanyName"></el-table-column>
