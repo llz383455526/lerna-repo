@@ -45,7 +45,7 @@
         	</el-row>
 	    	  <el-row :gutter="20">
         	    <!-- <el-col :span="10">
-	    			  <el-col :span="5" class="right">所属行业</el-col><el-col :span="10">服务业</el-col>
+	    			  <el-col :span="5" class="right">税优地</el-col><el-col :span="10">{{msg.taxLandingName}}</el-col>
 	    		</el-col> -->
         	    <el-col :span="10">
 	    			  <el-col :span="5" class="right">更新时间</el-col><el-col :span="10">{{msg.updateTime}}</el-col>
@@ -131,6 +131,11 @@
                     <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
                   </el-select>
               </el-form-item>
+			  <el-form-item label="税优地" prop="taxLandingId" size="small">
+          	      <el-select v-model="cform.taxLandingId" class="f_input">
+          	          <el-option v-for="e in list" :label="e.taxLandingName" :value="e.id" :key="e.id"></el-option>
+          	      </el-select>
+          	  </el-form-item>
               <el-form-item label="企业地址" prop="areaName" size="small">
                   <el-input v-model="cform.areaName" class="f_input"></el-input>
               </el-form-item>
@@ -226,6 +231,13 @@ export default {
             message: "请选择负责人",
             trigger: "change"
           }
+		],
+		taxLandingId: [
+            {
+                required: true,
+                message: "请选择税优地",
+                trigger: "change"
+            }
         ],
         areaName: [
           {
@@ -342,7 +354,8 @@ export default {
               text: '汇付',
               value: 'hf'
           }
-      ]
+      ],
+	  list: []
     };
   },
   activated() {
@@ -357,6 +370,7 @@ export default {
     this.getDetail()
     this.getPhone();
     this.createId();
+	this.getList()
     this.authCode = localStorage.getItem("authCode");
   },
   mounted() {},
@@ -375,6 +389,11 @@ export default {
                   console.log(data)
                   this.charges = data
             })
+        })
+    },
+	getList() {
+        get('/api/console-dlv/tax-landing/all-tax-landing').then(data => {
+            this.list = data
         })
     },
     change() {
@@ -406,7 +425,8 @@ export default {
             chargeByName: this.msg.chargeByName,
             legalPerson: this.msg.legalPerson,
             areaName: this.msg.areaName,
-            registerDate: this.msg.registerDate
+            registerDate: this.msg.registerDate,
+			taxLandingId: this.msg.taxLandingId
         }
     },
     upDate() {
