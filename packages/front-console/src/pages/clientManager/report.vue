@@ -16,9 +16,6 @@
                     <el-option v-for="e in months" :label="`${e.replace(/^0/, '')}月`" :value="e" :key="e"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="收款方名称" prop="accountName">
-                <el-input v-model="form.accountName" placeholder="请输入"></el-input>
-            </el-form-item>
             <el-form-item label="收款方账户" prop="accountNo">
                 <el-input v-model="form.accountNo" placeholder="请输入"></el-input>
             </el-form-item>
@@ -87,7 +84,6 @@ export default {
                 year: '',
                 month: '',
                 accountNo: '',
-                accountName: '',
                 customerCompanyName: '',
                 taxLandingName: '',
                 serviceCompanyName: '',
