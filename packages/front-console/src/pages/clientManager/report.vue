@@ -44,7 +44,6 @@
                 </template>
             </el-table-column>
             <el-table-column label="时间" prop="date"></el-table-column>
-            <el-table-column label="收款方名称" prop="name"></el-table-column>
             <el-table-column label="身份证号" prop="idcd"></el-table-column>
             <el-table-column label="收款方账号" prop="accountNo"></el-table-column>
             <el-table-column label="年收入" prop="yearAmount" v-if="form.statisticsType == 'year'"></el-table-column>
