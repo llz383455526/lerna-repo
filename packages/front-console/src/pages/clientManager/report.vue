@@ -122,7 +122,7 @@ export default {
         },
         reset() {
             this.$refs.form.resetFields()
-            this.form.statisticsType = 'years'
+            this.form.statisticsType = 'year'
             this.form.year = this.years[10]
         },
         down() {
