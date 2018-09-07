@@ -25,8 +25,8 @@
             <el-form-item label="税优地" prop="taxLandingName">
                 <el-input v-model="form.taxLandingName" placeholder="请输入"></el-input>
             </el-form-item>
-            <el-form-item label="服务商公司" prop="serviceCompanyName">
-                <el-input v-model="form.serviceCompanyName" placeholder="请输入"></el-input>
+            <el-form-item label="身份证" prop="idCard">
+                <el-input v-model="form.idCard" placeholder="请输入"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="query">查询</el-button>
@@ -86,7 +86,7 @@ export default {
                 accountNo: '',
                 customerCompanyName: '',
                 taxLandingName: '',
-                serviceCompanyName: '',
+                idCard: '',
                 page: 1,
                 pageSize: 10
             },
