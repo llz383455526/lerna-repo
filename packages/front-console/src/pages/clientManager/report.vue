@@ -128,11 +128,13 @@ export default {
         down() {
             var str = ''
             for(var k in this.form) {
-                if(!str) {
-                    str += `?${k}=${this.form[k]}`
-                }
-                else {
-                    str += `&${k}=${this.form[k]}`
+                if(k != 'pageSize' && k != 'page') {
+                    if(!str) {
+                        str += `?${k}=${this.form[k]}`
+                    }
+                    else {
+                        str += `&${k}=${this.form[k]}`
+                    }
                 }
             }
             window.open(`/api/console-dlv/tax-landing/download-user-amount-statistics${str}`)
