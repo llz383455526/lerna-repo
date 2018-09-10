@@ -16,9 +16,6 @@
                     <el-option v-for="e in months" :label="`${e.replace(/^0/, '')}月`" :value="e" :key="e"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="收款方账户" prop="accountNo">
-                <el-input v-model="form.accountNo" placeholder="请输入"></el-input>
-            </el-form-item>
             <el-form-item label="客户公司" prop="customerCompanyName">
                 <el-input v-model="form.customerCompanyName" placeholder="请输入"></el-input>
             </el-form-item>
@@ -42,12 +39,10 @@
             </el-table-column>
             <el-table-column label="时间" prop="date"></el-table-column>
             <el-table-column label="身份证号" prop="idcd"></el-table-column>
-            <el-table-column label="收款方账号" prop="accountNo"></el-table-column>
             <el-table-column label="年收入" prop="yearAmount" v-if="form.statisticsType == 'year'"></el-table-column>
             <el-table-column label="月收入" prop="monthAmount" v-if="form.statisticsType == 'month'"></el-table-column>
             <el-table-column label="客户公司" prop="customCompanyName"></el-table-column>
             <el-table-column label="税优地" prop="taxLandingName"></el-table-column>
-            <el-table-column label="服务商公司" prop="serviceCompanyName"></el-table-column>
             <el-table-column label="风控规则">
                 <template slot-scope="scope">
                     <div v-for="e in scope.row.riskRuleStrList" :key="e">{{e}}</div>
@@ -83,7 +78,6 @@ export default {
                 statisticsType: 'year',
                 year: '',
                 month: '',
-                accountNo: '',
                 customerCompanyName: '',
                 taxLandingName: '',
                 idCard: '',
