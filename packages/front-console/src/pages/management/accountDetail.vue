@@ -137,7 +137,7 @@
             </div>
 
 
-            <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" append-to-body width="45%">
+            <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" append-to-body width="45%" @close="selectionArr = [];">
                 <el-form :inline="true" :model="formApp" ref="formApp" v-if="dialogType === 'app'" @submit.native.prevent>
                     <el-form-item label="商户名称" size="small" prop="appName">
                         <el-input v-model="formApp.appName"></el-input>
@@ -177,7 +177,7 @@
 
                     <el-form-item style="margin-top: -4px">
                         <el-button type="primary" @click="search" size="small">查询</el-button>
-                        <el-button size="small" @click="resetForm('formService')">清除</el-button>
+                        <el-button size="small" @click="resetForm('formCompany')">清除</el-button>
                     </el-form-item>
                 </el-form>
 
@@ -252,6 +252,7 @@
     import _ from 'lodash'
 
     import { showNotify } from '../../plugin/utils-notify'
+import { setTimeout } from 'timers';
 
     export default {
     	created() {
@@ -284,7 +285,8 @@
 				    name: '',
 				    fullName: ''
 			    },
-			    multipleSelection: [],
+                multipleSelection: [],
+                selectionArr: [],
 			    selectedAppList: [],
 			    selectedServiceList: [],
 			    selectedCompanyList: [],
@@ -432,13 +434,14 @@
 	        handleSizeChange(value) {
 		        this.pageSize = value
 		        this.pageIndex = 1
-		        this.getList()
+                this.getList()
 	        },
 	        handleCurrentChange(value) {
 		        this.pageIndex = value
 		        this.getList()
 	        },
 	        getList() {
+                this.getArr()
 		        let url
 		        let formSearch
 		        let options = _.assign(formSearch, {
@@ -466,10 +469,30 @@
 
 		        post(url, options)
 			        .then(result => {
-				        this.tableList = result
+                        this.tableList = result
+                        setTimeout(e => {
+                            this.tableList.list.forEach(e => {
+                                this.selectionArr.forEach((el, i) => {
+                                    if(el.appId ? el.appId == e.appId : el.id ? el.id == e.id : '') {
+                                        this.$refs.multipleTable.toggleRowSelection(e)
+                                        this.selectionArr.splice(i, 1)
+                                    }
+                                })
+                            })
+                        },100)
 			        })
-
-	        },
+            },
+            getArr() {
+                this.multipleSelection.forEach(e => {
+                    var arr = this.selectionArr.filter(el => {
+                        return el.appId ? el.appId == e.appId : el.id ? el.id == e.id : ''
+                    })
+                    if(!arr.length){
+                        this.selectionArr.push(e)
+                        console.log(e)
+                    }
+                })
+            },
 	        handleSelectionChange(val) {
 		        this.multipleSelection = val
 	        },
@@ -482,10 +505,10 @@
 		        let selectedList = _.cloneDeep(isApp ? this.selectedAppList : this.selectedServiceList)*/
 		        let isApp = this.dialogType === 'app'
 		        let keyName = this.firstUpperCase(this.dialogType)
-		        let selectedList = _.cloneDeep(this[`selected${keyName}List`])
-		        _.forEach(this.multipleSelection, item => {
+                let selectedList = _.cloneDeep(this[`selected${keyName}List`])
+                this.getArr()
+		        _.forEach(this.selectionArr, item => {
 			        if(!_.find(selectedList, function (o) {return o.subjectId === (isApp ? item.appId : item.id).toString()})) {
-				        console.log(item)
 				        selectedList.push({
 					        subjectId: (isApp ? item.appId : item.id).toString(),
 					        subjectName: isApp ? item.appName : item.fullName,
@@ -530,7 +553,7 @@
 		                let _profile = profile.userContextCollectionMap[type.key]
                         if(_profile) {
 	                        if(_profile.isAllSubject) {
-		                        this[`is${type.bindKey}All`] = true
+                                this[`is${type.bindKey}All`] = true
 	                        }else {
 		                        _.forEach(profile.userContextCollectionMap[type.key].userContexts, item => {
 			                        this[`selected${type.bindKey}List`].push({
@@ -544,7 +567,6 @@
                         }
 	                })
                 }
-
 		        this.dialogOutVisible = true
 	        },
             openUserDialog() {

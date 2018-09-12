@@ -197,6 +197,14 @@
                     <el-input class="form_input" v-model="form.rec$hf$sftp$password"></el-input>
                 </el-form-item>
             </template>
+            <template v-if="form.thirdpaySystemId == 'hxb'">
+                <el-form-item label="商户号" size="small" prop="hxb$merchId">
+                    <el-input class="form_input" v-model="form.hxb$merchId"></el-input>
+                </el-form-item>
+                <el-form-item label="前置机地址" size="small" prop="hxb$server">
+                    <el-input class="form_input" v-model="form.hxb$server"></el-input>
+                </el-form-item>
+            </template>
             <el-form-item label="备注" prop="memo" size="small">
                 <el-input class="form_input" v-model="form.memo"></el-input>
             </el-form-item>
@@ -882,6 +890,30 @@ export default {
                 message: '输入过长',
                 trigger: 'blur'
             }
+        ],
+        hxb$merchId: [
+            {
+                required: true,
+                message: '请输入商户号',
+                trigger: 'blur'
+            },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        hxb$server: [
+            {
+                required: true,
+                message: '请输入前置机地址',
+                trigger: 'blur'
+            },
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
         ]
       },
       types: [
@@ -1000,6 +1032,12 @@ export default {
             'rec$hf$sftp$dir': '',
             'rec$hf$sftp$username': '',
             'rec$hf$sftp$password': ''
+        })
+    }
+    if(this.form.thirdpaySystemId == 'hxb'){
+        Object.assign(this.form, {
+            'hxb$merchId': '',
+            'hxb$server': ''
         })
     }
     post("/api/sysmgr-web/company-app/get-two-step-phone").then(data => {

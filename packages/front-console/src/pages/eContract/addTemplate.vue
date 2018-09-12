@@ -140,7 +140,7 @@
             </el-form-item>
             <el-form-item label="是否发送短信" prop="smsType">
                 <el-radio v-model="form.smsType" label="1">是</el-radio>
-                <el-radio v-model="form.smsType" label="2" :disabled="form.accessType == 1">否</el-radio>
+                <el-radio v-model="form.smsType" label="2">否</el-radio>
             </el-form-item>
             <el-form-item label="返回链接" prop="linkType">
                 <el-radio v-model="form.linkType" label="1">证照上传页面</el-radio>
@@ -373,7 +373,7 @@ export default {
     },
     methods: {
         remoteMethod(a) {
-            if(a !== '') {
+            if(a) {
                 get('/api/econtract/user/clientqry', {
                     extrSystemName: a,
                     pageNo: 1,

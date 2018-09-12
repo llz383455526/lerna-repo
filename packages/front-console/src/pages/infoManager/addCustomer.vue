@@ -10,11 +10,11 @@
       </el-breadcrumb>
       <div class="form_head">客户发票信息</div>
       <el-form class="form" :model="form" :rules="rules" :inline="true" label-width="150px" ref="form">
-        <el-form-item label="客户名称" prop="name">
-            <el-select class="form_input" filterable v-model="form.name" placeholder="请输入客户名称" @change="change">
+        <el-form-item label="商户名称" prop="name">
+            <el-select class="form_input" filterable v-model="form.name" placeholder="请输入商户名称" @change="change">
                 <el-option v-for="item in nameList" :key="item.companyId" :label="item.companyName" :value="item.companyName"></el-option>
             </el-select>
-            <!-- <el-input class="form_input" placeholder="请输入客户名称"></el-input> -->
+            <!-- <el-input class="form_input" placeholder="请输入商户名称"></el-input> -->
         </el-form-item>
         <el-form-item label="纳税识别号" prop="taxIdcd">
             <el-input class="form_input" v-model="form.taxIdcd" placeholder="请输入客户纳税识别号"></el-input>
@@ -44,7 +44,8 @@
             <el-input class="form_input" v-model="form.collectorAddr" placeholder="请输入收票人地址"></el-input>
         </el-form-item>
         <el-form-item class="form_foot">
-            <el-button type="primary" @click="save">保存</el-button><el-button type="warning" @click="cancel">取消</el-button>
+            <el-button type="primary" size="small" @click="save">保存</el-button>
+            <el-button size="small" @click="cancel">取消</el-button>
         </el-form-item>
       </el-form>
   </div>
@@ -70,7 +71,7 @@ export default {
       nameList: [],
       rules: {
         name: [
-          { required: true, message: '请输入客户名称', trigger: 'blur' }
+          { required: true, message: '请输入商户名称', trigger: 'blur' }
         ],
         taxIdcd: [
           { required: true, message: '请输入纳税识别号', trigger: 'blur' }

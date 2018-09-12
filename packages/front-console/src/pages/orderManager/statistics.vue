@@ -4,7 +4,14 @@
 
         <el-form :inline="true" :model="formSearch" style="padding-left: 35px;padding: 10px 0 10px 35px;">
             <el-form-item label="请求起止时间:" size="small">
-                <el-date-picker v-model="dateValue" type="datetimerange" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+                    <!-- type="datetimerange" -->
+                <el-date-picker
+                    v-model="dateValue"
+                    type="daterange"
+                    value-format="yyyy-MM-dd"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                ></el-date-picker>
             </el-form-item>
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="search" size="small">查询</el-button>
@@ -13,7 +20,7 @@
         </el-form>
 
         <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
-            <el-table-column prop="appName" label="客户名称"></el-table-column>
+            <el-table-column prop="appName" label="商户名称"></el-table-column>
             <el-table-column prop="startAt" label="开始时间">
                 <template slot-scope="scope">
                     <span>{{scope.row.startAt | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
@@ -80,9 +87,9 @@
             exportXls() {
                 let startAt = '';
                 let endAt = '';
-                if (this.dateValue) {
-                    startAt = formatTime(this.dateValue[0], 'yyyy-MM-dd hh:mm:ss');
-                    endAt = formatTime(this.dateValue[1], 'yyyy-MM-dd hh:mm:ss');
+                if (this.dateValue && this.dateValue.length) {
+                    startAt = this.dateValue[0]
+                    endAt = this.dateValue[1]
                 }
                 window.location.href = baseUrl + '/api/console-dlv/pay-order-statistics/export-list'
                     + '?startAt=' + startAt
@@ -91,9 +98,9 @@
             requestAction(pageInfo) {
                 let startAt = '';
                 let endAt = '';
-                if (this.dateValue) {
-                    startAt = formatTime(this.dateValue[0], 'yyyy-MM-dd hh:mm:ss');
-                    endAt = formatTime(this.dateValue[1], 'yyyy-MM-dd hh:mm:ss');
+                if (this.dateValue && this.dateValue.length) {
+                    startAt = this.dateValue[0]
+                    endAt = this.dateValue[1]
                 }
                 let param = {
                     startAt: startAt,

@@ -6,13 +6,13 @@
       </el-breadcrumb-item>
     </el-breadcrumb>
     <div class="r_head">
-      <el-input v-model="form.companyName" class="in_input" @keyup.enter.native="query()"></el-input>
-      <el-button type="primary" @click="query()">搜索</el-button>
+      <el-input size="small" v-model="form.companyName" class="in_input" @keyup.enter.native="query()"></el-input>
+      <el-button size="small" type="primary" @click="query()">搜索</el-button>
       <div class="f_left">
         <!-- <el-button type="primary">导出客户信息</el-button>
         <el-button type="primary">导入客户信息</el-button> -->
         <router-link to="/main/infoManager/addCustomer">
-          <el-button type="primary">添加客户</el-button>
+          <el-button size="small" type="primary">添加客户</el-button>
         </router-link>
       </div>
     </div>
@@ -23,7 +23,7 @@
           <el-button @click="delet(scope.row)" size="small" type="text">删除</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="客户名称"></el-table-column>
+      <el-table-column prop="name" label="商户名称"></el-table-column>
       <el-table-column prop="taxIdcd" label="纳税识别号"></el-table-column>
       <el-table-column prop="addr" label="地址"></el-table-column>
       <el-table-column prop="phone" label="电话号码"></el-table-column>
@@ -58,8 +58,8 @@
     </div>
     <el-dialog title="修改" :visible.sync="show">
       <el-form :model="detail" :rules="rules" label-width="120px" ref="dateil">
-        <el-form-item label="客户名称：" prop="name">
-          <el-select filterable v-model="detail.name" placeholder="请输入客户名称" @change="change">
+        <el-form-item label="商户名称：" prop="name">
+          <el-select filterable v-model="detail.name" placeholder="请输入商户名称" @change="change">
                 <el-option v-for="item in nameList" :key="item.companyId" :label="item.companyName" :value="item.companyName"></el-option>
             </el-select>
         </el-form-item>
@@ -112,7 +112,7 @@ export default {
       nameList: {},
       rules: {
         name: [
-          { required: true, message: '请输入客户名称', trigger: 'blur' }
+          { required: true, message: '请输入商户名称', trigger: 'blur' }
         ],
         taxIdcd: [
           { required: true, message: '请输入纳税识别号', trigger: 'blur' }

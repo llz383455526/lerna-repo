@@ -23,8 +23,16 @@ const stepOneFormData = [[{
 	elementLabel: '资源地：',
 	value: [],
 	property: 'region',
-	ruleProperty: 'provinceId',
-	elementRequired: true
+	ruleProperty: 'province',
+	elementRequired: true,
+	hasChildren: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'address',
+	elementPlaceholder: '备注地址',
+	validValue: true
 }],[{
 	elementType: 'radio',
 	elementLabel: '行政级别：',
@@ -40,29 +48,171 @@ const stepOneFormData = [[{
 	elementPlaceholder: ''
 }],[{
 	elementType: 'text',
-	elementLabel: '资源地直接联系人姓名：',
+	elementLabel: '资源地合伙人姓名：',
 	value: '',
 	property: 'contact',
 	elementRequired: true
 }],[{
 	elementType: 'text',
-	elementLabel: '资源地直接联系人职位：',
-	value: '',
-	property: 'contactPost',
-	elementRequired: true
-}],[{
-	elementType: 'text',
-	elementLabel: '联系人电话（手机、座机）：',
+	elementLabel: '资源地合伙人电话：',
 	value: '',
 	property: 'contactMobile',
 	elementRequired: true
 }],[{
 	elementType: 'text',
-	elementLabel: '资源地财政返还政策(请附具体政策)：',
+	elementLabel: '项目引进政府关键人姓名：',
 	value: '',
-	property: 'returnPolicy',
+	property: 'keymanName',
 	elementRequired: true
 }],[{
+	elementType: 'text',
+	elementLabel: '项目引进政府关键人职位：',
+	value: '',
+	property: 'keymanPost',
+	elementRequired: true
+}],[{
+	elementType: 'text',
+	elementLabel: '项目引进政府关键人电话（非必填）：',
+	value: '',
+	property: 'keymanMobile'
+}],[{
+	elementType: 'text',
+	elementLabel: '营改增项目增值税：',
+	value: '',
+	property: 'valueTaxRetain',
+	subLabel: '地方留存比例',
+	shortText: true,
+	appendLabel: '%',
+	hasChildren: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'valueTaxReturn',
+	subLabel: '返还比例',
+	shortText: true,
+	appendLabel: '%'
+}],[{
+	elementType: 'text',
+	elementLabel: '企业所得税：',
+	value: '',
+	property: 'corporateTaxRetain',
+	subLabel: '地方留存比例',
+	shortText: true,
+	appendLabel: '%',
+	hasChildren: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'corporateTaxReturn',
+	subLabel: '返还比例',
+	shortText: true,
+	appendLabel: '%'
+}],[{
+	elementType: 'text',
+	elementLabel: '个人所得税：',
+	value: '',
+	property: 'personalTaxRetain',
+	subLabel: '地方留存比例',
+	shortText: true,
+	appendLabel: '%',
+	hasChildren: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'personalTaxReturn',
+	subLabel: '返还比例',
+	shortText: true,
+	appendLabel: '%'
+}],[{
+	elementType: 'text',
+	elementLabel: '附征：',
+	value: '',
+	property: 'taxLawsRetain',
+	subLabel: '地方留存比例',
+	shortText: true,
+	appendLabel: '%',
+	hasChildren: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'taxLawsReturn',
+	subLabel: '返还比例',
+	shortText: true,
+	appendLabel: '%'
+}],[{
+	elementType: 'radio',
+	elementLabel: '三万以下免征：',
+	value: '',
+	property: 'remitTaxUnder30000',
+	/*propertyOrigin: 'policyDetails',*/
+	elementOptions: ['无', '有'],
+	elementRequired: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'remitTaxUnder30000Add',
+	elementPlaceholder: ''
+}],[{
+	elementType: 'text',
+	elementLabel: '其它(非必填)：',
+	value: '',
+	property: 'otherPolicy',
+	elementPlaceholder: '如有，请列明'
+}], [{
+	elementType: 'radio',
+	elementLabel: '当地政府承诺兑现能力是否有不兑现承诺的情况：',
+	value: '',
+	property: 'commitmentState',
+	elementOptions: ['无', '有'],
+	elementRequired: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'commitmentStateAdd',
+	elementPlaceholder: ''
+}],[{
+	elementType: 'text',
+	elementLabel: '当地招商部门对我们公司业务的态度(请具体说明)：',
+	value: '',
+	property: 'initiativeState',
+	elementRequired: true
+}],[{
+	elementType: 'text',
+	elementLabel: '成本估算：',
+	value: '',
+	property: 'landCost',
+	subLabel: '资源地落地成本',
+	shortText: true,
+	appendLabel: '元',
+	hasChildren: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'contactCost',
+	subLabel: '合伙人分润',
+	shortText: true,
+	appendLabel: '元'
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'costCount',
+	subLabel: '成本合计',
+	shortText: true,
+	appendLabel: '元',
+	valueType: 'count',
+	keys: 'landCost,contactCost',
+	disabled: true,
+	invalid: true
+}]]
+/*[{
 	elementType: 'text',
 	elementLabel: '资源地税收地方留存比例：',
 	value: '',
@@ -94,26 +244,7 @@ const stepOneFormData = [[{
 	subLabel: '其他（如有，请列明）',
 	autoText: true,
 	add: true
-}],[{
-	elementType: 'radio',
-	elementLabel: '当地政府承诺兑现能力是否有不兑现承诺的情况：',
-	value: '',
-	property: 'commitmentState',
-	elementOptions: ['无', '有'],
-	elementRequired: true
-},{
-	elementType: 'text',
-	elementLabel: '',
-	value: '',
-	property: 'commitmentStateAdd',
-	elementPlaceholder: ''
-}],[{
-	elementType: 'text',
-	elementLabel: '当地招商部门对我们公司业务的态度(请具体说明)：',
-	value: '',
-	property: 'initiativeState',
-	elementRequired: true
-}]]
+}],*/
 
 const stepTwoFormData = [[{
 	elementType: 'textarea',
@@ -141,14 +272,134 @@ const stepThreeFormData = [[{
 	elementLabel: '地点：',
 	value: [],
 	property: 'landRegion',
-	ruleProperty: 'provinceId',
-	elementRequired: true
+	ruleProperty: 'province',
+	elementRequired: true,
+	hasChildren: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'address',
+	newProperty: 'landAddress',
+	elementPlaceholder: '备注地址',
+	validValue: true
+}],[{
+	elementType: 'text',
+	elementLabel: '成本：',
+	value: '',
+	property: 'costUnder30000',
+	subLabel: '三万以下',
+	shortText: true,
+	appendLabel: '元',
+	hasChildren: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'costOver30000',
+	subLabel: '三万以上',
+	shortText: true,
+	appendLabel: '元'
+}],[{
+	elementType: 'text',
+	elementLabel: '月税收：',
+	value: '',
+	property: 'monthMinLimit',
+	subLabel: '最低值',
+	shortText: true,
+	appendLabel: '元',
+	hasChildren: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'monthMaxLimit',
+	subLabel: '最高值',
+	shortText: true,
+	appendLabel: '元'
+}],[{
+	elementType: 'text',
+	elementLabel: '营改增项目增值税：',
+	value: '',
+	property: 'valueTaxRetain',
+	newProperty: 'newValueTaxRetain',
+	subLabel: '地方留存比例',
+	shortText: true,
+	appendLabel: '%',
+	hasChildren: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'valueTaxReturn',
+	newProperty: 'newValueTaxReturn',
+	subLabel: '返还比例',
+	shortText: true,
+	appendLabel: '%'
+}],[{
+	elementType: 'text',
+	elementLabel: '企业所得税：',
+	value: '',
+	property: 'corporateTaxRetain',
+	newProperty: 'newCorporateTaxRetain',
+	subLabel: '地方留存比例',
+	shortText: true,
+	appendLabel: '%',
+	hasChildren: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'corporateTaxReturn',
+	newProperty: 'newCorporateTaxReturn',
+	subLabel: '返还比例',
+	shortText: true,
+	appendLabel: '%'
+}],[{
+	elementType: 'text',
+	elementLabel: '个人所得税：',
+	value: '',
+	property: 'personalTaxRetain',
+	newProperty: 'newPersonalTaxRetain',
+	subLabel: '地方留存比例',
+	shortText: true,
+	appendLabel: '%',
+	hasChildren: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'personalTaxReturn',
+	newProperty: 'newPersonalTaxReturn',
+	subLabel: '返还比例',
+	shortText: true,
+	appendLabel: '%'
+}],[{
+	elementType: 'text',
+	elementLabel: '附征：',
+	value: '',
+	property: 'taxLawsRetain',
+	newProperty: 'newTaxLawsRetain',
+	subLabel: '地方留存比例',
+	shortText: true,
+	appendLabel: '%',
+	hasChildren: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'taxLawsReturn',
+	newProperty: 'newTaxLawsReturn',
+	subLabel: '返还比例',
+	shortText: true,
+	appendLabel: '%'
 }],[{
 	elementType: 'radio',
 	elementLabel: '三万以下免征：',
 	value: '',
 	property: 'remitTaxUnder30000',
-	propertyOrigin: 'policyDetails',
+	newProperty: 'newRemitTaxUnder30000',
+	/*propertyOrigin: 'policyDetails',*/
 	elementOptions: ['无', '有'],
 	elementRequired: true
 },{
@@ -161,8 +412,8 @@ const stepThreeFormData = [[{
 	elementType: 'radio',
 	elementLabel: '个税核定：',
 	value: '',
-	property: 'personalTax',
-	propertyOrigin: 'policyDetails',
+	property: 'personalTaxAudit',
+	newProperty: 'newPersonalTaxAudit',
 	elementOptions: ['待定', '已确认'],
 	elementRequired: true
 },{
@@ -172,68 +423,44 @@ const stepThreeFormData = [[{
 	property: 'personalTaxAdd',
 	elementPlaceholder: ''
 }],[{
-	elementType: 'radio',
-	elementLabel: '留存比例 - 增值税：',
+	elementType: 'text',
+	elementLabel: '其它(非必填)：',
 	value: '',
-	property: 'vaTaxRetain',
-	propertyOrigin: 'policyDetails',
-	elementOptions: ['待定', '已确认'],
-	elementRequired: true
+	property: 'otherPolicy',
+	newProperty: 'newOtherPolicy',
+	elementPlaceholder: '如有，请列明'
+}],[{
+	elementType: 'text',
+	elementLabel: '成本复核：',
+	value: '',
+	property: 'landCost',
+	newProperty: 'newLandCost',
+	subLabel: '资源地落地成本',
+	shortText: true,
+	appendLabel: '元',
+	hasChildren: true
 },{
 	elementType: 'text',
 	elementLabel: '',
 	value: '',
-	property: 'vaTaxRetainAdd',
-	elementPlaceholder: ''
-}],[{
-	elementType: 'radio',
-	elementLabel: '留存比例 - 个税：',
-	value: '',
-	property: 'personalTaxRetain',
-	propertyOrigin: 'policyDetails',
-	elementOptions: ['待定', '已确认'],
-	elementRequired: true
+	property: 'contactCost',
+	newProperty: 'newContactCost',
+	subLabel: '合伙人分润',
+	shortText: true,
+	appendLabel: '元'
 },{
 	elementType: 'text',
 	elementLabel: '',
 	value: '',
-	property: 'personalTaxRetainAdd',
-	elementPlaceholder: ''
-}],[{
-	elementType: 'text',
-	elementLabel: '返还比例：',
-	value: '',
-	property: 'returnRatio',
-	propertyOrigin: 'policyDetails',
-	elementRequired: true
-}],[{
-	elementType: 'text',
-	elementLabel: '成本 - 三万以下：',
-	value: '',
-	property: 'costUnder30000',
-	propertyOrigin: 'policyDetails',
-	elementRequired: true
-}],[{
-	elementType: 'text',
-	elementLabel: '成本 - 三万以上：',
-	value: '',
-	property: 'costOver30000',
-	propertyOrigin: 'policyDetails',
-	elementRequired: true
-}],[{
-	elementType: 'text',
-	elementLabel: '月流水 - 最低值：',
-	value: '',
-	property: 'mouthMinLimit',
-	propertyOrigin: 'policyDetails',
-	elementRequired: true
-}],[{
-	elementType: 'text',
-	elementLabel: '月流水 - 最高值：',
-	value: '',
-	property: 'mouthMaxLimit',
-	propertyOrigin: 'policyDetails',
-	elementRequired: true
+	property: 'newCostCount',
+	subLabel: '成本合计',
+	shortText: true,
+	appendLabel: '元',
+	valueType: 'count',
+	keys: 'landCost,contactCost',
+	newKeys: 'newLandCost,newContactCost',
+	disabled: true,
+	invalid: true
 }],[{
 	elementType: 'radio',
 	elementLabel: '协议签署情况：',
@@ -281,6 +508,166 @@ const stepThreeFormData = [[{
 	property: 'expectSignAt',
 	elementRequired: true
 }]]
+
+/*const stepThreeFormData = [[{
+	elementType: 'checkbox',
+	elementLabel: '业务类型：',
+	value: [],
+	property: 'landBizTypes',
+	optionKey: 'land_biz_type',
+	type: 'arr',
+	elementRequired: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'landBizTypesAdd',
+	elementPlaceholder: ''
+}],[{
+	elementType: 'location',
+	elementLabel: '地点：',
+	value: [],
+	property: 'landRegion',
+	ruleProperty: 'provinceId',
+	elementRequired: true
+}],[{
+	elementType: 'radio',
+	elementLabel: '三万以下免征：',
+	value: '',
+	property: 'remitTaxUnder30000',
+	// propertyOrigin: 'policyDetails',
+	elementOptions: ['无', '有'],
+	elementRequired: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'remitTaxUnder30000Add',
+	elementPlaceholder: ''
+}],[{
+	elementType: 'radio',
+	elementLabel: '个税核定：',
+	value: '',
+	property: 'personalTax',
+	// propertyOrigin: 'policyDetails',
+	elementOptions: ['待定', '已确认'],
+	elementRequired: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'personalTaxAdd',
+	elementPlaceholder: ''
+}],[{
+	elementType: 'radio',
+	elementLabel: '留存比例 - 增值税：',
+	value: '',
+	property: 'vaTaxRetain',
+	// propertyOrigin: 'policyDetails',
+	elementOptions: ['待定', '已确认'],
+	elementRequired: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'vaTaxRetainAdd',
+	elementPlaceholder: ''
+}],[{
+	elementType: 'radio',
+	elementLabel: '留存比例 - 个税：',
+	value: '',
+	property: 'personalTaxRetain',
+	// propertyOrigin: 'policyDetails',
+	elementOptions: ['待定', '已确认'],
+	elementRequired: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'personalTaxRetainAdd',
+	elementPlaceholder: ''
+}],[{
+	elementType: 'text',
+	elementLabel: '返还比例：',
+	value: '',
+	property: 'returnRatio',
+	// propertyOrigin: 'policyDetails',
+	elementRequired: true
+}],[{
+	elementType: 'text',
+	elementLabel: '成本 - 三万以下：',
+	value: '',
+	property: 'costUnder30000',
+	// propertyOrigin: 'policyDetails',
+	elementRequired: true
+}],[{
+	elementType: 'text',
+	elementLabel: '成本 - 三万以上：',
+	value: '',
+	property: 'costOver30000',
+	// propertyOrigin: 'policyDetails',
+	elementRequired: true
+}],[{
+	elementType: 'text',
+	elementLabel: '月流水 - 最低值：',
+	value: '',
+	property: 'mouthMinLimit',
+	// propertyOrigin: 'policyDetails',
+	elementRequired: true
+}],[{
+	elementType: 'text',
+	elementLabel: '月流水 - 最高值：',
+	value: '',
+	property: 'mouthMaxLimit',
+	// propertyOrigin: 'policyDetails',
+	elementRequired: true
+}],[{
+	elementType: 'radio',
+	elementLabel: '协议签署情况：',
+	value: [],
+	property: 'landAgreementState',
+	optionKey: 'agreement_state',
+	elementRequired: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'landAgreementStateAdd',
+	elementPlaceholder: ''
+}],[{
+	elementType: 'checkbox',
+	elementLabel: '协议中明确的行业：',
+	value: [],
+	property: 'landIndustrys',
+	optionKey: 'land_industry',
+	type: 'arr',
+	elementRequired: true
+},{
+	elementType: 'text',
+	elementLabel: '',
+	value: '',
+	property: 'landIndustrysAdd',
+	elementPlaceholder: ''
+}],[{
+	elementType: 'select',
+	elementLabel: '对接负责人：',
+	value: '',
+	property: 'landDirector',
+	type: 'users',
+	elementRequired: true
+}],[{
+	elementType: 'text',
+	elementLabel: '当地关键人：',
+	value: '',
+	property: 'landContact',
+	elementRequired: true
+}],[{
+	elementType: 'date',
+	elementLabel: '预计签约日期：',
+	value: '',
+	property: 'expectSignAt',
+	elementRequired: true
+}]]*/
 
 const stepFourFormData = [[{
 	elementType: 'textarea',

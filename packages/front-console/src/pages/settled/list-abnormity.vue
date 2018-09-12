@@ -2,7 +2,7 @@
     <div class="bg-white p15">
         <div class="mb30">异常账单</div>
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
-            <el-form-item label="客户名称" size="small">
+            <el-form-item label="商户名称" size="small">
                 <el-autocomplete
                         class="inline-input"
                         v-model="appName"
@@ -43,7 +43,7 @@
             </el-form-item>
         </el-form>
         <el-table :data="tableData.list" v-if="tableData">
-            <el-table-column prop="appName" label="客户名称"></el-table-column>
+            <el-table-column prop="appName" label="商户名称"></el-table-column>
             <el-table-column prop="settleDate" label="记账时间">
                 <template slot-scope="scope">
                     <span>{{scope.row.settleDate | formatTime('yyyy-MM-dd')}}</span>

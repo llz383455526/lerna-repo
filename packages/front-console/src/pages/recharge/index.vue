@@ -640,7 +640,7 @@ export default {
       });
     },
     setTime() {
-        if(this.dateValue.length) {
+        if(this.dateValue && this.dateValue.length) {
             this.formSearch.createAtBegin = this.dateValue[0]
             this.formSearch.createAtEnd = this.dateValue[1]
         }

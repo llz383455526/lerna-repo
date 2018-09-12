@@ -35,11 +35,11 @@
                         </el-select>
                     </el-form-item>
                 </el-col>
-                <el-col :span="12">
+                <!-- <el-col :span="12">
                     <el-form-item label="普票可开张数上限" prop="ppMaxNum">
                         <el-input v-model="companyForm.ppMaxNum" :maxlength="10"></el-input>
                     </el-form-item>
-                </el-col>
+                </el-col> -->
             </el-row>
             <el-row>
                 <el-col :span="12">
@@ -54,11 +54,11 @@
                         </el-select>
                     </el-form-item>
                 </el-col>
-                <el-col :span="12">
+                <!-- <el-col :span="12">
                     <el-form-item label="专票可开张数上限" prop="zpMaxNum">
                         <el-input v-model="companyForm.zpMaxNum" :maxlength="10"></el-input>
                     </el-form-item>
-                </el-col>
+                </el-col> -->
             </el-row>
             <el-form-item label="企业所在地" prop="addr1Code">
                 <el-cascader size="large" :options="options" v-model="companyForm.addr1Code" @change="calcuAddr1">
@@ -93,6 +93,12 @@
                     </el-form-item>
                 </el-col>
             </el-row>
+            <el-form-item label="是否支持企业自主开票" prop="supportSelfInvoice">
+                <el-radio-group v-model="companyForm.supportSelfInvoice">
+                    <el-radio label="是">是</el-radio>
+                    <el-radio label="否">否</el-radio>
+                </el-radio-group>
+            </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="submitForm('companyForm')">保存</el-button>
                 <el-button @click="routerPush('/main/billingManager/list')">取消</el-button>
@@ -200,7 +206,10 @@
                     ],
                     drawer: [
                         {required: true, message: '请输入开票人', trigger: 'blur'}
-                    ]
+                    ],
+                    supportSelfInvoice: [
+                        {required: true, message: '请选择是否支持企业自主开票', trigger: 'blur'}
+                    ],
                 },
                 formData: '',
                 serviceCompaniesList: [],
@@ -239,6 +248,11 @@
                 this.companyForm.addr = this.companyForm.addr1 + ' ' + this.companyForm.addr2;
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                        if(this.companyForm.supportSelfInvoice == '是'){
+                            this.companyForm.supportSelfInvoice = 1;
+                        }else{
+                            this.companyForm.supportSelfInvoice = 0;
+                        }
                         post(url, this.companyForm).then(data => {
                             showNotify('success', data);
                             this.$router.push({path: '/main/billingManager/list'});

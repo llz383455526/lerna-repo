@@ -8,7 +8,7 @@
             <el-form-item label="文件ID" class="hide">
                 <input v-model="contractForm.referIds">
             </el-form-item>
-            <el-form-item label="客户名称" prop="customerName" placeholder="请输入内容">
+            <el-form-item label="商户名称" prop="customerName" placeholder="请输入内容">
                 <el-select v-model="contractForm.customerName" filterable placeholder="请选择" @change="getInvoice" style="width:100%;">
                     <el-option v-for="item in customerCompaniesList" :key="item.companyId" :label="item.companyName"
                                :value="item.companyName"></el-option>
@@ -29,7 +29,7 @@
             </el-form-item>
             <el-form-item label="结算方式" prop="settleType" required>
                 <el-select v-model="contractForm.settleType" placeholder="请选择" @change="showType" style="width:100%;">
-                	<!-- <el-option label="预收" value="each"></el-option>
+                    <!-- <el-option label="预收" value="each"></el-option>
                     <el-option label="日结" value="day"></el-option>
                     <el-option label="周结" value="week"></el-option>
                     <el-option label="月结" value="month"></el-option> -->
@@ -291,7 +291,7 @@
             return {
                 rules: {
                     customerName: [
-                        {required: true, message: '请输入客户名称', trigger: 'blur'}
+                        {required: true, message: '请输入商户名称', trigger: 'blur'}
                     ],
                     serviceCompanyName: [
                         {required: true, message: '请输入公司名称', trigger: 'blur'}
@@ -573,7 +573,7 @@
                             }
                         })
                     }else {
-	                    showNotify('error', '请检查输入项错误！')
+                        showNotify('error', '请检查输入项错误！')
                     }
                 });
             },
@@ -765,9 +765,9 @@
                     post('/api/contract-web/file/delete', {downloadCode: this.downloadCode}).then(data => {
                         // showNotify('success', data);
                         //this.queryAttachments(this.$route.query.contractId);
-	                    showNotify('success', '删除成功')
-	                    this.fileList.splice(this.deleteKey, 1)
-	                    this.referArr.splice(this.deleteKey, 1)
+                        showNotify('success', '删除成功')
+                        this.fileList.splice(this.deleteKey, 1)
+                        this.referArr.splice(this.deleteKey, 1)
                         this.dialogVisible = false;
                     });
                 }

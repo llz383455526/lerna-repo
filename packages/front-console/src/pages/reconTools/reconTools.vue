@@ -14,8 +14,8 @@
                 <el-date-picker v-model="dateValue" type="daterange" start-placeholder="开始日期"
                                 end-placeholder="结束日期"></el-date-picker>
             </el-form-item>
-            <el-form-item label="客户名称:" size="small">
-                <el-input style="width: 150px" v-model="formSearch.payerAppNameLK" placeholder="客户名称"></el-input>
+            <el-form-item label="商户名称:" size="small">
+                <el-input style="width: 150px" v-model="formSearch.payerAppNameLK" placeholder="商户名称"></el-input>
             </el-form-item>
             <el-form-item label="对账状态:" size="small">
                 <el-select style="width: 150px" v-model="formSearch.comparedStatusEQ" placeholder="请选择">
@@ -36,7 +36,7 @@
             <el-table-column prop="billDate" label="提交日期" width="90" fixed></el-table-column>
             <!--<el-table-column prop="billDate" label="对账日期" width="120"></el-table-column>-->
             <el-table-column prop="channelCodeName" label="发放渠道" width="80"></el-table-column>
-            <el-table-column prop="payerAppName" label="客户名称"></el-table-column>
+            <el-table-column prop="payerAppName" label="商户名称"></el-table-column>
             <!--<el-table-column prop="fromAccountNo" label="发放账号" width="80"></el-table-column>-->
             <el-table-column prop="status" label="对账进度" width="80"></el-table-column>
             <el-table-column prop="appAmount" label="业务发放金额" width="120">

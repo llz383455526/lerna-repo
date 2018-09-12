@@ -10,7 +10,7 @@
         </el-tabs>
 
         <el-form :inline="true" :model="formSearch" style="padding-left: 35px;padding: 10px 0 10px 35px;">
-            <el-form-item label="客户名称:" size="small">
+            <el-form-item label="商户名称:" size="small">
                 <el-select style="width: 150px" v-model="formSearch.appName" placeholder="请选择">
                     <el-option label="所有" value=""></el-option>
                     <el-option v-for="(item, index) in customNameList" :label="item.text" :value="item.value" :key="index"></el-option>
@@ -70,7 +70,7 @@
 
         <div class="table-container el-table el-table--fit el-table--border el-table--scrollable-x el-table--enable-row-transition">
             <el-table :data="flowTableList.list" style="width: 100%">
-                <el-table-column prop="appName" label="客户名称" width="140" fixed></el-table-column>
+                <el-table-column prop="appName" label="商户名称" width="140" fixed></el-table-column>
                 <el-table-column prop="outOrderNo" label="客户订单号" width="120"></el-table-column>
                 <el-table-column prop="paymentThirdTypeName" label="发放渠道" width="80"></el-table-column>
                 <el-table-column prop="sourceTypeName" label="发放方式" width="80"></el-table-column>sourceTypeName

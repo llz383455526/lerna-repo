@@ -2,7 +2,7 @@
     <div class="bg-white p15" style="background-color: #fff;padding: 15px;">
         <!--<div class="mb30" style="margin-bottom: 30px;">流水账单</div>-->
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
-            <!--<el-form-item label="客户名称" size="small">
+            <!--<el-form-item label="商户名称" size="small">
                 <el-autocomplete
                         class="inline-input"
                         v-model="appName"
@@ -45,7 +45,7 @@
 
         <div class="table-container">
             <el-table :data="tableData.list">
-                <el-table-column prop="appName" label="客户名称"></el-table-column>
+                <el-table-column prop="appName" label="商户名称"></el-table-column>
                 <el-table-column prop="settleDate" label="记账时间">
                     <template slot-scope="scope">
                         <span v-if="scope.row.billType === 'month'">{{scope.row.settleDate | formatTime('yyyy-MM')}}</span>
@@ -145,7 +145,7 @@
                 });
             },
             requestAction(pageInfo) {
-                let url = '/api/console-dlv/settled/flow-order-list';
+                let url = '/api/recon/settled/flow-order-list';
                 let self = this;
                 _.foreach(this.allAppList, function (value) {
                     if (value['text'] == self.appName) {
@@ -179,7 +179,7 @@
             },
             handleDownload(appId, billType, settledTime) {
                 settledTime = formatTime(settledTime, 'yyyy-MM-dd');
-                window.location.href = baseUrl + '/api/console-dlv/settled/flow-order-download'
+                window.location.href = baseUrl + '/api/recon/settled/flow-order-download'
                     + '?appId=' + appId + '&billType=' + billType
                     + '&settledTime=' + settledTime;
             },

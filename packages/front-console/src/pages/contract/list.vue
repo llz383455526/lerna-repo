@@ -2,7 +2,7 @@
     <div style="background-color:#fff;padding:15px;">
         <div style="margin-bottom:30px;">合同管理</div>
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
-            <el-form-item label="客户名称" size="small" prop="customerName">
+            <el-form-item label="商户名称" size="small" prop="customerName">
                 <el-input v-model="formSearch.customerName"></el-input>
             </el-form-item>
             <el-form-item label="服务商名称" size="small" prop="serviceCompanyName">
@@ -31,7 +31,7 @@
         </el-form>
         <el-button size="small" @click="routerPush('/main/contract/create')">新增</el-button>
         <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
-            <el-table-column prop="customerName" label="客户名称" width="200"></el-table-column>
+            <el-table-column prop="customerName" label="商户名称" width="200"></el-table-column>
             <el-table-column prop="serviceCompanyName" label="服务商名称" width="220"></el-table-column>
             <el-table-column prop="settleTypeName" label="结算周期"></el-table-column>
             <el-table-column prop="serviceFeeName" label="服务费收费比例"></el-table-column>

@@ -22,8 +22,19 @@
 
                     <el-form :model="formData" ref="formData" :inline="true">
                         <div class="form-item" v-for="(formGroup, index1) in stepOneFormData">
-                            <el-form-item :label="item.elementLabel" v-for="(item, index2) in formGroup" :prop="item.property">
-                                <span>{{projectDetail[item.property]}}</span>
+                            <el-form-item :label="formGroup[0].elementLabel" :prop="formGroup[0].property">
+                                <div v-if="formGroup[0].hasChildren">
+                                    <span v-for="(item, index2) in formGroup" style="margin-right: 15px;" v-if="projectDetail[item.property]">
+                                        {{item.subLabel}}
+                                        {{projectDetail[item.property]}}
+                                        {{item.appendLabel}}
+                                        <!--{{item}}-->
+                                    </span>
+                                </div>
+                                <div v-else>
+                                    {{projectDetail[formGroup[0].property]}}
+                                </div>
+                                <!--<span>{{projectDetail[item.property]}}</span>-->
                             </el-form-item>
                         </div>
                     </el-form>
@@ -40,11 +51,24 @@
 
                     <el-form :model="formData" ref="formData" :inline="true">
                         <div class="form-item" v-for="(formGroup, index1) in stepThreeFormData">
-                            <el-form-item :label="item.elementLabel" v-for="(item, index2) in formGroup">
+                            <el-form-item :label="formGroup[0].elementLabel" :prop="formGroup[0].property">
+                                <div v-if="formGroup[0].hasChildren">
+                                    <span v-for="(item, index2) in formGroup" style="margin-right: 15px;" v-if="projectDetail[item.newProperty || item.property]">
+                                        {{item.subLabel}}
+                                        {{projectDetail[item.newProperty || item.property]}}
+                                        {{item.appendLabel}}
+                                    </span>
+                                </div>
+                                <div v-else>
+                                    <span v-if="formGroup[0].elementType === 'date'">{{projectDetail[formGroup[0].newProperty || formGroup[0].property] | formatTime('yyyy-MM-dd')}}</span>
+                                    <span v-else>{{projectDetail[formGroup[0].newProperty || formGroup[0].property]}}</span>
+                                </div>
+                            </el-form-item>
+                            <!--<el-form-item :label="item.elementLabel" v-for="(item, index2) in formGroup">
                                 <span v-if="item.propertyOrigin">{{projectDetail[item.propertyOrigin][item.property]}}</span>
                                 <span v-else-if="item.elementType === 'date'">{{projectDetail[item.property] | formatTime('yyyy-MM-dd')}}</span>
                                 <span v-else>{{projectDetail[item.property]}}</span>
-                            </el-form-item>
+                            </el-form-item>-->
                         </div>
                     </el-form>
                 </div>
@@ -58,7 +82,10 @@
                 <div v-if="projectDetail.status >= 5" class="information-container">
                     <div class="sub-title" style="margin-bottom: 10px;">签约结果</div>
 
-                    <div style="font-size: 14px;">{{projectDetail.statusName}}</div>
+                    <div style="font-size: 14px;">
+                        <span>{{projectDetail.statusName}}</span>
+                        <a v-if="projectDetail.statusName === '已完成'" :href="`/api/salemgt/taxlanding/download_contract/${projectDetail.id}`">查看合同</a>
+                    </div>
                 </div>
 
                 <div v-if="step && submitAuthorise">
@@ -79,8 +106,10 @@
                                 <div v-if="item.elementType === 'text'" class="normal-item" :class="{'short-item': item.shortText, 'auto-item': item.autoText}">
                                     <el-input
                                             v-model="formList[index1][index2].value"
-                                            :placeholder="item.elementPlaceholder">
+                                            :placeholder="item.elementPlaceholder"
+                                            :disabled="item.disabled">
                                         <template v-if="item.subLabel" slot="prepend">{{item.subLabel}}</template>
+                                        <template v-if="item.appendLabel" slot="append">{{item.appendLabel}}</template>
                                     </el-input>
                                 </div>
 
@@ -223,7 +252,7 @@
 
             this.getRemarkList()
 
-			this.uploadUrl = `${baseUrl}/api/salemgt/upload_contract`
+			this.uploadUrl = `${baseUrl}/api/salemgt/taxlanding/upload_contract`
 
         },
         data() {
@@ -274,45 +303,66 @@
 				let formList = _.cloneDeep(this.formList)
                 // let formList = this.formList
 
-				_.forEach(formList, formGroup => {
+				_.forEach(formList, (formGroup, _key) => {
 					_.forEach(formGroup, (item, key) => {
 						let val = item.value
 						if(val && typeof val === 'object' && item.type !== 'arr') val = val.toString()
 						// formData[item.property] = val
-                        if(item.elementLabel) {
 
-                            if(item.elementType === 'radio' && val === _.last(item.elementOptions)) {
-                                val = formGroup[key+1].value
-                            }
-                            if(item.elementType === 'location') {
-                                [formData.provinceId, formData.cityId, formData.regionId] = val.split(',')
-                                return
-                            }
+                        if(!item.invalid) {
+	                        if(item.elementLabel) {
 
-                            if(item.elementType === 'checkbox') {
-                            	let last = _.last(item.elementOptions)
-	                            let elseVal = formGroup[key+1].value
-	                            if(elseVal && val.length) val = _.replace(val.join(','), last, elseVal).split(',')
-                            }
+		                        if(item.elementType === 'radio' && val === _.last(item.elementOptions)) {
+		                        	let _else = formGroup[key+1]
+                                    if(_else && _else.value) {
+                                    	val += `,${_else.value}`
+                                    }
+			                        // val = formGroup[key+1].value
+		                        }
+		                        if(item.elementType === 'location') {
+			                        [formData.provinceId, formData.cityId, formData.regionId] = val.split(',')
+			                        return
+		                        }
 
-                            if(item.propertyOrigin) {
-                            	if(formData[item.propertyOrigin]) formData[item.propertyOrigin][item.property] = val
-                                else {
-                            		formData[item.propertyOrigin] = {}
-		                            formData[item.propertyOrigin][item.property] = val
-	                            }
-                            }else {
-                            	formData[item.property] = val
-                            }
-                        }else if(item.add) {
-	                        formData[formGroup[0].property] += `|${item.value}`
-                        }else if(item.elementType === 'textarea' || item.validValue) {
-	                        formData[item.property] = val
+		                        if(item.elementType === 'checkbox') {
+			                        let last = _.last(item.elementOptions)
+			                        let elseVal = formGroup[key+1].value
+			                        if(elseVal && val.length) val = _.replace(val.join(','), last, elseVal).split(',')
+		                        }
 
-                            /*if(item.type === 'upload' && !item.multiple) {
-	                            formData[item.property] = _.last(val)
-                            }*/
+		                        formData[item.property] = val
+		                        /*if(item.propertyOrigin) {
+			                        if(formData[item.propertyOrigin]) formData[item.propertyOrigin][item.property] = val
+			                        else {
+				                        formData[item.propertyOrigin] = {}
+				                        formData[item.propertyOrigin][item.property] = val
+			                        }
+		                        }else {
+			                        formData[item.property] = val
+		                        }*/
+	                        }else if(item.add) {
+		                        formData[formGroup[0].property] += `|${item.value}`
+	                        }else if(item.elementType === 'textarea' || item.validValue) {
+		                        formData[item.property] = val
+
+		                        /*if(item.type === 'upload' && !item.multiple) {
+                                    formData[item.property] = _.last(val)
+                                }*/
+	                        }else if(item.subLabel) {
+		                        formData[item.property] = val
+	                        }
                         }
+
+						if(item.valueType === 'count') {
+							let keys = item.keys.split(',')
+                            let count = 0
+
+                            _.forEach(keys, vKey => {
+                                count = this.Add(count, parseFloat(formData[vKey] || 0), 8)
+                            })
+
+                            this.formList[_key][key].value = count
+						}
 					})
 				})
 
@@ -385,7 +435,8 @@
 				            item.elementOptions = this.editUsers
                         }
 
-			            if(item.elementLabel) {
+			            if(item.elementLabel || item.subLabel || item.validValue) {
+			            	if(item.invalid) return
 				            let val = item.propertyOrigin ? this.projectDetail[item.propertyOrigin][item.property] : this.projectDetail[item.property]
 				            switch (item.elementType) {
 					            case 'location':
@@ -409,7 +460,7 @@
 						            break
 					            case 'radio':
 						            if(val && item.elementOptions.indexOf(val) === -1) {
-							            formGroup[key+1].value = val
+							            formGroup[key+1].value = val.substring(val.indexOf(',') + 1)
 							            val = _.last(item.elementOptions)
 						            }
 						            break
@@ -430,6 +481,7 @@
             submit(type) {
             	let url = '/api/salemgt'
                 let formData
+                let error
 
                 switch (this.step) {
                     case 'One':
@@ -452,8 +504,14 @@
 		                formData = {}
                         let signType =  this.formData.signType
                         if(signType) formData.pass = signType === '确认签约'
+                        else error = '请选择签约状态！'
 		                break
                 }
+                if(error){
+                	showNotify('error', error)
+                    return false
+                }
+
 	            if(!formData) formData = _.cloneDeep(this.formData)
 
                 let stepStr = 'TwoThreeFour'
@@ -509,6 +567,23 @@
 	            showNotify('success', '操作成功')
 	            this.$router.push('list')
             },
+            formatCountData(step) {
+	            let _formList = _.cloneDeep(this[`step${step}FormData`])
+	            _.forEach(_formList, formGroup => {
+		            _.forEach(formGroup, (item, key) => {
+			            if(item.valueType === 'count') {
+				            let keys = (item.newKeys || item.keys).split(',')
+				            let count = 0
+
+				            _.forEach(keys, vKey => {
+					            count = this.Add(count, parseFloat(this.projectDetail[vKey] || 0), 8)
+				            })
+
+				            this.projectDetail[item.property] = count
+			            }
+		            })
+	            })
+            },
             getDetail() {
 	            if(!this.projectId) {
 		            this.step = 'One'
@@ -529,8 +604,8 @@
                             	actions[item] = true
                             })
 				            projectDetail.actions = actions
-                            let retainRatio = projectDetail.retainRatio.split('|')
-                            projectDetail.retainRatio = `营改增项目增值税${retainRatio[0] || 0}% 企业所得税${retainRatio[1] || 0}% 个人所得税企业所得税${retainRatio[2] || 0}%`
+                            /*let retainRatio = projectDetail.retainRatio.split('|')
+                            projectDetail.retainRatio = `营改增项目增值税${retainRatio[0] || 0}% 企业所得税${retainRatio[1] || 0}% 个人所得税企业所得税${retainRatio[2] || 0}%`*/
 
                             projectDetail.landBizTypes = projectDetail.landBizTypes ? projectDetail.landBizTypes.join(',') : []
 				            projectDetail.landIndustrys = projectDetail.landIndustrys ? projectDetail.landIndustrys.join(',') : []
@@ -552,8 +627,8 @@
                                 13: 4
                             }
 
-                            this.step = step[projectDetail.status]
-                            let status = projectDetail.status
+				            let status = projectDetail.status
+                            this.step = step[status]
                             if(status <= 5) {
 	                            this.activeStep = status
                             }else {
@@ -561,6 +636,8 @@
                                 this.errorStep = true
                             }
 
+				            this.formatCountData('One')
+                            if(status > 2) this.formatCountData('Three')
                             if(this.step) {
 	                            switch (this.step) {
 		                            case 'Two':
@@ -569,6 +646,7 @@
 			                            this.btnText = '审核通过'
 			                            this.title = '税优地资源审核'
 			                            // this.formList = _.cloneDeep(this[`step${this.step}FormData`])
+
 			                            break
 		                            case 'Three':
 			                            this.stepThree()
@@ -624,7 +702,7 @@
 		        this.fileData = fileData
 	        },
 	        handleHttpRequest() {
-		        formPost('/api/salemgt/upload_contract', this.fileData)
+		        formPost('/api/salemgt/taxlanding/upload_contract', this.fileData)
 			        .then(result => {
 				        showNotify('success', '上传成功!')
 			        })
@@ -689,6 +767,16 @@
                 }).then(result => {
                 	this.remarkList = result
                 })
+            },
+            Add(arg1, arg2) {
+	            arg1 = arg1.toString()
+                arg2 = arg2.toString()
+	            let arg1Arr = arg1.split("."), arg2Arr = arg2.split("."), d1 = arg1Arr.length === 2 ? arg1Arr[1] : "", d2 = arg2Arr.length === 2 ? arg2Arr[1] : ""
+	            let maxLen = Math.max(d1.length, d2.length)
+	            let m = Math.pow(10, maxLen)
+	            let result = Number(((arg1 * m + arg2 * m) / m).toFixed(maxLen))
+	            let d = arguments[2]
+	            return typeof d === "number" ? Number(result.toFixed(d)) : result
             }
         }
     }
@@ -720,7 +808,7 @@
     }
 
     .short-item {
-        width: 220px;
+        width: 280px;
     }
 
     .auto-item {
@@ -744,6 +832,17 @@
     }
 
 </style>
+
+<style lang="scss">
+    .area-select {
+        height: 40px;
+
+        .area-selected-trigger {
+            padding-top: 10px;
+        }
+    }
+</style>
+
 
 
 

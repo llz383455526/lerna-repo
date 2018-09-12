@@ -32,7 +32,7 @@
 
 			this.getUsers()
             this.getProjectUsers()
-        },
+		},
         data() {
 			return {
 				projectId: '',
@@ -66,7 +66,8 @@
                     })
 	        },
             getProjectUsers() {
-	        	get(`/api/salemgt/taxlanding/stage_directors/${this.projectId}`, {})
+	        	let url = this.projectId ? `/api/salemgt/taxlanding/stage_directors/${this.projectId}` : '/api/salemgt/taxlanding/director_list'
+	        	get(url)
                     .then(result => {
                         _.forEach(this.userSetting, item => {
                         	let step = result[item.key]
@@ -75,13 +76,17 @@
                     })
             },
             setUser(stage) {
-	        	post('/api/salemgt/taxlanding/set_stage_director', {
-			        infoId: this.projectId,
+	        	let param = {
 			        stage: stage.key,
 			        directorId: stage.user
-                }).then(result => {
-			        showNotify('success', '设置成功')
-                })
+                }
+                if(this.projectId) param.infoId = this.projectId
+
+
+	        	post(`/api/salemgt/taxlanding/set${this.projectId ? '' : '_default'}_stage_director`, param)
+                    .then(result => {
+                        showNotify('success', '设置成功')
+                    })
             }
         }
     }

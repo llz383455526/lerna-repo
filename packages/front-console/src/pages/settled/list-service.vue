@@ -2,7 +2,7 @@
     <div class="bg-white p15">
         <div class="mb30">服务费账单</div>
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
-            <el-form-item label="客户名称" size="small">
+            <el-form-item label="商户名称" size="small">
                 <el-autocomplete
                         class="inline-input"
                         v-model="appName"
@@ -33,7 +33,8 @@
                 <el-date-picker
                         v-model="valueDate"
                         type="daterange"
-                        placeholder="选择日期"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
                         value-format="yyyy-MM-dd">
                 </el-date-picker>
             </el-form-item>
@@ -48,7 +49,7 @@
             </el-form-item>
         </el-form>
         <el-table :data="tableData.list">
-            <el-table-column prop="appName" label="客户名称"></el-table-column>
+            <el-table-column prop="appName" label="商户名称"></el-table-column>
             <el-table-column prop="settleDate" label="入账时间">
                 <template slot-scope="scope">
                     <span v-if="scope.row.billType === 'month'">{{scope.row.settleDate | formatTime('yyyy-MM')}}</span>
@@ -153,7 +154,7 @@
                 });
             },
             requestAction(pageInfo) {
-                let url = '/api/console-dlv/settled/service-free-order-list';
+                let url = '/api/recon/settled/service-free-order-list';
                 let self = this;
                 _.foreach(this.allAppList, function (value) {
                     if (value['text'] == self.appName) {
@@ -170,8 +171,10 @@
                     endAt = this.valueMonth;
                 }
                 if (this.formSearch.billType === 'day') {
-                    startAt = this.valueDate[0];
-                    endAt = this.valueDate[1];
+                    if(this.valueDate && this.valueDate.length) {
+                        startAt = this.valueDate[0];
+                        endAt = this.valueDate[1];
+                    }
                 }
                 let param = {
                     startAt: startAt,
@@ -188,7 +191,7 @@
             },
             handleDownload(a) {
                 var settledTime = formatTime(a.settleDate, 'yyyy-MM-dd');
-                window.location.href = baseUrl + '/api/console-dlv/settled/service-free-order-download'
+                window.location.href = baseUrl + '/api/recon/settled/service-free-order-download'
                     + '?appId=' + a.appId + '&billType=' + a.billType
                     + '&settledTime=' + settledTime + (this.formSearch.billType == 'month' ? '&settledOrderServiceFeeNpttMonthId=' + a.id : '&settledOrderServiceFeeNpttId=' + a.id)
             },

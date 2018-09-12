@@ -3,7 +3,7 @@
         <div style="margin: 0 30px 30px;">拒绝下单记录</div>
 
         <el-form :inline="true" :model="formSearch" class="demo-form-inline" style="padding-left: 35px;padding: 10px 0 10px 35px;">
-            <el-form-item label="客户名称:" size="small">
+            <el-form-item label="商户名称:" size="small">
                 <el-select filterable style="width: 150px" v-model="formSearch.appName" placeholder="请选择">
                     <el-option label="所有" value=""></el-option>
                     <el-option v-for="(item, index) in customNameList" :label="item.text" :value="item.value" :key="index"></el-option>
@@ -30,7 +30,7 @@
         </el-form>
 
         <el-table :data="payOrderRejectList.list" style="width: 100%;margin-top: 20px;">
-            <el-table-column align="left" prop="appName" label="客户名称" width="140"></el-table-column>
+            <el-table-column align="left" prop="appName" label="商户名称" width="140"></el-table-column>
             <el-table-column align="left" prop="outOrderNo" label="客户订单号" width="220"></el-table-column>
             <el-table-column align="left" prop="createAt" label="请求时间" width="160">
                 <template slot-scope="scope">

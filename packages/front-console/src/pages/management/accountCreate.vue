@@ -96,7 +96,7 @@
         </el-form>
 
 
-        <el-dialog :title="dialogTitle" :visible.sync="dialogVisible">
+        <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" @close="selectionArr = [];">
             <el-form :inline="true" :model="formApp" ref="formApp" v-if="dialogType === 'app'" @submit.native.prevent>
                 <el-form-item label="商户名称" size="small" prop="appName">
                     <el-input v-model="formApp.appName"></el-input>
@@ -234,7 +234,8 @@
                     name: '',
                     fullName: ''
                 },
-				multipleSelection: [],
+                multipleSelection: [],
+                selectionArr: [],
                 selectedAppList: [],
 				selectedServiceList: [],
                 selectedCompanyList: [],
@@ -372,6 +373,7 @@
 		        this.getList()
 	        },
             getList() {
+                this.getArr()
             	let url
                 let formSearch
 	            let options = _.assign(formSearch, {
@@ -399,9 +401,29 @@
 
                 post(url, options)
                     .then(result => {
-                    	this.tableList = result
+                        this.tableList = result
+                        setTimeout(e => {
+                            this.tableList.list.forEach(e => {
+                                this.selectionArr.forEach((el, i) => {
+                                    if(el.appId ? el.appId == e.appId : el.id ? el.id == e.id : '') {
+                                        this.$refs.multipleTable.toggleRowSelection(e)
+                                        this.selectionArr.splice(i, 1)
+                                    }
+                                })
+                            })
+                        },100)
                     })
-
+            },
+            getArr() {
+                this.multipleSelection.forEach(e => {
+                    var arr = this.selectionArr.filter(el => {
+                        return el.appId ? el.appId == e.appId : el.id ? el.id == e.id : ''
+                    })
+                    if(!arr.length){
+                        this.selectionArr.push(e)
+                        console.log(e)
+                    }
+                })
             },
 	        handleSelectionChange(val) {
                 this.multipleSelection = val
@@ -410,10 +432,11 @@
 		        return str.toLowerCase().replace(/^\S/g,function(s){return s.toUpperCase();});
 	        },
 	        confirmSelection() {
+                this.getArr()
 		        let keyName = this.firstUpperCase(this.dialogType)
 		        let selectedList = _.cloneDeep(this[`selected${keyName}List`])
 
-                _.forEach(this.multipleSelection, item => {
+                _.forEach(this.selectionArr, item => {
                     if(!_.find(selectedList, function (o) {return o.id === item.id})) {
 	                    selectedList.push(item)
                     }

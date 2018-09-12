@@ -73,7 +73,7 @@
 	    		  </el-col>
         	</el-row> -->
 	    </div>
-        <el-button style="margin-top: 30px" type="primary" @click="eshow = true">新增账号渠道</el-button>
+        <el-button style="margin-top: 30px" type="primary" @click="eshow = true">新增渠道账号</el-button>
         <el-table class="table" :data="tableData" border="">
             <el-table-column prop="channelAlias" label="渠道别名"></el-table-column>
             <el-table-column prop="thirdpaySystemId" label="渠道类型"></el-table-column>
@@ -232,13 +232,13 @@ export default {
             trigger: "change"
           }
 		],
-		taxLandingId: [
-            {
-                required: true,
-                message: "请选择税优地",
-                trigger: "change"
-            }
-        ],
+		// taxLandingId: [
+        //     {
+        //         required: true,
+        //         message: "请选择税优地",
+        //         trigger: "change"
+        //     }
+        // ],
         areaName: [
           {
             required: true,
@@ -353,7 +353,11 @@ export default {
           {
               text: '汇付',
               value: 'hf'
-          }
+          },
+          {
+			  text: '华夏银行',
+			  value: 'hxb'
+		  }
       ],
 	  list: []
     };

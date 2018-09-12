@@ -5,7 +5,7 @@
               支付验证记录-白名单
           </el-breadcrumb-item>
       </el-breadcrumb>
-      <el-form class="form" :model="form" :inline="true" label-width="100px">
+      <el-form class="form" :model="form" :inline="true" size="small">
           <el-form-item label="应用名称">
               <el-input v-model="form.extrSystemName" class="in_input"></el-input>
           </el-form-item>
@@ -29,7 +29,7 @@
               <el-input v-model="form.orderNo" class="in_input"></el-input>
           </el-form-item>
           <el-form-item class="form_foot">
-              <el-button type="primary" @click="query">查询</el-button><el-button type="warning" @click="clear">重置</el-button>
+              <el-button type="primary" @click="query">查询</el-button><el-button @click="clear">重置</el-button>
           </el-form-item>
       </el-form>
       <el-table class="table" :data="tableData" border="">

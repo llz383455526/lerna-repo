@@ -19,7 +19,7 @@
 					<span :class="{ invalid:  scope.row.errMsg && 'remark' in scope.row.errMsg}">{{scope.row.remark}}</span>
 				</template>
 			</el-table-column>
-            <el-table-column label="客户名称" prop="customCompanyName">
+            <el-table-column label="商户名称" prop="customCompanyName">
 				<template slot-scope="scope">
 					<span :class="{ invalid:  scope.row.errMsg && 'customCompanyName' in scope.row.errMsg}">{{scope.row.customCompanyName}}</span>
 				</template>

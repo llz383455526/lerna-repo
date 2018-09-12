@@ -6,10 +6,10 @@
           </el-breadcrumb-item>
       </el-breadcrumb>
       <div class="r_head">
-          <el-input class="in_input" v-model="form.name" placeholder="输入发票类目" @keyup.enter.native="query()"></el-input>
-          <el-button type="primary" @click="query()">搜索</el-button>
+          <el-input class="in_input" size="small" v-model="form.name" placeholder="输入发票类目" @keyup.enter.native="query()"></el-input>
+          <el-button type="primary" size="small" @click="query()">搜索</el-button>
           <div class="f_left">
-                <el-button type="primary" @click="add">添加新类目</el-button>
+                <el-button type="primary" size="small" @click="add">添加新类目</el-button>
           </div>
       </div>
       <el-table class="table" :data="tableData" border>

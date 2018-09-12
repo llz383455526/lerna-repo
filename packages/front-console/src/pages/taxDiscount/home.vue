@@ -10,13 +10,13 @@
                 <el-table-column prop="landBizType" label="适合业务类型"></el-table-column>
                 <el-table-column prop="stage" label="项目进展"></el-table-column>
                 <el-table-column prop="status" label="项目状态"></el-table-column>
-                <el-table-column prop="processBy" label="跟进人"></el-table-column>
+                <el-table-column prop="lastProcessBy" label="跟进人"></el-table-column>
                 <el-table-column prop="expectSignDate" label="预计签约时间">
                     <template slot-scope="scope">
                         <span>{{scope.row.expectSignDate | formatTime('yyyy-MM-dd')}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="processBy" label="待办人"></el-table-column>
+                <el-table-column prop="processBy" label="负责人"></el-table-column>
                 <el-table-column label="操作" width="120">
                     <template slot-scope="scope">
                         <el-button @click="toDetail(scope.row.id)" type="text" size="medium" style="padding:0;">去办理</el-button>

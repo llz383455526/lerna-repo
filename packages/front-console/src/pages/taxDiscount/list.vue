@@ -61,15 +61,28 @@
                 <el-table-column prop="statusName" label="项目状态" width="100">
                     <!--<template slot-scope="scope">{{taxStatusList[scope.row.status].name}}</template>-->
                 </el-table-column>
-                <el-table-column prop="retainRatio" label="留存比" width="200">
+                <el-table-column prop="" label="留存比例" width="200">
                     <template slot-scope="scope">
-                        <span v-if="typeof scope.row.retainRatio === 'object'">营改增项目增值税{{scope.row.retainRatio[0]}}% 企业所得税{{scope.row.retainRatio[1]}}% 个人所得税企业所得税{{scope.row.retainRatio[2]}}%</span>
-                        <span v-else>{{scope.row.retainRatio}}</span>
+                        <!--<span v-if="typeof scope.row.retainRatio === 'object'">营改增项目增值税{{scope.row.retainRatio[0]}}% 企业所得税{{scope.row.retainRatio[1]}}% 个人所得税企业所得税{{scope.row.retainRatio[2]}}%</span>
+                        <span v-else>{{scope.row.retainRatio}}</span>-->
+                        <p>营改增项目增值税{{scope.row.newValueTaxRetain || scope.row.valueTaxRetain || 0}}%</p>
+                        <p>企业所得税{{scope.row.newCorporateTaxRetain || scope.row.corporateTaxRetain || 0}}%</p>
+                        <p>个人所得税{{scope.row.newPersonalTaxRetain || scope.row.personalTaxRetain || 0}}%</p>
                     </template>
                 </el-table-column>
-                <el-table-column prop="returnPolicy" label="返还政策" width="200"></el-table-column>
-                <el-table-column prop="policyDetails.remitTaxUnder30000" label="三万免征" width="100"></el-table-column>
-                <el-table-column prop="policyDetails.costOver30000" label="三万以上" width="100"></el-table-column>
+                <el-table-column prop="" label="返还比例" width="200">
+                    <template slot-scope="scope">
+                        <p>营改增项目增值税{{scope.row.newValueTaxReturn || scope.row.valueTaxReturn || 0}}%</p>
+                        <p>企业所得税{{scope.row.newCorporateTaxReturn || scope.row.corporateTaxReturn || 0}}%</p>
+                        <p>个人所得税{{scope.row.newPersonalTaxReturn || scope.row.personalTaxReturn || 0}}%</p>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="remitTaxUnder30000" label="三万免征" width="100">
+                    <template slot-scope="scope">
+                        <span>{{scope.row.newRemitTaxUnder30000 || scope.row.remitTaxUnder30000}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="costOver30000" label="三万以上" width="100"></el-table-column>
                 <el-table-column prop="processBy" label="跟进人" width="100"></el-table-column>
                 <el-table-column prop="landDirector" label="负责人" width="100"></el-table-column>
                 <el-table-column prop="updateDate" label="变更时间" width="100">
@@ -210,6 +223,10 @@
         background-color: #fff;
         padding: 15px;
         margin-bottom: 20px;
+    }
+
+    .table-container p {
+        margin: 5px 0;
     }
 
 </style>

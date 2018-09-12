@@ -12,110 +12,82 @@
           </el-breadcrumb-item>
           </el-breadcrumb>
       <div class="content">
-		<div class="title">基本信息</div><el-button type="primary" style="margin-left: 120px;" size="small" @click="open">编辑</el-button>
-		<div class="box">
-      		<el-row :gutter="20">
-      		    <el-col :span="10">
-					  <el-col :span="8" class="right">商户名称</el-col><el-col :span="10">{{data.appName}}</el-col>
-				</el-col>
-      		    <el-col :span="10">
-					  <el-col :span="8" class="right">Company ID</el-col><el-col :span="10">{{data.companyId}}</el-col>
-				</el-col>
-      		</el-row>
-			<el-row :gutter="20">
-      		    <el-col :span="10">
-					  <el-col :span="8" class="right">appId</el-col><el-col :span="10">{{data.appId}}</el-col>
-				</el-col>
-				<el-col :span="10">
-					  <el-col :span="8" class="right">商户负责人</el-col><el-col :span="10">{{data.chargeByName}}</el-col>
-				</el-col>
-      		</el-row>
-			<el-row :gutter="20">
-				<el-col :span="20">
-					  <el-col :span="4" class="right">异步通知appid</el-col><el-col :span="10" style="word-wrap: break-word;">{{data.notifyAppId}}</el-col>
-				</el-col>
-      		    <el-col :span="10">
-					  <el-col :span="8" class="right">负责人电话</el-col><el-col :span="10">{{data.phone}}</el-col>
-				</el-col>
-      		</el-row>
-			<el-row :gutter="20">
-      		    <el-col :span="10">
-					  <el-col :span="8" class="right">更新人</el-col><el-col :span="10">{{data.updateByName}}</el-col>
-				</el-col>
-				<el-col :span="10">
-					  <el-col :span="8" class="right">更新时间</el-col><el-col :span="10">{{data.updateTime}}</el-col>
-				</el-col>
-      		</el-row>
-			<el-row :gutter="20">
+            <div class="title">基本信息</div>
+    <el-button type="primary" style="margin-left: 120px;" size="small" @click="open">编辑</el-button>
+    <div class="box">
+        <el-row :gutter="20">
+            <el-col :span="10">
+                <el-col :span="8" class="right">商户名称</el-col>
+                <el-col :span="10">{{data.appName}}</el-col>
+            </el-col>
+            <el-col :span="10">
+                <el-col :span="8" class="right">Company ID</el-col>
+                <el-col :span="10">{{data.companyId}}</el-col>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20">
+            <el-col :span="10">
+                <el-col :span="8" class="right">appId</el-col>
+                <el-col :span="10">{{data.appId}}</el-col>
+            </el-col>
+            <el-col :span="10">
+                <el-col :span="8" class="right">商户负责人</el-col>
+                <el-col :span="10">{{data.chargeByName}}</el-col>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20">
+            <el-col :span="20">
+                <el-col :span="4" class="right">异步通知appid</el-col>
+                <el-col :span="10" style="word-wrap: break-word;">{{data.notifyAppId}}</el-col>
+            </el-col>
+            <el-col :span="10">
+                <el-col :span="8" class="right">负责人电话</el-col>
+                <el-col :span="10">{{data.phone}}</el-col>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20">
+            <el-col :span="10">
+                <el-col :span="8" class="right">更新人</el-col>
+                <el-col :span="10">{{data.updateByName}}</el-col>
+            </el-col>
+            <el-col :span="10">
+                <el-col :span="8" class="right">更新时间</el-col>
+                <el-col :span="10">{{data.updateTime}}</el-col>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20">
+            <el-col :span="10">
+                <el-col :span="8" class="right">服务商</el-col>
                 <el-col :span="10">
-					  <el-col :span="8" class="right">服务商</el-col><el-col :span="10">
-                          <div v-for="e in data.serviceCompanyList">{{e.serviceCompanyName}}</div>
-                      </el-col>
-				</el-col>
-      		</el-row>
-            <el-row :gutter="20">
-      		    <el-col :span="20">
-					  <el-col :span="4" class="right">IP白名单（固定IP）</el-col><el-col :span="10" style="word-wrap: break-word;">{{data.allowIp}}</el-col>
-				</el-col>
-      		</el-row>
-			<el-row :gutter="20">
-      		    <el-col :span="20">
-					  <el-col :span="4" class="right">异步通知接口</el-col><el-col :span="10" style="word-wrap: break-word;">{{data.notifyUrl}}</el-col>
-				</el-col>
-      		</el-row>
-			<el-row :gutter="20">
-      		    <el-col :span="20">
-					  <el-col :span="4" class="right">RSA公钥</el-col><el-col :span="10" style="word-wrap: break-word;">{{data.appRsaPublickKey}}</el-col>
-				</el-col>
-      		</el-row>
-      	</div>
-          <!-- <div class="title">
-              基本信息
-          </div>
-          <el-form label-width="180px" class="form">
-              <el-form-item label="客户名称：">
-                  <template>{{data.companyName}}</template>
-              </el-form-item>
-              <el-form-item label="接入应用：">
-                  <template>{{data.appName}}</template>
-              </el-form-item>
-              <el-form-item label="appId：">
-                  <template>{{data.appId}}</template>
-              </el-form-item>
-              <el-form-item label="服务商名称：">
-                  <template>{{data.serviceCompanyName}}</template>
-              </el-form-item>
-          </el-form> -->
-          <!-- <div class="title">客户应用配置信息</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="open">编辑</el-button>
-          <el-form label-width="180px" class="form">
-            <el-form-item label="应用类型：">
-                <template>{{data.isFromOutApp ? '外部' : '内部'}}应用</template>
-            </el-form-item>
-            <el-form-item label="异步通知appid：">
-                <template>{{data.notifyAppId}}</template>
-            </el-form-item>
-            <el-form-item label="Rsa公钥：">
-                <el-input v-model="data.appRsaPublickKey" style="width: 400px;"></el-input>
-            </el-form-item>
-            <el-form-item label="IP白名单（固定IP）：">
-                <template>{{data.allowIp}}</template>
-            </el-form-item>
-            <el-form-item label="工资单笔异步通知接口：">
-                <template>{{data.notifyUrl}}</template>
-            </el-form-item>
-            <el-form-item label="手机号码(发放短信验证)：" v-if="!data.isFromOutApp">
-                <template>{{data.phone}}</template>
-            </el-form-item>
-          </el-form> -->
+                    <div v-for="e in data.serviceCompanyList">{{e.serviceCompanyName}}</div>
+                </el-col>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20">
+            <el-col :span="20">
+                <el-col :span="4" class="right">IP白名单（固定IP）</el-col>
+                <el-col :span="10" style="word-wrap: break-word;">{{data.allowIp}}</el-col>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20">
+            <el-col :span="20">
+                <el-col :span="4" class="right">异步通知接口</el-col>
+                <el-col :span="10" style="word-wrap: break-word;">{{data.notifyUrl}}</el-col>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20">
+            <el-col :span="20">
+                <el-col :span="4" class="right">RSA公钥</el-col>
+                <el-col :span="10" style="word-wrap: break-word;">{{data.appRsaPublickKey}}</el-col>
+            </el-col>
+        </el-row>
+    </div>
           <div class="title">支付渠道</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="addChannel">添加支付渠道</el-button>
           <el-table :data="data.payUsers">
               <el-table-column prop="payUserId" label="支付用户ID"></el-table-column>
               <el-table-column prop="thirdPaymentTypeName" label="渠道名称"></el-table-column>
               <el-table-column prop="serviceCompanyName" label="关联服务商"></el-table-column>
-              <el-table-column prop="payUserId" label="支付账号"></el-table-column>
-              <!-- <el-table-column prop="payUserName" label="子账号名称"></el-table-column>
-              <el-table-column prop="payUserNo" label="子账号"></el-table-column> -->
-              <!-- <el-table-column prop="channelTypeName" label="渠道类型"></el-table-column> -->
+              <el-table-column prop="payUserName" label="支付账号"></el-table-column>
               <el-table-column label="操作">
                   <template slot-scope="scope">
                       <el-button type="text" @click="deleteRow(scope.row)">删除</el-button>
@@ -124,12 +96,105 @@
                   </template>
               </el-table-column>
           </el-table>
+            <div class="title" v-if="data.isFromOutApp">开发者信息</div>
+            <div class="box" v-if="data.isFromOutApp">
+                <el-row :gutter="20"><el-col :span="10"><el-col :span="8" class="rightHead">商户服务信息</el-col></el-col></el-row>
+                <el-row :gutter="20">
+                    <el-col :span="10">
+                        <el-col :span="8" class="right">应用名称</el-col>
+                        <el-col :span="10">{{appinfo.appName}}</el-col>
+                    </el-col>
+                    <el-col :span="10">
+                        <el-col :span="8" class="right">AppID</el-col>
+                        <el-col :span="10">{{appinfo.appId}}</el-col>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="10">
+                        <el-col :span="8" class="right">开通服务</el-col>
+                        <el-col :span="16"><el-checkbox v-for="e in appinfo.services" :key="e" :label="e" :checked="true" disabled></el-checkbox></el-col>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="10">
+                        <el-col :span="8" class="right">状态</el-col>
+                        <el-col :span="10">{{appinfo.statusName}}<span class="danger" v-if="this.appinfo.status == 9">{{appinfo.memo}}</span></el-col>
+                    </el-col>
+                    <el-col :span="10">
+                        <el-col :span="8" class="right">备注</el-col>
+                        <el-col :span="10">{{appinfo.memo}}</el-col>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20"><el-col :span="10"><el-col :span="8" class="rightHead">沙箱环境配置</el-col></el-col></el-row>
+                <el-row :gutter="20">
+                    <el-col :span="10">
+                        <el-col :span="8" class="right">回调地址</el-col>
+                        <el-col :span="16">{{appinfo.sandboxConfig.notifyUrl}}</el-col>
+                    </el-col>
+                    <el-col :span="10">
+                        <el-col :span="8" class="right">每日调用限制</el-col>
+                        <el-col :span="10">{{appinfo.sandboxConfig.dailyLimit}}</el-col>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="10" v-for="e in appinfo.sandboxConfig.services" :key="e.code">
+                        <el-col :span="8" class="right">{{e.name}}</el-col>
+                        <el-col :span="16">
+                            <span class="usable" v-if="e.configured">可用</span>
+                            <span class="disable" v-else>配置中</span>
+                        </el-col>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="20">
+                        <el-col :span="4" class="right">应用公钥</el-col>
+                        <el-col :span="20" style="word-wrap: break-word;">{{appinfo.sandboxConfig.appPubKey}}</el-col>
+                    </el-col>
+                    <el-col :span="20">
+                        <el-col :span="4" class="right">爱员工公钥</el-col>
+                        <el-col :span="20" style="word-wrap: break-word;">{{appinfo.sandboxConfig.aygPubKey}}</el-col>
+                    </el-col>
+                </el-row>
+                <div v-if="appinfo.prodConfig">
+                  <el-row :gutter="20"><el-col :span="10"><el-col :span="8" class="rightHead">线上环境配置</el-col></el-col></el-row>
+                  <el-row :gutter="20">
+                      <el-col :span="10">
+                          <el-col :span="8" class="right">回调地址</el-col>
+                          <el-col :span="16">{{appinfo.prodConfig.notifyUrl}}</el-col>
+                      </el-col>
+                      <el-col :span="10">
+                          <el-col :span="8" class="right">每日调用限制</el-col>
+                          <el-col :span="10">{{appinfo.prodConfig.dailyLimit}}</el-col>
+                      </el-col>
+                  </el-row>
+                  <el-row :gutter="20">
+                      <el-col :span="10" v-for="e in appinfo.prodConfig.services" :key="e.code">
+                          <el-col :span="8" class="right">{{e.name}}</el-col>
+                          <el-col :span="16">
+                              <span class="usable" v-if="e.configured">可用</span>
+                              <span class="disable" v-else>配置中</span>
+                          </el-col>
+                      </el-col>
+                  </el-row>
+                  <el-row :gutter="20">
+                      <el-col :span="20">
+                          <el-col :span="4" class="right">应用公钥</el-col>
+                          <el-col :span="20" style="word-wrap: break-word;">{{appinfo.prodConfig.appPubKey}}</el-col>
+                      </el-col>
+                      <el-col :span="20">
+                          <el-col :span="4" class="right">爱员工公钥</el-col>
+                          <el-col :span="20" style="word-wrap: break-word;">{{appinfo.prodConfig.aygPubKey}}</el-col>
+                      </el-col>
+                      <el-col :span="20">
+                          <el-col :span="4" class="right">IP白名单</el-col>
+                          <el-col :span="20" style="word-wrap: break-word;">{{appinfo.prodConfig.whiteIp}}</el-col>
+                      </el-col>
+                  </el-row>
+                </div>
+            </div>
       </div>
       <el-dialog title="appid配置信息" :before-close="listInit" :visible.sync="ashow" width="70%">
           <el-form label-width="180px" :model="aform" :rules="arule" ref="aform">
-              <!-- <el-form-item label="商品名称：" prop="appName">
-                  <el-input class="f_input" v-model="aform.appName"></el-input>
-              </el-form-item> -->
               <el-form-item label="商户负责人：" prop="chargeBy">
                   <el-select v-model="aform.chargeBy" class="form_input" @change="getName">
                   <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
@@ -154,9 +219,7 @@
                     <el-input class="f_input" v-model="aform.phone"></el-input>
                 </el-form-item>
               </template>
-              <!-- v-if="isQuery" -->
               <el-form-item label="服务商">
-                  <!-- :checked="isChecked(item)" -->
                   <el-checkbox-group v-model="aform.serviceCompanyList" @change="change">
                       <el-checkbox v-for="item in company" :label="item.value" :key="item.value">{{item.text}}</el-checkbox>
                   </el-checkbox-group>
@@ -234,6 +297,8 @@
           </span>
       </el-dialog>
     </div>
+
+    
 </template>
 <script>
 import {
@@ -254,7 +319,6 @@ export default {
       ashow: false,
       aform: {
         allowIp: "",
-        // appName: '',
         appId: "",
         chargeBy: '',
         chargeByName: '',
@@ -263,17 +327,9 @@ export default {
         notifyUrl: "",
         phone: "",
         authCode: "",
-        serviceCompanyList: []
+        serviceCompanyList: {}
       },
-    //   isQuery: true,
       arule: {
-        // appName: [
-        //   {
-        //     required: true,
-        //     message: "请输入商户名称",
-        //     trigger: "change"
-        //   }
-        // ],
         chargeBy: [
             {
             required: true,
@@ -295,13 +351,7 @@ export default {
             trigger: "change"
           }
         ],
-        allowIp: [
-        //   {
-        //     required: true,
-        //     message: "请输入白名单IP",
-        //     trigger: "change"
-        //   }
-        ],
+        allowIp: [],
         notifyUrl: [
           {
             required: true,
@@ -330,45 +380,47 @@ export default {
       isDefault: 1,
       serviceCompanyId: '',
       charges: [],
-      company: []
+      company: [],
+      appinfo:{
+        sandboxConfig:{
+          notifyUrl:""
+        }
+      }
     };
   },
-  activated() {
+  mounted() {
     this.appId = sessionStorage.getItem("appId");
     this.aform.appId = this.appId;
     this.query();
+
     get("/api/console-dlv/option/get-by-type?type=ThirdPaymentType").then(
       data => {
         this.types = data;
       }
     );
-    // post('/api/paymentmgt/front/payuser/qrybycompany', {
-    //   companyId: this.data.id,
-    //   thirdpaySystemId: "string"
-    // })
     this.getPhone();
     this.createId();
-    this.authCode = localStorage.getItem("authCode");
+    this.authCode = localStorage.getItem("authCode")
     get(`/api/sysmgr-web/user/get-platform-users?platformType=console-company`).then(data => {
-      console.log(data);
       this.charges = data;
     });
+    
+    get("/api/openapi/developer/appinfo/" + this.appId).then(data => {
+      this.appinfo = data;
+    });
+
   },
   methods: {
     query() {
-    //   this.isQuery = false
       post("/api/sysmgr-web/company-app/detail", {
         appId: this.appId
       }).then(data => {
         this.data = data;
         !this.data.payUsers && (this.data.payUsers = []);
         this.listInit()
-        // this.aform.serviceCompanyList
-        // this.aform.appName = data.appName
         this.aform.chargeBy = data.chargeBy
         this.aform.chargeByName = data.chargeByName
         this.getService()
-        // this.isQuery = true
       });
     },
     listInit(next) {
@@ -392,12 +444,6 @@ export default {
         }
       });
     },
-    // isChecked(a) {
-    //     var arr = this.data.serviceCompanyList.filter(e => {
-    //         return e.serviceCompanyId == a.value
-    //     })
-    //     return arr.length > 0 ? true : false
-    // },
     change() {
         console.log(this.aform.serviceCompanyList)
     },
@@ -464,7 +510,6 @@ export default {
         companyId: this.serviceCompanyId,
         thirdpaySystemId: this.paymentThirdType
       }).then(data => {
-        console.log(data);
         this.others = data;
       });
     },
@@ -472,7 +517,6 @@ export default {
       var arr = this.others.filter(e => {
         return e.payeruserName == this.payeruserName;
       });
-      console.log(arr);
       this.result = arr[0];
     },
     addChannel() {
@@ -485,7 +529,6 @@ export default {
     addRow() {
       if (this.authCode) {
         post(`/api/paymentmgt/front/channel/qrydetail?channelId=${this.result.channelId}`).then(data => {
-            // console.log(data['cj.merchant_id'] || data['wx.mchid'] || data['partner_id'] || data['mer_id'])
             postWithErrorCallback("/api/sysmgr-web/company-app/add-payment-user", {
               appId: this.appId,
               payUserNo: this.result.thirdpayUserId,
@@ -496,7 +539,7 @@ export default {
               isDefault: this.isDefault,
               channelAlias: data.channelAlias,
               channelLoginAcctNo: data.loginAcctno,
-              channelMerCustId: data['cj.merchant_id'] || data['wx.mchid'] || data['partner_id'] || data['mer_id'] || data['alipay.appid'] || data['pingan.mainacct.no'] || data['cmb.nteckopr.eacNbr'] || '',
+              channelMerCustId: data['cj.merchant_id'] || data['wx.mchid'] || data['partner_id'] || data['mer_id'] || data['alipay.appid'] || data['pingan.mainacct.no'] || data['cmb.nteckopr.eacNbr'] || data['hxb.merchId'] || '',
               serviceCompanyId: this.serviceCompanyId
             }).then(data => {
               this.addShow = false;
@@ -519,11 +562,9 @@ export default {
     deleteRow(e) {
       this.curr = e;
       this.dshow = true;
-      console.log(this.curr);
     },
     sure() {
       if (this.authCode) {
-        console.log(this.curr);
         postWithErrorCallback("/api/sysmgr-web/company-app/del-payment-user", {
           appId: this.appId,
           paymentThirdType: this.curr.thirdPaymentType,
@@ -561,7 +602,6 @@ export default {
     },
     createId() {
       this.req_id = this.guid();
-      console.log(this.req_id);
     },
     getCode() {
       if (this.chars) {
@@ -569,8 +609,7 @@ export default {
           captcha: this.chars,
           reqId: this.req_id
         })
-          .then(data => {
-            console.log(data);
+        .then(data => {
             this.$message({
               type: "success",
               message: "验证码已发送，请注意查收"
@@ -602,7 +641,6 @@ export default {
         post("/api/sysmgr-web/company-app/get-auth-code-by-phone-code", {
           phoneCode: this.phoneCode
         }).then(data => {
-          console.log(data);
           this.cshow = false;
           this.authCode = data;
           localStorage.setItem("authCode", data);
@@ -624,10 +662,8 @@ export default {
         else {
             this.isDefault = 0
         }
-        console.log(this.isDefault)
     },
     setDefault(a) {
-        console.log(a)
         if(a) {
             this.curr = a
         }
@@ -645,7 +681,6 @@ export default {
                 });
                 this.query()
             }).catch(err => {
-                console.log(err)
                 if (err.message == "无效的授权码！") {
                   this.getAccredit(this.setDefault);
                 }
@@ -691,10 +726,46 @@ export default {
   color: #909399;
 }
 /* .box > div:nth-child(1) {
-	margin-bottom: 20px;
+    margin-bottom: 20px;
 } */
 .right {
   font-weight: bold;
   text-align: right;
+}
+.rightHead{
+    font-weight: bold;
+    text-align: right;
+    margin-bottom: 10px;
+    font-size: 16px
+}
+.danger{
+    color: #fff;
+    text-align:center;
+    border:1px solid #F56C6C;
+    padding:1px 7px; 
+    background:#F56C6C;
+    border-radius:5px;
+    -moz-border-radius:7px;
+}
+.usable{
+    color: #fff;
+    text-align:center;
+    border:1px solid #67C23A;
+    padding:1px 7px; 
+    background:#67C23A;
+    border-radius:5px;
+    -moz-border-radius:7px;
+}
+.disable{
+    color: #fff;
+    text-align:center;
+    border:1px solid #E6A23C;
+    padding:1px 7px; 
+    background:#E6A23C;
+    border-radius:5px;
+    -moz-border-radius:7px;
+}
+.el-col{
+    margin-bottom: 5px;
 }
 </style>

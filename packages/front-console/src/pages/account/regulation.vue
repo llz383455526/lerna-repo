@@ -235,9 +235,13 @@ export default {
     },
     methods: {
         getTime() {
-            if(this.dateValue.length) {
+            if(this.dateValue && this.dateValue.length) {
                 this.form.tradeAtBegin = this.dateValue[0]
                 this.form.tradeAtEnd = this.dateValue[1]
+            }
+            else {
+                this.form.tradeAtBegin = ''
+                this.form.tradeAtEnd = ''
             }
         },
         query(a) {

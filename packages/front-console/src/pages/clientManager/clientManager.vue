@@ -6,7 +6,7 @@
           </el-breadcrumb-item>
       </el-breadcrumb>
       <el-form class="form" :model="form" :inline="true" label-width="100px">
-          <el-form-item label="客户名称" size="small">
+          <el-form-item label="企业名称" size="small">
               <el-input v-model="form.fullName" class="in_input"></el-input>
           </el-form-item>
           <!-- <el-form-item label="开通状态">
@@ -15,7 +15,7 @@
                   <el-option value="0" label="未开通"></el-option>
               </el-select>
           </el-form-item> -->
-          <el-form-item label="客户简称" size="small">
+          <el-form-item label="企业简称" size="small">
               <el-input v-model="form.name" class="in_input"></el-input>
           </el-form-item>
           <el-form-item class="form_foot" size="small">
@@ -59,7 +59,7 @@
       </div>
       <!-- <el-dialog title="添加客户" :visible.sync="eshow" width="50%">
           <el-form :inline="true" label-width="80px">
-              <el-form-item label="客户名称">
+              <el-form-item label="商户名称">
                   <el-select v-model="appId" filterable remote :remote-method="remoteMethod" :loading="loading">
                       <el-option v-for="item in remoteData" :label="item.text" :value="item.value"></el-option>
                   </el-select>

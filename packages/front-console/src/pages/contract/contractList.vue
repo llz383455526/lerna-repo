@@ -2,7 +2,7 @@
 
     <div class="main-container">
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
-            <el-form-item label="客户名称（公司）" size="small" prop="customCompanyName">
+            <el-form-item label="商户名称（公司）" size="small" prop="customCompanyName">
                 <el-input v-model="formSearch.customCompanyName"></el-input>
             </el-form-item>
 
@@ -38,7 +38,7 @@
         <div class="table-container">
             <el-table :data="tableList.list">
                 <el-table-column prop="contractNo" label="合同编号"></el-table-column>
-                <el-table-column prop="customCompanyName" label="客户名称"></el-table-column>
+                <el-table-column prop="customCompanyName" label="商户名称"></el-table-column>
                 <el-table-column prop="serviceCompanyName" label="服务商名称"></el-table-column>
                 <el-table-column prop="contractTypeName" label="业务类型"></el-table-column>
                 <el-table-column prop="contractStartDate" label="合同开始时间">

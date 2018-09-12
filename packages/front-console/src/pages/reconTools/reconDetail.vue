@@ -15,7 +15,7 @@
                         <el-table-column prop="billDate" label="提交日期" width="90" fixed></el-table-column>
                         <!--<el-table-column prop="billDate" label="对账日期" width="120"></el-table-column>-->
                         <el-table-column prop="channelCodeName" label="发放渠道" width="80"></el-table-column>
-                        <el-table-column prop="payerAppName" label="客户名称"></el-table-column>
+                        <el-table-column prop="payerAppName" label="商户名称"></el-table-column>
                         <el-table-column prop="status" label="对账进度" width="80"></el-table-column>
                         <!--<el-table-column prop="fromAccountNo" label="发放账号" width="80"></el-table-column>-->
                         <el-table-column prop="appAmount" label="业务发放金额" width="120">

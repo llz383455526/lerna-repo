@@ -20,7 +20,7 @@
 
         <div class="title">申请开票列表</div>
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
-            <el-form-item label="客户名称" size="small" prop="customCompanyName">
+            <el-form-item label="商户名称" size="small" prop="customCompanyName">
                 <el-input v-model="formSearch.customCompanyName"></el-input>
             </el-form-item>
             <el-form-item label="申请编号" size="small" prop="orderNo">
@@ -91,7 +91,7 @@
         </router-link>
         <el-button size="small" style="margin-left: 240px" @click="isWait">待审批：{{wait}}</el-button>
         <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
-         	<el-table-column label="操作" width="120">
+            <el-table-column label="操作" width="120">
                 <template slot-scope="scope">
                     <el-button v-if="scope.row.cancelFlag == 0 && scope.row.applyType != '客户申请'" @click="showDetail(scope.row.id, true)" type="text" size="medium" style="padding:0;">作废</el-button>
                 </template>
@@ -101,9 +101,14 @@
                     <el-button size="small" type="text" @click="showDetail(scope.row.id)">{{scope.row.orderNo}}</el-button>
                 </template>
             </el-table-column>
+            <el-table-column prop="createTime" label="申请时间" width="220">
+                <template slot-scope="scope">
+                    <span>{{scope.row.createTime | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="applyType" label="申请类型" width="120"></el-table-column>
             <el-table-column prop="statusName" label="申请状态" width="120"></el-table-column>
-            <el-table-column prop="customCompanyName" label="客户名称" width="160"></el-table-column>
+            <el-table-column prop="customCompanyName" label="商户名称" width="160"></el-table-column>
             <el-table-column prop="purpose" label="发票用途" width="160"></el-table-column>
             <el-table-column prop="amount" label="申请金额" width="120"></el-table-column>
             <el-table-column prop="num" label="申请票数" width="120"></el-table-column>
@@ -120,11 +125,6 @@
             <el-table-column prop="customerInvoiceType" label="客户开票类型"></el-table-column>
             <el-table-column prop="serviceCompanyName" label="开票公司" width="220"></el-table-column>
             <el-table-column prop="createByName" label="申请人" width="120"></el-table-column>
-            <el-table-column prop="createTime" label="申请时间" width="220">
-                <template slot-scope="scope">
-                    <span>{{scope.row.createTime | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
-                </template>
-            </el-table-column>
             <el-table-column prop="checkByName" label="审批人" width="120"></el-table-column>
             <el-table-column prop="checkTime" label="审批时间" width="220">
                 <template slot-scope="scope">
@@ -238,7 +238,7 @@
             </div>
             <div class="detailContext">
                 <span>发票用途:</span>
-                <span>{{formDetail.remark}}</span>
+                <span>{{formDetail.purpose}}</span>
             </div>
 
             <el-table :data="formDetail.items" style="width: 100%;margin-top: 20px;" @selection-change="handleSelectionChange">
@@ -251,7 +251,7 @@
             </el-table>
 
             <div slot="footer" class="dialog-footer">
-            	<el-button size="small" @click="dialogDetailVisible = false">关闭</el-button>
+                <el-button size="small" @click="dialogDetailVisible = false">关闭</el-button>
                 <template v-if="formDetail.status == '1' || isCancel">
                     <template v-if="!isCancel">
                         <el-button size="small" @click="dialogDetailVisible = false;dialogRejectVisible = true" v-if="isCan">整单拒开</el-button>
@@ -291,7 +291,7 @@
             </p>
             <h3>提交开票后，未勾选的部分将做欠票处理</h3>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogOpenVisible=false;submitInvoice();">确认提交</el-button>
+                <el-button @click="dialogOpenVisible=false;formInvoice.allReject = false;submitInvoice();">确认提交</el-button>
             </div>
         </el-dialog>
         <div class="v-modal" v-show="showDown" @click.self="showDown = false" :style="{ backgroundImage: `url(/api/invoice-web/invoice/attachment/preview/${attachmentId})`}">
@@ -430,6 +430,10 @@
                 if(this.dateValue && this.dateValue.length) {
                     this.formSearch.startAt = this.dateValue[0]
                     this.formSearch.endAt = this.dateValue[1]
+                }
+                else {
+                    this.formSearch.startAt = ''
+                    this.formSearch.endAt = ''
                 }
             },
             indexMethod(index) {
@@ -656,10 +660,10 @@
                 this.formOpen.amount = parseFloat((allAmount - allAmountMinus).toPrecision(12));
             },
             previewForm() {
-            	let url = '/api/invoice-web/invoice/approve-preview';
+                let url = '/api/invoice-web/invoice/approve-preview';
                 let param = this.formInvoice;
-             	post(url, param).then(data => {
-                	let newWindow = window.open();
+                post(url, param).then(data => {
+                    let newWindow = window.open();
                     newWindow.location.href = data;
                 });
             },

@@ -214,7 +214,7 @@ export default {
   computed: {
       ...mapGetters({
           userInformation: 'userInformation',
-          clientList: 'clientList'
+        //   clientList: 'clientList'
       })
   },
   watch: {
@@ -261,12 +261,12 @@ export default {
     })
     // this.getPhone();
     this.query()
-    this.$store.dispatch('getClientList', {
-      orderId: this.data.id
-    })
-    setTimeout(() => {
-      console.log(this.clientList)
-    }, 3000)
+    // this.$store.dispatch('getClientList', {
+    //   orderId: this.data.id
+    // })
+    // setTimeout(() => {
+    //   console.log(this.clientList)
+    // }, 3000)
     // console.log(this.userInformation)
   },
   methods: {

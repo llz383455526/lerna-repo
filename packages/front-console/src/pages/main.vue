@@ -319,13 +319,16 @@ export default {
 }
 </style>
 
-<style lang="scss">
+<style>
 .el-submenu__title i {
   color: #fff;
 }
 
 .el-menu--horizontal .el-submenu > .el-menu {
   top: 60px !important;
+}
+.el-dialog__body {
+	text-align: left;
 }
 </style>
 

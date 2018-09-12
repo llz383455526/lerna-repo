@@ -91,13 +91,13 @@ export default {
                         trigger: "change"
                     }
                 ],
-                taxLandingId: [
-                    {
-                        required: true,
-                        message: "请选择税优地",
-                        trigger: "change"
-                    }
-                ],
+                // taxLandingId: [
+                //     {
+                //         required: true,
+                //         message: "请选择税优地",
+                //         trigger: "change"
+                //     }
+                // ],
                 areaName: [
                     {
                         required: true,

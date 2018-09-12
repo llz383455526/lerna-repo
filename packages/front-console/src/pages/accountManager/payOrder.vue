@@ -10,7 +10,7 @@
         </el-tabs>
 
         <el-form :inline="true" :model="formSearch" style="padding-left: 35px;padding: 10px 0 10px 35px;">
-            <el-form-item label="客户名称:" size="small">
+            <el-form-item label="商户名称:" size="small">
                 <el-select filterable style="width: 150px" v-model="formSearch.appName" placeholder="请选择">
                     <el-option label="所有" value=""></el-option>
                     <el-option v-for="(item, index) in customNameList" :label="item.text" :value="item.value" :key="index"></el-option>
@@ -50,7 +50,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="请求起止时间:" size="small">
-                <el-date-picker v-model="dateValue" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" @change="getTime_req"></el-date-picker>
+                <el-date-picker v-model="dateValue" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
             </el-form-item>
 			<el-form-item label="发放时间:" size="small">
                 <el-date-picker v-model="paymentResTime" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
@@ -75,7 +75,7 @@
 
         <div class="table-container el-table el-table--fit el-table--border el-table--scrollable-x el-table--enable-row-transition">
             <el-table :data="flowTableList.list" style="width: 100%">
-                <el-table-column prop="appName" label="客户名称" width="140" fixed></el-table-column>
+                <el-table-column prop="appName" label="商户名称" width="140" fixed></el-table-column>
                 <el-table-column prop="outOrderNo" label="客户订单号" width="120"></el-table-column>
                 <el-table-column prop="serviceCompanyName" label="服务公司" width="140"></el-table-column>
                 <el-table-column prop="paymentThirdTypeName" label="发放渠道" width="80"></el-table-column>

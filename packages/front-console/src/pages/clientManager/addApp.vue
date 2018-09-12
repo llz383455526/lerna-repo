@@ -18,7 +18,12 @@
           </el-form-item>
           <el-form-item label="商户类型" prop="isFromOutApp">
 			  <el-radio v-model="form.isFromOutApp" label="1">API对接</el-radio>
-  			  <el-radio v-model="form.isFromOutApp" label="0">SAAS系统</el-radio>
+  			  <el-radio v-model="form.isFromOutApp" label="0" @change="form.serviceCodes = [];">SAAS系统</el-radio>
+          </el-form-item>
+          <el-form-item label="服务类型" prop="serviceCodes" size="small" v-show="form.isFromOutApp == 1">
+                <el-checkbox-group v-model="form.serviceCodes">
+                  <el-checkbox :label="item.value" :key="item.value" v-for="item in serverConfig">{{item.text}}</el-checkbox>
+                </el-checkbox-group>
           </el-form-item>
 		  <el-form-item label="企业负责人" prop="chargeBy" size="small">
               <el-select v-model="form.chargeBy" class="form_input" @change="getName">
@@ -77,6 +82,13 @@ import { get, post, postWithErrorCallback } from "../../store/api";
 import { baseUrl } from "../../config/address.js";
 export default {
   data() {
+    var validateService = (rule, value, callback) => {
+        if(value == '' && this.form.isFromOutApp == 1){
+            callback(new Error('至少勾选一个选项'))
+        }else{
+            callback()
+        }
+    };
     return {
       form: {
         isFromOutApp: "",
@@ -86,7 +98,8 @@ export default {
         serviceCompanyList: [],
         authCode: "",
         chargeBy: "",
-        chargeByName: ""
+        chargeByName: "",
+        serviceCodes: []
       },
       rule: {
         isFromOutApp: [
@@ -109,6 +122,12 @@ export default {
             message: "请输入appId",
             trigger: "change"
           }
+        ],
+        serviceCodes:[
+        {
+          validator: validateService,
+          trigger: "blur"
+        }
         ],
         chargeBy: [
           {
@@ -146,7 +165,8 @@ export default {
       currEvent: "",
       msg: "",
       baseUrl,
-      charges: []
+      charges: [],
+      serverConfig: [],
     };
   },
   mounted() {
@@ -169,6 +189,10 @@ export default {
       this.charges = data;
     });
     this.authCode = localStorage.getItem('authCode')
+    get("/api/sysmgr-web/commom/service-config").then(data => {
+        this.serverConfig = data;
+    })
+
   },
   methods: {
     back() {

@@ -114,9 +114,13 @@ export default {
           this.form.createAtEnd = ''
       },
       getTime() {
-          if(this.range.length) {
+          if(this.range && this.range.length) {
               this.form.createAtBegin = this.range[0]
               this.form.createAtEnd = this.range[1]
+          }
+          else {
+              this.form.createAtBegin = ''
+              this.form.createAtEnd = ''
           }
       },
       exportDetail() {

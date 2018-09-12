@@ -285,8 +285,23 @@
 					</el-col>
       			</el-row>
 			</template>
+            <template v-if="data.thirdpaySystemId == 'hxb'">
+				<el-row :gutter="20">
+                    <el-col :span="10">
+						  <el-col :span="8" class="right">商户号</el-col><el-col :span="10">{{data['hxb.merchId']}}</el-col>
+					</el-col>
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">前置机地址</el-col><el-col :span="10">{{data['hxb.server']}}</el-col>
+					</el-col>
+      			</el-row>
+                  <el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">渠道标识</el-col><el-col :span="10">{{data['id']}}</el-col>
+					</el-col>
+      			</el-row>
+			</template>
       	</div>
-        <div class="title">支付渠道</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="addChannel">添加支付渠道</el-button>
+        <div class="title">支付用户</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="addChannel">添加支付用户</el-button>
         <el-table :data="payUsers">
             <el-table-column prop="payeruserName" label="支付用户名称"></el-table-column>
             <el-table-column prop="thirdpayUserId" label="子账户"></el-table-column>
@@ -295,6 +310,11 @@
 					{{scope.row.amount | formatMoney}}
 				</template>
 			</el-table-column>
+            <template v-if="data.thirdpaySystemId == 'hxb'">
+                <el-table-column prop="othBankPayeeSubAcc" label="跨行收款子账号"></el-table-column>
+                <el-table-column prop="othBankPayeeSubAccName" label="跨行收款子账号户名"></el-table-column>
+                <el-table-column prop="othBankPayeeSubAccSetteName" label="跨行收款子账号清算行"></el-table-column>
+            </template>
             <el-table-column prop="memo" label="备注"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
@@ -499,6 +519,14 @@
                     <el-input class="form_input" v-model="eform.rec$hf$sftp$password"></el-input>
                 </el-form-item>
 			</template>
+            <template v-if="eform.thirdpaySystemId == 'hxb'">
+                <el-form-item label="商户号" prop="hxb$merchId">
+                    <el-input class="form_input" v-model="eform.hxb$merchId"></el-input>
+                </el-form-item>
+                <el-form-item label="前置机地址" prop="hxb$server">
+                    <el-input class="form_input" v-model="eform.hxb$server"></el-input>
+                </el-form-item>
+            </template>
 		  </el-form>
           <span class="form_footer" slot="footer">
               <el-button @click="update" type="primary">保存</el-button>
@@ -510,7 +538,7 @@
               <el-form-item label="用户名" prop="payeruserName">
 				  <el-input v-model="aform.payeruserName" size="small" type="primary"></el-input>
               </el-form-item>
-              <el-form-item label="子账号" prop="thirdpayUserId" v-if="eform.thirdpaySystemId != 'changjie' && eform.thirdpaySystemId != 'wx'">
+              <el-form-item label="子账号" prop="thirdpayUserId" v-if="eform.thirdpaySystemId != 'changjie' && eform.thirdpaySystemId != 'wx' && eform.thirdpaySystemId != 'hxb' && eform.thirdpaySystemId != 'pingan'">
                   <el-input v-model="aform.thirdpayUserId" size="small" type="primary"></el-input>
               </el-form-item>
               <el-form-item label="备注" prop="memo">
@@ -1210,6 +1238,30 @@ export default {
             }
         ],
         rec$hf$sftp$password: [
+            {
+                max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        hxb$merchId: [
+            {
+                required: true,
+                message: '请输入商户号',
+                trigger: 'blur'
+            },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        hxb$server: [
+            {
+                required: true,
+                message: '请输入前置机地址',
+                trigger: 'blur'
+            },
             {
                 max: 512,
                 message: '输入过长',

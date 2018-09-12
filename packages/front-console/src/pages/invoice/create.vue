@@ -6,7 +6,7 @@
 
             <div>
                 <div class="input-container">
-                    <div class="label">客户名称<span>*</span></div>
+                    <div class="label">商户名称<span>*</span></div>
                     <div class="input">
                         <el-form-item prop="customCompanyId">
                             <el-select v-model="formData.customCompanyId" filterable placeholder="请选择" style="width: 250px;"
@@ -162,7 +162,7 @@
 
             <div>
                 <div class="input-container" style="width: 45%;">
-                    <div class="label">客户名称<span>*</span></div>
+                    <div class="label">商户名称<span>*</span></div>
                     <div class="input">
                         {{formService.name}}
                     </div>
@@ -283,9 +283,11 @@
                             subjectId: '',
                         }
                     ],
-                    // payee: '',
-                    // checker: '',
-                    // drawer: '',
+                    taxIdcd: '',
+                    addr: '',
+                    phone: '',
+                    bankName: '',
+                    bankAccount: '',
                 },
                 formBuy: {
                     taxIdcd: '',
@@ -319,7 +321,7 @@
                     customCompanyId: [
                         {
                             required: true,
-                            message: "请选择客户名称",
+                            message: "请选择商户名称",
                             trigger: "blur"
                         }
                     ],

@@ -1,7 +1,7 @@
 <template>
   <div class="r_main">
-      <el-form :inline="true" label-width="80px">
-          <el-form-item label="客户名称">
+      <el-form :inline="true" size="small">
+          <el-form-item label="商户名称">
               <el-input v-model="form.customCompanyName" class="in_input" placeholder="请输入名称"></el-input>
           </el-form-item>
           <el-form-item label="发票类型">
@@ -13,7 +13,7 @@
               <el-input v-model="form.amountStart" placeholder="最小值" class="in_input"></el-input> - <el-input v-model="form.amountEnd" placeholder="最大值" class="in_input"></el-input>
           </el-form-item>
           <el-form-item class="form_foot">
-              <el-button type="primary" @click="query">查询</el-button><el-button type="warning" @click="clear">清除</el-button>
+              <el-button type="primary" @click="query">查询</el-button><el-button @click="clear">清除</el-button>
           </el-form-item>
       </el-form>
       <div class="form_head">欠票列表</div>
@@ -24,7 +24,7 @@
                   <el-button type="text" @click="detail(scope.row)">欠票详细记录</el-button>
               </template>
           </el-table-column>
-          <el-table-column prop="customCompanyName" label="客户名称"></el-table-column>
+          <el-table-column prop="customCompanyName" label="商户名称"></el-table-column>
           <el-table-column label="欠票金额合计">
               <template slot-scope="scope">
                   {{(scope.row.totalAmount - 0).toFixed(2)}}
@@ -50,7 +50,7 @@
         </el-pagination>
       </div>
     <el-dialog title="历史欠票" :visible.sync="show">
-        <div>客户名称： {{dForm.customCompanyName}}</div>
+        <div>商户名称： {{dForm.customCompanyName}}</div>
         <div>发票类型： {{dForm.invoiceTypeName}}</div>
         <el-table class="table" :data="dtData" border>
             <el-table-column prop="subjectName" label="发票类目名"></el-table-column>

@@ -2,7 +2,7 @@
     <div class="bg-white p15">
         <div class="mb30">大额资金发放审批</div>
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
-            <el-form-item label="客户名称" size="small">
+            <el-form-item label="商户名称" size="small">
                 <el-autocomplete
                         class="inline-input"
                         v-model="appName"
@@ -24,10 +24,10 @@
             <el-form-item label="提交时间:" size="small">
                 <el-date-picker
                         v-model="dateValue"
-                        type="datetimerange"
+                        type="daterange"
+                        value-format="yyyy-MM-dd"
                         start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd hh:mm:ss">
+                        end-placeholder="结束日期">
                 </el-date-picker>
             </el-form-item>
             <br>
@@ -174,7 +174,7 @@
                 });
                 let startAt = '';
                 let endAt = '';
-                if (this.dateValue) {
+                if (this.dateValue && this.dateValue.length) {
                     startAt = this.dateValue[0];
                     endAt = this.dateValue[1];
                 }

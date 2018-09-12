@@ -2,7 +2,7 @@
     <div class="bg-white p15">
         <div class="mb30">流水账单</div>
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
-            <el-form-item label="客户名称" size="small">
+            <el-form-item label="商户名称" size="small">
                 <el-autocomplete
                         class="inline-input"
                         v-model="appName"
@@ -33,7 +33,8 @@
                 <el-date-picker
                         v-model="valueDate"
                         type="daterange"
-                        placeholder="选择日期"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
                         value-format="yyyy-MM-dd">
                 </el-date-picker>
             </el-form-item>
@@ -58,7 +59,7 @@
             </el-form-item>
         </el-form>
         <el-table :data="tableData.list">
-            <el-table-column prop="appName" label="客户名称"></el-table-column>
+            <el-table-column prop="appName" label="商户名称"></el-table-column>
             <el-table-column prop="settleDate" label="入账时间">
                 <template slot-scope="scope">
                     <span v-if="scope.row.billType === 'month'">{{scope.row.settleDate | formatTime('yyyy-MM')}}</span>
@@ -101,7 +102,7 @@
             </el-table-column> -->
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <a class="download" v-if="scope.row.status !== '10'" :href="`/api/console-dlv/settled/flow-order-download?appId=${scope.row.appId}&billType=${scope.row.billType}&settledTime=${scope.row.settleDate}&${formSearch.billType == 'month' ? 'settleOrderInvoiceMonthId' : 'settleOrderInvoiceId'}=${scope.row.id}`" target="_blank">
+                    <a class="download" v-if="scope.row.status !== '10'" :href="`/api/recon/settled/flow-order-download?appId=${scope.row.appId}&billType=${scope.row.billType}&settledTime=${scope.row.settleDate}&${formSearch.billType == 'month' ? 'settleOrderInvoiceMonthId' : 'settleOrderInvoiceId'}=${scope.row.id}`" target="_blank">
                         账单下载
                     </a>
                 </template>
@@ -167,7 +168,7 @@
 		            this.formSearch.startAt = this.valueDate[0]
 		            this.formSearch.endAt = this.valueDate[1]
 	            }
-                window.location.href = `/api/console-dlv/settled/flow-order-summing-download?${urlEncode(this.formSearch)}`
+                window.location.href = `/api/recon/settled/flow-order-summing-download?${urlEncode(this.formSearch)}`
             },
             getAllApp() {
                 let url = '/api/console-dlv/option/get-all-app';
@@ -197,7 +198,7 @@
                 this.getStatusList()
             },
             requestAction(pageInfo) {
-                let url = '/api/console-dlv/settled/flow-order-list';
+                let url = '/api/recon/settled/flow-order-list';
                 let self = this;
                 _.foreach(this.allAppList, function (value) {
                     if (value['text'] == self.appName) {
@@ -214,8 +215,10 @@
                     endAt = this.valueMonth;
                 }
                 if (this.formSearch.billType === 'day') {
-                    startAt = this.valueDate[0];
-                    endAt = this.valueDate[1];
+                    if(this.valueDate && this.valueDate.length) {
+                        startAt = this.valueDate[0];
+                        endAt = this.valueDate[1];
+                    }
                 }
                 let param = {
                     startAt: startAt,
@@ -233,7 +236,7 @@
             },
             handleDownload(appId, billType, settledTime) {
                 settledTime = formatTime(settledTime, 'yyyy-MM-dd');
-                window.location.href = baseUrl + '/api/console-dlv/settled/flow-order-download'
+                window.location.href = baseUrl + '/api/recon/settled/flow-order-download'
                     + '?appId=' + appId + '&billType=' + billType
                     + '&settledTime=' + settledTime;
             },
@@ -260,7 +263,7 @@
                     })
             },
             getStatusList() {
-                get('/api/console-dlv/option/get-invoice-status', {
+                get('/api/recon/option/get-invoice-status', {
                     appId: this.formSearch.appId,
                     serviceCompanyId: this.formSearch.serviceCompanyId,
                     billType: this.formSearch.billType

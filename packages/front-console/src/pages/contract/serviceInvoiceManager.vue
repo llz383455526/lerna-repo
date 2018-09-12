@@ -1,16 +1,16 @@
 <template>
   <div class="r_main">
-    <el-form :inline="true" label-width="80px">
+    <el-form :inline="true" size="small">
         <el-form-item label="服务类型">
             <el-input v-model="searchForm.serviceName" class="in_input" placeholder="请输入名称"></el-input>
             <span style="padding-left :20px;" >
-                <el-button type="primary" @click="search">查询</el-button><el-button type="warning" @click="clear">清除</el-button>
+                <el-button type="primary" @click="search">查询</el-button><el-button @click="clear">清除</el-button>
             </span>
         </el-form-item>
      
     </el-form>
 
-    <el-button size="small" @click="add">新增</el-button>
+    <el-button size="small" type="primary" @click="add">新增</el-button>
 
     <el-table :data="page.list" style="width: 100%;margin-top: 20px;">
         <el-table-column prop="id" label="ID" ></el-table-column>

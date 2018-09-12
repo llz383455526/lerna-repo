@@ -330,8 +330,14 @@ export default {
       this.$refs[name].resetFields();
     },
     change() {
-      this.form.startAt = this.range[0];
-      this.form.endAt = this.range[1];
+      if(this.range && this.range.length) {
+		  this.form.startAt = this.range[0];
+      	  this.form.endAt = this.range[1];
+	  }
+	  else {
+		  this.form.startAt = '';
+      	  this.form.endAt = '';
+	  }
     },
     cancel(a) {
       this.$confirm("确定取消该订单吗？", "提示", {

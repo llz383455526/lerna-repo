@@ -59,10 +59,13 @@
                 <el-table-column prop="serviceCompanyName" label="销方名称"></el-table-column>
                 <el-table-column prop="serviceTaxIdcd" label="销方税号"></el-table-column>
                 <el-table-column prop="amount" label="金额（元）">
-                    <template slot-scope="scope">{{scope.row.amount | formatMoney}}</template>
+                    <template slot-scope="scope">{{scope.row.amount - scope.row.taxAmount | formatMoney}}</template>
                 </el-table-column>
                 <el-table-column prop="totalTaxAmount" label="税额（元）">
                     <template slot-scope="scope">{{scope.row.taxAmount | formatMoney}}</template>
+                </el-table-column>
+				<el-table-column prop="totalTaxAmount" label="价税合计（元）">
+                    <template slot-scope="scope">{{scope.row.amount | formatMoney}}</template>
                 </el-table-column>
             </el-table>
         </div>

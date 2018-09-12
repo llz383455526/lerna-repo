@@ -6,7 +6,7 @@
           </el-breadcrumb-item>
       </el-breadcrumb>
       <el-form class="form" :model="form" :inline="true" label-width="100px" ref="form">
-          <el-form-item label="客户名称" prop="customCompanyName">
+          <el-form-item label="商户名称" prop="customCompanyName">
               <el-input v-model="form.customCompanyName" class="in_input" size="small"></el-input>
           </el-form-item>
           <el-form-item label="申请编号" prop="orderNo">
@@ -67,7 +67,7 @@
               </template>
           </el-table-column>
           <el-table-column prop="serviceCompanyName" label="服务商"></el-table-column>
-          <el-table-column prop="customCompanyName" label="客户名称"></el-table-column>
+          <el-table-column prop="customCompanyName" label="商户名称"></el-table-column>
           <el-table-column prop="purpose" label="发票用途"></el-table-column>
           <el-table-column label="金额">
               <template slot-scope="scope">
@@ -131,7 +131,7 @@
         </div>
         <div class="half">
             <span>地址： {{invoiceData.customAddr}}</span>
-            <span>电话： {{invoiceData.customPhone || '暂无'}}</span>   
+            <span>电话： {{invoiceData.customPhone || '暂无'}}</span>
         </div>
         <div class="half">
             <span>开票类型： {{invoiceData.invoiceTypeName}}</span>
@@ -204,7 +204,7 @@
         </div>
         <div class="half">
             <span>地址： {{invoiceData.customAddr}}</span>
-            <span>电话： {{invoiceData.customPhone || '暂无'}}</span>   
+            <span>电话： {{invoiceData.customPhone || '暂无'}}</span>
         </div>
         <div class="half">
             <span>开票类型： {{invoiceData.invoiceTypeName}}</span>
@@ -310,7 +310,7 @@
                     :on-change="save"
                     :multiple="false"
                     :show-file-list="false"
-                    accept=".jpg, .png">
+                    accept=".jpg, .png, .pdf">
                       <!-- <img v-if="attrForm.attachmentId" :src="`https://openadmintest92.aiyuangong.com/api/invoice-web/invoice/attachment/preview/${attrForm.attachmentId}`" alt="" width="200px"> -->
                       <!-- <template v-else> -->
                     <el-button v-if="!imgUrl" size="small" type="primary">上传文件</el-button>

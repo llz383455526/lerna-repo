@@ -102,6 +102,10 @@ let taxDiscountList = r => require.ensure([], () => r(require('../pages/taxDisco
 let taxDiscountDetail = r => require.ensure([], () => r(require('../pages/taxDiscount/detail')), 'taxDiscountDetail')
 let taxDiscountSetting = r => require.ensure([], () => r(require('../pages/taxDiscount/userSetting')), 'taxDiscountSetting')
 
+
+let landingCompanyList = r => require.ensure([], () => r(require('../pages/landingCompany/list')), 'landingCompanyList')
+
+
 const documentList = () => import('../pages/management/documentList')
 const documentDetail = () => import('../pages/management/documentDetail')
 const documentCreate = () => import('../pages/management/documentCreate')
@@ -585,7 +589,10 @@ export default [
                             },
                             {
                                 path: 'appDetail',
-                                component: appDetail
+                                component: appDetail,
+                                meta: {
+                                    keepAlive: false
+                                }
                             },
                             {
                                 path: 'addClient',
@@ -697,7 +704,18 @@ export default [
 				                keepAlive: false
 			                }
 		                }]
-	                }
+	                },
+                    {
+                        path: 'landingCompany',
+                        component: index,
+                        children: [{
+                            path: 'list',
+                            component: landingCompanyList,
+                            meta: {
+                                keepAlive: false
+                            }
+                        }]
+                    },
                 ],
             },
             {

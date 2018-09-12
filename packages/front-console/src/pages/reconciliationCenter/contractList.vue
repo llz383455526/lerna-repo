@@ -89,7 +89,8 @@
 				pageSize: 10,
 				pageIndex: 1,
 				extrSystemOptions: [],
-                templateData: []
+                templateData: [],
+                customCompanyList: []
             }
         },
         methods: {

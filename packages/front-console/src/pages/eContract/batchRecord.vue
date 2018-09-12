@@ -119,8 +119,14 @@ export default {
             })
         },
         getTime() {
-            this.form.startTime = this.range[0]
-            this.form.endTime = this.range[1]
+            if(this.range && this.range.length) {
+                this.form.startTime = this.range[0]
+                this.form.endTime = this.range[1]
+            }
+            else {
+                this.form.startTime = ''
+                this.form.endTime = ''
+            }
         },
         reset(a) {
             this.range = []

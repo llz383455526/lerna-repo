@@ -94,13 +94,13 @@
             </el-form-item>
 
             <h4 class="ml50 mt50">客户联系信息</h4>
-            <!--<el-form-item label="客户名称（公司）" prop="customCompanyId" required>
+            <!--<el-form-item label="商户名称（公司）" prop="customCompanyId" required>
                 <el-select v-model="contractForm.customCompanyId" placeholder="请选择" style="width:100%;">
                     <el-option v-for="item in customList" :key="item.id" :label="item.name"
                                :value="item.id"></el-option>
                 </el-select>
             </el-form-item>-->
-            <el-form-item label="客户名称（公司）" prop="customCompanyName" >
+            <el-form-item label="商户名称（公司）" prop="customCompanyName" >
                 <el-input v-model="contractForm.customCompanyName"></el-input>
             </el-form-item>
             <el-form-item label="法定代表人" prop="customLegalPerson" >
