@@ -43,7 +43,7 @@
             <el-table-column label="月收入" prop="monthAmount" v-if="form.statisticsType == 'month'"></el-table-column>
             <el-table-column label="客户公司" prop="customCompanyName"></el-table-column>
             <el-table-column label="税优地" prop="taxLandingName"></el-table-column>
-            <el-table-column label="风控规则">
+            <el-table-column label="风控规则" width="240">
                 <template slot-scope="scope">
                     <div v-for="e in scope.row.riskRuleStrList" :key="e">{{e}}</div>
                 </template>
@@ -118,6 +118,7 @@ export default {
             this.$refs.form.resetFields()
             this.form.statisticsType = 'year'
             this.form.year = this.years[10]
+            this.query()
         },
         down() {
             var str = ''
