@@ -47,6 +47,11 @@
                     ￥{{scope.row.tradeAmount > 0 ? '+' : ''}}{{scope.row.tradeAmount.toFixed(2)}}
                 </template>
             </el-table-column>
+            <el-table-column label="余额" prop="currentAvailBalance">
+                <template slot-scope="scope">
+                    {{scope.row.currentAvailBalance | formatMoney}}
+                </template>
+            </el-table-column>
             <el-table-column label="操作" prop="bizTradeNameName"></el-table-column>
             <el-table-column label="完成时间" prop="tradeAtStr"></el-table-column>
         </el-table>
