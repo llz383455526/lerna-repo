@@ -1,7 +1,7 @@
 <template>
 	<div style="margin-top: 15px;background-color: #fff; padding: 15px;">
 		<div style="margin: 0 0 20px;">上传文件</div>
-			<el-form :model="formInfo" ref="formInfo" style="width: 800px;" label-width="100px" label-position="left" >
+			<el-form :model="formInfo" :rules="rules" ref="formInfo" style="width: 800px;" label-width="100px" label-position="left" size="small">
 			<el-form-item label="发放方式：">批量导入
 			</el-form-item>
 			<el-form-item label="发放渠道：" prop="type">
@@ -10,17 +10,26 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
+			<el-form-item label="客户公司:" prop="customerCompanyId">
+                <el-select filterable v-model="formInfo.customerCompanyId" placeholder="请选择" @change="getAppList">
+                    <el-option v-for="(item, index) in customCompanyList" :label="item.name" :value="item.id" :key="index" ></el-option>
+                </el-select>
+            </el-form-item>
+			<el-form-item label="商户名称:" prop="appId">
+                <el-select filterable v-model="formInfo.appId" placeholder="请选择" @change="getAppId">
+                    <el-option v-for="(item, index) in customNameList" :label="item.text" :value="item.value" :key="index"></el-option>
+                </el-select>
+            </el-form-item>
 			<el-form-item label="上传文件：">
 				<div class="input-container">
 					<div class="input">
 						<div :class="{'upload-finish' : isUp, 'upload-logo' : true }" style="position: relative;">
-							<ayg-file-uploader v-if="importOptions.targetType" url="/api/sysmgr-web/file/upload" :options="importOptions" :needProgress="true" progressUrl="/api/sysmgr-web/file/progress">
-							</ayg-file-uploader>
+							<ayg-file-uploader v-if="importOptions.targetType && formInfo.customerCompanyId && formInfo.appId" url="/api/sysmgr-web/file/upload-ext" :options="importOptions" :needProgress="true" progressUrl="/api/sysmgr-web/file/progress"></ayg-file-uploader>
 						</div>
 						<div v-if="giveOutFile && giveOutFile.state === 30">
 								<div class="upload-file">
-										<div class="file-logo"></div>
-										<span>{{giveOutFile.fileName}}</span>
+									<div class="file-logo"></div>
+									<span>{{giveOutFile.fileName}}</span>
 								</div>
 						</div>
 					</div>
@@ -50,7 +59,7 @@
   	import {post,get} from '../../store/api'
   	import { setTimeout, clearInterval } from 'timers';
   	import aygFileUploader from '../../component/aygFileUploader'
-  	import {showTopErrorToast} from '../../plugin/utils-toast'
+	import {showTopErrorToast} from '../../plugin/utils-toast'
 	export default {
 		data(){
 			return {
@@ -60,14 +69,44 @@
 					memo:'',
 					successCount: '',
 					failCount:'',
+					appId: '',
+					customerCompanyId: ''
+				},
+				rules: {
+					type: [
+						{
+                        	required: true,
+                        	message: "请选择类型",
+                        	trigger: "blur"
+                    	}
+					],
+					appId: [
+						{
+							required: true,
+							message: "请选择商户",
+							trigger: "blur"
+						}
+					],
+					customerCompanyId: [
+						{
+							required: true,
+							message: "请选择公司",
+							trigger: "blur"
+						}
+					]
 				},
 				giveOutFile:null,
 				importOptions: {
-						targetType: null
+					targetType: '',
+					targetExt: {
+						customerCompanyId: '',
+						appId: ''
+					}
 				},
 				errFlag:true,
 				errMsg:'',
-				isUp: false
+				isUp: false,
+				customNameList: []
       		}
     	},
 		components: {
@@ -75,11 +114,16 @@
 		},
 		created(){
 			this.$store.dispatch('getTypeList');
+			// this.$store.dispatch('getCustomNameList');
+			this.$store.dispatch('getCustomCompanyList');
+			
 		},
 		computed: {
 				...mapGetters({
 					uploadFile: 'uploadFile',
 					typeList: 'typeList',
+					// customNameList: 'customNameList',
+					customCompanyList: 'customCompanyList'
 				})
 		},
 		watch: {
@@ -96,26 +140,44 @@
 					this.errMsg = this.giveOutFile.desc;
 				}
 			}
-		},	
+		},
 		methods: {
 			setImportOptions(val){
 				this.importOptions.targetType = 'pay_order_import_' +val
 			},
+			getAppList() {
+				get('/api/sysmgr-web/commom/app-list', {
+					companyId: this.formInfo.customerCompanyId
+				}).then(data => {
+					this.formInfo.appId = ''
+					this.importOptions.targetExt.appId = ''
+					this.customNameList = data
+				})
+				this.importOptions.targetExt.customerCompanyId = this.formInfo.customerCompanyId
+			},
+			getAppId() {
+				this.importOptions.targetExt.appId = this.formInfo.appId
+				console.log(this.importOptions)
+			},
 		 	nextStep() {
-				if (this.formInfo.type == '') {
-						showTopErrorToast('请选择类型');
-						return;
-				}
+				// if (this.formInfo.type == '') {
+				// 		showTopErrorToast('请选择类型');
+				// 		return;
+				// }
 				if (this.formInfo.taskId == '') {
 						showTopErrorToast('请上传数据');
 						return;
 				}
-				if(this.errFlag){
-					showTopErrorToast(this.errMsg);
-		 			return;
-		 		}
-      			sessionStorage.setItem('offlineSalaryUploadInfo', JSON.stringify(this.formInfo))
-				this.$router.push('offlineSalaryImport');
+				this.$refs.formInfo.validate(valid => {
+					if(valid) {
+						if(this.errFlag){
+							showTopErrorToast(this.errMsg);
+		 					return;
+		 				}
+      					sessionStorage.setItem('offlineSalaryUploadInfo', JSON.stringify(this.formInfo))
+						this.$router.push('offlineSalaryImport');
+					}
+				})
 			},
 			close(){
 				this.formInfo.type == ''

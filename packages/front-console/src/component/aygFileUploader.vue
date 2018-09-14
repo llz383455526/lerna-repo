@@ -5,7 +5,6 @@
 			<el-progress :text-inside="true" :stroke-width="18" :percentage="percent"></el-progress>
 		</el-dialog>
     </div>
-    
 </template>
 
 <script>
@@ -33,7 +32,9 @@
 			let el = this.$el.childNodes[0]
 			this.uploadElement = el
 			el.addEventListener('change', e => {
-				let file = el.files[0]
+                let file = el.files[0]
+                this.options.targetExt && (this.options.targetExt = JSON.stringify(this.options.targetExt))
+                console.log(this.options)
 				this.selectedFile = file
 				let formData = new FormData()
                 formData.append('fileName', file.name)

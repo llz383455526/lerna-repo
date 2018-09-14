@@ -34,6 +34,7 @@
 		<el-button size="small" @click="creatNew">新增</el-button>
 		<el-table :data="offlineSalaryPage.list" style="width: 100%;margin-top: 20px;">
 		<el-table-column prop="customCompanyName" label="客户公司"></el-table-column>
+		<el-table-column prop="appName" label="商户名称"></el-table-column>
 		<el-table-column prop="thirdPaymentTypeName" label="发放渠道"></el-table-column>
 		<el-table-column prop="serviceCompanyName" label="服务商公司"></el-table-column>
 		<el-table-column prop="payTypeName" label="发放方式"></el-table-column>
