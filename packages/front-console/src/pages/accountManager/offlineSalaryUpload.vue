@@ -45,7 +45,7 @@
 		</el-form>
 		<div style="padding: 15px;">
 	    <el-button type="primary" @click="nextStep" size="small">下一步</el-button>
-			<el-button @click="close" size="small">关闭</el-button>
+		<el-button @click="close" size="small">关闭</el-button>
 		</div>
 	</div>
 </template>
