@@ -189,17 +189,31 @@
 		},
 		methods: {
             download() {
+				let startAt = ''
+				let endAt = ''
+				if (this.dateValue[0]) {
+					startAt = this.dateValue[0]
+					endAt = this.dateValue[1]
+				}
+
+				let formSearch = _.cloneDeep(this.formSearch)
+				formSearch.startTime = startAt
+				formSearch.endTime = endAt
+				let options = _.assign(formSearch, {
+					pageNo: this.pageIndex,
+					pageSize: this.pageSize
+				})
+
                 var url = '', isFirst = true
-                for(var k in this.formSearch) {
+                for(var k in options) {
                     if(isFirst) {
                         isFirst = false
-                        url += `?${k}=${this.formSearch[k]}`
+                        url += `?${k}=${options[k]}`
                     }
                     else {
-                        url += `&${k}=${this.formSearch[k]}`
+                        url += `&${k}=${options[k]}`
                     }
-                    console.log(url)
-                }
+				}
                 window.open(`/api/econtract/inner/export${url}`)
 	        },
 			getOrderStateList() {

@@ -576,7 +576,8 @@ export default {
             get('/api/contract-web/contract/calc-serviceFee', {
                 amount: this.dialogCreateForm.amount,
                 companyId: this.dialogCreateForm.companyId,
-                serviceCompanyId: this.dialogCreateForm.serviceCompanyId
+                serviceCompanyId: this.dialogCreateForm.serviceCompanyId,
+                calcType: 'prePay'
             }).then(data => {
                 this.serviceFee = data
             })

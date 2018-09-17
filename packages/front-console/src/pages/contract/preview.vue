@@ -18,63 +18,112 @@
             <el-col :span="4" style="text-align: right; margin-right: 20px;">结算方式：</el-col>
             <el-col :span="8">{{detail.settleTypeName}}</el-col>
         </el-row>
-        <el-row class="mb15" style="font-weight: normal;">
+        <!-- <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">结算日期：</el-col>
             <el-col :span="8">{{detail.settleExp}}</el-col>
+        </el-row> -->
+        <el-row class="mb15" style="font-weight: normal;">
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">服务费是否预开：</el-col>
+            <el-col :span="8">{{detail.prePayType == 1 ? `是（${detail.prePayContent.secondType == 'real' ? '实发金额' : '应发金额'} * ${detail.prePayContent.serviceFeeRate}%）` : '否'}}</el-col>
         </el-row>
         <el-row class="mb15" style="font-weight: normal;">
-            <el-col :span="4" style="text-align: right; margin-right: 20px;">发票类型：</el-col>
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">开票类型：</el-col>
             <el-col :span="8">{{detail.invoiceTypeName}}</el-col>
         </el-row>
         <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">服务费收费比例/金额：</el-col>
-            <el-col :span="8">
-                <template v-if="detail.serviceFeeType != 'ratio' && detail.serviceFeeType != 'step'">
-                    {{'固定金额，每笔' + detail.serviceFee + '元'}}
+            <el-col :span="8" v-if="detail.serviceFeeContent && detail.serviceFeeContent.serviceFeeType">
+                <template v-if="detail.serviceFeeContent.serviceFeeType == 'dummy'">
+                    {{'无'}}
                 </template>
-                <template v-else-if="detail.serviceFeeType == 'ratio' && !detail.shouldAmountRate">
-                    {{'实发金额 * ' + detail.serviceFeeRate + '%'}}
+                <template v-else-if="detail.serviceFeeContent.serviceFeeType == 'fixed'">
+                    {{'固定金额，每笔' + detail.serviceFeeContent.fixFee + '元'}}
                 </template>
-                <template v-else-if="!detail.stepwiseList || !detail.stepwiseList.length">
-                    {{'实发金额 / ( 1 - '+ detail.shouldAmountRate +'%) * ' + detail.serviceFeeRate + '%'}}
+                <template v-else-if="detail.serviceFeeContent.serviceFeeType == 'ratio'">
+                    {{`${detail.prePayContent.secondType == 'real' ? '实发金额' : '应发金额'} * ${detail.serviceFeeContent.serviceFeeRate}%`}}
                 </template>
-                <template v-else>
-                    {{`阶梯收费，${detail.stepwiseList[0].startAmount}~${detail.stepwiseList[0].endAmount}元: ${detail.stepwiseList[0].percent}%，${detail.stepwiseList[1].startAmount}~${detail.stepwiseList[1].endAmount}元: ${detail.stepwiseList[1].percent}%`}}
+                <template v-else-if="detail.serviceFeeContent.serviceFeeType == 'step' && detail.serviceFeeContent.secondType == '0'">
+                    {{`月收入阶梯收费：`}}
+                    <div v-for="(e, i) in detail.serviceFeeContent.stepwiseList">
+                        <div class="indent">
+                            <span class="inline">
+                                <template v-if="!e.startAmount && !i">
+                                    {{`小于${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}
+                                </template>
+                                <template v-else-if="e.startAmount && e.endAmount">
+                                    {{`${e.startAmount}万${e.equalsStart ? '（含）' : ''}~${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}
+                                </template>
+                                <template v-else-if="!e.endAmount">
+                                    {{`大于${e.startAmount}万${e.equalsStart ? '（含）' : ''}`}}
+                                </template>
+                            </span>
+                            {{`实发金额*${e.percent}%`}}
+                        </div>
+                    </div>
+                </template>
+                <template v-else-if="detail.serviceFeeContent.serviceFeeType == 'step' && detail.serviceFeeContent.secondType == '1'">
+                    {{`月总额阶梯收费：`}}
+                    <div v-for="(e, i) in detail.serviceFeeContent.stepwiseList">
+                        <div class="indent">
+                            <span class="inline">
+                                <template v-if="!e.startAmount && !i">
+                                    {{`小于${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}
+                                </template>
+                                <template v-else-if="e.startAmount && e.endAmount">
+                                    {{`${e.startAmount}万${e.equalsStart ? '（含）' : ''}~${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}
+                                </template>
+                                <template v-else-if="!e.endAmount">
+                                    {{`大于${e.startAmount}万${e.equalsStart ? '（含）' : ''}`}}
+                                </template>
+                            </span>
+                            {{`实发金额*${e.percent}%`}}
+                        </div>
+                    </div>
+                </template>
+                <template v-else-if="detail.serviceFeeContent.serviceFeeType == 'step' && detail.serviceFeeContent.secondType == '2'">
+                    {{`月总额按月收入阶梯收费：`}}
+                    <div class="indent">
+                        {{`（1）月收入小于${detail.serviceFeeContent.monthIncomeAmount}万（含）：`}}
+                        <div v-for="(e, i) in detail.serviceFeeContent.stepwiseList">
+                            <div class="indent">
+                                <span class="inline">
+                                    <template v-if="!e.startAmount && !i">
+                                        {{`小于${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}
+                                    </template>
+                                    <template v-else-if="e.startAmount && e.endAmount">
+                                        {{`${e.startAmount}万${e.equalsStart ? '（含）' : ''}~${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}
+                                    </template>
+                                    <template v-else-if="!e.endAmount">
+                                        {{`大于${e.startAmount}万${e.equalsStart ? '（含）' : ''}`}}
+                                    </template>
+                                </span>
+                                {{`实发金额*${e.percent}%`}}
+                            </div>
+                        </div>
+                        {{`（2） 月收入大于${detail.serviceFeeContent2.monthIncomeAmount}万：`}}
+                        <div v-for="(e, i) in detail.serviceFeeContent2.stepwiseList">
+                            <div class="indent">
+                                <span class="inline">
+                                    <template v-if="!e.startAmount && !i">
+                                        {{`小于${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}
+                                    </template>
+                                    <template v-else-if="e.startAmount && e.endAmount">
+                                        {{`${e.startAmount}万${e.equalsStart ? '（含）' : ''}~${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}
+                                    </template>
+                                    <template v-else-if="!e.endAmount">
+                                        {{`大于${e.startAmount}万${e.equalsStart ? '（含）' : ''}`}}
+                                    </template>
+                                </span>
+                                {{`实发金额*${e.percent}%`}}
+                            </div>
+                        </div>
+                    </div>
                 </template>
             </el-col>
         </el-row>
         <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">合同起止时间：</el-col>
             <el-col :span="8">{{detail.startDate}} 至 {{detail.endDate}}</el-col>
-        </el-row>
-        <h4 class="ml50 mt50">发票信息</h4>
-        <el-row class="mb15" style="font-weight: normal;">
-            <el-col :span="4" style="text-align: right; margin-right: 20px;">公司名称：</el-col>
-            <el-col :span="8">{{invoiceMsg.name}}</el-col>
-        </el-row>
-        <el-row class="mb15" style="font-weight: normal;">
-            <el-col :span="4" style="text-align: right; margin-right: 20px;">纳税人识别号：</el-col>
-            <el-col :span="8">{{invoiceMsg.taxIdcd}}</el-col>
-        </el-row>
-        <el-row class="mb15" style="font-weight: normal;">
-            <el-col :span="4" style="text-align: right; margin-right: 20px;">开票类型：</el-col>
-            <el-col :span="8">{{detail.openInvoiceType == '20' ? '预开票' : '账单开票'}}</el-col>
-        </el-row>
-        <el-row class="mb15" style="font-weight: normal;">
-            <el-col :span="4" style="text-align: right; margin-right: 20px;">地址：</el-col>
-            <el-col :span="8">{{invoiceMsg.addr}}</el-col>
-        </el-row>
-        <el-row class="mb15" style="font-weight: normal;">
-            <el-col :span="4" style="text-align: right; margin-right: 20px;">电话：</el-col>
-            <el-col :span="8">{{invoiceMsg.phone}}</el-col>
-        </el-row>
-        <el-row class="mb15" style="font-weight: normal;">
-            <el-col :span="4" style="text-align: right; margin-right: 20px;">开户银行：</el-col>
-            <el-col :span="8">{{invoiceMsg.bankName}}</el-col>
-        </el-row>
-        <el-row class="mb15" style="font-weight: normal;">
-            <el-col :span="4" style="text-align: right; margin-right: 20px;">银行账号：</el-col>
-            <el-col :span="8">{{invoiceMsg.bankAccount}}</el-col>
         </el-row>
         <h4 class="ml50 mt50">合同文件</h4>
         <div style="margin-left: 120px; margin-right: 120px;">
@@ -93,6 +142,13 @@
                 </el-table-column>
             </el-table>
         </div>
+        <h4 class="ml50 mt50">关联企业名称</h4>
+        <div class="flex">
+            <div v-for="(e, i) in detail.branchs" :key="e.branchId">
+                {{e.branchName}}
+            </div>
+        </div>
+        <el-button class="back" type="primary" @click="$router.back()" size="small">返回</el-button>
     </div>
 </template>
 
@@ -158,5 +214,33 @@
 </script>
 
 <style scoped>
-
+    .bg-white {
+        overflow: hidden;
+    }
+    .indent {
+        text-indent: 10px
+    }
+    .inline {
+        display: inline-block;
+        width: 136px;
+    }
+    .flex {
+        display: flex;
+        margin-top: 24px;
+        margin-left: 120px;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .flex > div {
+        font-size: 14px;
+        border-radius: 2px;
+        background-color: #f4f4f5;
+        padding: 5px 5px;
+        margin-bottom: 10px;
+        margin-right: 10px;
+    }
+    .back {
+        float: right;
+        margin-right: 40px;
+    }
 </style>
