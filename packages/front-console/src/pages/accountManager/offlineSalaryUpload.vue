@@ -4,12 +4,6 @@
 			<el-form :model="formInfo" :rules="rules" ref="formInfo" style="width: 800px;" label-width="100px" label-position="left" size="small">
 			<el-form-item label="发放方式：">批量导入
 			</el-form-item>
-			<el-form-item label="发放渠道：" prop="type">
-				<el-select placeholder="请选择" v-model="formInfo.type" v-on:change="setImportOptions">
-					<el-option v-for="(item, index) in typeList" :label="item.text" :value="item.value" :key="index">
-					</el-option>
-				</el-select>
-			</el-form-item>
 			<el-form-item label="客户公司:" prop="customerCompanyId">
                 <el-select filterable v-model="formInfo.customerCompanyId" placeholder="请选择" @change="getAppList">
                     <el-option v-for="(item, index) in customCompanyList" :label="item.name" :value="item.id" :key="index" ></el-option>
@@ -20,6 +14,12 @@
                     <el-option v-for="(item, index) in customNameList" :label="item.text" :value="item.value" :key="index"></el-option>
                 </el-select>
             </el-form-item>
+			<el-form-item label="发放渠道：" prop="type">
+				<el-select placeholder="请选择" v-model="formInfo.type" v-on:change="setImportOptions">
+					<el-option v-for="(item, index) in typeList" :label="item.text" :value="item.value" :key="index">
+					</el-option>
+				</el-select>
+			</el-form-item>
 			<el-form-item label="上传文件：">
 				<div class="input-container">
 					<div class="input">
@@ -143,6 +143,7 @@
 		},
 		methods: {
 			setImportOptions(val){
+				this.formInfo.taskId = ''
 				this.importOptions.targetType = 'pay_order_import_' +val
 			},
 			getAppList() {
@@ -151,11 +152,13 @@
 				}).then(data => {
 					this.formInfo.appId = ''
 					this.importOptions.targetExt.appId = ''
+					this.formInfo.taskId = ''
 					this.customNameList = data
 				})
 				this.importOptions.targetExt.customerCompanyId = this.formInfo.customerCompanyId
 			},
 			getAppId() {
+				this.formInfo.taskId = ''
 				this.importOptions.targetExt.appId = this.formInfo.appId
 				console.log(this.importOptions)
 			},

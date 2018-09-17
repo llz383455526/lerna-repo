@@ -26,6 +26,7 @@
                 taskId: null,
                 progressShow :false,
                 percent:0,
+                form: {}
             }
         },
 		mounted() {
@@ -33,16 +34,17 @@
 			this.uploadElement = el
 			el.addEventListener('change', e => {
                 let file = el.files[0]
-                this.options.targetExt && typeof this.options.targetExt == 'object' && (this.options.targetExt = JSON.stringify(this.options.targetExt))
-                console.log(this.options.targetExt)
+                this.form = JSON.parse(JSON.stringify(this.options))
+                this.form.targetExt && typeof this.form.targetExt == 'object' && (this.form.targetExt = JSON.stringify(this.form.targetExt))
+                console.log(this.form.targetExt)
 				this.selectedFile = file
 				let formData = new FormData()
                 formData.append('fileName', file.name)
                 formData.append('file', file)
 
-                let keys = _.keys(this.options)
+                let keys = _.keys(this.form)
                 _.forEach(keys, key => {
-                	formData.append(key, this.options[key])
+                	formData.append(key, this.form[key])
                 })
                 importPost(this.url, formData)
                     .then(result => {
