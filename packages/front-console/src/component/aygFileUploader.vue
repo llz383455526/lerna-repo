@@ -33,8 +33,8 @@
 			this.uploadElement = el
 			el.addEventListener('change', e => {
                 let file = el.files[0]
-                this.options.targetExt && (this.options.targetExt = JSON.stringify(this.options.targetExt))
-                console.log(this.options)
+                this.options.targetExt && typeof this.options.targetExt == 'object' && (this.options.targetExt = JSON.stringify(this.options.targetExt))
+                console.log(this.options.targetExt)
 				this.selectedFile = file
 				let formData = new FormData()
                 formData.append('fileName', file.name)
