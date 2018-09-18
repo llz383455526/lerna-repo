@@ -23,10 +23,10 @@
 			<el-form-item label="上传文件：">
 				<div class="input-container">
 					<div class="input">
-						<div :class="{'upload-finish' : isUp, 'upload-logo' : true }" style="position: relative;">
+						<div :class="{'upload-finish' : formInfo.taskId, 'upload-logo' : true }" style="position: relative;">
 							<ayg-file-uploader v-if="importOptions.targetType && formInfo.customerCompanyId && formInfo.appId" url="/api/sysmgr-web/file/upload-ext" :options="importOptions" :needProgress="true" progressUrl="/api/sysmgr-web/file/progress"></ayg-file-uploader>
 						</div>
-						<div v-if="giveOutFile && giveOutFile.state === 30">
+						<div v-if="formInfo.taskId && giveOutFile && giveOutFile.state === 30">
 								<div class="upload-file">
 									<div class="file-logo"></div>
 									<span>{{giveOutFile.fileName}}</span>
