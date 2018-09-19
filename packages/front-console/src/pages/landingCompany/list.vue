@@ -1,45 +1,48 @@
 <template>
     <div style="background-color:#fff;padding:15px;">
-        <div style="margin-bottom:30px;">落地公司开票信息管理</div>
-        <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch" s>
-            <el-form-item label="" size="small" prop="companyName">
-                <el-input v-model="formSearch.companyName"></el-input>
-            </el-form-item>
-            <el-form-item style="margin-top: -4px">
-                <el-button type="primary" @click="search" size="small">搜索</el-button>
-            </el-form-item>
-        </el-form>
-        <el-button size="small" @click="routerPush('/main/billingManager/create')">添加落地企业信息</el-button>
-
+        <div style="margin-bottom:30px;">落地公司管理</div>
+        <el-form class="form" :model="formSearch" :inline="true" label-width="100px" style="float:right">
+          <el-form-item label="客户简称" size="small">
+              <el-input v-model="formSearch.shortName" class="in_input" clearable placeholder="请输入内容" prefix-icon="el-icon-search"></el-input>
+          </el-form-item>
+          <el-form-item class="form_foot" size="small">
+              <el-button type="primary" @click="requestAction({
+                    pageNo: 1,
+                    pageSize: pageSize,
+                })">查询</el-button>
+          </el-form-item>
+      </el-form>
+        <el-button size="small" @click="routerPush('/main/landingCompany/create')">新建企业</el-button>
         <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
-            <el-table-column label="操作" width="100" fixed>
+            <el-table-column prop="shortName" label="落地公司简称"></el-table-column>
+            <el-table-column prop="directName" label="是否直营"></el-table-column>
+            <el-table-column prop="address" label="地址"></el-table-column>
+            <el-table-column prop="masterName" label="负责人"></el-table-column>
+            <el-table-column prop="registeredName" label="注册状态">
                 <template slot-scope="scope">
-                    <el-button @click="dialogAddInvoiceVisible = true;id = scope.row.id;" type="text" size="medium" style="padding:0;margin-left: 11px;">添加票量
-                    </el-button>
-                    <el-button @click="dialogInvoicelistVisible = true;id = scope.row.id;handleRequest();" type="text" size="medium" style="padding:0;">领票记录
-                    </el-button>
-                    <el-button @click="handleEdit(scope.row.id)" type="text" size="medium" style="padding:0;">修改
-                    </el-button>
-                    <el-button @click="handleDelete(scope.row.id)" type="text" size="medium" style="padding:0;" v-if="tableList.ppLeftNum <= 0 && tableList.zpLeftNum <= 0">删除
+                    <span class="usable" v-if="scope.row.registeredName == '已注册'">{{scope.row.registeredName}}</span>
+                    <span class="disable" v-if="scope.row.registeredName == '未注册'">{{scope.row.registeredName}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="testStatusName" label="业务穿行状态">
+                <template slot-scope="scope">
+                    <span class="testok" v-if="scope.row.testStatusName == '已完成测试'">{{scope.row.testStatusName}}</span>
+                    <span v-else>{{scope.row.testStatusName}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="invoiceType" label="发票类型">
+                <template slot-scope="scope">
+                    <span v-for="e in scope.row.supportInvoiceTypeName">
+                        <span>{{e}}</span><br/>
+                    </span>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作" width="100" fixed="right">
+                <template slot-scope="scope">
+                    <el-button @click="routerPush('/main/clientManager/serverManager',scope.row)" type="text" size="medium" style="padding:0;">管理
                     </el-button>
                 </template>
             </el-table-column>
-            <el-table-column prop="name" label="企业名称" width="220"></el-table-column>
-            <el-table-column prop="taxIdcd" label="纳税人识别号" width="200"></el-table-column>
-            <el-table-column prop="addr" label="企业所在地" width="500"></el-table-column>
-            <el-table-column prop="payee" label="收款人"></el-table-column>
-            <el-table-column prop="checker" label="复核"></el-table-column>
-            <el-table-column prop="drawer" label="开票人"></el-table-column>
-            <el-table-column prop="ppMaxAmount" label="普票最大限额" width="120"></el-table-column>
-            <!-- <el-table-column prop="ppMaxNum" label="普票最大张数" width="120"></el-table-column> -->
-            <el-table-column prop="ppLeftNum" label="普票剩余票量" width="120"></el-table-column>
-            <el-table-column prop="zpMaxAmount" label="专票最大限额" width="120"></el-table-column>
-            <!-- <el-table-column prop="zpMaxNum" label="专票最大张数" width="120"></el-table-column> -->
-            <el-table-column prop="zpLeftNum" label="专票剩余票量" width="120"></el-table-column>
-            <el-table-column prop="phone" label="电话" width="150"></el-table-column>
-            <el-table-column prop="bankName" label="开户行" width="150"></el-table-column>
-            <el-table-column prop="bankAccount" label="银行账号" width="200"></el-table-column>
-            <el-table-column prop="supportSelfInvoice" label="是否支持企业自主开票" width="200"></el-table-column>
         </el-table>
         <ayg-pagination v-if="tableList.total" :total="tableList.total"
                         v-on:handleSizeChange="handleSizeChange"
@@ -51,38 +54,44 @@
     .el-time-spinner.has-seconds .el-time-spinner__wrapper:nth-child(2) {
         margin-left: 0;
     }
-    .el-dialog__body{
+    /* .el-dialog__body{
         text-align: center;
-    }
-    .bill {
-        display: inline-block;
-        padding: 3px 8px;
-        border-radius: 5px;
+    } */
+    .usable{
         color: #fff;
+        text-align:center;
+        border:1px solid #67C23A;
+        padding:1px 7px; 
+        background:#67C23A;
+        border-radius:5px;
+        -moz-border-radius:7px;
+    },
+    .disable{
+        color: #fff;
+        text-align:center;
+        border:1px solid #E6A23C;
+        padding:1px 7px; 
+        background:#E6A23C;
+        border-radius:5px;
+        -moz-border-radius:7px;
     }
-    .common {
-        background-color:  #6BDDA2;
-    }
-    .special {
-        background-color: #63D1F2;
+    .testok{
+        color: green;
     }
 </style>
 
 <script>
     import {post, get} from '../../store/api';
     import {showNotify} from '../../plugin/utils-notify';
-    import { baseUrl } from '../../config/address'
     export default {
         data() {
             return {
                 pageSize: 10,
-                pageInvoiceSize: 10,
                 currentPage: parseInt(this.$route.query.page) || 1,
-                currentInvoicePage: parseInt(this.$route.query.page) || 1,
                 tableList: [],
                 options: [],
                 formSearch: {
-                    companyName: '',
+                    shortName: '',
                 },
                 
             }
@@ -91,17 +100,45 @@
             search() {
                 this.currentPage = 1;
                 this.requestAction({
-                    page: 1,
+                    pageNo: 1,
+                    pageSize: this.pageSize,
+                });
+            },
+            handleSizeChange(value) {
+                this.pageSize = value;
+                this.requestAction({
+                    pageNo: 1,
+                    pageSize: value,
+                });
+            },
+            handleCurrentChange(value) {
+                this.requestAction({
+                    pageNo: value,
                     pageSize: this.pageSize,
                 });
             },
             requestAction(pageInfo) {
-                let param = {
-                    companyName: this.formSearch.companyName,
-                    page: pageInfo.page,
-                    pageSize: pageInfo.pageSize,
-                };
-                post('/api/invoice-web/service-company/qry', param).then(data => {
+                if(this.formSearch.shortName){
+                    var param = {
+                        keyword:this.formSearch.shortName,
+                        pageNo: pageInfo.pageNo,
+                        pageSize: pageInfo.pageSize,
+                    };
+                }else{
+                    var param = {
+                        pageNo: pageInfo.pageNo,
+                        pageSize: pageInfo.pageSize,
+                    };
+                }
+                
+                post(`/api/salemgt/service-company/query/list`,param).then(data => {
+                    data.list.forEach(e => {
+                        e.supportInvoiceTypeName = e.supportInvoiceTypeName.split(";");
+                    })
+                    this.tableList = data;
+                })
+                /*post('/api/salemgt/service-company/query/list', param).then(data => {
+                    console.log(data);
                     data.list.forEach(item => {
                         if (item) {
                             if (item.addr) {
@@ -110,13 +147,22 @@
                         }
                     })
                     this.tableList = data;
-                })
+                })*/
             },
-            
+            routerPush(link,val) {
+                if(val){
+                    localStorage.setItem('appId', val.id)
+                    localStorage.setItem('fullName', val.name)
+                    this.$router.push({path: link});
+                }else{
+                    this.$router.push({path: link});
+                }
+                
+            }
         },
-        activated() {
+        mounted() {
             this.requestAction({
-                page: this.$route.query.page || 1,
+                pageNo: this.$route.query.page || 1,
                 pageSize: this.pageSize,
             });
         },

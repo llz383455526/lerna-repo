@@ -104,6 +104,7 @@ let taxDiscountSetting = r => require.ensure([], () => r(require('../pages/taxDi
 
 
 let landingCompanyList = r => require.ensure([], () => r(require('../pages/landingCompany/list')), 'landingCompanyList')
+let landingCompanyCreate = r => require.ensure([], () => r(require('../pages/landingCompany/create')), 'landingCompanyCreate')
 
 
 const documentList = () => import('../pages/management/documentList')
@@ -714,8 +715,14 @@ export default [
                             meta: {
                                 keepAlive: false
                             }
+                        },{
+                            path: 'create',
+                            component: landingCompanyCreate,
+                            meta: {
+                                keepAlive: false
+                            }
                         }]
-                    },
+                    }
                 ],
             },
             {

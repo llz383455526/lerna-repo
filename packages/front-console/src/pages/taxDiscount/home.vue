@@ -24,6 +24,22 @@
                 </el-table-column>
             </el-table>
         </div>
+        
+        <div class="sub-title">待开通落地公司管理</div>
+        <div class="table-container el-table el-table--fit el-table--border el-table--scrollable-x el-table--enable-row-transition">
+            <el-table :data="landCompany" style="width: 100%">
+                <el-table-column prop="shortName" label="落地公司简称"></el-table-column>
+                <el-table-column prop="directName" label="是否直营"></el-table-column>
+                <el-table-column prop="address" label="所在地区"></el-table-column>
+                <el-table-column prop="testStatusName" label="业务穿行状态"></el-table-column>
+                <el-table-column prop="masterName" label="负责人"></el-table-column>
+                <el-table-column label="操作" width="120">
+                    <template slot-scope="scope">
+                        <el-button @click="toManage(scope.row.id)" type="text" size="medium" style="padding:0;">管理</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </div>
 
         <div class="statistics-container">
             <div class="table-container">
@@ -54,6 +70,30 @@
                     </tr>
                 </table>
             </div>
+            <div class="table-container">
+                <div style="margin-bottom: 20px; line-height: 22px;">
+                    <span class="sub-title">落地公司汇总</span>
+                    <a href="javascript:void(0)" @click="$router.push('/main/landingCompany/list')" style="float: right">更多信息</a>
+                </div>
+                <table class="statistics-table">
+                    <tr>
+                        <td>累计开通落地公司</td>
+                        <td>{{landCompanyStatistics.total || 0}}</td>
+                    </tr>
+                    <tr>
+                        <td>已开通落地公司</td>
+                        <td>{{landCompanyStatistics.openedTotal || 0}}</td>
+                    </tr>
+                    <tr>
+                        <td>待开通落地公司</td>
+                        <td>{{landCompanyStatistics.tobeOpenedTotal || 0}}</td>
+                    </tr>
+                    <tr>
+                        <td>本月开通落地公司</td>
+                        <td>{{landCompanyStatistics.mouthOpenedTotal || 0}}</td>
+                    </tr>
+                </table>
+            </div>
         </div>
 
     </div>
@@ -63,40 +103,62 @@
 <script>
     import { get } from '../../store/api'
 
-	export default {
-    	created() {
+    export default {
+        created() {
             this.getTodo()
-
+            this.getCompanyData();
             this.getTaxStatistics()
+            this.getCompanyStatistics();
         },
         data() {
-    		return {
-    			todoList: [],
+            return {
+                todoList: [],
                 taxStatistics: [],
-
+                landCompany:[],
+                landCompanyStatistics:[],
             }
         },
         methods: {
-    		getTodo() {
-    			get('/api/salemgt/taxlanding/todo_list', {})
+            getTodo() {
+                get('/api/salemgt/taxlanding/todo_list', {})
                     .then(result => {
                         this.todoList = result
                     })
             },
             getTaxStatistics() {
-	            get('/api/salemgt/taxlanding/statistics', {})
-		            .then(result => {
-			            this.taxStatistics = result
-		            })
+                get('/api/salemgt/taxlanding/statistics', {})
+                    .then(result => {
+                        this.taxStatistics = result
+                    })
             },
-	        toDetail(id) {
-		        this.$router.push({
-			        path: 'detail',
-			        query: {
-				        id: id
-			        }
-		        })
-	        }
+            toDetail(id) {
+                this.$router.push({
+                    path: 'detail',
+                    query: {
+                        id: id
+                    }
+                })
+            },
+            getCompanyData(){
+                get('/api/salemgt/service-company/query/todo_list').then(data => {
+                    data.forEach( r => {
+                        r.address = r.provinceName + r.cityName;
+                    })
+                    this.landCompany = data;
+                })
+            },
+            getCompanyStatistics(){
+                get('/api/salemgt/service-company/query/statistics').then(data => {
+                    this.landCompanyStatistics = data;
+                    console.log(data);
+                })
+            },
+            toManage(id){
+                localStorage.setItem('appId', id)
+                this.$router.push({
+                    path: '/main/clientManager/serverManager'
+                })
+            }
         }
     }
 </script>

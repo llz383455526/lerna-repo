@@ -344,6 +344,11 @@
                 this.queryDetail(this.$route.query.companyId);
                 this.changeMode = true;
             }
+            if(this.$route.query.taxIdcd){
+                this.companyForm.taxIdcd = this.$route.query.taxIdcd;
+                this.companyForm.name = this.$route.query.name;
+            }
+            
         }
     }
 </script>

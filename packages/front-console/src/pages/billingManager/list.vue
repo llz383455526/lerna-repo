@@ -9,7 +9,7 @@
                 <el-button type="primary" @click="search" size="small">搜索</el-button>
             </el-form-item>
         </el-form>
-        <el-button size="small" @click="routerPush('/main/billingManager/create')">添加落地企业信息</el-button>
+        <el-button size="small" @click="routerPush('/main/billingManager/create')">添加落地公司信息</el-button>
 
         <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
             <el-table-column label="操作" width="100" fixed>

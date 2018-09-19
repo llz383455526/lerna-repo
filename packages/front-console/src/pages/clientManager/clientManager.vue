@@ -28,11 +28,11 @@
       <el-table class="table" :data="tableData" border="">
           <el-table-column prop="name" label="企业简称"></el-table-column>
           <el-table-column prop="fullName" label="企业全称"></el-table-column>
-          <el-table-column prop="service" label="企业类型">
+          <!-- <el-table-column prop="service" label="企业类型">
             <template slot-scope="scope">
               {{scope.row.service ? '服务商' : '客户'}}
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column prop="chargeByName" label="企业负责人"></el-table-column>
           <el-table-column prop="createTime" label="添加时间"></el-table-column>
           <el-table-column prop="createByName" label="创建人"></el-table-column>
