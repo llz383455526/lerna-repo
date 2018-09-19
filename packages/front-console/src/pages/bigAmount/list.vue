@@ -50,7 +50,7 @@
             </el-form-item>
         </el-form>
         <el-table :data="tableData.list">
-            <el-table-column prop="appName" label="账户名称"></el-table-column>
+            <el-table-column prop="appName" label="商户名称"></el-table-column>
             <el-table-column prop="accountName" label="收款人"></el-table-column>
             <el-table-column prop="accountNo" label="收款账号" width="180"></el-table-column>
             <el-table-column prop="amount" label="交易金额"></el-table-column>
