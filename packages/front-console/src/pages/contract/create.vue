@@ -571,7 +571,7 @@
                 },
                 // weekVisible: false,
                 // monthVisible: false,
-                showInputRatio: '',
+                showInputRatio: -1,
                 showInputFixed: false,
                 showSelectExpDay: false,
                 showSelectExpStart: true,
@@ -1069,14 +1069,14 @@
             prveFee(a) {
                 if (this.contractForm.prePayContent.serviceFeeType == 'ratio') {
                     this.contractForm.prePayContent.secondType = 'real'
-                    this.contractForm.prePayContent.serviceFeeRate = parseInt(this.prevRatio);
+                    this.contractForm.prePayContent.serviceFeeRate = isNaN(this.prevRatio) ? '' : this.prevRatio;
                     this.contractForm.prePayContent.fixFee = (this.prevRatio && (this.prevRatio - 0 > 0 && this.prevRatio <= 100))  ? 0 : ''
                     this.showPrev = a;
                 }
                 if (this.contractForm.prePayContent.serviceFeeType == 'ratio_1') {
                     this.contractForm.prePayContent.secondType = 'should'
-                    this.contractForm.prePayContent.discountRate = parseInt(this.prevRatio_1);
-                    this.contractForm.prePayContent.serviceFeeRate = parseInt(this.prevRatio_1);
+                    this.contractForm.prePayContent.discountRate = isNaN(this.prevRatio_1) ? '' : this.prevRatio_1;
+                    this.contractForm.prePayContent.serviceFeeRate = isNaN(this.prevRatio_1) ? '' : this.prevRatio_1;;
                     this.contractForm.prePayContent.fixFee = (this.prevRatio_1 && (this.prevRatio_1 - 0 > 0 && this.prevRatio_1 <= 100)) ? 0 : ''
                     this.showPrev = a;
                 }
