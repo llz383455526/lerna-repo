@@ -1358,7 +1358,8 @@
                     return ''
                 }
                 else {
-                    return (a - 0).toFixed(2)
+                    var value = (a - 0).toFixed(2)
+                    return value <= a ? value : value - 0.01
                 }
             }
         }
