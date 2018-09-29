@@ -917,25 +917,33 @@
                             contractForm.prePayContent.serviceFeeType = 'ratio'
                         }
                         if(contractForm.serviceFeeContent.serviceFeeType == 'fixed') {
-                            contractForm.serviceFeeContent.fixFee = this.inputFixed
+                            contractForm.serviceFeeContent.fixFee = this.Fixed(this.inputFixed)
                         }
                         if(contractForm.serviceFeeContent.serviceFeeType == 'ratio'){
                             contractForm.serviceFeeContent.fixFee = 0
                             contractForm.serviceFeeContent.secondType = 'real'
-                            contractForm.serviceFeeContent.serviceFeeRate = this.inputRatio
+                            contractForm.serviceFeeContent.serviceFeeRate = this.Fixed(this.inputRatio)
                             contractForm.serviceFeeContent.discountRate = ''
                         }
                         if(contractForm.serviceFeeContent.serviceFeeType == 'ratio_1'){
                             contractForm.serviceFeeContent.serviceFeeType = 'ratio'
                             contractForm.serviceFeeContent.fixFee = 0
                             contractForm.serviceFeeContent.secondType = 'should'
-                            contractForm.serviceFeeContent.discountRate = this.inputRatio_1
-                            contractForm.serviceFeeContent.serviceFeeRate = this.inputRatio_1
+                            contractForm.serviceFeeContent.discountRate = this.Fixed(this.inputRatio_1)
+                            contractForm.serviceFeeContent.serviceFeeRate = this.Fixed(this.inputRatio_1)
                         }
                         if(contractForm.serviceFeeContent.serviceFeeType == 'step'){
                             contractForm.serviceFeeContent.secondType = 0
                             contractForm.serviceFeeContent.stepwiseList.forEach(e => {
-                                if(e.percent < 0 || e.percent >= 100) {
+                                try {
+                                    e.endAmount = this.Fixed(e.endAmount)
+                                    e.startAmount = this.Fixed(e.startAmount)
+                                    e.percent = this.Fixed(e.percent)
+                                    if(e.percent < 0 || e.percent >= 100) {
+                                        err = true
+                                    }
+                                }
+                                catch(err) {
                                     err = true
                                 }
                             })
@@ -945,7 +953,15 @@
                             contractForm.serviceFeeContent.serviceFeeType = 'step'
                             contractForm.serviceFeeContent.secondType = 1
                             contractForm.serviceFeeContent.stepwiseList.forEach(e => {
-                                if(e.percent < 0 || e.percent >= 100) {
+                                try {
+                                    e.endAmount = this.Fixed(e.endAmount)
+                                    e.startAmount = this.Fixed(e.startAmount)
+                                    e.percent = this.Fixed(e.percent)
+                                    if(e.percent < 0 || e.percent >= 100) {
+                                        err = true
+                                    }
+                                }
+                                catch(err) {
                                     err = true
                                 }
                             })
@@ -955,15 +971,32 @@
                             contractForm.serviceFeeContent.serviceFeeType = 'step'
                             contractForm.serviceFeeContent.secondType = 2
                             contractForm.serviceFeeContent.stepwiseList.forEach(e => {
-                                if(e.percent < 0 || e.percent >= 100) {
+                                try {
+                                    e.endAmount = this.Fixed(e.endAmount)
+                                    e.startAmount = this.Fixed(e.startAmount)
+                                    e.percent = this.Fixed(e.percent)
+                                    if(e.percent < 0 || e.percent >= 100) {
+                                        err = true
+                                    }
+                                }
+                                catch(err) {
                                     err = true
                                 }
                             })
                             contractForm.serviceFeeContent2.stepwiseList.forEach(e => {
-                                if(e.percent < 0 || e.percent >= 100) {
+                                try {
+                                    e.endAmount = this.Fixed(e.endAmount)
+                                    e.startAmount = this.Fixed(e.startAmount)
+                                    e.percent = this.Fixed(e.percent)
+                                    if(e.percent < 0 || e.percent >= 100) {
+                                        err = true
+                                    }
+                                }
+                                catch(err) {
                                     err = true
                                 }
                             })
+                            contractForm.serviceFeeContent.monthIncomeAmount = this.Fixed(contractForm.serviceFeeContent.monthIncomeAmount)
                             contractForm.serviceFeeContent2.monthIncomeAmount = contractForm.serviceFeeContent.monthIncomeAmount
                         }
                         if(err) {
@@ -1069,14 +1102,14 @@
             prveFee(a) {
                 if (this.contractForm.prePayContent.serviceFeeType == 'ratio') {
                     this.contractForm.prePayContent.secondType = 'real'
-                    this.contractForm.prePayContent.serviceFeeRate = isNaN(this.prevRatio) ? '' : this.prevRatio;
+                    this.contractForm.prePayContent.serviceFeeRate = this.Fixed(this.prevRatio);
                     this.contractForm.prePayContent.fixFee = (this.prevRatio && (this.prevRatio - 0 > 0 && this.prevRatio <= 100))  ? 0 : ''
                     this.showPrev = a;
                 }
                 if (this.contractForm.prePayContent.serviceFeeType == 'ratio_1') {
                     this.contractForm.prePayContent.secondType = 'should'
-                    this.contractForm.prePayContent.discountRate = isNaN(this.prevRatio_1) ? '' : this.prevRatio_1;
-                    this.contractForm.prePayContent.serviceFeeRate = isNaN(this.prevRatio_1) ? '' : this.prevRatio_1;;
+                    this.contractForm.prePayContent.discountRate = this.Fixed(this.prevRatio_1);
+                    this.contractForm.prePayContent.serviceFeeRate = this.Fixed(this.prevRatio_1);
                     this.contractForm.prePayContent.fixFee = (this.prevRatio_1 && (this.prevRatio_1 - 0 > 0 && this.prevRatio_1 <= 100)) ? 0 : ''
                     this.showPrev = a;
                 }
@@ -1319,6 +1352,14 @@
                 })
 
                 return arr.length
+            },
+            Fixed(a) {
+                if(a === '' || isNaN(a)) {
+                    return ''
+                }
+                else {
+                    return (a - 0).toFixed(2)
+                }
             }
         }
     }
