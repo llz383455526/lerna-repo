@@ -1359,7 +1359,7 @@
                 }
                 else {
                     var value = (a - 0).toFixed(2)
-                    return value <= a ? value : (value - 0.01).toFixed(2)
+                    return value * 100 <= a * 100 ? value : (value - 0.01).toFixed(2)
                 }
             }
         }
