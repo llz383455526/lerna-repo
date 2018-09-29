@@ -844,12 +844,12 @@
                     stepwiseList[a - 1] && (stepwiseList[a - 1].endAmount = stepwiseList[a].startAmount)
                 }
                 console.log(stepwiseList[a])
-                if(stepwiseList[a].startAmount - 0 >= stepwiseList[a].endAmount) {
-                    this.contractForm.serviceFeeContent.fixFee = ''
-                }
-                else {
-                    this.contractForm.serviceFeeContent.fixFee = 0
-                }
+                // if(stepwiseList[a].startAmount - 0 >= stepwiseList[a].endAmount) {
+                //     this.contractForm.serviceFeeContent.fixFee = ''
+                // }
+                // else {
+                //     this.contractForm.serviceFeeContent.fixFee = 0
+                // }
             },
             equals(a, b, c) {
                 console.log(a, b)
