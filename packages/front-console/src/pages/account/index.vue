@@ -1,7 +1,7 @@
 <template>
     <div class="company-build-container company-container">
         <el-tabs v-model="activeName">
-            <el-tab-pane label="客户账户余额" name="new" v-loading="!aData">
+            <!-- <el-tab-pane label="客户账户余额" name="new" v-loading="!aData">
                 <div style="padding: 30px;">
                     <img src="../../image/money.png" style="width: 120px;height: 120px;float: left; margin-right: 50px;"/>
                     <p>账户总余额（元）： </p>
@@ -26,40 +26,9 @@
                         </template>
                     </el-table-column>
                 </el-table>
-            </el-tab-pane>
-            <el-tab-pane label="渠道账户余额" name="old" v-loading="load">
-                <div style="padding: 30px;">
-                    <img src="../../image/money.png" style="width: 120px;height: 120px;float: left; margin-right: 50px;"/>
-                    <p>账户总余额（元）： </p>
-                    <h2>{{account.balanceAmount | formatMoney}}</h2>
-                </div>
-                <el-table :data="account.customerBalances" style="width: 100%;margin-top: 20px;">
-                    <el-table-column
-                            align="left"
-                            prop='customerCompanyName'
-                            label='接入应用'>
-                    </el-table-column>
-                    <el-table-column
-                            align="left"
-                            prop='payUserName'
-                            label='子账号名称'>
-                    </el-table-column>
-                    <el-table-column
-                            align="left"
-                            prop='payUserNo'
-                            label='子账号'>
-                    </el-table-column>
-                    <el-table-column
-                            align="left"
-                            prop="balanceAmount"
-                            label='余额（元）'>
-                        <template slot-scope="scope">
-                            <span>{{scope.row.balanceAmount | formatMoney}}</span>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </el-tab-pane>
-            <el-tab-pane label="客户账户余额（新）" name="client" v-loading="load">
+            </el-tab-pane> -->
+            <!-- v-loading="load" -->
+            <el-tab-pane label="客户账户余额" name="client">
                 <!-- <div style="padding: 30px;">
                     <img src="../../image/money.png" style="width: 120px;height: 120px;float: left; margin-right: 50px;"/>
                     <p>账户总余额（元）： </p>
@@ -146,12 +115,8 @@
                     v-on:handleCurrentChange="clientBalance">
                 </ayg-pagination>
             </el-tab-pane>
-            <el-tab-pane label="服务商账户余额（新）" name="service" v-loading="load">
-                <!-- <div style="padding: 30px;">
-                    <img src="../../image/money.png" style="width: 120px;height: 120px;float: left; margin-right: 50px;"/>
-                    <p>账户总余额（元）： </p>
-                    <h2>{{account.balanceAmount | formatMoney}}</h2>
-                </div> -->
+            <!-- v-loading="load" -->
+            <el-tab-pane label="服务商账户余额" name="service">
                 <el-form :inline="true" :model="serviceForm" ref="serviceForm">
                     <el-form-item label="服务商" prop="serviceCompanyId">
                         <el-select size="small" filterable v-model="serviceForm.serviceCompanyId">
@@ -217,6 +182,130 @@
                     v-on:handleCurrentChange="serviceBalance">
                 </ayg-pagination>
             </el-tab-pane>
+            <!-- v-loading="load" -->
+            <el-tab-pane label="转包服务商账户余额" name="assign">
+                <el-form :inline="true" :model="assignForm" ref="assignForm">
+                    <el-form-item label="商户" prop="appId">
+                        <el-select size="small" filterable v-model="assignForm.appId">
+                            <el-option v-for="e in apps" :value="e.value" :label="e.text" :key="e.value"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="服务商" prop="serviceCompanyId">
+                        <el-select size="small" filterable v-model="assignForm.serviceCompanyId">
+                            <el-option v-for="e in serviceOption" :value="e.id" :label="e.name" :key="e.id"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="转包服务商" prop="subServiceCompanyId">
+                        <el-select size="small" filterable v-model="assignForm.subServiceCompanyId">
+                            <el-option v-for="e in serviceOption" :value="e.id" :label="e.name" :key="e.id"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button size="small" type="primary" @click="assignBalance">查询</el-button>
+                        <el-button size="small" @click="reset('assignForm')">清除</el-button>
+                        <!-- <el-button size="small" style="margin-left: 60px" @click="exportService">导出搜索结果</el-button> -->
+                    </el-form-item>
+                </el-form>
+                <el-table :data="assignData.list" style="width: 100%;margin-top: 20px;">
+                    <el-table-column
+                            align="left"
+                            prop='companyName'
+                            label='企业名称'>
+                    </el-table-column>
+                    <el-table-column
+                            align="left"
+                            prop='appName'
+                            label='商户名称'>
+                    </el-table-column>
+                    <el-table-column
+                            align="left"
+                            prop='serviceCompanyName'
+                            label='服务商名称'>
+                    </el-table-column>
+                    <el-table-column
+                            align="left"
+                            prop='subServiceCompanyName'
+                            label='转包服务商名称'>
+                    </el-table-column>
+                    <el-table-column
+                            align="left"
+                            prop="bankAvailBalance"
+                            label='银行卡余额（元）'>
+                        <template slot-scope="scope">
+                            <span>{{scope.row.bankAvailBalance | formatMoney}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            align="left"
+                            prop="alipayAvailBalance"
+                            label='支付宝余额（元）'>
+                        <template slot-scope="scope">
+                            <span>{{scope.row.alipayAvailBalance | formatMoney}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            align="left"
+                            prop="wxAvailBalance"
+                            label='微信余额（元）'>
+                        <template slot-scope="scope">
+                            <span>{{scope.row.wxAvailBalance | formatMoney}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            align="left"
+                            prop="totalAvailBalance"
+                            label='总余额（元）'>
+                        <template slot-scope="scope">
+                            <span>{{scope.row.totalAvailBalance | formatMoney}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            align="left"
+                            label='操作'>
+                        <template slot-scope="scope">
+                            <el-button size="small" type="text" @click="goAssignDetail(scope.row)">详情</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <ayg-pagination
+                    :total="assignData.total"
+                    :currentPage="assignForm.page"
+                    v-on:handleSizeChange="setSizeAssign"
+                    v-on:handleCurrentChange="assignBalance">
+                </ayg-pagination>
+            </el-tab-pane>
+            <el-tab-pane label="渠道账户余额" name="old" v-loading="load">
+                <div style="padding: 30px;">
+                    <img src="../../image/money.png" style="width: 120px;height: 120px;float: left; margin-right: 50px;"/>
+                    <p>账户总余额（元）： </p>
+                    <h2>{{account.balanceAmount | formatMoney}}</h2>
+                </div>
+                <el-table :data="account.customerBalances" style="width: 100%;margin-top: 20px;">
+                    <el-table-column
+                            align="left"
+                            prop='customerCompanyName'
+                            label='接入应用'>
+                    </el-table-column>
+                    <el-table-column
+                            align="left"
+                            prop='payUserName'
+                            label='子账号名称'>
+                    </el-table-column>
+                    <el-table-column
+                            align="left"
+                            prop='payUserNo'
+                            label='子账号'>
+                    </el-table-column>
+                    <el-table-column
+                            align="left"
+                            prop="balanceAmount"
+                            label='余额（元）'>
+                        <template slot-scope="scope">
+                            <span>{{scope.row.balanceAmount | formatMoney}}</span>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-tab-pane>
         </el-tabs>
         <!--<ayg-pagination v-if="companyBuildList.total" :total="companyBuildList.total"-->
         <!--v-on:handleSizeChange="handleSizeChange"-->
@@ -243,8 +332,8 @@ export default {
         stateEQ: ""
       },
       value9: "",
-      activeName: "old",
-      aData: "",
+      activeName: "client",
+    //   aData: "",
       load: true,
       clientForm: {
         appId: '',
@@ -265,7 +354,15 @@ export default {
       },
       serviceData: {},
       companys: [],
-      apps: []
+      apps: [],
+      assignForm: {
+          appId: '',
+          serviceCompanyId: '',
+          subServiceCompanyId: '',
+          page: 1,
+          pageSize: 10
+      },
+      assignData: {}
     };
   },
   computed: {
@@ -284,23 +381,32 @@ export default {
       if (this.account.balanceAmount || this.account.balanceAmount === 0) {
         this.load = false;
       }
+    },
+    activeName() {
+        if(this.activeName == 'old' && !this.account) {
+            this.requestAction({
+                page: 1,
+                pageSize: this.pageSize
+            });
+        }
     }
   },
   mounted() {
-    post("/api/balance-web/balance-account/query-account").then(
-      function(data) {
-        this.aData = data;
-      }.bind(this)
-    );
-    setTimeout(
-      function() {
-        this.activeName = "new";
-      }.bind(this),
-      10
-    );
+    // post("/api/balance-web/balance-account/query-account").then(
+    //   function(data) {
+    //     this.aData = data;
+    //   }.bind(this)
+    // );
+    // setTimeout(
+    //   function() {
+    //     this.activeName = "new";
+    //   }.bind(this),
+    //   10
+    // );
     // this.getService()
     this.clientBalance()
     this.serviceBalance()
+    this.assignBalance()
     get('/api/sysmgr-web/commom/company', {
         companyIdentity: 'custom'
     }).then(data => {
@@ -412,18 +518,28 @@ export default {
         sessionStorage.setItem('serviceDetail', JSON.stringify(a))
         this.$router.push('serviceDetail')
     },
+    assignBalance(a) {
+        if(isNaN(a)) {
+            a = 1
+        }
+        this.assignForm.page = a
+        post('/api/balance-web/balance-account/query-sub-service-company-balance-account', this.assignForm).then(data => {
+            this.assignData = data
+        })
+    },
+    setSizeAssign(a) {
+        this.assignForm.pageSize = a
+        this.assignBalance()
+    },
+    goAssignDetail(a) {
+        sessionStorage.setItem('assignDetail', JSON.stringify(a))
+        this.$router.push('assignDetail')
+    },
     reset(name) {
         console.log(name)
         this.$refs[name].resetFields()
         // this.$refs[name].resetFields()
     }
-  },
-
-  created: function() {
-    this.requestAction({
-      page: 1,
-      pageSize: this.pageSize
-    });
   }
 };
 </script>

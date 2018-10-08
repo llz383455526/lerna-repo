@@ -175,10 +175,10 @@
                 <el-form-item label="客户号" size="small" prop="mer_cust_id">
                     <el-input class="form_input" v-model="form.mer_cust_id"></el-input>
                 </el-form-item>
-                <el-form-item label="密钥文件密码" size="small" prop="pfx_file_pwd">
+                <el-form-item label="证书文件密码" size="small" prop="pfx_file_pwd">
                     <el-input class="form_input" v-model="form.pfx_file_pwd"></el-input>
                 </el-form-item>
-                <el-form-item label="密钥文件路径" size="small" prop="pfx_file_fullname">
+                <el-form-item label="证书文件路径" size="small" prop="pfx_file_fullname">
                     <el-input class="form_input" v-model="form.pfx_file_fullname"></el-input>
                 </el-form-item>
                 <el-form-item label="对账sftp地址" size="small" prop="rec$hf$sftp$host">

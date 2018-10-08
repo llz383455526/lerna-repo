@@ -9,7 +9,7 @@
             <el-form-item label="文件ID" class="hide">
                 <input v-model="contractForm.referIds">
             </el-form-item>
-            <el-form-item label="商户名称" prop="customerName" placeholder="请输入内容">
+            <el-form-item label="企业名称" prop="customerName" placeholder="请输入内容">
                 <el-select v-model="contractForm.customerName" filterable placeholder="请选择" @change="getInvoice" style="width:100%;" :disabled="$route.query.contractId ? true : false">
                     <el-option v-for="item in customerCompaniesList" :key="item.companyId" :label="item.companyName"
                                :value="item.companyName"></el-option>
@@ -530,7 +530,7 @@
             return {
                 rules: {
                     customerName: [
-                        {required: true, message: '请输入商户名称', trigger: 'blur'}
+                        {required: true, message: '请输入企业名称', trigger: 'blur'}
                     ],
                     serviceCompanyName: [
                         {required: true, message: '请输入公司名称', trigger: 'blur'}

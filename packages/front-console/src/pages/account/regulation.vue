@@ -55,8 +55,13 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="选择服务商" prop="serviceCompanyId">
-                    <el-select filterable v-model="regForm.serviceCompanyId" size="small" placeholder="请选择服务商名称" @change="getChannelType">
+                    <el-select filterable v-model="regForm.serviceCompanyId" size="small" placeholder="请选择服务商名称" @change="getSubServiceCompany">
                         <el-option v-for="e in serviceName" :label="e.text" :value="e.value" :key="e.value"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="转包服务商" prop="subServiceCompanyId" v-if="subServiceCompanys && subServiceCompanys.length">
+                    <el-select filterable v-model="regForm.subServiceCompanyId" size="small" placeholder="请选择转包服务商" @change="getChannelType">
+                        <el-option v-for="e in subServiceCompanys" :key="e.id" :label="e.name" :value="e.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="选择渠道" prop="bankType">
@@ -143,6 +148,7 @@ export default {
                 appName: '',
                 serviceCompanyId: '',
                 serviceCompanyName: '',
+                subServiceCompanyId: '',
                 bankType: '',
                 fromBalanceAccountId: '',
                 toBalanceAccountId: '',
@@ -211,7 +217,8 @@ export default {
             },
             outMsg: '',
             inMsg: '',
-            companys: []
+            companys: [],
+            subServiceCompanys: []
         }
     },
     computed: {
@@ -285,6 +292,18 @@ export default {
             })
             this.getChannel()
         },
+        getSubServiceCompany() {
+            this.resetReg.subServiceCompanyId = ''
+            this.subServiceCompanys = []
+            this.regForm.subServiceCompanyId = ''
+            get('/api/sysmgr-web/commom/subcontract-service-companies', {
+                appId: this.regForm.appId,
+                serviceCompanyId: this.regForm.serviceCompanyId
+            }).then(data => {
+                this.subServiceCompanys = data
+            })
+            this.getChannelType()
+        },
         getChannelType() {
             this.regForm.bankType = ''
             this.channels = []
@@ -313,7 +332,8 @@ export default {
                 get('/api/balance-web/balance-account/query-balance-account-channel-list', {
                     appId: this.regForm.appId,
                     serviceCompanyId: this.regForm.serviceCompanyId,
-                    bankType: this.regForm.bankType
+                    bankType: this.regForm.bankType,
+                    subServiceCompanyId: this.regForm.subServiceCompanyId
                 }).then(data => {
                     this.channels = data
                 })
@@ -367,14 +387,16 @@ export default {
             this.$refs["regForm"].validate(valid => {
                 if(valid) {
                     if(this.outMsg && this.outMsg.currentAvailBalance >= this.regForm.tradeAmount) {
-                        var bankType = this.regForm.bankType
+                        var bankType = this.regForm.bankType, subServiceCompanyId = this.regForm.subServiceCompanyId
                         delete this.regForm.bankType
+                        delete this.regForm.subServiceCompanyId
                         postWithErrorCallback('/api/balance-web/balance-trade-recon/do-trade-recon', this.regForm).then(data => {
                             this.show = false
                             this.regForm.bankType = bankType
                             this.query()
                         }).catch(err => {
                             this.regForm.bankType = bankType
+                            this.regForm.subServiceCompanyId = subServiceCompanyId
                         })
                     }
                     else {

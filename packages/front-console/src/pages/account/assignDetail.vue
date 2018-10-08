@@ -1,6 +1,6 @@
 <template>
     <div class="company-build-container company-container">
-        <div class="title">{{data.appName}}账户余额明细（{{data.companyName}}）</div>
+        <div class="title">转包服务商余额明细（{{data.subServiceCompanyName}}）</div>
         <div class="collect">
             <div>
                 <span>总余额（元）</span>
@@ -20,7 +20,8 @@
             </div>
         </div>
         <el-table v-if="data.list" :data="data.list">
-            <el-table-column label="服务商名称" prop="serviceCompanyName" width="180"></el-table-column>
+            <el-table-column label="商户名称" prop="appName"></el-table-column>
+            <el-table-column label="服务商名称" prop="serviceCompanyName"></el-table-column>
             <el-table-column label="转包服务商名称" prop="subServiceCompanyName"></el-table-column>
             <el-table-column label="子账号名称" prop="payUserName"></el-table-column>
             <el-table-column label="业务类型" prop="bankTypeName"></el-table-column>
@@ -34,7 +35,7 @@
             </el-table-column>
             <el-table-column label="余额">
                 <template slot-scope="scope">
-                    {{scope.row.availBalance | formatMoney}}
+                    {{scope.row.totalAvailBalance | formatMoney}}
                 </template>
             </el-table-column>
         </el-table>
@@ -52,11 +53,11 @@ export default {
     data() {
         return {
             form: {
-                appId: '',
-                companyId: '',
                 page: 1,
                 pageSize: 10,
-                serviceCompanyId: ''
+                subServiceCompanyId: '',
+                serviceCompanyId: '',
+                appId: ''
             },
             total: 0,
             msg: {},
@@ -64,9 +65,9 @@ export default {
         }
     },
     mounted() {
-        this.msg = JSON.parse(sessionStorage.getItem('clientDetail'))
-        for(var k in this.form) {
-            if(this.msg[k]) {
+        this.msg = JSON.parse(sessionStorage.getItem('assignDetail'))
+        for(var k in this.msg) {
+            if(k in this.form) {
                 this.form[k] = this.msg[k]
             }
         }
@@ -78,14 +79,14 @@ export default {
                 a = 1
             }
             this.form.page = a
-            post('/api/balance-web/balance-account/query-app-balance-account-detail', this.form).then(data => {
+            post('/api/balance-web/balance-account/query-service-company-balance-account-sub-service-detail', this.form).then(data => {
                 this.data = data
                 this.data.list = this.data.list.filter(e => {
                     return e.payUserName
                 })
-                this.data.list.forEach(e => {
-                    e.serviceCompanyName = this.data.serviceCompanyName
-                })
+                // this.data.list.forEach(e => {
+                //     e.serviceCompanyName = this.data.serviceCompanyName
+                // })
             })
         },
         setSize(a) {

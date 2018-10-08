@@ -2,7 +2,7 @@
     <div style="background-color:#fff;padding:15px;">
         <div style="margin-bottom:30px;">合同管理</div>
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
-            <el-form-item label="商户名称" size="small" prop="customerName">
+            <el-form-item label="企业名称" size="small" prop="customerName">
                 <el-input v-model="formSearch.customerName"></el-input>
             </el-form-item>
             <el-form-item label="服务商名称" size="small" prop="serviceCompanyName">
@@ -31,7 +31,7 @@
         </el-form>
         <el-button size="small" @click="routerPush('/main/contract/create')">新增</el-button>
         <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
-            <el-table-column prop="customerName" label="商户名称" width="200"></el-table-column>
+            <el-table-column prop="customerName" label="企业名称" width="200"></el-table-column>
             <el-table-column prop="serviceCompanyName" label="服务商名称" width="220"></el-table-column>
             <el-table-column prop="settleTypeName" label="结算周期"></el-table-column>
             <el-table-column prop="serviceFeeName" label="服务费收费比例"></el-table-column>
@@ -60,7 +60,7 @@
         </ayg-pagination>
         <el-dialog :title="`复制${source.customerName}-${source.serviceCompanyName}合同`" :visible.sync="show" width="500px">
             <el-form :model="copyForm" size="small" :rules="copyRules" label-width="100px" ref="copyForm">
-                <el-form-item label="商户名称" prop="customerId">
+                <el-form-item label="企业名称" prop="customerId">
                     <el-select v-model="copyForm.customerId" filterable class="input_full" @change="getCompanyName">
                         <el-option v-for="item in customerCompaniesList" :key="item.companyId" :label="item.companyName" :value="item.companyId"></el-option>
                     </el-select>
@@ -71,7 +71,7 @@
                     </el-select>
                 </el-form-item>
                 <span class="tip">
-                    *新合同的客户和服务商不支持修改
+                    *新合同的企业和服务商不支持修改
                 </span>
                 <el-form-item>
                     <el-button @click="show=false">取消</el-button>
@@ -115,7 +115,7 @@ import { setTimeout } from 'timers';
                     customerId: [
                         {
                             required: true,
-                            message: '请选择客户',
+                            message: '请选择企业',
                             trigger: 'change'
                         }
                     ],

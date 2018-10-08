@@ -25,33 +25,25 @@
                   <el-checkbox :label="item.value" :key="item.value" v-for="item in serverConfig">{{item.text}}</el-checkbox>
                 </el-checkbox-group>
           </el-form-item>
-		  <el-form-item label="企业负责人" prop="chargeBy" size="small">
+		  <el-form-item label="商户负责人" prop="chargeBy" size="small">
               <el-select v-model="form.chargeBy" class="form_input" @change="getName">
                   <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
               </el-select>
           </el-form-item>
-          <!-- <el-form-item label="商户负责人" prop="companyType" size="small">
-              <el-select v-model="form.companyType" class="form_input">
-                  <el-option v-for="e in types" :label="e.text" :value="e.value" :key="e.value"></el-option>
-              </el-select>
-          </el-form-item> -->
           <el-form-item label="选择服务商" prop="serviceCompanyList" size="small">
-              <!-- <el-select v-model="form.serviceCompanyId" class="form_input" filterable>
-                  <el-option v-for="item in company" :value="item.companyId" :label="item.companyName"></el-option>
-              </el-select> -->
               <el-checkbox-group v-model="form.serviceCompanyList">
-                  <el-checkbox v-for="item in company" :label="item" :key="item.value">{{item.text}}</el-checkbox>
+                  <el-checkbox v-for="(item, i) in company" :label="item" :key="item.value" class="block">
+						<span class="mr10">{{item.text}}</span>
+                        <el-select v-model="assign[i].subcontractType" v-if="form.serviceCompanyList.indexOf(item) > -1">
+							<el-option label="非转包" :value="0"></el-option>
+                            <el-option label="业务转包" :value="1"></el-option>
+                        </el-select>
+                        <el-select v-model="assign[i].subServiceList[0].subServiceCompanyId" v-if="form.serviceCompanyList.indexOf(item) > -1 && assign[i].subcontractType" @change="getassignCompanyName(i)">
+                            <el-option v-for="e in filterAssignCompany(item.value)" :key="e.id" :label="e.name" :value="e.id"></el-option>
+                        </el-select>
+				  </el-checkbox>
               </el-checkbox-group>
           </el-form-item>
-          <!-- <el-form-item label="企业负责人" prop="legalPerson" size="small">
-              <el-button type="primary">选择负责人</el-button>
-          </el-form-item> -->
-          <!-- <el-form-item label="企业地址" prop="areaName" size="small">
-              <el-input class="form_input" v-model="form.areaName"></el-input>
-          </el-form-item>
-          <el-form-item label="注册日期" prop="registerDate" size="small">
-              <el-input class="form_input" v-model="form.registerDate"></el-input>
-          </el-form-item> -->
       </el-form>
       <el-dialog title="获取验证码" :visible.sync="cshow" width="70%">
           <span class="tip">为了保障您的账号安全，请完成一下身份验证。</span>
@@ -166,12 +158,13 @@ export default {
       msg: "",
       baseUrl,
       charges: [],
-      serverConfig: [],
+	  serverConfig: [],
+	  assign: [],
+	  assignCompany: []
     };
   },
   mounted() {
     Object.assign(this.form, this.$route.query);
-    console.log(this.form);
     post("/api/sysmgr-web/company-app/get-two-step-phone").then(data => {
       this.phone = data;
     });
@@ -180,19 +173,32 @@ export default {
     //   this.company = data;
     // });
     get(`/api/sysmgr-web/commom/contract-service-company-options?customCompanyId=${this.form.companyId}`).then(data => {
-        this.company = data;
+		this.company = data;
+		this.company.forEach(e => {
+			this.assign.push({
+				serviceCompanyId: e.value,
+				subcontractType: 0,
+				subServiceList: [{
+					isDefault: 1,
+					subServiceCompanyId: '',
+					subServiceCompanyName: ''
+				}]
+			})
+		})
+		console.log(this.assign)
     })
     get(
       `/api/sysmgr-web/user/get-platform-users?platformType=console-company`
     ).then(data => {
-      console.log(data);
       this.charges = data;
     });
     this.authCode = localStorage.getItem('authCode')
     get("/api/sysmgr-web/commom/service-config").then(data => {
         this.serverConfig = data;
     })
-
+	get('/api/sysmgr-web/commom/company?companyIdentity=service').then(data => {
+		this.assignCompany = data
+	})
   },
   methods: {
     back() {
@@ -204,26 +210,41 @@ export default {
           this.form.chargeByName = e.name;
         }
       });
-    },
+	},
+	filterAssignCompany(a) {
+		return this.assignCompany.filter(e => {
+			return a != e.id
+		})
+	},
+	getassignCompanyName(a) {
+		this.assignCompany.forEach(e => {
+			if(e.id == this.assign[a].subServiceList[0].subServiceCompanyId) {
+				this.assign[a].subServiceList[0].subServiceCompanyName = e.name
+			}
+		})
+	},
     sure(e) {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.authCode) {
             this.form.authCode = this.authCode;
-            var arr = [], oldArr = this.form.serviceCompanyList
+			var arr = [], oldArr = this.form.serviceCompanyList
             this.form.serviceCompanyList.forEach((e, i) => {
                 arr[i] = {}
                 arr[i].serviceCompanyId = e.value
-                arr[i].serviceCompanyName = e.text
+				arr[i].serviceCompanyName = e.text
+				this.assign.forEach(e => {
+					if(e.serviceCompanyId == arr[i].serviceCompanyId) {
+						Object.assign(arr[i], e)
+					}
+				})
             })
             this.form.serviceCompanyList = arr
-            console.log(this.form)
             postWithErrorCallback(
               "/api/sysmgr-web/company-app/add-app",
               this.form
             )
               .then(data => {
-                console.log(data);
                 this.eshow = false;
                 this.$message({
                   type: "success",
@@ -236,7 +257,6 @@ export default {
                   this.getAccredit(this.sure);
                 }
               }).finally(() => {
-                  console.log('finally')
                   this.form.serviceCompanyList = oldArr
               })
           } else {
@@ -269,7 +289,6 @@ export default {
     },
     createId() {
       this.req_id = this.guid();
-      console.log(this.req_id);
     },
     getCode() {
       if (this.chars) {
@@ -278,7 +297,6 @@ export default {
           reqId: this.req_id
         })
           .then(data => {
-            console.log(data);
             this.$message({
               type: "success",
               message: "验证码已发送，请注意查收"
@@ -310,7 +328,6 @@ export default {
         post("/api/sysmgr-web/company-app/get-auth-code-by-phone-code", {
           phoneCode: this.phoneCode
         }).then(data => {
-          console.log(data);
           this.cshow = false;
           this.authCode = data;
           localStorage.setItem("authCode", data);
@@ -351,5 +368,12 @@ export default {
 }
 .tool {
   margin: 20px 0;
+}
+.block {
+    display: block;
+    margin-bottom: 10px;
+}
+.mr10 {
+    margin-right: 10px;
 }
 </style>

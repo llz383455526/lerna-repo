@@ -83,7 +83,7 @@
           <!-- <el-table-column prop="totalNum" label="申请开票数"></el-table-column> -->
           <el-table-column prop="subjectName" label="发票类目"></el-table-column>
           <el-table-column prop="customerInvoiceType" label="客户开票类型"></el-table-column>
-          <el-table-column label="操作时间">
+          <el-table-column label="审批通过时间">
               <template slot-scope="scope">
                   {{scope.row.lastTime | formatTime}}
               </template>

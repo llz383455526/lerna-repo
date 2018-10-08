@@ -39,7 +39,7 @@
                     </el-table-column>
                 </el-table>
             </el-tab-pane>
-            <el-tab-pane label="关联商户明细" name="relevance">
+            <el-tab-pane label="关联商户明细（自营）" name="relevance">
                 <el-table v-if="data.list" :data="data.list">
                     <el-table-column label="商户名称" prop="appName"></el-table-column>
                     <el-table-column label="归属企业" prop="companyName"></el-table-column>
@@ -77,6 +77,27 @@
                     </el-table-column>
                 </el-table>
             </el-tab-pane>
+            <!-- <el-tab-pane label="转包服务商明细" name="assign">
+                <el-table v-if="data.list" :data="data.list">
+                    <el-table-column label="转包服务商" prop="subServiceCompanyName" width="180"></el-table-column>
+                    <el-table-column label="商户名称" prop="appName"></el-table-column>
+                    <el-table-column label="归属企业" prop="companyName"></el-table-column>
+                    <el-table-column label="子账号名称" prop="payUserName"></el-table-column>
+                    <el-table-column label="渠道别名" prop="channelAlias"></el-table-column>
+                    <el-table-column label="关键标识">
+                        <template slot-scope="scope">
+                            <div>登录账号：{{scope.row.channelLoginAcctNo}}</div>
+                            <div>商户号：{{scope.row.channelMerCustId}}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="业务类型" prop="bankType"></el-table-column>
+                    <el-table-column label="总余额（元）" prop="totalAvailBalance">
+                        <template slot-scope="scope">
+                            {{scope.row.totalAvailBalance | formatMoney}}
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-tab-pane> -->
         </el-tabs>
         <ayg-pagination
             :total="data.total"
@@ -119,6 +140,7 @@ export default {
                 a = 1
             }
             this.form.page = a
+            // this.tabName == 'relevance' ? 'query-service-company-balance-account-app-detail' : 'query-service-company-balance-account-sub-service-detail'
             post(`/api/balance-web/balance-account/${this.tabName == 'channel' ? 'query-service-company-balance-account-channel-detail' : 'query-service-company-balance-account-app-detail'}`, this.form).then(data => {
                 this.data = data
                 this.data.list = this.data.list.filter(e => {

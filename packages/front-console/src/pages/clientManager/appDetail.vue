@@ -56,10 +56,15 @@
             </el-col>
         </el-row>
         <el-row :gutter="20">
-            <el-col :span="10">
-                <el-col :span="8" class="right">服务商</el-col>
+            <el-col :span="20">
+                <el-col :span="4" class="right">服务商</el-col>
                 <el-col :span="10">
-                    <div v-for="e in data.serviceCompanyList">{{e.serviceCompanyName}}</div>
+                    <div v-for="e in data.serviceCompanyList">
+                        {{e.serviceCompanyName}}
+                        <template v-if="e.subServiceList && e.subServiceList.length">
+                            <span style="color: red;">业务转包</span> {{`${e.subServiceList[0].subServiceCompanyName}`}}
+                        </template>
+                    </div>
                 </el-col>
             </el-col>
         </el-row>
@@ -86,7 +91,17 @@
           <el-table :data="data.payUsers">
               <el-table-column prop="payUserId" label="支付用户ID"></el-table-column>
               <el-table-column prop="thirdPaymentTypeName" label="渠道名称"></el-table-column>
-              <el-table-column prop="serviceCompanyName" label="关联服务商"></el-table-column>
+              <el-table-column prop="serviceCompanyName" label="关联服务商" width=280>
+                  <template slot-scope="scope">
+                      <template v-if="scope.row.subServiceCompanyName">
+                          {{scope.row.subServiceCompanyName}} <br>
+                          <span style="color: red;">（{{scope.row.serviceCompanyName}} 业务转包）</span>
+                      </template>
+                      <template v-else>
+                          {{scope.row.serviceCompanyName}}
+                      </template>
+                  </template>
+              </el-table-column>
               <el-table-column prop="payUserName" label="支付账号"></el-table-column>
               <el-table-column label="操作">
                   <template slot-scope="scope">
@@ -193,8 +208,8 @@
                 </div>
             </div>
       </div>
-      <el-dialog title="appid配置信息" :before-close="listInit" :visible.sync="ashow" width="70%">
-          <el-form label-width="180px" :model="aform" :rules="arule" ref="aform">
+      <el-dialog title="appid配置信息" :before-close="listInit" :visible.sync="ashow" width="940px">
+          <el-form label-width="180px" :model="aform" :rules="arule" ref="aform" size="small">
               <el-form-item label="商户负责人：" prop="chargeBy">
                   <el-select v-model="aform.chargeBy" class="form_input" @change="getName">
                   <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
@@ -221,7 +236,16 @@
               </template>
               <el-form-item label="服务商">
                   <el-checkbox-group v-model="aform.serviceCompanyList" @change="change">
-                      <el-checkbox v-for="item in company" :label="item.value" :key="item.value">{{item.text}}</el-checkbox>
+                      <el-checkbox v-for="(item, i) in company" :label="item.value" :key="item.value" class="block">
+                          <span class="mr10">{{item.text}}</span>
+                          <el-select v-model="assign[i].subcontractType" v-if="aform.serviceCompanyList.indexOf(item.value) > -1">
+							<el-option label="非转包" value="0"></el-option>
+                            <el-option label="业务转包" value="1"></el-option>
+                        </el-select>
+                        <el-select v-model="assign[i].subServiceList[0].subServiceCompanyId" filterable v-if="aform.serviceCompanyList.indexOf(item.value) > -1 && assign[i].subcontractType - 0" @change="getassignCompanyName(i)">
+                            <el-option v-for="e in filterAssignCompany(item.value)" :key="e.id" :label="e.name" :value="e.id"></el-option>
+                        </el-select>
+                      </el-checkbox>
                   </el-checkbox-group>
               </el-form-item>
           </el-form>
@@ -230,7 +254,7 @@
               <el-button @click="ashow = false">关闭</el-button>
           </span>
       </el-dialog>
-      <el-dialog title="添加支付渠道" :visible.sync="addShow" width="70%">
+      <el-dialog title="添加支付渠道" :visible.sync="addShow" @open="clearForm" width="70%">
           <el-form label-width="180px">
               <el-form-item label="接入应用：">
                   <template>{{data.appName}}</template>
@@ -238,6 +262,11 @@
               <el-form-item label="服务商">
                   <el-select class="f_input" v-model="serviceCompanyId" @change="clear">
                       <el-option v-for="e in data.serviceCompanyList" :value="e.serviceCompanyId" :label="e.serviceCompanyName"></el-option>
+                  </el-select>
+              </el-form-item>
+              <el-form-item label="转包服务商" v-if="subServiceList.length">
+                  <el-select class="f_input" v-model="subServiceCompanyId" @change="getSubServiceCompanyName">
+                      <el-option v-for="e in subServiceList" :value="e.subServiceCompanyId" :label="e.subServiceCompanyName"></el-option>
                   </el-select>
               </el-form-item>
               <el-form-item label="支付渠道">
@@ -297,8 +326,6 @@
           </span>
       </el-dialog>
     </div>
-
-    
 </template>
 <script>
 import {
@@ -385,7 +412,12 @@ export default {
         sandboxConfig:{
           notifyUrl:""
         }
-      }
+      },
+      assign: [],
+      assignCompany: [],
+      subServiceCompanyId: "",
+      subServiceCompanyName: "",
+      subServiceList: []
     };
   },
   mounted() {
@@ -404,11 +436,12 @@ export default {
     get(`/api/sysmgr-web/user/get-platform-users?platformType=console-company`).then(data => {
       this.charges = data;
     });
-    
     get("/api/openapi/developer/appinfo/" + this.appId).then(data => {
       this.appinfo = data;
     });
-
+    get('/api/sysmgr-web/commom/company?companyIdentity=service').then(data => {
+		this.assignCompany = data
+	})
   },
   methods: {
     query() {
@@ -420,7 +453,6 @@ export default {
         this.listInit()
         this.aform.chargeBy = data.chargeBy
         this.aform.chargeByName = data.chargeByName
-        this.getService()
       });
     },
     listInit(next) {
@@ -431,10 +463,24 @@ export default {
         if(next) {
             next()
         }
+        this.getService()
     },
     getService() {
         get(`/api/sysmgr-web/commom/contract-service-company-options?customCompanyId=${this.data.companyId}`).then(data => {
             this.company = data;
+            this.company.forEach(e => {
+                var arr = this.data.serviceCompanyList.filter(ev =>{
+                    return ev.serviceCompanyId == e.value
+                })
+			    this.assign.push({
+		    		subcontractType: arr[0] && arr[0].subcontractType ? arr[0].subcontractType : '0',
+		    		subServiceList: [{
+		    			isDefault: 1,
+		    			subServiceCompanyId: arr[0] && arr[0].subServiceList ? arr[0].subServiceList[0].subServiceCompanyId : '',
+		    			subServiceCompanyName: arr[0] && arr[0].subServiceList ? arr[0].subServiceList[0].subServiceCompanyName : ''
+		    		}]
+                })
+            })
         })
     },
     getName() {
@@ -444,8 +490,20 @@ export default {
         }
       });
     },
+    filterAssignCompany(a) {
+		return this.assignCompany.filter(e => {
+			return a != e.id
+		})
+	},
+	getassignCompanyName(a) {
+		this.assignCompany.forEach(e => {
+			if(e.id == this.assign[a].subServiceList[0].subServiceCompanyId) {
+				this.assign[a].subServiceList[0].subServiceCompanyName = e.name
+			}
+		})
+	},
     change() {
-        console.log(this.aform.serviceCompanyList)
+        // console.log(this.aform.serviceCompanyList)
     },
     open() {
       this.ashow = true;
@@ -471,6 +529,7 @@ export default {
                         serviceCompanyId: e.value,
                         serviceCompanyName: e.text
                     }
+                    Object.assign(arr[arr.length - 1], this.assign[i])
                 }
             })
             for(var k in this.aform) {
@@ -501,13 +560,27 @@ export default {
         this.others = [];
         this.result = "";
         this.payeruserName = "";
+        this.subServiceCompanyId = ""
+        this.data.serviceCompanyList.forEach(e => {
+            if(e.serviceCompanyId == this.serviceCompanyId) {
+                this.subServiceList = e.subServiceList || []
+            }
+        })
+    },
+    getSubServiceCompanyName() {
+        this.paymentThirdType = ''
+        this.others = [];
+        this.result = "";
+        this.payeruserName = "";
+        this.subServiceCompanyName = this.subServiceList[0].subServiceCompanyName
+        console.log(this.paymentThirdType)
     },
     getList() {
       this.others = [];
       this.result = "";
       this.payeruserName = "";
       post("/api/paymentmgt/front/payuser/qrybycompany", {
-        companyId: this.serviceCompanyId,
+        companyId: this.subServiceCompanyId || this.serviceCompanyId,
         thirdpaySystemId: this.paymentThirdType
       }).then(data => {
         this.others = data;
@@ -526,6 +599,12 @@ export default {
       this.others = [];
       this.result = "";
     },
+    clearForm() {
+        this.serviceCompanyId = ''
+        this.subServiceList = ''
+        this.subServiceCompanyId = ''
+        this.subServiceCompanyName = ''
+    },
     addRow() {
       if (this.authCode) {
         post(`/api/paymentmgt/front/channel/qrydetail?channelId=${this.result.channelId}`).then(data => {
@@ -540,7 +619,9 @@ export default {
               channelAlias: data.channelAlias,
               channelLoginAcctNo: data.loginAcctno,
               channelMerCustId: data['cj.merchant_id'] || data['wx.mchid'] || data['partner_id'] || data['mer_id'] || data['alipay.appid'] || data['pingan.mainacct.no'] || data['cmb.nteckopr.eacNbr'] || data['hxb.merchId'] || '',
-              serviceCompanyId: this.serviceCompanyId
+              serviceCompanyId: this.serviceCompanyId,
+              subServiceCompanyId: this.subServiceCompanyId,
+              subServiceCompanyName: this.subServiceCompanyName
             }).then(data => {
               this.addShow = false;
               this.$message({
@@ -570,7 +651,9 @@ export default {
           paymentThirdType: this.curr.thirdPaymentType,
           paymentUserId: this.curr.payUserId,
           authCode: this.authCode,
-          serviceCompanyId: this.curr.serviceCompanyId
+          serviceCompanyId: this.curr.serviceCompanyId,
+          subServiceCompanyId: this.curr.subServiceCompanyId,
+          subServiceCompanyName:this.curr.subServiceCompanyName
         })
           .then(data => {
             this.dshow = false;
@@ -673,7 +756,8 @@ export default {
                 authCode: this.authCode,
                 paymentThirdType: this.curr.thirdPaymentType,
                 paymentUserId: this.curr.payUserId,
-                serviceCompanyId: this.curr.serviceCompanyId
+                serviceCompanyId: this.curr.serviceCompanyId,
+                subServiceCompanyId: this.curr.subServiceCompanyId
             }).then(data => {
                 this.$message({
                   type: "success",
@@ -705,7 +789,7 @@ export default {
   margin-top: 20px;
 }
 .title {
-  display: inline-block;
+  display: block;
   margin-top: 30px;
   font-weight: bold;
 }
@@ -767,5 +851,12 @@ export default {
 }
 .el-col{
     margin-bottom: 5px;
+}
+.block {
+    display: block;
+    margin-bottom: 10px;
+}
+.mr10 {
+    margin-right: 10px;
 }
 </style>

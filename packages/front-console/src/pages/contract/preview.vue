@@ -3,7 +3,7 @@
         <div style="margin-bottom:30px;">查看合同</div>
         <h4 class="ml50">基本信息</h4>
         <el-row class="mb15" style="font-weight: normal;">
-            <el-col :span="4" style="text-align: right; margin-right: 20px;">商户名称：</el-col>
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">企业名称：</el-col>
             <el-col :span="8">{{detail.customerName}}</el-col>
         </el-row>
         <el-row class="mb15" style="font-weight: normal;">

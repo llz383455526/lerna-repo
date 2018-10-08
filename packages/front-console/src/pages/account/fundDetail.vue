@@ -40,6 +40,7 @@
             <el-table-column label="商户" prop="appName"></el-table-column>
             <el-table-column label="企业" prop="companyName"></el-table-column>
             <el-table-column label="服务商" prop="serviceCompanyName"></el-table-column>
+            <!-- <el-table-column label="转包服务商" prop="serviceCompanyName"></el-table-column> -->
             <el-table-column label="渠道" prop="bankTypeName"></el-table-column>
             <!-- <el-table-column label="支付账号" prop="payUserName"></el-table-column> -->
             <el-table-column label="金额" prop="tradeAmount">

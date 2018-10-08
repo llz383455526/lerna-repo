@@ -11,6 +11,7 @@ let payManager = r => require.ensure([], () => r(require('../pages/account/payMa
 let regulation = r => require.ensure([], () => r(require('../pages/account/regulation.vue')), 'regulation');
 let clientDetail = r => require.ensure([], () => r(require('../pages/account/clientDetail.vue')), 'clientDetail');
 let serviceDetail = r => require.ensure([], () => r(require('../pages/account/serviceDetail.vue')), 'serviceDetail');
+let assignDetail = r => require.ensure([], () => r(require('../pages/account/assignDetail.vue')), 'assignDetail');
 
 let amountManager = r => require.ensure([], () => r(require('../pages/accountManager/amountManager.vue')), 'amountManager');
 let companyCreditRecord = r => require.ensure([], () => r(require('../pages/accountManager/companyCreditRecord.vue')), 'companyCreditRecord');
@@ -176,6 +177,9 @@ export default [
                         }, {
                             path: 'serviceDetail',
                             component: serviceDetail
+                        }, {
+                            path: 'assignDetail',
+                            component: assignDetail
                         }]
                     }, {
                         path: 'amountManager',

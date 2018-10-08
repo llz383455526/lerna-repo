@@ -243,10 +243,10 @@
 			<template v-if="data.thirdpaySystemId == 'hf'">
 				<el-row :gutter="20">
       			    <el-col :span="10">
-						  <el-col :span="8" class="right">APPID</el-col><el-col :span="10">{{data['mer_id']}}</el-col>
+						  <el-col :span="8" class="right">商户号</el-col><el-col :span="10">{{data['mer_id']}}</el-col>
 					</el-col>
       			    <el-col :span="10">
-						  <el-col :span="8" class="right">商户号</el-col><el-col :span="10">{{data['mer_cust_id']}}</el-col>
+						  <el-col :span="8" class="right">客户号</el-col><el-col :span="10">{{data['mer_cust_id']}}</el-col>
 					</el-col>
       			</el-row>
 				<el-row :gutter="20">
@@ -491,10 +491,10 @@
 				</el-form-item>
 			</template>
 			<template v-if="eform.thirdpaySystemId == 'hf'">
-				<el-form-item label="APPID" prop="mer_id">
+				<el-form-item label="商户号" prop="mer_id">
 					<el-input v-model="eform.mer_id"></el-input>
 				</el-form-item>
-				<el-form-item label="商户号" prop="mer_cust_id">
+				<el-form-item label="客户号" prop="mer_cust_id">
 					<el-input v-model="eform.mer_cust_id"></el-input>
 				</el-form-item>
 				<el-form-item label="证书文件密码" prop="pfx_file_pwd">
