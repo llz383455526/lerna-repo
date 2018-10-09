@@ -136,7 +136,7 @@
     </div>
 </template>
 
-<style>
+<style scoped>
     .el-time-spinner.has-seconds .el-time-spinner__wrapper:nth-child(2) {
         margin-left: 0;
     }
