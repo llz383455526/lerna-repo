@@ -95,6 +95,20 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="accountName" label="收款人姓名" width="100"></el-table-column>
+				<el-table-column prop="idCard" label="收款人身份证号" width="150">
+					<template slot-scope="scope" v-if="scope.row.idCard">
+						{{scope.row.idCard.substr(0, 6)}}
+						<template v-for="e in scope.row.idCard.length - 10">*</template>
+						{{scope.row.idCard.substr(-4, 4)}}
+					</template>
+				</el-table-column>
+				<el-table-column prop="phone" label="收款人手机号" width="100">
+					<template slot-scope="scope">
+						{{scope.row.phone.substr(0, 3)}}
+						<template v-for="e in scope.row.phone.length - 7">*</template>
+						{{scope.row.phone.substr(-4, 4)}}
+					</template>
+				</el-table-column>
                 <el-table-column prop="accountNo" label="收款账号" width="160"></el-table-column>
                 <el-table-column prop="amount" label="交易金额" width="120">
                     <template slot-scope="scope">
