@@ -43,6 +43,12 @@
                         <el-button @click="getDetail(scope.row)" type="text">{{scope.row.orderNo}}</el-button>
                     </template>
                 </el-table-column>
+                <el-table-column label="申请时间">
+                    <template slot-scope="scope">
+                        <span>{{scope.row.createAt |formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="stateName" label="处理状态" width="100px"></el-table-column>
                 <el-table-column prop="appName" label="商户名称"></el-table-column>
                 <el-table-column prop="companyName" label="公司名称"></el-table-column>
                 <el-table-column label="服务商信息" width="240px">
@@ -71,12 +77,6 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="purpose" label="备注"></el-table-column>
-                <el-table-column label="提交时间">
-                    <template slot-scope="scope">
-                        <span>{{scope.row.createAt |formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="stateName" label="处理状态" width="100px"></el-table-column>
                 <el-table-column prop="updateByNme" label="处理人" width="100px"></el-table-column>
                 <el-table-column prop="updateAt" label="处理时间" width="100px"></el-table-column>
         </el-table>
@@ -140,7 +140,7 @@
                     </div>
                 </div>
                 <div class="input-container">
-                    <div class="label">充值金额：<span>*</span></div>
+                    <div class="label">实发金额：<span>*</span></div>
                     <div class="input">
                         <el-form-item prop="amount">
                             <el-input :maxlength=15 v-model="dialogCreateForm.amount" placeholder=""></el-input>
@@ -162,7 +162,7 @@
                     </div>
                 </div>
                 <div class="input-container">
-                    <div class="label">总金额金额：<span>*</span></div>
+                    <div class="label">充值金额：<span>*</span></div>
                     <div class="input">
                         <el-form-item>
                             <el-input disabled :value="dialogCreateForm.amount - 0 + serviceFee"></el-input>
@@ -297,23 +297,32 @@
                 <el-button type="primary" @click="submitConfirmOrder">确 定</el-button>
             </div>
         </el-dialog>
-        <el-dialog title="到账操作"  :visible.sync="show" width="960px">
+        <el-dialog title="上传充值凭证"  :visible.sync="show" width="960px">
             <div class="title">客户充值凭证</div>
-            <div class="det">充值金额：{{detail.amount | formatMoney}}</div>
-            <div class="det" v-if="detail.serviceFee">服务费金额：{{detail.serviceFee | formatMoney}}</div>
             <div class="det">企业名称：{{detail.companyName}}</div>
             <div class="det">商户名称：{{detail.appName}}</div>
+            <div class="det">充值金额：{{detail.amount | formatMoney}}</div>
+            <div class="det" v-if="detail.serviceFee">实发金额：{{detail.amount - detail.serviceFee | formatMoney}}</div>
+            <div class="det" v-if="detail.serviceFee">服务费金额：{{detail.serviceFee | formatMoney}}</div>
+            <div class="det pad">
+                *充值金额=实发金额+服务费金额<br>
+                阶梯报价时，服务费金额按商定预收比例计算
+            </div>
+            <!-- <div class="title">转账凭证</div> -->
+            <div class="det">
+                <div style="float: left;">转账凭证:</div>
+                <img @click="showAttr = true" style="width: 300px" :src="`/api/sysmgr-web/file/download?downloadCode=${detail.customDownloadCode}`" alt="">
+            </div>
             <div class="title">服务商信息</div>
-            <div class="det">名称：{{detail.serviceCompanyName}}</div>
-            <div class="det">所属银行：{{detail.depositBank}}</div>
-            <div class="det">开户行：{{detail.depositBank}}</div>
-            <div class="det">账户名：{{detail.accountName}}</div>
+            <div class="det">名称：{{detail.serviceCompanyName}}<div class="toggle" @click="showDetail = !showDetail">{{ showDetail ? '收起' : '展开'}}</div></div>
+            <template v-if="showDetail">
+                <div class="det">所属银行：{{detail.depositBank}}</div>
+                <div class="det">开户行：{{detail.depositBank}}</div>
+                <div class="det">账户名：{{detail.accountName}}</div>
+            </template>
             <div class="det">账号：{{detail.accountNo}}</div>
             <div class="det" v-if="detail.payUser">业务渠道：{{detail.payUser.thirdPaymentTypeName}}</div>
-            <div class="voucher">
-                <div class="title">转账凭证</div>
-                <img style="width: 300px" :src="`/api/sysmgr-web/file/download?downloadCode=${detail.customDownloadCode}`" alt="">
-            </div>
+            <!-- <div class="voucher"></div> -->
             <template v-if="!detail.subServiceCompanyId">
                 <div class="title">渠道金额充值</div>
                 <div class="det" v-if="(detail.state != 30 && detail.state != 40) || detail.financeDownloadCode ">
@@ -333,7 +342,7 @@
                         <img v-if="imageUrl" :src="imageUrl" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
-                    <img style="width: 300px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${detail.financeDownloadCode}`" alt="">
+                    <img @click="showVoucher = true" style="width: 300px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${detail.financeDownloadCode}`" alt="">
                 </div>
             </template>
             <div class="det">备注：
@@ -381,7 +390,7 @@
                         <img v-if="imageUrl" :src="imageUrl" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
-                    <img style="width: 300px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${detail.financeDownloadCode}`" alt="">
+                    <img @click="showVoucher = true" style="width: 300px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${detail.financeDownloadCode}`" alt="">
                 </div>
                 <div class="title">充值凭证</div>
                 <div class="det">
@@ -400,7 +409,7 @@
                         <img v-if="uploadUrl" :src="uploadUrl" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
-                    <img style="width: 300px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${detail.subDownloadCode}`" alt="">
+                    <img @click="showSub = true" style="width: 300px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${detail.subDownloadCode}`" alt="">
                 </div>
                 <div class="det">选择渠道帐号：
                     <el-select size="small" v-model="balanceAccountId" @change="getSuggest" style="width: 500px" :disabled="detail.state != 20 ? true : false">
@@ -420,6 +429,8 @@
             </div>
         </el-dialog>
         <div class="v-modal" v-if="detail" v-show="showAttr" @click="showAttr = false" :style="{ backgroundImage: `url(/api/sysmgr-web/file/download?downloadCode=${detail.customDownloadCode}`}"></div>
+        <div class="v-modal" v-if="detail" v-show="showVoucher" @click="showVoucher = false" :style="{ backgroundImage: `url(/api/sysmgr-web/file/download?downloadCode=${detail.financeDownloadCode}`}"></div>
+        <div class="v-modal" v-if="detail" v-show="showSub" @click="showSub = false" :style="{ backgroundImage: `url(/api/sysmgr-web/file/download?downloadCode=${detail.subDownloadCode}`}"></div>
     </div>
 </template>
 
@@ -546,6 +557,8 @@ export default {
       suggest: '',
       payUserId: '',
       showAttr: false,
+      showVoucher: false,
+      showSub: false,
       detail: '',
       msg: '',
       sub: '',
@@ -553,7 +566,8 @@ export default {
       subCompany: '',
       subServiceCompanyId: '',
       uploadUrl: '',
-      subMsg: ''
+      subMsg: '',
+      showDetail: false
     };
   },
   watch: {
@@ -620,6 +634,7 @@ export default {
         }).then(data => {
             this.detail = data
             this.show = true
+            this.showDetail = false
             this.subServiceCompanyId = this.detail.subServiceCompanyId
             console.log(this.subServiceCompanyId)
             // this.subUploadId = this.detail.subUploadId
@@ -994,7 +1009,7 @@ export default {
     display: inline-block;
 }
 .v-modal {
-    z-index: 2001;
+    z-index: 2100;
     opacity: 1;
     background-color: rgba(0, 0, 0, 0.5);
     background-repeat: no-repeat;
@@ -1007,5 +1022,15 @@ export default {
 }
 .mb0 {
     margin-bottom: 0px;
+}
+.pad {
+    padding-left: 18px;
+}
+.toggle {
+    color: #0283fb;
+    display: inline-block;
+    margin-left: 50px;
+    cursor: pointer;
+    user-select: none;
 }
 </style>
