@@ -301,8 +301,8 @@
             <div class="title">客户充值凭证</div>
             <div class="det">企业名称：{{detail.companyName}}</div>
             <div class="det">商户名称：{{detail.appName}}</div>
-            <div class="det">充值金额：{{detail.amount | formatMoney}}</div>
-            <div class="det" v-if="detail.serviceFee">实发金额：{{detail.amount - detail.serviceFee | formatMoney}}</div>
+            <div class="det">充值金额：{{detail.amount + detail.serviceFee | formatMoney}}</div>
+            <div class="det" v-if="detail.serviceFee">实发金额：{{detail.amount | formatMoney}}</div>
             <div class="det" v-if="detail.serviceFee">服务费金额：{{detail.serviceFee | formatMoney}}</div>
             <div class="det pad">
                 *充值金额=实发金额+服务费金额<br>
@@ -1013,7 +1013,7 @@ export default {
     opacity: 1;
     background-color: rgba(0, 0, 0, 0.5);
     background-repeat: no-repeat;
-    background-size: auto 612px;
+    background-size: 1000px auto;
     background-position: center center;
     transition: all 0.3s;
 }
