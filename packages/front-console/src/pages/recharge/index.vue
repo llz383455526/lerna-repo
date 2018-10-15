@@ -324,9 +324,8 @@
             <div class="det" v-if="detail.payUser">业务渠道：{{detail.payUser.thirdPaymentTypeName}}</div>
             <template v-if="!detail.subServiceCompanyId">
                 <div class="det">选择渠道帐号：
-                    <!-- /${e.channelLoginAcctNo}/${e.channelMerCustId} -->
                     <el-select size="small" v-model="balanceAccountId" @change="getSuggest" style="width: 500px" :disabled="detail.state != 20 ? true : false">
-                        <el-option v-for="e in channlList" :label="`${e.channelAlias}`" :value="e.balanceAccountId"></el-option>
+                        <el-option v-for="e in channlList" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}`" :value="e.balanceAccountId"></el-option>
                     </el-select>
                 </div>
                 <div class="det" v-if="suggest">帐号今日可充建议：{{suggest.allowAvailBalance | formatMoney}}元&#x3000;帐号当前余额：{{suggest.currentAvailBalance | formatMoney}}元&#x3000;
