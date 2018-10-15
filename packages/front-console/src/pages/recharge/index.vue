@@ -310,7 +310,7 @@
             </div>
             <!-- <div class="title">转账凭证</div> -->
             <div class="det">
-                <div style="float: left;">转账凭证:</div>
+                <div style="float: left;">转账凭证：</div>
                 <img @click="showAttr = true" style="width: 300px" :src="`/api/sysmgr-web/file/download?downloadCode=${detail.customDownloadCode}`" alt="">
             </div>
             <div class="title">服务商信息</div>
@@ -322,6 +322,17 @@
             </template>
             <div class="det">账号：{{detail.accountNo}}</div>
             <div class="det" v-if="detail.payUser">业务渠道：{{detail.payUser.thirdPaymentTypeName}}</div>
+            <template v-if="!detail.subServiceCompanyId">
+                <div class="det">选择渠道帐号：
+                    <!-- /${e.channelLoginAcctNo}/${e.channelMerCustId} -->
+                    <el-select size="small" v-model="balanceAccountId" @change="getSuggest" style="width: 500px" :disabled="detail.state != 20 ? true : false">
+                        <el-option v-for="e in channlList" :label="`${e.channelAlias}`" :value="e.balanceAccountId"></el-option>
+                    </el-select>
+                </div>
+                <div class="det" v-if="suggest">帐号今日可充建议：{{suggest.allowAvailBalance | formatMoney}}元&#x3000;帐号当前余额：{{suggest.currentAvailBalance | formatMoney}}元&#x3000;
+                    日发放限额：{{suggest.limitAvailBalance | formatMoney}}元&#x3000;当日已发：{{suggest.outAvailBalance | formatMoney}}元
+                </div>
+            </template>
             <!-- <div class="voucher"></div> -->
             <template v-if="!detail.subServiceCompanyId">
                 <div class="title">渠道金额充值</div>
@@ -349,16 +360,6 @@
                 <el-input size="small" v-model="memo" style="width: 300px" v-if="detail.state != 30 && detail.state != 40"></el-input>
                 <span>{{detail.memo}}</span>
             </div>
-            <template v-if="!detail.subServiceCompanyId">
-                <div class="det">选择渠道帐号：
-                    <el-select size="small" v-model="balanceAccountId" @change="getSuggest" style="width: 500px" :disabled="detail.state != 20 ? true : false">
-                        <el-option v-for="e in channlList" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}`" :value="e.balanceAccountId"></el-option>
-                    </el-select>
-                </div>
-                <div class="det" v-if="suggest">帐号今日可充建议：{{suggest.allowAvailBalance | formatMoney}}元&#x3000;帐号当前余额：{{suggest.currentAvailBalance | formatMoney}}元&#x3000;
-                    日发放限额：{{suggest.limitAvailBalance | formatMoney}}元&#x3000;当日已发：{{suggest.outAvailBalance | formatMoney}}元
-                </div>
-            </template>
             <template v-if="detail.subServiceCompanyId">
                 <hr>
                 <div class="det">
@@ -1024,7 +1025,8 @@ export default {
     margin-bottom: 0px;
 }
 .pad {
-    padding-left: 18px;
+    color: #999999;
+    padding-left: 96px;
 }
 .toggle {
     color: #0283fb;
