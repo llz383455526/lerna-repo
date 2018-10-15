@@ -25,20 +25,18 @@
 			</el-form-item>
 
             <el-form-item label="服务商名称" prop="serviceCompanyId" >
-                <el-select v-model="contractForm.serviceCompanyId" placeholder="请选择" style="width:100%;"
-                @change="serviceBank">
-                    <el-option v-for="item in serviceList" :key="item.id" :label="item.name"
-                               :value="item.id"></el-option>
+                <el-select v-model="contractForm.serviceCompanyId" placeholder="请选择" style="width:100%;" @change="serviceBank">
+                    <el-option v-for="item in serviceList" :key="item.companyId" :label="item.name" :value="item.companyId"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="法定代表人" required>
-                <el-input v-model="serviceCompany.legalPerson" :disabled="true"></el-input>
+                <el-input v-model="serviceCompany.corporateName" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item  label="公司电话" >
-                <el-input v-model="serviceCompany.phone" :disabled="true"></el-input>
+                <el-input v-model="serviceCompany.telephone" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="公司地址" required>
-                <el-input v-model="serviceCompany.registerAddr" :disabled="true"></el-input>
+                <el-input v-model="serviceCompany.address" :disabled="true"></el-input>
                 <el-button @click="show" type="text">{{showDesc}}</el-button>
             </el-form-item>
             <div v-if="isShow">
@@ -328,8 +326,9 @@
                 return company ? company.legalPerson : ''
             },*/
             serviceCompany() {
-	            let company = _.find(this.serviceList, custom => custom.id === this.contractForm.serviceCompanyId)
-                return company || {}
+                var company = this.serviceList.filter(e => e.companyId == this.contractForm.serviceCompanyId)
+	            // let company = _.find(this.serviceList, custom => custom.id === this.contractForm.serviceCompanyId)
+                return company[0] || {}
             },
             serviceContent() {
                 let content = _.find(this.serviceTypes, serviceType => serviceType.serviceId === this.contractForm.serviceId)
@@ -355,20 +354,27 @@
             },
             serviceBank(){
                 if(this.contractForm.serviceCompanyId){
-                    get('/api/sysmgr-web/commom/company-bank-info', {
-                        companyId: this.contractForm.serviceCompanyId
-                    }).then(result => {
-                            if(result){
-                                this.contractForm.serviceDepositBank = result[0].depositBank
-                                this.contractForm.serviceAccountNo = result[0].bankAccount
-                                this.contractForm.serviceAccountName = result[0].bankAccountName
-                            }else{
-                                this.contractForm.serviceDepositBank = ''
-                                this.contractForm.serviceAccountNo = ''
-                                this.contractForm.serviceAccountName = ''
-                            }
-                            
+                    this.serviceList.forEach(e => {
+                        if(e.companyId == this.contractForm.serviceCompanyId) {
+                            this.contractForm.serviceDepositBank = e.bankBranchName
+                            this.contractForm.serviceAccountNo = e.bankAccount
+                            this.contractForm.serviceAccountName = e.bankAccountName
+                        }
                     })
+                    // get('/api/sysmgr-web/commom/company-bank-info', {
+                    //     companyId: this.contractForm.serviceCompanyId
+                    // }).then(result => {
+                    //         if(result){
+                    //             this.contractForm.serviceDepositBank = result[0].depositBank
+                    //             this.contractForm.serviceAccountNo = result[0].bankAccount
+                    //             this.contractForm.serviceAccountName = result[0].bankAccountName
+                    //         }else{
+                    //             this.contractForm.serviceDepositBank = ''
+                    //             this.contractForm.serviceAccountNo = ''
+                    //             this.contractForm.serviceAccountName = ''
+                    //         }
+                            
+                    // })
                 }
             },
             getTemplateDetail(tplId) {
@@ -380,19 +386,9 @@
                 })
             },
             getCompanyList() {
-            	get('/api/sysmgr-web/commom/company-detail', {
-		            companyIdentity: 'service'
-                }).then(result => {
-		            this.serviceList= result
-                        /*let _list = result
-                        _.forEach(_list, item => {
-	                        if(item.service) {
-                        		this.serviceList.push(item)
-                            }else if(item.custom) {
-                        		this.customList.push(item)
-                            }
-                        })*/
-                    })
+                get('/api/salemgt/common/service-company/list').then(data => {
+                    this.serviceList = data
+                })
             },
 	        getSearchOptions() {
 		        post('/api/sysmgr-web/commom/options?enumTypes=ContractGenInvoiceType,ContractGenSettleType', {})
@@ -430,16 +426,16 @@
 			        if (valid) {
 				        this.setContractFormData(this.searchOptions.ContractGenInvoiceType, 'invoiceType', 'value', 'text', this.contractForm.invoiceType)
 				        this.setContractFormData(this.invoiceOptions, 'invoiceSubject', 'value', 'text', this.contractForm.invoiceSubjectId)
-				        this.setContractFormData(this.serviceList, 'serviceCompany', 'id', 'name', this.contractForm.serviceCompanyId)
+				        this.setContractFormData(this.serviceList, 'serviceCompany', 'companyId', 'name', this.contractForm.serviceCompanyId)
 				        // this.setContractFormData(this.customList, 'customCompany', 'id', 'name', this.contractForm.customCompanyId)
 
 				        let contractForm = _.cloneDeep(this.contractForm)
 				        contractForm.tplId = this.templateDetail.id
 
 				        contractForm = _.assign(contractForm, {
-					        serviceLegalPerson: this.serviceCompany.legalPerson,
-					        serviceRegisterAddr: this.serviceCompany.registerAddr,
-                            servicePhone: this.serviceCompany.phone
+					        serviceLegalPerson: this.serviceCompany.corporateName,
+					        serviceRegisterAddr: this.serviceCompany.address,
+                            servicePhone: this.serviceCompany.telephone
                         })
 
 				        let startAt = contractForm.dateValue[0]

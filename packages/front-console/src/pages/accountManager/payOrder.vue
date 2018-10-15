@@ -9,62 +9,82 @@
             <el-tab-pane label="支付失败" name="fourth"></el-tab-pane>
         </el-tabs>
 
-        <el-form :inline="true" :model="formSearch" style="padding-left: 35px;padding: 10px 0 10px 35px;">
+        <el-form :inline="true" :model="formSearch" size="small" style="padding-left: 35px;padding: 10px 0 10px 35px;" ref="formSearch">
 			<el-form-item label="客户公司" prop="companyId">
-                <el-select size="small" filterable style="width: 150px" v-model="formSearch.companyId">
+                <el-select filterable style="width: 150px" v-model="formSearch.companyId">
 					<el-option label="所有" value=""></el-option>
                     <el-option v-for="e in companys" :value="e.id" :label="e.name" :key="e.id"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="商户名称:" size="small">
-                <el-select filterable style="width: 150px" v-model="formSearch.appName" placeholder="请选择">
+			<el-form-item label="服务公司" prop="serviceCompanyId">
+                <el-select filterable style="width: 150px" v-model="formSearch.serviceCompanyId">
+					<el-option label="所有" value=""></el-option>
+                    <el-option v-for="e in servers" :value="e.id" :label="e.name" :key="e.id"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="商户名称:" prop="appId">
+                <el-select filterable style="width: 150px" v-model="formSearch.appId" placeholder="请选择">
                     <el-option label="所有" value=""></el-option>
                     <el-option v-for="(item, index) in customNameList" :label="item.text" :value="item.value" :key="index"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="客户订单号:" size="small">
+            <el-form-item label="客户订单号:" prop="outOrderNo">
                 <el-input style="width: 150px" v-model="formSearch.outOrderNo" placeholder="客户订单号"></el-input>
             </el-form-item>
-            <el-form-item label="发放渠道:" size="small">
+            <el-form-item label="发放渠道:" prop="paymentThirdType">
                 <el-select style="width: 150px" v-model="formSearch.paymentThirdType" placeholder="请选择">
                     <el-option label="所有" value=""></el-option>
                     <el-option v-for="(item, index) in selectList2" :label="item.text" :value="item.value" :key="index"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="发放方式:" size="small">
+            <el-form-item label="发放方式:" prop="sourceType">
                 <el-select style="width: 150px" v-model="formSearch.sourceType" placeholder="请选择">
                     <el-option label="所有" value=""></el-option>
                     <el-option v-for="(item, index) in sourceTypeList" :label="item.text" :value="item.value" :key="index"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="渠道交易流水号:" size="small">
+            <el-form-item label="渠道交易流水号:" prop="paymentThirdTradeNo">
                 <el-input style="width: 150px" v-model="formSearch.paymentThirdTradeNo" placeholder="渠道交易流水号"></el-input>
             </el-form-item>
-            <el-form-item label="收款人姓名:" size="small">
+            <el-form-item label="收款人姓名:" prop="accountName">
                 <el-input style="width: 150px" v-model="formSearch.accountName" placeholder="收款人姓名"></el-input>
             </el-form-item>
-            <el-form-item label="收款账号:" size="small">
+            <el-form-item label="收款账号:" prop="accountNo">
                 <el-input style="width: 150px" v-model="formSearch.accountNo" placeholder="收款账号">
                 </el-input>
             </el-form-item>
-            <el-form-item label="交易状态:" size="small" v-if="activeTab === 'first'">
-                <el-select style="width: 150px" v-model="formSearch.stateName" placeholder="请选择">
+            <el-form-item label="交易状态:" v-if="activeTab === 'first'">
+                <el-select style="width: 150px" v-model="formSearch.state" placeholder="请选择">
                     <el-option label="所有" value=""></el-option>
                     <el-option label="支付成功" value="30"></el-option>
                     <el-option label="支付失败" value="40"></el-option>
                     <el-option label="支付中" value="20"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="请求起止时间:" size="small">
-                <el-date-picker v-model="dateValue" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+            <el-form-item label="请求起止时间:">
+                <el-date-picker
+					v-model="dateValue"
+					type="daterange"
+					value-format="yyyy-MM-dd"
+					start-placeholder="开始日期"
+					end-placeholder="结束日期"
+					@change="getDate">
+				</el-date-picker>
             </el-form-item>
-			<el-form-item label="发放时间:" size="small">
-                <el-date-picker v-model="paymentResTime" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+			<el-form-item label="发放时间:">
+                <el-date-picker
+					v-model="paymentResTime"
+					type="daterange"
+					value-format="yyyy-MM-dd"
+					start-placeholder="开始日期"
+					end-placeholder="结束日期"
+					@change="getTime">
+				</el-date-picker>
             </el-form-item>
             <el-form-item style="margin-top: -4px">
-                <el-button type="primary" @click="search" size="small">查询</el-button>
-                <el-button size="small" @click="clear">清除</el-button>
-                <el-button size="small" @click="exportXls">导出xls</el-button>
+                <el-button type="primary" @click="query">查询</el-button>
+                <el-button @click="clear">清除</el-button>
+                <el-button @click="exportXls">导出xls</el-button>
             </el-form-item>
         </el-form>
 
@@ -95,24 +115,8 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="accountName" label="收款人姓名" width="100"></el-table-column>
-				<el-table-column prop="idCard" label="收款人身份证号" width="150">
-					<template slot-scope="scope">
-						<template v-if="scope.row.idCard">
-							{{scope.row.idCard.substr(0, 6)}}
-							<template v-for="e in scope.row.idCard.length - 10">*</template>
-							{{scope.row.idCard.substr(-4, 4)}}
-						</template>
-					</template>
-				</el-table-column>
-				<el-table-column prop="phone" label="收款人手机号" width="100">
-					<template slot-scope="scope">
-						<template v-if="scope.row.phone">
-							{{scope.row.phone.substr(0, 3)}}
-							<template v-for="e in scope.row.phone.length - 7">*</template>
-							{{scope.row.phone.substr(-4, 4)}}
-						</template>
-					</template>
-				</el-table-column>
+				<el-table-column prop="idCard" label="收款人身份证号" width="150"></el-table-column>
+				<el-table-column prop="phone" label="收款人手机号" width="100"></el-table-column>
                 <el-table-column prop="accountNo" label="收款账号" width="160"></el-table-column>
                 <el-table-column prop="amount" label="交易金额" width="120">
                     <template slot-scope="scope">
@@ -132,17 +136,18 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="costTimeName" label="发放时长(秒)" width="140">
-                    <!--<template slot-scope="scope">-->
-                    <!--<span>{{scope.row.costTime | formatTimes()}}</span>-->
-                    <!--</template>-->
                 </el-table-column>
                 <el-table-column prop="notifyStateName" label="通知用户状态" width="120"></el-table-column>
             </el-table>
         </div>
 
-        <ayg-pagination v-if="flowTableList.total" :total="flowTableList.total"
-                        v-on:handleSizeChange="handleSizeChange"
-                        v-on:handleCurrentChange="handleCurrentChange" :currentPage="currentPage"></ayg-pagination>
+        <ayg-pagination
+			v-if="flowTableList.total"
+			:total="flowTableList.total"
+            v-on:handleSizeChange="handleSizeChange"
+            v-on:handleCurrentChange="query"
+			:currentPage="formSearch.page">
+		</ayg-pagination>
     </div>
 </template>
 
@@ -152,16 +157,17 @@
 	import {formatTime} from '../../plugin/utils-functions'
 	import {baseUrl} from '../../config/address'
 	import {post, get} from '../../store/api'
+	import {showLoading, hideLoading} from '../../plugin/utils-loading'
+	import { setInterval, clearInterval } from 'timers';
 
 	export default {
 		data() {
 			return {
-				pageSize: 10,
-				currentPage: 1,
-				currentChangeBySetting: false,
 				formSearch: {
 					companyId: '',
-					appName: '',
+					serviceCompanyId: '',
+					state: '',
+					appId: '',
 					outOrderNo: '',
 					paymentThirdTypeName: '',
 					paymentThirdTradeNo: '',
@@ -169,17 +175,25 @@
 					accountName: '',
 					accountNo: '',
 					account: '',
-					stateName: '',
 					paymentResDesc: '',
 					paymentThirdType: '',
-					sourceType: ''
+					sourceType: '',
+					createAtBegin: '',
+					createAtEnd: '',
+					paymentResTimeBegin: '',
+					paymentResTimeEnd: '',
+					page: 1,
+					pageSize: 10
 				},
 				dateValue: '',
 				paymentResTime:'',
 				selectList2: [],
 				sourceTypeList: [],
 				activeTab: 'first',
-				companys: []
+				companys: [],
+				servers: [],
+				downloadCode: '',
+				interval: ''
 			}
 		},
 		computed: {
@@ -189,7 +203,43 @@
 				moneyFlow: 'moneyFlow'
 			})
 		},
+		mounted() {
+			this.query()
+			this.$store.dispatch('getCustomNameList');
+			this.getSelectList2();
+			this.getSourceType()
+			get('/api/sysmgr-web/commom/company', {
+    		    companyIdentity: 'custom'
+    		}).then(data => {
+    		    this.companys = data
+    		})
+			get('/api/sysmgr-web/commom/company', {
+    		    companyIdentity: 'service'
+    		}).then(data => {
+    		    this.servers = data
+    		})
+		},
 		methods: {
+			getDate() {
+				if (this.dateValue) {
+					this.formSearch.createAtBegin = this.dateValue[0]
+					this.formSearch.createAtEnd = this.dateValue[1]
+				}
+				else {
+					this.formSearch.createAtBegin = ''
+					this.formSearch.createAtEnd = ''
+				}
+			},
+			getTime() {
+				if (this.paymentResTime) {
+					this.formSearch.paymentResTimeBegin = this.paymentResTime[0]
+					this.formSearch.paymentResTimeEnd = this.paymentResTime[1]
+				}
+				else {
+					this.formSearch.paymentResTimeBegin = ''
+					this.formSearch.paymentResTimeEnd = ''
+				}
+			},
 			getSourceType() {
 				get('/api/console-dlv/option/get-by-type', {
 					type: 'PayOrderSourceType'
@@ -197,123 +247,44 @@
 					this.sourceTypeList = result
 				})
 			},
-			search() {
-				// this.currentChangeBySetting = true;
-				this.currentPage = 1;
-				this.requestAction({
-					page: 1,
-					pageSize: this.pageSize,
-				});
+			query(a) {
+				if(isNaN(a)) {
+					a = 1
+				}
+				this.formSearch.page = a
+				this.$store.dispatch('getFlowTableList', this.formSearch);
 			},
 			clear() {
-				this.formSearch.appName = '';
-				this.formSearch.outOrderNo = '';
-				this.formSearch.paymentThirdTypeName = '';
-				this.formSearch.paymentThirdTradeNo = '';
-				this.formSearch.createAt = '';
-				this.formSearch.accountName = '';
-				this.formSearch.accountNo = '';
-				this.formSearch.account = '';
-				if(this.activeTab === 'first') this.formSearch.stateName = '';
-				this.formSearch.paymentResDesc = '';
+				this.$refs.formSearch.resetFields()
+				if(this.activeTab === 'first') this.formSearch.state = '';
 				this.dateValue = '';
 				this.paymentResTime = '';
-				this.formSearch.paymentThirdType = '';
-				this.formSearch.sourceType = ''
-				this.formSearch.companyId = ''
+				this.getDate()
+				this.getTime()
 			},
 			exportXls() {
-				let createAtBegin = '';
-				let createAtEnd = '';
-				let paymentResTimeBegin = '';
-				let paymentResTimeEnd = '';
-				
-				if (this.dateValue) {
-					createAtBegin = formatTime(this.dateValue[0], 'yyyy-MM-dd');
-					createAtEnd = formatTime(this.dateValue[1], 'yyyy-MM-dd');
-				}
-				if (this.paymentResTime) {
-					paymentResTimeBegin = formatTime(this.paymentResTime[0], 'yyyy-MM-dd');
-					paymentResTimeEnd = formatTime(this.paymentResTime[1], 'yyyy-MM-dd');
-				}
-				window.location.href = baseUrl + '/api/console-dlv/pay-order/export-item?appId=' + this.formSearch.appName
-					+ '&outOrderNo=' + this.formSearch.outOrderNo
-					+ '&paymentThirdTypeName=' + this.formSearch.paymentThirdTypeName
-					+ '&paymentThirdTradeNo=' + this.formSearch.paymentThirdTradeNo
-					+ '&createAtBegin=' + createAtBegin
-					+ '&createAtEnd=' + createAtEnd
-					+ '&paymentResTimeBegin=' + paymentResTimeBegin
-					+ '&paymentResTimeEnd=' + paymentResTimeEnd
-					+ '&accountName=' + this.formSearch.accountName
-					+ '&accountNo=' + this.formSearch.accountNo
-					+ '&account=' + this.formSearch.account
-					+ '&state=' + this.formSearch.stateName
-					+ '&paymentResDesc=' + this.formSearch.paymentResDesc
-					+ "&paymentThirdType=" + this.formSearch.paymentThirdType
-					+ "&sourceType=" + this.formSearch.sourceType
-					+ "&companyId=" + this.formSearch.companyId
-			},
-			handleSizeChange(value) {
-				this.pageSize = value;
-				/*if (this.currentPage == 1) {
-                    this.requestAction({
-                        page: 1,
-                        pageSize: value,
-                    });
-                } else {
-                    this.currentPage = 1;
-                }*/
-				this.currentPage = 1
-				this.requestAction({
-					page: 1,
-					pageSize: value,
+				showLoading('请稍等...')
+				var param = JSON.parse(JSON.stringify(this.formSearch))
+				delete param.page
+                delete param.pageSize
+				get('/api/console-dlv/pay-order/export-item', param, true).then(data => {
+					this.downloadCode = data
+					this.interval = setInterval(() => {
+						get('/api/console-dlv/file/check-export', {
+							downloadCode: this.downloadCode
+						}, true).then(res => {
+							if(res) {
+								clearInterval(this.interval)
+								hideLoading()
+								location.href = `${baseUrl}/api/console-dlv/file/download-export?downloadCode=${this.downloadCode}`
+							}
+						})
+					}, 1000 * 1)
 				})
 			},
-			handleCurrentChange(value) {
-				this.currentPage = value;
-				/*if (this.currentChangeBySetting) {
-                    this.currentChangeBySetting = false;
-                    return;
-                }*/
-				this.requestAction({
-					page: value,
-					pageSize: this.pageSize,
-				});
-			},
-			requestAction(pageInfo) {
-				let createAtBegin = '';
-				let createAtEnd = '';
-				let paymentResTimeBegin = '';
-				let paymentResTimeEnd = '';
-				if (this.dateValue) {
-					createAtBegin = formatTime(this.dateValue[0], 'yyyy-MM-dd');
-					createAtEnd = formatTime(this.dateValue[1], 'yyyy-MM-dd');
-				}
-				if (this.paymentResTime) {
-					paymentResTimeBegin = formatTime(this.paymentResTime[0], 'yyyy-MM-dd');
-					paymentResTimeEnd = formatTime(this.paymentResTime[1], 'yyyy-MM-dd');
-				}
-				let param = {
-					appId: this.formSearch.appName,
-					outOrderNo: this.formSearch.outOrderNo,
-					paymentThirdTypeName: this.formSearch.paymentThirdTypeName,
-					paymentThirdTradeNo: this.formSearch.paymentThirdTradeNo,
-					createAtBegin: createAtBegin,
-					createAtEnd: createAtEnd,
-					paymentResTimeBegin: paymentResTimeBegin,
-					paymentResTimeEnd: paymentResTimeEnd,
-					accountName: this.formSearch.accountName,
-					accountNo: this.formSearch.accountNo,
-					account: this.formSearch.account,
-					state: this.formSearch.stateName,
-					paymentResDesc: this.formSearch.paymentResDesc,
-					paymentThirdType: this.formSearch.paymentThirdType,
-					sourceType: this.formSearch.sourceType,
-					companyId: this.formSearch.companyId,
-					page: pageInfo.page,
-					pageSize: pageInfo.pageSize,
-				};
-				this.$store.dispatch('getFlowTableList', param);
+			handleSizeChange(a) {
+				this.formSearch.pageSize = a
+				this.query()
 			},
 			getSelectList2() {
 				get('/api/console-dlv/pay-order/payment-third-types').then(data => {
@@ -322,41 +293,23 @@
 			},
 			handleTabClick(tab, event) {
 				let _tab = tab.name
-
 				switch (_tab) {
 					case 'first':
-						this.formSearch.stateName = ''
+						this.formSearch.state = ''
 						break
 					case 'second':
-						this.formSearch.stateName = '30'
+						this.formSearch.state = '30'
 						break
 					case 'third':
-						this.formSearch.stateName = '20'
+						this.formSearch.state = '20'
 						break
 					case 'fourth':
-						this.formSearch.stateName = '40'
+						this.formSearch.state = '40'
 						break
 				}
-
-				this.search()
-
+				this.query()
 			}
-		},
-		created: function () {
-			this.requestAction({
-				page: 1,
-				pageSize: this.pageSize,
-			});
-			this.$store.dispatch('getCustomNameList');
-			this.getSelectList2();
-
-			this.getSourceType()
-			get('/api/sysmgr-web/commom/company', {
-    		    companyIdentity: 'custom'
-    		}).then(data => {
-    		    this.companys = data
-    		})
-		},
+		}
 	}
 </script>
 

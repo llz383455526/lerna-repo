@@ -62,6 +62,9 @@
 </template>
 <script>
 import { get, post } from "../../store/api";
+import {showLoading, hideLoading} from '../../plugin/utils-loading'
+import {baseUrl} from '../../config/address'
+import { setInterval, clearInterval } from 'timers';
 export default {
     data() {
         var currentYear = new Date().getFullYear(), years = [], months = []
@@ -95,7 +98,9 @@ export default {
             ],
             years: years,
             months: months,
-            data: {}
+            data: {},
+            downloadCode: '',
+            interval: ''
         }
     },
     mounted() {
@@ -120,18 +125,36 @@ export default {
             this.query()
         },
         down() {
-            var str = ''
-            for(var k in this.form) {
-                if(k != 'pageSize' && k != 'page') {
-                    if(!str) {
-                        str += `?${k}=${this.form[k]}`
-                    }
-                    else {
-                        str += `&${k}=${this.form[k]}`
-                    }
-                }
-            }
-            window.open(`/api/console-dlv/tax-landing/download-user-amount-statistics${str}`)
+            // var str = ''
+            // for(var k in this.form) {
+            //     if(k != 'pageSize' && k != 'page') {
+            //         if(!str) {
+            //             str += `?${k}=${this.form[k]}`
+            //         }
+            //         else {
+            //             str += `&${k}=${this.form[k]}`
+            //         }
+            //     }
+            // }
+            // window.open(`/api/console-dlv/tax-landing/download-user-amount-statistics${str}`)
+            showLoading('请稍等...')
+			var param = JSON.parse(JSON.stringify(this.form))
+			delete param.page
+            delete param.pageSize
+			get('/api/console-dlv/tax-landing/download-user-amount-statistics', param, true).then(data => {
+				this.downloadCode = data
+				this.interval = setInterval(() => {
+					get('/api/console-dlv/file/check-export', {
+						downloadCode: this.downloadCode
+					}, true).then(res => {
+						if(res) {
+							clearInterval(this.interval)
+							hideLoading()
+							location.href = `${baseUrl}/api/console-dlv/file/download-export?downloadCode=${this.downloadCode}`
+						}
+					})
+				}, 1000 * 1)
+			})
         }
     }
 }

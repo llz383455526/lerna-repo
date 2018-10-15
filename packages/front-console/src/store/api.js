@@ -67,10 +67,10 @@ function postButNoErrorToast(url, param) {
     });
 }
 
-function get(url, param) {
+function get(url, param, withLoading = false) {
     return new Promise((resolve, reject) => {
-        param = requestBefore(param);
-        ajaxAction('get', url, param, resolve, reject, true, false);
+        param = requestBefore(param, withLoading);
+        ajaxAction('get', url, param, resolve, reject, true, false, withLoading);
     })
 }
 
