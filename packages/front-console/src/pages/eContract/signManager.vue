@@ -1,10 +1,15 @@
 <template>
     <div class="main">
         <div class="title">签约管理</div>
+        <el-tabs v-model="tabName" @tab-click="query">
+            <el-tab-pane label="合同模板" name="contract"></el-tab-pane>
+            <el-tab-pane label="合同模板组" name="contractArr"></el-tab-pane>
+        </el-tabs>
         <el-form :model="form" :inline="true" ref="form">
-            <el-form-item label="合同模板" prop="name">
+            <el-form-item :label="tabName === 'contract' ? '合同模板' : '合同模板组'" prop="name">
                 <el-select
                     class="form_input_short"
+                    v-if="tabName === 'contract'"
                     v-model="form.name"
                     filterable
                     remote
@@ -20,9 +25,9 @@
                         :value="e.name">
                     </el-option>
                 </el-select>
-                <!-- <el-input v-model="form.name" size="small"></el-input> -->
+                 <el-input v-else v-model="form.name" size="small"></el-input>
             </el-form-item>
-            <el-form-item label="签约对象" prop="userName">
+            <el-form-item :label="tabName === 'contract' ? '签约对象' : '服务商公司'" prop="userName">
                 <el-select
                     class="form_input_short"
                     v-model="form.userName"
@@ -48,7 +53,7 @@
                 </el-select>
                 <!-- <el-input v-model="form.accessType" size="small"></el-input> -->
             </el-form-item>
-            <el-form-item label="发起时间">
+            <!--<el-form-item label="发起时间">
                 <el-date-picker
                     v-model="range"
                     type="daterange"
@@ -58,26 +63,40 @@
                     size="small"
                     @change="getTime">
                 </el-date-picker>
-            </el-form-item>
+            </el-form-item>-->
             <el-form-item>
                 <el-button type="primary" size="small" @click="query">查询</el-button>
                 <el-button type="text" size="small" @click="reset('form')">清空所有条件</el-button>
             </el-form-item>
         </el-form>
         <el-table :data="list">
-            <el-table-column label="合同模板名称" prop="name"></el-table-column>
-            <el-table-column label="签约对象">
+            <el-table-column :label="tabName == 'contract' ? '合同模板名称' : '合同模板组名称'" :prop="tabName === 'contract' ? 'name' : 'groupName'"></el-table-column>
+            <!--<el-table-column label="签约对象">
                 <template slot-scope="scope">
                     <div v-for="(e, i) in scope.row.partys">
                         {{partys[i]}}：{{e.userName ? e.userName : '个人'}}
                     </div>
                 </template>
+            </el-table-column>-->
+            <el-table-column label="服务商公司">
+                <template slot-scope="scope">
+                    <div v-if="scope.row.templateId">
+                        <div v-for="(e, i) in scope.row.partys" v-if="e.userName">
+                            {{e.userName}}
+                        </div>
+                    </div>
+                    <div v-else>
+                        <div v-for="item in scope.row.serviceCompanyNames">
+                            {{item}}
+                        </div>
+                    </div>
+                </template>
             </el-table-column>
             <el-table-column label="对接方式" prop="accessTypeDesc"></el-table-column>
-            <el-table-column label="发起时间" prop="signTime"></el-table-column>
+            <el-table-column label="发起时间" prop="lastLaunchTimeDesc"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" size="small" @click="launch(scope.row)" v-if="scope.row.state == 'VALID' && scope.row.accessType == 1">发起签约</el-button>
+                    <el-button type="text" size="small" @click="launch(scope.row)" v-if="scope.row.enable == '1' && scope.row.accessType == 1">发起签约</el-button>
                     <el-button type="text" size="small" @click="record(scope.row)">查看签约记录</el-button>
                     <el-button type="text" size="small" @click="batch(scope.row)" v-if="scope.row.isManualSign == '1'">查看批次记录</el-button>
                 </template>
@@ -126,7 +145,8 @@ export default {
             list: [],
             total: 0,
             range: [],
-            partys: ['甲方', '乙方', '丙方']
+            partys: ['甲方', '乙方', '丙方'],
+	        tabName: 'contract'
         }
     },
     mounted() {
@@ -159,7 +179,8 @@ export default {
                 a = 1
             }
             this.form.pageNo = a
-            post('/api/econtract/template/signqry', this.form).then(data => {
+	        let url = this.tabName === 'contract' ? '/api/econtract/template/signqry' : '/api/econtract/template-group/signqry'
+            post(url, this.form).then(data => {
                 this.list = data.data
                 this.total = data.total
             })
@@ -185,14 +206,25 @@ export default {
             this.query()
         },
         launch(a) {
-            sessionStorage.setItem('sign', JSON.stringify(a))
-            this.$router.push('uploadObject')
+        	if(a.templateId) {
+		        sessionStorage.setItem('sign', JSON.stringify(a))
+		        this.$router.push('uploadObject')
+            }else {
+                this.$router.push({
+                    path: `start/${a.groupId}`,
+                    query: {
+	                    group: true,
+                        templateName: a.groupName
+                    }
+                })
+            }
+
         },
         record(a) {
             sessionStorage.setItem('query', JSON.stringify({
                 orderId: a.orderId
             }))
-            this.$router.push(`index?templateName=${a.name}`)
+            this.$router.push(`index?templateName=${a.name || a.groupName}&isGroup=${a.groupName ? '1' :'0'}`)
         },
         batch(a) {
             this.$router.push(`batchRecord?templateName=${a.name}`)

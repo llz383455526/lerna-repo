@@ -1,6 +1,6 @@
 <template>
-    <div class="main">
-        <div class="title">{{ltype ? '查看' : '新增'}}合同模板</div>
+    <div class="main template-main">
+        <div class="title">{{ltype ? '查看' : (form.enable ? '修改' : '新增')}}合同模板</div>
         <el-form :model="form" :rules="rules" label-width="150px" ref="form">
             <div class="mtitle">基础信息设置</div>
             <el-form-item label="合同模板名称:" prop="name">
@@ -24,9 +24,6 @@
                         :value="e.extrSystemId">
                     </el-option>
                 </el-select>
-                <!-- <router-link to="addObject" tag="a">
-                    <el-button type="text" size="small">添加</el-button>
-                </router-link> -->
             </el-form-item>
             <el-form-item label="合同原件上传" prop="fpages">
                 <el-upload
@@ -61,7 +58,8 @@
                 </el-input>
             </el-form-item>
             <el-form-item label="备注" prop="memo">
-                <textarea class="form_input" v-model="form.memo" placeholder="备注"></textarea>
+                <!--<textarea class="form_input" v-model="form.memo" placeholder="备注"></textarea>-->
+                <el-input type="textarea" :rows="6" :maxlength="500" v-model="form.memo" class="form_input" placeholder="备注" size="small"></el-input>
             </el-form-item>
             <div class="mtitle">签约对象设置</div>
             <el-form-item label="签约对象数量：" prop="partycount">
@@ -72,7 +70,7 @@
             <template v-for="(item, i) in form.partys">
                 <div class="mtitle">
                     <span v-if="item.signNo == 1">
-                        甲方参数设置    
+                        甲方参数设置
                     </span>
                     <span v-else-if="item.signNo == 2">
                         乙方参数设置
@@ -135,12 +133,16 @@
             </template>
             <div class="mtitle">签约方式设置</div>
             <el-form-item label="对接方式" prop="accessType">
-                <el-radio v-model="form.accessType" label="1">线下对接</el-radio>
+                <el-radio v-model="form.accessType" label="1">SaaS对接</el-radio>
                 <el-radio v-model="form.accessType" label="2" >API对接</el-radio>
             </el-form-item>
             <el-form-item label="是否发送短信" prop="smsType">
                 <el-radio v-model="form.smsType" label="1">是</el-radio>
                 <el-radio v-model="form.smsType" label="2">否</el-radio>
+            </el-form-item>
+            <el-form-item label="短信引导内容" prop="smsType">
+                <el-radio v-model="form.signSmsType" label="1">直接签约</el-radio>
+                <el-radio v-model="form.signSmsType" label="2">通过小程序签约</el-radio>
             </el-form-item>
             <el-form-item label="返回链接" prop="linkType">
                 <el-radio v-model="form.linkType" label="1">证照上传页面</el-radio>
@@ -232,6 +234,7 @@ export default {
                 fpages: '',
                 accessType: '1',
                 smsType: '1',
+	            signSmsType: '1',
                 linkType: '1',
                 passportType: ''
             },
@@ -267,7 +270,7 @@ export default {
             platform: [],
             objects: [],
             baseUrl: baseUrl,
-            contracts: [ 
+            contracts: [
                 {
                     text: '甲乙（两方合同）',
                     value: '2'
@@ -307,10 +310,10 @@ export default {
     watch: {
         'form.partycount': function(a) {
             console.log(a)
-            if(a == 2 && this.form.partys.length == 3) {
+            if(a == 2 && this.form.partys && this.form.partys.length == 3) {
                 this.form.partys.pop()
             }
-            if(a == 3 && this.form.partys.length == 2) {
+            if(a == 3 && this.form.partys && this.form.partys.length == 2) {
                 this.form.partys.push({
                     params: [
                         {
@@ -349,14 +352,17 @@ export default {
                 extrSystemId: this.form.platform,
                 extrSystemGroup: this.form.companyId
             })
-            this.form.partys.forEach((e, i) => {
-                if(e.userName) {
-                    this.objects.push({
-                        name: e.userName,
-                        userId: e.userId
-                    })
-                }
-            })
+            if(this.form.partys) {
+	            this.form.partys.forEach((e, i) => {
+		            if(e.userName) {
+			            this.objects.push({
+				            name: e.userName,
+				            userId: e.userId
+			            })
+		            }
+	            })
+            }
+
             this.fileList.push({
                 name: this.form.fname,
                 url: this.form.furl
@@ -459,39 +465,45 @@ export default {
             this.$refs['form'].validate(valid => {
                 if(valid) {
                     var companyPartyNum = 0, errMsg, hasPeople,  hasCompany, hasServer
-                    this.form.partys.forEach(e => {
-                        if(e.userType == 2){
-                            companyPartyNum++
-                        }
-                        if(e.userDetailType == 1) {
-                            hasPeople = true
-                        }
-                        if(e.userDetailType == 2.1) {
-                            hasServer = true
-                        }
-                        if(e.userDetailType == 2.2) {
-                            hasCompany = true
-                        }
-                        if(!errMsg){
-                            e.params.forEach(el => {
-                                if(parseInt(el.varPages) > parseInt(this.form.fpages)) {
-                                    errMsg = '超出合同最大页数！'
-                                }
-                                else if(parseFloat(el.varX) > parseFloat(this.form.width)) {
-                                    errMsg = '超出合同最大宽度！'
-                                }
-                                else if(parseFloat(el.varY) > parseFloat(this.form.height)) {
-                                    errMsg = '超出合同最大高度！'
-                                }
-                            })
-                        }
-                    })
-                    if(this.form.partycount == 2 && !(hasPeople && hasServer)) {
-                        errMsg = '签约对象类型必须有1个服务商、1个个人'
+                    if(this.form.partys) {
+	                    this.form.partys.forEach(e => {
+		                    if(e.userType == 2){
+			                    companyPartyNum++
+		                    }
+		                    if(e.userDetailType == 1) {
+			                    hasPeople = true
+		                    }
+		                    if(e.userDetailType == 2.1) {
+			                    hasServer = true
+		                    }
+		                    if(e.userDetailType == 2.2) {
+			                    hasCompany = true
+		                    }
+		                    if(!errMsg){
+			                    e.params.forEach(el => {
+				                    if(parseInt(el.varPages) > parseInt(this.form.fpages)) {
+					                    errMsg = '超出合同最大页数！'
+				                    }
+				                    else if(parseFloat(el.varX) > parseFloat(this.form.width)) {
+					                    errMsg = '超出合同最大宽度！'
+				                    }
+				                    else if(parseFloat(el.varY) > parseFloat(this.form.height)) {
+					                    errMsg = '超出合同最大高度！'
+				                    }
+			                    })
+		                    }
+	                    })
                     }
-                    if(this.form.partycount == 3 && !(hasPeople && hasServer && hasCompany)) {
-                        errMsg = '1个服务商、1个企业、1个个人'
+
+                    if(this.form.isSign === '1') {
+	                    if(this.form.partycount == 2 && !(hasPeople && hasServer)) {
+		                    errMsg = '签约对象类型必须有1个服务商、1个个人'
+	                    }
+	                    if(this.form.partycount == 3 && !(hasPeople && hasServer && hasCompany)) {
+		                    errMsg = '1个服务商、1个企业、1个个人'
+	                    }
                     }
+
                     if(errMsg) {
                         this.$message.error(errMsg)
                         return
@@ -580,3 +592,34 @@ textarea {
     padding: 6px 12px;
 }
 </style>
+
+
+<style lang="scss">
+    .template-main {
+        .el-form-item {
+            margin-bottom: 0;
+        }
+
+        .el-tag--info {
+            margin-right: 10px;
+        }
+
+        .el-upload {
+            display: inherit;
+        }
+    }
+
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+

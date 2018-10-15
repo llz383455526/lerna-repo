@@ -1,6 +1,10 @@
 <template>
     <div class="main">
         <div class="title">电子合同管理</div>
+        <el-tabs v-model="tabName" @tab-click="query">
+            <el-tab-pane label="合同模板" name="contract"></el-tab-pane>
+            <el-tab-pane label="合同模板组" name="contractArr"></el-tab-pane>
+        </el-tabs>
         <el-form :model="form" :inline="true" ref="query">
             <el-form-item label="所属平台：" prop="platformName">
                 <el-select
@@ -20,9 +24,10 @@
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="合同模板名称" prop="name">
+            <el-form-item :label="tabName === 'contract' ? '合同模板名称' : '合同模板组名称'" prop="name">
                 <el-select
                     v-model="form.name"
+                    v-if="tabName === 'contract'"
                     filterable
                     remote
                     reserve-keyword
@@ -37,6 +42,10 @@
                         :value="e.name">
                     </el-option>
                 </el-select>
+                <el-input
+                    v-model="form.name"
+                    v-else
+                    size="small"></el-input>
             </el-form-item>
             <el-form-item label="签约对象" prop="userName">
                 <el-select
@@ -61,41 +70,56 @@
                 <el-button type="text" size="small" @click="reset('query')">清空所有条件</el-button>
             </el-form-item>
         </el-form>
-        <router-link to="addTemplate" tag="span"><el-button type="primary" size="small">新增合同模板</el-button></router-link>
+        <router-link :to="tabName === 'contract' ? 'addTemplate' : 'addTemplateGroup'" tag="span"><el-button type="primary" size="small">{{tabName === 'contract' ? '新增合同模板' : '新增合同模板组'}}</el-button></router-link>
         <el-table :data="list">
-            <el-table-column label="合同模板ID" prop="templateId"></el-table-column>
-            <el-table-column label="合同模板名称" prop="name"></el-table-column>
+            <el-table-column :label="tabName == 'contract' ? '合同模板ID' : '合同模板组ID'" :prop="tabName === 'contract' ? 'templateId' : 'groupId'"></el-table-column>
+            <el-table-column :label="tabName == 'contract' ? '合同模板名称' : '合同模板组名称'" :prop="tabName === 'contract' ? 'name' : 'groupName'"></el-table-column>
             <el-table-column label="客户平台" prop="platformName"></el-table-column>
             <el-table-column label="服务商名称">
                 <template slot-scope="scope">
-                    {{scope.row.partys[0].userName}}
+                    <div v-if="scope.row.templateId">
+                        <div v-for="item in scope.row.partys" v-if="item.userName">{{item.userName}}</div>
+                    </div>
+                    <div v-else>
+                        <div v-for="item in scope.row.serviceCompanyNames">
+                            {{item}}
+                        </div>
+                    </div>
+
+                    <!--{{scope.row.partys[0].userName}}-->
                 </template>
             </el-table-column>
-            <el-table-column label="签约对象">
+            <!--<el-table-column label="签约对象" v-if="tabName == 'contract'">
                 <template slot-scope="scope">
                     <div v-for="(e, i) in scope.row.partys">
                         {{partys[i]}}：{{e.userName ? e.userName : '个人'}}
                     </div>
-                    <!-- 甲：{{scope.row.partys[0].userName ? scope.row.partys[0].userName : '个人'}} <br/>
-                    乙：{{scope.row.partys[1].userName ? scope.row.partys[1].userName : '个人'}} <br/>
-                    <template v-if="scope.row.partys[2]">
-                        丙：{{scope.row.partys[2].userName ? scope.row.partys[2].userName : '个人'}}
-                    </template> -->
                 </template>
-            </el-table-column>
+            </el-table-column>-->
             <el-table-column label="对接方式" prop="accessTypeDesc"></el-table-column>
             <el-table-column label="是否发短信" prop="smsTypeDesc"></el-table-column>
+            <el-table-column label="短信引导内容" prop="signSmsTypeDesc"></el-table-column>
             <el-table-column label="返回链接" prop="linkTypeDesc"></el-table-column>
             <el-table-column label="备注" prop="memo"></el-table-column>
             <el-table-column label="合同原件">
                 <template slot-scope="scope">
-                    <a target="_bank" :href="`${baseUrl}/api/econtract/template/download?fileName=${scope.row.fname}`">{{scope.row.fname}}</a>
+                    <div v-if="scope.row.templateId">
+                        <a target="_bank" :href="`${baseUrl}/api/econtract/template/download?fileName=${scope.row.fname}`">{{scope.row.fname}}</a>
+                    </div>
+                    <div v-else>
+                        <div v-for="item in scope.row.templateFileNames">
+                            <a target="_bank" :href="`${baseUrl}/api/econtract/template/download?fileName=${item}`">{{item}}</a>
+                        </div>
+                    </div>
+                    <!--<a target="_bank" :href="`${baseUrl}/api/econtract/template/download?fileName=${scope.row.fname}`">{{scope.row.fname}}</a>-->
                 </template>
             </el-table-column>
+            <el-table-column label="状态" prop="enableDesc"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button type="text" size="small" @click="look(scope.row, 1)">查看</el-button>
                     <el-button type="text" size="small" @click="look(scope.row)">修改</el-button>
+                    <el-button type="text" size="small" @click="changeGroupType(scope.row)">{{scope.row.enable === '1' ? '禁用' : '启用'}}</el-button>
                     <el-button type="text" size="small" @click="deleteTemplate(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
@@ -129,7 +153,8 @@ export default {
             names: [],
             objects: [],
             baseUrl: baseUrl,
-            partys: ['甲方', '乙方', '丙方']
+            partys: ['甲方', '乙方', '丙方'],
+            tabName: 'contract'
         }
     },
     mounted() {
@@ -175,7 +200,8 @@ export default {
                 a = 1
             }
             this.form.pageNo = a
-            post('/api/econtract/template/qrylist', this.form).then(data => {
+            let url = this.tabName === 'contract' ? '/api/econtract/template/qrylist' : '/api/econtract/template-group/list'
+            post(url, this.form).then(data => {
                 this.list = data.data
                 this.total = data.total
             })
@@ -188,12 +214,23 @@ export default {
             this.query()
         },
         look(a, e) {
-            sessionStorage.setItem('msg', JSON.stringify(a))
-            var link = 'addTemplate'
-            if(e) {
-                link += '?type=1'
+        	if(a.templateId) {
+		        sessionStorage.setItem('msg', JSON.stringify(a))
+		        var link = 'addTemplate'
+		        if(e) {
+			        link += '?type=1'
+		        }
+		        this.$router.push(link)
+            }else {
+        		this.$router.push({
+                    path: 'addTemplateGroup',
+                    query: {
+                    	type: e,
+                        id: a.groupId
+                    }
+                })
             }
-            this.$router.push(link)
+
         },
         deleteTemplate(a) {
             this.$confirm('确定删除该模板吗？', '提示', {
@@ -201,9 +238,11 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                post('/api/econtract/template/delete', {
-                    templateId: a.templateId
-                }).then(data => {
+            	let url
+                let param
+                url = this.tabName === 'contract' ? '/api/econtract/template/delete' : '/api/econtract/template-group/enable'
+                param = this.tabName === 'contract' ? {templateId: a.templateId} : {templateGroupId: a.groupId, enable: '2'}
+                post(url, param).then(data => {
                     console.log(data)
                     this.$message({
                         type: 'success',
@@ -216,6 +255,19 @@ export default {
                     type: 'info',
                     message: '删除已取消！'
                 })
+            })
+        },
+        changeGroupType(group) {
+	        let url
+	        let param
+	        url = this.tabName === 'contract' ? '/api/econtract/template/enable' : '/api/econtract/template-group/enable'
+	        param = this.tabName === 'contract' ? {templateId: group.templateId, enable: group.enable === '1' ? '0' : '1'} : {templateGroupId: group.groupId, enable: group.enable === '1' ? '0' : '1'}
+        	post(url, param).then(result => {
+		        this.$message({
+			        type: 'success',
+			        message: '修改成功！'
+		        })
+		        this.query()
             })
         }
     }

@@ -65,7 +65,7 @@
             <template v-else>
                 <el-form label-width="180px">
                     <el-form-item :label="`${ptype[e.userDetailType]}全称：`">
-                        {{e.name}} 
+                        {{e.name}}
                         <!-- <el-button type="text" size="small" @click="isShow[e.userDetailType] = !isShow[e.userDetailType]">
                             {{isShow[e.userDetailType] ? '收起' : '展开详情'}}
                         </el-button> -->
@@ -156,8 +156,9 @@ export default {
             this.query()
         },
         next() {
-            post(`/api/econtract/batch/submit?batchId=${this.form.batchId}&templateId=${this.msg.templateId}`).then(data => {
-                this.$router.push('signSuccess')
+        	let templateName = this.$route.query.templateName
+            post(`/api/econtract/batch/submit?batchId=${this.form.batchId}&templateId=${this.msg.templateId}&templateGroupId=`).then(data => {
+                this.$router.push(`/main/eContract/signSuccess?name=${templateName}`)
             })
         },
         cancle() {

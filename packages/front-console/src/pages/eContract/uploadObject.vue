@@ -115,7 +115,7 @@
             </span>
         </el-dialog>
         <el-dialog title="修改" :visible.sync="eshow">
-            <el-form :model="editor" :rules="erules" label-width="100px">
+            <el-form :model="editor" :rules="erules" ref="editor" label-width="100px">
                 <el-form-item label="名字：" prop="name">
                     <el-input v-model="editor.name" class="form_input"></el-input>
                 </el-form-item>
@@ -172,14 +172,14 @@ export default {
                 personalMobile: ''
             },
             erules: {
-                name: [
+                /*name: [
                     { required: true, message: '名字不能为空', trigger: 'blur' }
-                ],
+                ],*/
                 identityType: [
                     { required: true, message: '请选择证件类型', trigger: 'blur' }
                 ],
                 identity: [
-                    { required: true, message: '证件号码不能为空', trigger: 'blur' },
+                    { required: false, message: '证件号码不能为空', trigger: 'blur' },
                     { pattern: /^[\w]+$/, message: '请正确输入证件号码'}
                 ],
                 personalMobile: [
@@ -221,19 +221,23 @@ export default {
     mounted() {
         this.msg = JSON.parse(sessionStorage.getItem('sign'))
         post('/api/econtract/template/qrydetail', {
-            templateId: this.msg.templateId
+            templateId: this.msg.templateId,
+	        templateGroupId: ''
         }).then(data => {
             this.detail = data.partys
-            this.detail.forEach(e => {
-                if(e.userId) {
-                    post('/api/econtract/user/company/qrydetail', {
-                        userId: e.userId
-                    }).then(res => {
-                        Object.assign(e, res)
-                        this.$forceUpdate()
-                    })
-                }
-            })
+            if(this.detail) {
+	            this.detail.forEach(e => {
+		            if(e.userId) {
+			            post('/api/econtract/user/company/qrydetail', {
+				            userId: e.userId
+			            }).then(res => {
+				            Object.assign(e, res)
+				            this.$forceUpdate()
+			            })
+		            }
+	            })
+            }
+
         })
         if(this.$route.query.batchId) {
             console.log(this.$route)
@@ -272,6 +276,7 @@ export default {
             var formData = new FormData()
             formData.append('batchId', this.form.batchId)
             formData.append('templateId', this.msg.templateId)
+            formData.append('templateGroupId', '')
             formData.append('fileName', a.name)
             formData.append('multipartFile', a.raw)
             importPost('/api/econtract/contractsigner/addlist', formData).then(data => {
@@ -314,15 +319,25 @@ export default {
             this.editor.personalMobile = a.personalMobile
         },
         edit() {
-            post('/api/econtract/contractsigner/modify', this.editor).then(data => {
-                this.$message({
-                    type: 'success',
-                    message: '修改成功！'
-                })
-                this.eshow = false
-                this.hasChange = true
-                this.query()
+	        this.$refs['editor'].validate(valid => {
+	        	if(valid) {
+			        post('/api/econtract/contractsigner/modify', this.editor).then(data => {
+				        this.$message({
+					        type: 'success',
+					        message: '修改成功！'
+				        })
+				        this.eshow = false
+				        this.hasChange = true
+				        this.query()
+			        })
+                }else {
+			        this.$message({
+				        type: 'warning',
+				        message: '请正确填写表单！'
+			        })
+		        }
             })
+
         },
         deleteOrder(a) {
             this.$confirm('确定删除该签约对象吗？', '提示', {
@@ -364,7 +379,12 @@ export default {
                 }
                 sessionStorage.setItem('batchId', this.form.batchId)
                 sessionStorage.setItem('detail', JSON.stringify(this.detail))
-                this.$router.push('checkObject')
+                this.$router.push({
+                    path: 'checkObject',
+                    query: {
+	                    templateName: this.msg.name
+                    }
+                })
             })
         },
         cancle() {

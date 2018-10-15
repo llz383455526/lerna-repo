@@ -10,7 +10,8 @@ function showConfirm(options) {
 		confirmButtonText:'确定',
 		cancelButtonText:'取消',
 		showCancelButton:true,
-		confirmCallback:""
+		confirmCallback:"",
+		cancelCallback: ''
 	};
 	config = _.assign(config,options);
 	Vue.prototype.$confirm(config.msg,config.title,{
@@ -22,7 +23,9 @@ function showConfirm(options) {
 			config.confirmCallback()
 		}
     }).catch(() => {
-      	        
+    	if(config.cancelCallback) {
+    		config.cancelCallback()
+	    }
     });
 	
 }

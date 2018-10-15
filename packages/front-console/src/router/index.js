@@ -32,6 +32,7 @@ let cancleOrder = r => require.ensure([], () => r(require('../pages/orderManager
 let eContractIndex = r => require.ensure([], () => r(require('../pages/eContract/index.vue')), 'eContractIndex');
 let contractManager = r => require.ensure([], () => r(require('../pages/eContract/contractManager.vue')), 'contractManager');
 let addTemplate = r => require.ensure([], () => r(require('../pages/eContract/addTemplate.vue')), 'addTemplate');
+let addTemplateGroup = r => require.ensure([], () => r(require('../pages/eContract/addTemplateGroup.vue')), 'addTemplateGroup');
 let objectManager = r => require.ensure([], () => r(require('../pages/eContract/objectManager.vue')), 'objectManager');
 let addObject = r => require.ensure([], () => r(require('../pages/eContract/addObject.vue')), 'addObject');
 let signManager = r => require.ensure([], () => r(require('../pages/eContract/signManager.vue')), 'signManager');
@@ -118,6 +119,8 @@ const accountList = () => import('../pages/management/accountList')
 const accountCreate = () => import('../pages/management/accountCreate')
 const accountDetail = () => import('../pages/management/accountDetail')
 
+const flowSigning = () => import('../pages/eContract/flowSigning') //签约流程
+
 
 export default [
     {
@@ -146,7 +149,7 @@ export default [
 						}, {
 							path:'offlineSalaryManager',
 							component:offlineSalaryManager
-												
+							
 						}, {
                             path: 'index',
                             component: accountIndex
@@ -432,6 +435,13 @@ export default [
                                 }
                             },
                             {
+                                path: 'addTemplateGroup',
+                                component: addTemplateGroup,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
                                 path: 'objectManager',
                                 component: objectManager,
                                 meta: {
@@ -478,7 +488,14 @@ export default [
                                 meta: {
                                     keepAlive: false
                                 }
-                            }
+                            },
+	                        {
+		                        path: 'start/:id',
+		                        component: flowSigning,
+		                        hidden: true,
+		                        name: 'flowSigning',
+		                        meta: { title: '签约流程', keepAlive: false }
+	                        },
                         ]
                     }, {
                         path: 'recharge',
