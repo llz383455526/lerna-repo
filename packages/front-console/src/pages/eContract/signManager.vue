@@ -134,7 +134,7 @@ export default {
                     value: ''
                 },
                 {
-                    text: '线下对接',
+                    text: 'SaaS对接',
                     value: '1'
                 },
                 {
