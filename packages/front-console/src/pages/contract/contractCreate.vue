@@ -87,16 +87,16 @@
                 </el-select>
             </el-form-item> -->
             <h4 class="ml50 mt50">合同报价</h4>
-            <el-form-item label-width="110px">
+            <el-form-item label-width="110px" prop="offer">
                 <div class="item_div">
-                    <el-radio v-model="proType" label="0">标准报价：</el-radio>
-                    <el-input class="input_300" v-model="contractForm.contractTel" placeholder="请输入数值" :disabled="proType != '0'">
+                    <el-radio @change="resetTable" v-model="proType" label="0">标准报价：</el-radio>
+                    <el-input @change="setOffer('standardRate')" class="input_300" v-model="contractForm.standardRate" placeholder="请输入数值" :disabled="proType != '0'">
                          <template slot="append">%</template>
                     </el-input>
                 </div>
                 <div class="item_div">
-                    <el-radio v-model="proType" label="1">阶梯报价：</el-radio>
-                    <el-input class="input_300" v-model="contractForm.standardRate" placeholder="请输入数值" :disabled="proType != '1'">
+                    <el-radio @change="resetTable" v-model="proType" label="1">阶梯报价：</el-radio>
+                    <el-input @change="setOffer('laddersRate')" class="input_300" v-model="contractForm.laddersRate" placeholder="请输入数值" :disabled="proType != '1'">
                          <template slot="append">%</template>
                     </el-input>
                 </div>
@@ -107,21 +107,21 @@
                     <el-table-column label="月总额下限" prop="range">
                         <template slot-scope="scope">
                             <template v-if="scope.$index === 0">
-                                <el-input class="input_200" :disabled="proType != '0'" placeholder="请输入数值" @change="checkTable('lv1Step1Amount', 0)" v-model="contractForm.lv1Step1Amount"></el-input>万以下
+                                <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step1Amount', 0)" v-model="contractForm.lv1Step1Amount"></el-input>万以下
                             </template>
                             <template v-if="scope.$index === 1">
-                                <el-input class="input_100" :disabled="proType != '0'" placeholder="请输入数值" @change="checkTable('lv1Step2Amount1', 0)" v-model="contractForm.lv1Step2Amount1"></el-input>
+                                <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step2Amount1', 0)" v-model="contractForm.lv1Step2Amount1"></el-input>
                                 -
-                                <el-input class="input_100" :disabled="proType != '0'" placeholder="请输入数值" @change="checkTable('lv1Step2Amount2', 0)" v-model="contractForm.lv1Step2Amount2"></el-input>万
+                                <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step2Amount2', 0)" v-model="contractForm.lv1Step2Amount2"></el-input>万
                             </template>
                             <template v-if="scope.$index === 2">
-                                <el-input class="input_200" :disabled="proType != '0'" placeholder="请输入数值" @change="checkTable('lv1Step3Amount', 0)" v-model="contractForm.lv1Step3Amount"></el-input>万以上
+                                <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step3Amount', 0)" v-model="contractForm.lv1Step3Amount"></el-input>万以上
                             </template>
                         </template>
                     </el-table-column>
                     <el-table-column label="管理费率" prop="rate">
                         <template slot-scope="scope">
-                            <el-input class="input_200" :disabled="proType != '0'" placeholder="请输入数值" @change="checkRate(scope.row.rate, 0)" v-model="contractForm[scope.row.rate]">
+                            <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkRate(scope.row.rate, 0)" v-model="contractForm[scope.row.rate]">
                                 <template slot="append">%</template>
                             </el-input>
                         </template>
@@ -134,21 +134,21 @@
                     <el-table-column label="月总额下限" prop="range">
                         <template slot-scope="scope">
                             <template v-if="scope.$index === 0">
-                                <el-input class="input_200" :disabled="proType != '0'" placeholder="请输入数值" @change="checkTable('lv2Step1Amount', 1)" v-model="contractForm.lv2Step1Amount"></el-input>万以下
+                                <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step1Amount', 1)" v-model="contractForm.lv2Step1Amount"></el-input>万以下
                             </template>
                             <template v-if="scope.$index === 1">
-                                <el-input class="input_100" :disabled="proType != '0'" placeholder="请输入数值" @change="checkTable('lv2Step2Amount1', 1)" v-model="contractForm.lv2Step2Amount1"></el-input>
+                                <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step2Amount1', 1)" v-model="contractForm.lv2Step2Amount1"></el-input>
                                 -
-                                <el-input class="input_100" :disabled="proType != '0'" placeholder="请输入数值" @change="checkTable('lv2Step2Amount2', 1)" v-model="contractForm.lv2Step2Amount2"></el-input>万
+                                <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step2Amount2', 1)" v-model="contractForm.lv2Step2Amount2"></el-input>万
                             </template>
                             <template v-if="scope.$index === 2">
-                                <el-input class="input_200" :disabled="proType != '0'" placeholder="请输入数值" @change="checkTable('lv2Step3Amount', 1)" v-model="contractForm.lv2Step3Amount"></el-input>万以上
+                                <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step3Amount', 1)" v-model="contractForm.lv2Step3Amount"></el-input>万以上
                             </template>
                         </template>
                     </el-table-column>
                     <el-table-column label="管理费率" prop="rate">
                         <template slot-scope="scope">
-                            <el-input class="input_200" :disabled="proType != '0'" placeholder="请输入数值" @change="checkRate(scope.row.rate, 1)" v-model="contractForm[scope.row.rate]">
+                            <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkRate(scope.row.rate, 1)" v-model="contractForm[scope.row.rate]">
                                 <template slot="append">%</template>
                             </el-input>
                         </template>
@@ -163,12 +163,15 @@
                     <el-checkbox label="C">微信</el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
-            <h4 class="ml50 mt50">合同联系人信息</h4>
-            <el-form-item label="合同联系人" prop="contractPerson" >
+            <h4 class="ml50 mt50">销售联系人信息</h4>
+            <el-form-item label="销售姓名" prop="contractPerson" >
                 <el-input v-model="contractForm.contractPerson"></el-input>
             </el-form-item>
-            <el-form-item label="合同联系人邮箱" prop="contractEmail" >
+            <el-form-item label="销售联系邮箱" prop="contractEmail" >
                 <el-input v-model="contractForm.contractEmail"></el-input>
+            </el-form-item>
+            <el-form-item label="销售联系电话" prop="contractTel" >
+                <el-input v-model="contractForm.contractTel"></el-input>
             </el-form-item>
             <el-form-item label="合同联系人地址" prop="contractAddr" >
                 <el-input v-model="contractForm.contractAddr"></el-input>
@@ -192,9 +195,9 @@
             <el-form-item label="客户联系邮箱1" prop="customMail1">
                 <el-input v-model="contractForm.customMail1"></el-input>
             </el-form-item>
-            <el-form-item label="客户联系邮箱2" prop="customMail2">
+            <!-- <el-form-item label="客户联系邮箱2" prop="customMail2">
                 <el-input v-model="contractForm.customMail2"></el-input>
-            </el-form-item>
+            </el-form-item> -->
 
             <h4 class="ml50 mt50">客户（公司）开票信息</h4>
             <el-form-item label="发票类型" prop="invoiceType" >
@@ -285,6 +288,7 @@
                 showDesc:'展开',
                 templateDetail: {},
                 contractForm: {
+                    offer: '',
 	                invoiceType: '',
 	                invoiceTypeName: '',
 	                invoiceSubjectId: '',
@@ -300,7 +304,7 @@
 	                customCollectorPhone: '',
 	                customCollectorAddr: '',
 	                customMail1: '',
-	                customMail2: '',
+	                // customMail2: '',
 	                invoiceCompanyName: '',
 	                customTaxIdcd: '',
 	                customAddr: '',
@@ -323,6 +327,7 @@
                     contractEndDate: '',
                     contractTel: '',
                     standardRate: '',
+                    laddersRate: '',
                     lv1Step1Amount: '',
                     lv1Step1Rate: '',
                     lv1Step2Amount1: '',
@@ -342,6 +347,9 @@
                     channelType: ''
                 },
 				rules: {
+                    offer: [
+                        {required: true, message: '请选择并填写报价', trigger: 'blur'}
+                    ],
 					invoiceType: [
 						{required: true, message: '请选择发票类型', trigger: 'change'}
                     ],
@@ -387,6 +395,9 @@
 					customBankAccount: [
 						{ required: true, message: '银行账号为5至20位的数字', trigger: 'blur', validator: checkBankNo  }
                     ],
+                    customMail1: [
+                        { required: true, message: '请填写邮箱地址', trigger: 'blur'}
+                    ],
                     serviceId: [
 						{required: true, message: '请选择服务类型', trigger: 'change'}
                     ],
@@ -394,13 +405,16 @@
 					// 	{required: true, message: '请选择结算周期', trigger: 'change'}
 					// ],
                     contractPerson: [
-						{required: true, message: '合同联系人', trigger: 'blur'}
+						{required: true, message: '销售姓名', trigger: 'blur'}
 					],
                     contractEmail: [
-						{required: true, message: '合同联系人邮箱', trigger: 'blur'}
-					],
+						{required: true, message: '销售联系人邮箱', trigger: 'blur'}
+                    ],
+                    contractTel: [
+                        {required: true, message: '销售联系人电话', trigger: 'blur'}
+                    ],
                     contractAddr: [
-						{required: true, message: '合同联系人地址', trigger: 'blur'}
+						{required: true, message: '销售联系人地址', trigger: 'blur'}
                     ],
                     table_0: [
                         {required: true, message: '输入有误', trigger: 'blur'}
@@ -461,6 +475,24 @@
             }
         },
         methods: {
+            resetTable() {
+                this.contractForm.standardRate = ''
+                this.contractForm.laddersRate = ''
+                this.$refs['contractForm'].clearValidate('offer', 'table_0', 'table_1')
+            },
+            setOffer(a) {
+                console.log(this.contractForm[a])
+                console.log(!isNaN(this.contractForm[a]))
+                console.log(this.contractForm[a] > 0)
+                console.log(this.contractForm[a] < 100)
+                if(this.contractForm[a] && !isNaN(this.contractForm[a]) && this.contractForm[a] > 0 && this.contractForm[a] < 100) {
+                    this.contractForm.offer = '1'
+                    console.log('12233')
+                }
+                else {
+                    this.contractForm.offer = ''
+                }
+            },
             autoFill(a) {
                 if(!a) {
                     var time = new Date(new Date(this.contractForm.contractStartDate).getTime() - 24 * 60 * 60 * 1000)
@@ -486,6 +518,25 @@
                 else {
                     this.contractForm[`table_${index}`] = ''
                 }
+            },
+            checkAll() {
+                var amount = [
+                    ['lv1Step1Amount', 'lv1Step2Amount1', 'lv1Step2Amount2', 'lv1Step3Amount'],
+                    ['lv2Step1Amount', 'lv2Step2Amount1', 'lv2Step2Amount2', , 'lv2Step3Amount']
+                ], rate = [
+                    ['lv1Step1Rate', 'lv1Step2Rate', 'lv1Step3Rate'],
+                    ['lv2Step1Rate', 'lv2Step2Rate', 'lv2Step3Rate']
+                ]
+                amount.forEach((e, i) => {
+                    e.forEach(ev => {
+                        this.checkTable(ev, i)
+                    })
+                })
+                rate.forEach((e, i) => {
+                    e.forEach(ev => {
+                        this.checkRate(ev, i)
+                    })
+                })
             },
             setChannelType() {
                 if(!this.channelTypes.length) {
@@ -572,7 +623,13 @@
             },
 	        submitForm(formName) {
 		        let url = this.contractId ? '/api/contract-web/contract-generate/update-contract-generate' : '/api/contract-web/contract-generate/create-contract-generate'
-
+                if(this.contractForm.laddersRate) {
+                    this.checkAll()
+                }
+                else {
+                    this.contractForm.table_0 = '1',
+                    this.contractForm.table_1 = '1'
+                }
 		        this.$refs[formName].validate(valid => {
 			        if (valid) {
 				        this.setContractFormData(this.searchOptions.ContractGenInvoiceType, 'invoiceType', 'value', 'text', this.contractForm.invoiceType)
@@ -581,7 +638,10 @@
 				        // this.setContractFormData(this.customList, 'customCompany', 'id', 'name', this.contractForm.customCompanyId)
 
 				        let contractForm = _.cloneDeep(this.contractForm)
-				        contractForm.tplId = this.templateDetail.id
+                        contractForm.tplId = this.templateDetail.id
+                        delete contractForm.offer
+                        delete contractForm.table_0
+                        delete contractForm.table_1
 
 				        contractForm = _.assign(contractForm, {
 					        serviceLegalPerson: this.serviceCompany.corporateName,
@@ -627,7 +687,7 @@
 	                    customCollectorPhone: result.customCollectorPhone,
 	                    customCollectorAddr: result.customCollectorAddr,
 	                    customMail1: result.customMail1,
-	                    customMail2: result.customMail2,
+	                    // customMail2: result.customMail2,
 	                    invoiceCompanyName: result.invoiceCompanyName,
 	                    customTaxIdcd: result.customTaxIdcd,
 	                    customAddr: result.customAddr,
