@@ -108,7 +108,7 @@
                 <el-input v-model="contractForm.customCollector"></el-input>
             </el-form-item>
             <el-form-item label="客户联系电话" prop="customCollectorPhone" >
-                <el-input v-model="contractForm.customCollectorPhone" :maxlength="12"></el-input>
+                <el-input v-model="contractForm.customCollectorPhone"></el-input>
             </el-form-item>
             <el-form-item label="客户联系地址" prop="customCollectorAddr" >
                 <el-input v-model="contractForm.customCollectorAddr"></el-input>
@@ -143,7 +143,7 @@
                 <el-input v-model="contractForm.customAddr"></el-input>
             </el-form-item>
             <el-form-item label="电话" prop="customPhone" >
-                <el-input v-model="contractForm.customPhone" :maxlength="12"></el-input>
+                <el-input v-model="contractForm.customPhone"></el-input>
             </el-form-item>
             <el-form-item label="开户银行" prop="customBankName" >
                 <el-input v-model="contractForm.customBankName"></el-input>
