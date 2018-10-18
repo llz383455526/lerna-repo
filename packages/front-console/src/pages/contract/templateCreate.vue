@@ -224,9 +224,9 @@
 		        this.referArr.push(file.data.referId)
 	        },*/
 	        handleBeforeUpload(file) {
-		        const AllImgExt = ".docx";
+		        const AllImgExt = ".docx, .xlsx, .xls";
 		        let extName = file.name.substring(file.name.lastIndexOf(".")).toLowerCase()
-		        if (AllImgExt !== extName) {
+		        if (AllImgExt.indexOf(extName) < 0) {
 			        showNotify('error', '文件类型错误')
 			        return false
 		        }
