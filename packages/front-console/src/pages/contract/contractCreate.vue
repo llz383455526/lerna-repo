@@ -81,10 +81,87 @@
                 </el-date-picker>
             </el-form-item>
 
-            <el-form-item label="结算周期" prop="settleType" >
+            <!-- <el-form-item label="结算周期" prop="settleType" >
                 <el-select v-model="contractForm.settleType" placeholder="请选择" style="width:100%;">
                     <el-option v-for="item in searchOptions.ContractGenSettleType" :key="item.value" :label="item.text" :value="item.value"></el-option>
                 </el-select>
+            </el-form-item> -->
+            <h4 class="ml50 mt50">合同报价</h4>
+            <el-form-item label-width="110px">
+                <div class="item_div">
+                    <el-radio v-model="proType" label="0">标准报价：</el-radio>
+                    <el-input class="input_300" v-model="contractForm.contractTel" placeholder="请输入数值" :disabled="proType != '0'">
+                         <template slot="append">%</template>
+                    </el-input>
+                </div>
+                <div class="item_div">
+                    <el-radio v-model="proType" label="1">阶梯报价：</el-radio>
+                    <el-input class="input_300" v-model="contractForm.standardRate" placeholder="请输入数值" :disabled="proType != '1'">
+                         <template slot="append">%</template>
+                    </el-input>
+                </div>
+            </el-form-item>
+            <el-form-item prop="table_0">
+                <div class="table_head">月收入  2.8万  元（含）以下</div>
+                <el-table :data="table_0">
+                    <el-table-column label="月总额下限" prop="range">
+                        <template slot-scope="scope">
+                            <template v-if="scope.$index === 0">
+                                <el-input class="input_200" :disabled="proType != '0'" placeholder="请输入数值" @change="checkTable('lv1Step1Amount', 0)" v-model="contractForm.lv1Step1Amount"></el-input>万以下
+                            </template>
+                            <template v-if="scope.$index === 1">
+                                <el-input class="input_100" :disabled="proType != '0'" placeholder="请输入数值" @change="checkTable('lv1Step2Amount1', 0)" v-model="contractForm.lv1Step2Amount1"></el-input>
+                                -
+                                <el-input class="input_100" :disabled="proType != '0'" placeholder="请输入数值" @change="checkTable('lv1Step2Amount2', 0)" v-model="contractForm.lv1Step2Amount2"></el-input>万
+                            </template>
+                            <template v-if="scope.$index === 2">
+                                <el-input class="input_200" :disabled="proType != '0'" placeholder="请输入数值" @change="checkTable('lv1Step3Amount', 0)" v-model="contractForm.lv1Step3Amount"></el-input>万以上
+                            </template>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="管理费率" prop="rate">
+                        <template slot-scope="scope">
+                            <el-input class="input_200" :disabled="proType != '0'" placeholder="请输入数值" @change="checkRate(scope.row.rate, 0)" v-model="contractForm[scope.row.rate]">
+                                <template slot="append">%</template>
+                            </el-input>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-form-item>
+            <el-form-item prop="table_1">
+                <div class="table_head">月收入  2.8万  元（含）以上</div>
+                <el-table :data="table_1">
+                    <el-table-column label="月总额下限" prop="range">
+                        <template slot-scope="scope">
+                            <template v-if="scope.$index === 0">
+                                <el-input class="input_200" :disabled="proType != '0'" placeholder="请输入数值" @change="checkTable('lv2Step1Amount', 1)" v-model="contractForm.lv2Step1Amount"></el-input>万以下
+                            </template>
+                            <template v-if="scope.$index === 1">
+                                <el-input class="input_100" :disabled="proType != '0'" placeholder="请输入数值" @change="checkTable('lv2Step2Amount1', 1)" v-model="contractForm.lv2Step2Amount1"></el-input>
+                                -
+                                <el-input class="input_100" :disabled="proType != '0'" placeholder="请输入数值" @change="checkTable('lv2Step2Amount2', 1)" v-model="contractForm.lv2Step2Amount2"></el-input>万
+                            </template>
+                            <template v-if="scope.$index === 2">
+                                <el-input class="input_200" :disabled="proType != '0'" placeholder="请输入数值" @change="checkTable('lv2Step3Amount', 1)" v-model="contractForm.lv2Step3Amount"></el-input>万以上
+                            </template>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="管理费率" prop="rate">
+                        <template slot-scope="scope">
+                            <el-input class="input_200" :disabled="proType != '0'" placeholder="请输入数值" @change="checkRate(scope.row.rate, 1)" v-model="contractForm[scope.row.rate]">
+                                <template slot="append">%</template>
+                            </el-input>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-form-item>
+            <h4 class="ml50 mt50">客户发放方式</h4>
+            <el-form-item label="薪酬发放渠道" prop="channelType">
+                <el-checkbox-group v-model="channelTypes" @change="setChannelType">
+                    <el-checkbox label="A">银行</el-checkbox>
+                    <el-checkbox label="B">支付宝</el-checkbox>
+                    <el-checkbox label="C">微信</el-checkbox>
+                </el-checkbox-group>
             </el-form-item>
             <h4 class="ml50 mt50">合同联系人信息</h4>
             <el-form-item label="合同联系人" prop="contractPerson" >
@@ -232,7 +309,7 @@
 	                customBankAccount: '',
                     // dateValue: '',
                     serviceId:'',
-                    settleType:'',
+                    // settleType:'',
                     serviceAccountName:'',
                     serviceAccountNo:'',
                     serviceDepositBank:'',
@@ -243,7 +320,26 @@
                     aygContactPhone:'',
                     aygAddress:'',
                     contractStartDate: '',
-                    contractEndDate: ''
+                    contractEndDate: '',
+                    contractTel: '',
+                    standardRate: '',
+                    lv1Step1Amount: '',
+                    lv1Step1Rate: '',
+                    lv1Step2Amount1: '',
+                    lv1Step2Amount2: '',
+                    lv1Step2Rate: '',
+                    lv1Step3Amount: '',
+                    lv1Step3Rate: '',
+                    table_0: '',
+                    lv2Step1Amount: '',
+                    lv2Step1Rate: '',
+                    lv2Step2Amount1: '',
+                    lv2Step2Amount2: '',
+                    lv2Step2Rate: '',
+                    lv2Step3Amount: '',
+                    lv2Step3Rate: '',
+                    table_1: '',
+                    channelType: ''
                 },
 				rules: {
 					invoiceType: [
@@ -294,9 +390,9 @@
                     serviceId: [
 						{required: true, message: '请选择服务类型', trigger: 'change'}
                     ],
-                    settleType: [
-						{required: true, message: '请选择结算周期', trigger: 'change'}
-					],
+                    // settleType: [
+					// 	{required: true, message: '请选择结算周期', trigger: 'change'}
+					// ],
                     contractPerson: [
 						{required: true, message: '合同联系人', trigger: 'blur'}
 					],
@@ -305,7 +401,16 @@
 					],
                     contractAddr: [
 						{required: true, message: '合同联系人地址', trigger: 'blur'}
-					],
+                    ],
+                    table_0: [
+                        {required: true, message: '输入有误', trigger: 'blur'}
+                    ],
+                    table_1: [
+                        {required: true, message: '输入有误', trigger: 'blur'}
+                    ],
+                    channelType: [
+                        {required: true, message: '至少选择一项', trigger: 'blur'}
+                    ]
                 },
                 customList: [],
                 serviceList: [],
@@ -314,7 +419,31 @@
                 serviceTypes:{},
 				dateValue: '',
                 contractId: '',
-				fileList: [],
+                fileList: [],
+                proType: '0',
+                table_0: [
+                    {
+                        rate: 'lv1Step1Rate'
+                    },
+                    {
+                        rate: 'lv1Step2Rate'
+                    },
+                    {
+                        rate: 'lv1Step3Rate'
+                    }
+                ],
+                table_1: [
+                    {
+                        rate: 'lv2Step1Rate'
+                    },
+                    {
+                        rate: 'lv2Step2Rate'
+                    },
+                    {
+                        rate: 'lv2Step2Rate'
+                    }
+                ],
+                channelTypes: []
             }
         },
         computed: {
@@ -340,6 +469,40 @@
                 else {
                     var time = new Date(new Date(this.contractForm.contractEndDate).getTime() + 24 * 60 * 60 * 1000)
                     this.contractForm.contractStartDate = `${time.getFullYear() - 1}-${time.getMonth() + 1}-${time.getDate() > 9 ? time.getDate() : `0${time.getDate()}`}`
+                }
+            },
+            checkTable(a, index) {
+                if(this.contractForm[a] && !isNaN(this.contractForm[a])) {
+                    this.contractForm[`table_${index}`] = '1'
+                }
+                else {
+                    this.contractForm[`table_${index}`] = ''
+                }
+            },
+            checkRate(a, index) {
+                if(this.contractForm[a] && !isNaN(this.contractForm[a]) && this.contractForm[a] > 0 && this.contractForm[a] < 100) {
+                    this.contractForm[`table_${index}`] = '1'
+                }
+                else {
+                    this.contractForm[`table_${index}`] = ''
+                }
+            },
+            setChannelType() {
+                if(!this.channelTypes.length) {
+                    this.contractForm.channelType = ''
+                }
+                else {
+                    var str = ''
+                    for (var i = 0; i < this.channelTypes.length; i++) {
+                        if(str) {
+                            str += `,${this.channelTypes[i]}`
+                        }
+                        else {
+                            str += `${this.channelTypes[i]}`
+                        }
+                    }
+                    this.contractForm.channelType = str
+                    console.log(str)
                 }
             },
             aCompany(){
@@ -473,7 +636,7 @@
 	                    customBankAccount: result.customBankAccount,
                         dateValue: [result.contractStartDate, result.contractEndDate],
                         serviceId: result.serviceId,
-                        settleType:result.settleType,
+                        // settleType:result.settleType,
                         serviceAccountName:result.serviceAccountName,
                         serviceAccountNo:result.serviceAccountNo,
                         serviceDepositBank:result.serviceDepositBank,
@@ -505,6 +668,18 @@
 <style lang="scss" scoped>
     .demo-contractForm {
         width: 800px;
+    }
+    .item_div {
+        margin-bottom: 20px;
+    }
+    .input_300 {
+        width: 300px;
+    }
+    .input_200 {
+        width: 200px;
+    }
+    .input_100 {
+        width: 100px;
     }
 </style>
 
