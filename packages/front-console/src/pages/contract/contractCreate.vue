@@ -63,21 +63,27 @@
             </div>
            
                     
-            <el-form-item label="合同期限:" prop="dateValue" size="small" >
+            <el-form-item label="合同期限:" prop="contractStartDate" size="small" >
                 <el-date-picker
-                        v-model="contractForm.dateValue"
-                        type="daterange"
-                        :unlink-panels="true"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd">
+                    @change="autoFill()"
+                    v-model="contractForm.contractStartDate"
+                    type="date"
+                    placeholder="开始日期"
+                    value-format="yyyy-MM-dd">
+                </el-date-picker>
+                -
+                <el-date-picker
+                    @change="autoFill(1)"
+                    v-model="contractForm.contractEndDate"
+                    type="date"
+                    placeholder="结束日期"
+                    value-format="yyyy-MM-dd">
                 </el-date-picker>
             </el-form-item>
 
             <el-form-item label="结算周期" prop="settleType" >
                 <el-select v-model="contractForm.settleType" placeholder="请选择" style="width:100%;">
-                    <el-option v-for="item in searchOptions.ContractGenSettleType" :key="item.value" :label="item.text"
-                               :value="item.value"></el-option>
+                    <el-option v-for="item in searchOptions.ContractGenSettleType" :key="item.value" :label="item.text" :value="item.value"></el-option>
                 </el-select>
             </el-form-item>
             <h4 class="ml50 mt50">合同联系人信息</h4>
@@ -90,14 +96,7 @@
             <el-form-item label="合同联系人地址" prop="contractAddr" >
                 <el-input v-model="contractForm.contractAddr"></el-input>
             </el-form-item>
-
             <h4 class="ml50 mt50">客户联系信息</h4>
-            <!--<el-form-item label="商户名称（公司）" prop="customCompanyId" required>
-                <el-select v-model="contractForm.customCompanyId" placeholder="请选择" style="width:100%;">
-                    <el-option v-for="item in customList" :key="item.id" :label="item.name"
-                               :value="item.id"></el-option>
-                </el-select>
-            </el-form-item>-->
             <el-form-item label="商户名称（公司）" prop="customCompanyName" >
                 <el-input v-model="contractForm.customCompanyName"></el-input>
             </el-form-item>
@@ -186,13 +185,9 @@
 
 <script>
 	import { post, get } from "../../store/api"
-
 	import _ from 'lodash'
-
 	import { showNotify } from '../../plugin/utils-notify'
-
     import { checkBankNo, checkPhone } from '../../plugin/utils-element-validator'
-
 	export default {
 		created() {
             this.getCompanyList()
@@ -235,7 +230,7 @@
 	                customPhone: '',
 	                customBankName: '',
 	                customBankAccount: '',
-                    dateValue: '',
+                    // dateValue: '',
                     serviceId:'',
                     settleType:'',
                     serviceAccountName:'',
@@ -247,6 +242,8 @@
                     aygLegalPerson:'',
                     aygContactPhone:'',
                     aygAddress:'',
+                    contractStartDate: '',
+                    contractEndDate: ''
                 },
 				rules: {
 					invoiceType: [
@@ -258,7 +255,7 @@
 					serviceCompanyId: [
 						{required: true, message: '请选择服务商', trigger: 'change'}
 					],
-					dateValue: [
+					contractStartDate: [
 						{ required: true, message: '请选择合同期限', trigger: 'blur' }
                     ],
 					customCompanyName: [
@@ -321,13 +318,8 @@
             }
         },
         computed: {
-	        /*customLegalPerson() {
-                let company = _.find(this.customList, custom => custom.id === this.contractForm.customCompanyId)
-                return company ? company.legalPerson : ''
-            },*/
             serviceCompany() {
                 var company = this.serviceList.filter(e => e.companyId == this.contractForm.serviceCompanyId)
-	            // let company = _.find(this.serviceList, custom => custom.id === this.contractForm.serviceCompanyId)
                 return company[0] || {}
             },
             serviceContent() {
@@ -340,6 +332,16 @@
             }
         },
         methods: {
+            autoFill(a) {
+                if(!a) {
+                    var time = new Date(new Date(this.contractForm.contractStartDate).getTime() - 24 * 60 * 60 * 1000)
+                    this.contractForm.contractEndDate = `${time.getFullYear() + 1}-${time.getMonth() + 1}-${time.getDate() > 9 ? time.getDate() : `0${time.getDate()}`}`
+                }
+                else {
+                    var time = new Date(new Date(this.contractForm.contractEndDate).getTime() + 24 * 60 * 60 * 1000)
+                    this.contractForm.contractStartDate = `${time.getFullYear() - 1}-${time.getMonth() + 1}-${time.getDate() > 9 ? time.getDate() : `0${time.getDate()}`}`
+                }
+            },
             aCompany(){
                 get('/api/sysmgr-web/commom/company-infos', {
                         companyId: 1
@@ -361,20 +363,6 @@
                             this.contractForm.serviceAccountName = e.bankAccountName
                         }
                     })
-                    // get('/api/sysmgr-web/commom/company-bank-info', {
-                    //     companyId: this.contractForm.serviceCompanyId
-                    // }).then(result => {
-                    //         if(result){
-                    //             this.contractForm.serviceDepositBank = result[0].depositBank
-                    //             this.contractForm.serviceAccountNo = result[0].bankAccount
-                    //             this.contractForm.serviceAccountName = result[0].bankAccountName
-                    //         }else{
-                    //             this.contractForm.serviceDepositBank = ''
-                    //             this.contractForm.serviceAccountNo = ''
-                    //             this.contractForm.serviceAccountName = ''
-                    //         }
-                            
-                    // })
                 }
             },
             getTemplateDetail(tplId) {
@@ -438,11 +426,11 @@
                             servicePhone: this.serviceCompany.telephone
                         })
 
-				        let startAt = contractForm.dateValue[0]
-				        let endAt = contractForm.dateValue[1]
-				        contractForm.contractStartDate = startAt
-				        contractForm.contractEndDate = endAt
-                        delete contractForm.dateValue
+				        // let startAt = contractForm.dateValue[0]
+				        // let endAt = contractForm.dateValue[1]
+				        // contractForm.contractStartDate = startAt
+				        // contractForm.contractEndDate = endAt
+                        // delete contractForm.dateValue
 
                         if(this.contractId) contractForm.id = this.contractId
                         post(url, contractForm)
