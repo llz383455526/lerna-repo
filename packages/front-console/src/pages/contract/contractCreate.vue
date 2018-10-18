@@ -454,7 +454,7 @@
                         rate: 'lv2Step2Rate'
                     },
                     {
-                        rate: 'lv2Step2Rate'
+                        rate: 'lv2Step3Rate'
                     }
                 ],
                 channelTypes: []
@@ -522,7 +522,7 @@
             checkAll() {
                 var amount = [
                     ['lv1Step1Amount', 'lv1Step2Amount1', 'lv1Step2Amount2', 'lv1Step3Amount'],
-                    ['lv2Step1Amount', 'lv2Step2Amount1', 'lv2Step2Amount2', , 'lv2Step3Amount']
+                    ['lv2Step1Amount', 'lv2Step2Amount1', 'lv2Step2Amount2', 'lv2Step3Amount']
                 ], rate = [
                     ['lv1Step1Rate', 'lv1Step2Rate', 'lv1Step3Rate'],
                     ['lv2Step1Rate', 'lv2Step2Rate', 'lv2Step3Rate']
