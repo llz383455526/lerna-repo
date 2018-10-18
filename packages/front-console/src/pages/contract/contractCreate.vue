@@ -476,8 +476,8 @@
         },
         methods: {
             resetTable() {
-                this.contractForm.standardRate = ''
-                this.contractForm.laddersRate = ''
+                // this.contractForm.standardRate = ''
+                // this.contractForm.laddersRate = ''
                 this.$refs['contractForm'].clearValidate('offer', 'table_0', 'table_1')
             },
             setOffer(a) {
@@ -673,40 +673,17 @@
                     this.tplId = result.tplId
                     this.getTemplateDetail(this.tplId);
                     this.getInvoiceOptions(result.serviceId,""+result.invoiceSubjectId);
-                    this.contractForm = {
-	                    invoiceType: result.invoiceType,
-	                    invoiceTypeName: result.invoiceTypeName,
-	                    serviceCompanyId: result.serviceCompanyId,
-	                    serviceCompanyName: result.serviceCompanyName,
-	                    contractStartDate: result.contractStartDate,
-	                    contractEndDate: result.contractEndDate,
-	                    customCompanyId: result.customCompanyId,
-	                    customCompanyName: result.customCompanyName,
-	                    customLegalPerson: result.customLegalPerson,
-	                    customCollector: result.customCollector,
-	                    customCollectorPhone: result.customCollectorPhone,
-	                    customCollectorAddr: result.customCollectorAddr,
-	                    customMail1: result.customMail1,
-	                    // customMail2: result.customMail2,
-	                    invoiceCompanyName: result.invoiceCompanyName,
-	                    customTaxIdcd: result.customTaxIdcd,
-	                    customAddr: result.customAddr,
-	                    customPhone: result.customPhone,
-	                    customBankName: result.customBankName,
-	                    customBankAccount: result.customBankAccount,
-                        dateValue: [result.contractStartDate, result.contractEndDate],
-                        serviceId: result.serviceId,
-                        // settleType:result.settleType,
-                        serviceAccountName:result.serviceAccountName,
-                        serviceAccountNo:result.serviceAccountNo,
-                        serviceDepositBank:result.serviceDepositBank,
-                        contractPerson:result.contractPerson,
-                        contractEmail:result.contractEmail,
-                        contractAddr:result.contractAddr,
-                        aygLegalPerson:result.aygLegalPerson,
-                        aygContactPhone:result.aygContactPhone,
-                        aygAddress:result.aygAddress,
-                        
+                    this.contractForm = result
+                    for(var k in this.contractForm) {
+                        if(result[k]) {
+                            this.contractForm[k] = result[k]
+                        }
+                    }
+                    if(!this.contractForm.standardRate) {
+                        this.proType = '1'
+                    }
+                    if(this.contractForm.invoiceType) {
+                        this.channelTypes = this.contractForm.invoiceType.split(',')
                     }
                 })
             },

@@ -66,7 +66,7 @@
                     :before-upload="handleBeforeUpload"
                     :http-request="handleHttpRequest"
                     multiple
-                    accept=".docx"
+                    accept=".docx, .xlsx, .xls"
                     :show-file-list=false
                     :file-list="fileList">
                 <el-button size="small" type="primary">点击上传</el-button>
