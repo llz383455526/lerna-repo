@@ -83,13 +83,13 @@
             <h4 class="ml50 mt50">合同报价</h4>
             <el-form-item label-width="110px" prop="offer">
                 <div class="item_div">
-                    <el-radio @change="resetTable" v-model="proType" label="0">标准报价：</el-radio>
+                    <el-radio @change="resetTable(1)" v-model="proType" label="0">标准报价：</el-radio>
                     <el-input @change="setOffer('standardRate')" class="input_300" v-model="contractForm.standardRate" placeholder="请输入数值" :disabled="proType != '0'">
                          <template slot="append">%</template>
                     </el-input>
                 </div>
                 <div class="item_div">
-                    <el-radio @change="resetTable" v-model="proType" label="1">阶梯报价：</el-radio>
+                    <el-radio @change="resetTable(0)" v-model="proType" label="1">阶梯报价：</el-radio>
                     <el-input @change="setOffer('laddersRate')" class="input_300" v-model="contractForm.laddersRate" placeholder="请输入数值" :disabled="proType != '1'">
                          <template slot="append">%</template>
                     </el-input>
@@ -469,19 +469,18 @@
             }
         },
         methods: {
-            resetTable() {
-                // this.contractForm.standardRate = ''
-                this.contractForm.laddersRate = ''
+            resetTable(a) {
+                if(a) {
+                    this.contractForm.laddersRate = ''
+                }
+                else {
+                    this.contractForm.standardRate = ''
+                }
                 this.$refs['contractForm'].clearValidate('offer', 'table_0', 'table_1')
             },
             setOffer(a) {
-                console.log(this.contractForm[a])
-                console.log(!isNaN(this.contractForm[a]))
-                console.log(this.contractForm[a] > 0)
-                console.log(this.contractForm[a] < 100)
                 if(this.contractForm[a] && !isNaN(this.contractForm[a]) && this.contractForm[a] > 0 && this.contractForm[a] < 100) {
                     this.contractForm.offer = '1'
-                    console.log('12233')
                 }
                 else {
                     this.contractForm.offer = ''
@@ -498,7 +497,6 @@
                 }
             },
             checkTable(a, index) {
-                console.log('check')
                 if(this.contractForm[a] && !isNaN(this.contractForm[a])) {
                     this.contractForm[`table_${index}`] = '1'
                 }
@@ -545,13 +543,9 @@
                 this.contractForm[relevance] = this.contractForm[a]
             },
             compare_0(a, b, index) {
-                console.log(this.contractForm[b])
-                console.log(this.contractForm[b] < this.contractForm[a])
                 this.contractForm[b] && ((this.contractForm[b] - this.contractForm[a]) < 0) && (this.contractForm[`table_${index}`] = '')
             },
             compare_1(a, b, index) {
-                console.log(this.contractForm[b], this.contractForm[a])
-                console.log((this.contractForm[b] - this.contractForm[a]) > 0)
                 this.contractForm[b] && ((this.contractForm[b] - this.contractForm[a]) > 0) && (this.contractForm[`table_${index}`] = '')
             },
             checkRate(a, index) {
@@ -596,7 +590,6 @@
                         }
                     }
                     this.contractForm.channelType = str
-                    console.log(str)
                 }
             },
             aCompany(){
@@ -678,25 +671,34 @@
 				        this.setContractFormData(this.searchOptions.ContractGenInvoiceType, 'invoiceType', 'value', 'text', this.contractForm.invoiceType)
 				        this.setContractFormData(this.invoiceOptions, 'invoiceSubject', 'value', 'text', this.contractForm.invoiceSubjectId)
 				        this.setContractFormData(this.serviceList, 'serviceCompany', 'companyId', 'name', this.contractForm.serviceCompanyId)
-				        // this.setContractFormData(this.customList, 'customCompany', 'id', 'name', this.contractForm.customCompanyId)
 
 				        let contractForm = _.cloneDeep(this.contractForm)
                         contractForm.tplId = this.templateDetail.id
                         delete contractForm.offer
                         delete contractForm.table_0
                         delete contractForm.table_1
+                        if(!contractForm.laddersRate) {
+                            contractForm.lv1Step1Amount = ''
+                            contractForm.lv1Step1Rate = ''
+                            contractForm.lv1Step2Amount1 = ''
+                            contractForm.lv1Step2Amount2 = ''
+                            contractForm.lv1Step2Rate = ''
+                            contractForm.lv1Step3Amount = ''
+                            contractForm.lv1Step3Rate = ''
+                            contractForm.lv2Step1Amount = ''
+                            contractForm.lv2Step1Rate = ''
+                            contractForm.lv2Step2Amount1 = ''
+                            contractForm.lv2Step2Amount2 = ''
+                            contractForm.lv2Step2Rate = ''
+                            contractForm.lv2Step3Amount = ''
+                            contractForm.lv2Step3Rate = ''
+                        }
 
 				        contractForm = _.assign(contractForm, {
 					        serviceLegalPerson: this.serviceCompany.corporateName,
 					        serviceRegisterAddr: this.serviceCompany.address,
                             servicePhone: this.serviceCompany.telephone
                         })
-
-				        // let startAt = contractForm.dateValue[0]
-				        // let endAt = contractForm.dateValue[1]
-				        // contractForm.contractStartDate = startAt
-				        // contractForm.contractEndDate = endAt
-                        // delete contractForm.dateValue
 
                         if(this.contractId) contractForm.id = this.contractId
                         post(url, contractForm)
@@ -722,11 +724,11 @@
                             this.contractForm[k] = result[k]
                         }
                     }
-                    if(!this.contractForm.standardRate) {
+                    if(this.contractForm.laddersRate) {
                         this.proType = '1'
                     }
-                    if(this.contractForm.invoiceType) {
-                        this.channelTypes = this.contractForm.invoiceType.split(',')
+                    if(this.contractForm.channelType) {
+                        this.channelTypes = this.contractForm.channelType.split(',')
                     }
                 })
             },
