@@ -92,7 +92,7 @@
 				<el-table-column prop="serverName" label="签约服务商"></el-table-column>
                 <el-table-column prop="personalName" label="姓名"></el-table-column>
                 <el-table-column prop="personalIdentity" label="证件号"></el-table-column>
-                <!-- <el-table-column prop="personalMobile" label="手机号"></el-table-column> -->
+                 <el-table-column prop="personalMobile" label="手机号"></el-table-column>
                 <el-table-column prop="signStateDesc" label="签约状态"></el-table-column>
                 <el-table-column prop="certStateDesc" label="身份证认证状态"></el-table-column>
                 <el-table-column prop="orderStateDesc" label="订单状态">
@@ -105,7 +105,7 @@
 
                 <el-table-column label="操作">
                     <template slot-scope="scope">
-						<el-button v-if="scope.row.orderState == 'SIGNING'" type="text" size="small" @click="cancleOrder(scope.row)">取消签约</el-button>
+						<el-button v-if="scope.row.orderState === 'SIGNING' || scope.row.orderState === 'AUTHING'" type="text" size="small" @click="cancleOrder(scope.row)">取消签约</el-button>
 						<el-button v-if="isRe.indexOf(scope.row.orderState) > -1" type="text" size="small" @click="reCall(scope.row)">
 							{{scope.row.orderState == 'REJECTED' ? '重发通知': scope.row.orderState == 'SIGNING' ? '重发通知' : '重试'}}
 						</el-button>
@@ -120,7 +120,7 @@
         <ayg-pagination v-if="tableList.total" :total="tableList.total"
                         v-on:handleSizeChange="handleSizeChange" :currentSize="pageSize"
                         v-on:handleCurrentChange="handleCurrentChange" :currentPage="pageIndex"></ayg-pagination>
- 
+
     </div>
 
 </template>

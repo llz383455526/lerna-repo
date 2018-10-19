@@ -748,6 +748,7 @@
 			},
 			openDialogTwo() {
 				this.dialogVisibleTwo = true
+        this.query()
 			},
 			reset(name) {
 				this.$refs[name].resetFields();
@@ -763,7 +764,7 @@
 
 				let formData = _.cloneDeep(this.queryForm)
 				formData = _.assign(formData, {
-					pageNo: this.pageIndex,
+					pageNo: a,
 					pageSize: this.pageSize,
 					partyCount: this.form.partyCount,
 					accessType: this.form.accessType,
