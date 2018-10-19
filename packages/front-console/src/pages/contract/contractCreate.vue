@@ -480,11 +480,11 @@
             autoFill(a) {
                 if(!a) {
                     var time = new Date(new Date(this.contractForm.contractStartDate).getTime() - 24 * 60 * 60 * 1000)
-                    this.contractForm.contractEndDate = `${time.getFullYear() + 1}-${(time.getMonth() + 1) > 9 ? (time.getMonth() + 1) : `0${time.getMonth() + 1} `}-${time.getDate() > 9 ? time.getDate() : `0${time.getDate()}`}`
+                    this.contractForm.contractEndDate = `${time.getFullYear() + 1}-${(time.getMonth() + 1) > 9 ? (time.getMonth() + 1) : `0${time.getMonth() + 1}`}-${time.getDate() > 9 ? time.getDate() : `0${time.getDate()}`}`
                 }
                 else {
                     var time = new Date(new Date(this.contractForm.contractEndDate).getTime() + 24 * 60 * 60 * 1000)
-                    this.contractForm.contractStartDate = `${time.getFullYear() - 1}-${(time.getMonth() + 1) > 9 ? (time.getMonth() + 1) : `0${time.getMonth() + 1} `}-${time.getDate() > 9 ? time.getDate() : `0${time.getDate()}`}`
+                    this.contractForm.contractStartDate = `${time.getFullYear() - 1}-${(time.getMonth() + 1) > 9 ? (time.getMonth() + 1) : `0${time.getMonth() + 1}`}-${time.getDate() > 9 ? time.getDate() : `0${time.getDate()}`}`
                 }
             },
             checkTable(a, index) {
