@@ -336,7 +336,7 @@
                 },
 				rules: {
                     offer: [
-                        {required: true, message: '请选择并正确填写报价（最多两位小数）', trigger: 'blur'}
+                        {required: true, message: '请选择并正确填写报价（大于零且最多两位小数）', trigger: 'blur'}
                     ],
 					invoiceType: [
 						{required: true, message: '请选择发票类型', trigger: 'change'}
@@ -402,10 +402,10 @@
 						{required: true, message: '销售联系人地址', trigger: 'blur'}
                     ],
                     table_0: [
-                        {required: true, message: '请正确填写（最多两位小数）', trigger: 'blur'}
+                        {required: true, message: '请正确填写（大于零且最多两位小数）', trigger: 'blur'}
                     ],
                     table_1: [
-                        {required: true, message: '请正确填写（最多两位小数）', trigger: 'blur'}
+                        {required: true, message: '请正确填写（大于零且最多两位小数）', trigger: 'blur'}
                     ],
                     channelType: [
                         {required: true, message: '至少选择一项', trigger: 'blur'}
@@ -494,7 +494,7 @@
                 }
             },
             checkTable(a, index) {
-                if(this.contractForm[a] && !isNaN(this.contractForm[a])) {
+                if(this.contractForm[a] && !isNaN(this.contractForm[a]) && this.contractForm[a] > 0) {
                     var str = this.contractForm[a].toString().split('.')[1]
                     if(str && str.length > 2) {
                         this.contractForm[`table_${index}`] = ''
