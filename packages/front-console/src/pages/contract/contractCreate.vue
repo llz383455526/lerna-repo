@@ -157,7 +157,7 @@
                     <el-checkbox label="C">微信</el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
-            <h4 class="ml50 mt50">销售联系人信息</h4>
+            <h4 class="ml50 mt50">销售联系信息</h4>
             <el-form-item label="销售姓名" prop="contractPerson" >
                 <el-input v-model="contractForm.contractPerson"></el-input>
             </el-form-item>
@@ -186,7 +186,7 @@
             <el-form-item label="客户联系地址" prop="customCollectorAddr" >
                 <el-input v-model="contractForm.customCollectorAddr"></el-input>
             </el-form-item>
-            <el-form-item label="客户联系邮箱1" prop="customMail1">
+            <el-form-item label="客户联系邮箱" prop="customMail1">
                 <el-input v-model="contractForm.customMail1"></el-input>
             </el-form-item>
             <!-- <el-form-item label="客户联系邮箱2" prop="customMail2">
