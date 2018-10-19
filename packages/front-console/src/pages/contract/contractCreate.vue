@@ -477,7 +477,7 @@
         methods: {
             resetTable() {
                 // this.contractForm.standardRate = ''
-                // this.contractForm.laddersRate = ''
+                this.contractForm.laddersRate = ''
                 this.$refs['contractForm'].clearValidate('offer', 'table_0', 'table_1')
             },
             setOffer(a) {
