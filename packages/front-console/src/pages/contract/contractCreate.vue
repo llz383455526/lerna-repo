@@ -222,7 +222,7 @@
                 <el-input v-model="contractForm.customBankAccount"></el-input>
             </el-form-item>
 
-            <div v-if="this.contractId">
+            <!-- <div v-if="this.contractId">
                 <h4 class="ml50 mt50">合同文件</h4>
                 <div class="pl50 mb50">
                     <el-table :data="fileList">
@@ -242,7 +242,7 @@
                         </el-table-column>
                     </el-table>
                 </div>
-            </div>
+            </div> -->
 
             <el-form-item>
                 <el-button type="primary" @click="submitForm('contractForm')">保存</el-button>
