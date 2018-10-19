@@ -383,16 +383,16 @@
 
                 switch (this.dialogType) {
                     case 'app':
-	                    url = '/api/sysmgr-web/company-app/query-app'
+	                    url = '/api/sysmgr-web/commom/query-app-page-list'
 	                    formSearch = _.cloneDeep(this.formApp)
                         break
 	                case 'service':
-		                url = '/api/sysmgr-web/company/query-company'
+		                url = '/api/sysmgr-web/commom/query-service-company-page-list'
 		                formSearch = _.cloneDeep(this.formService)
 		                formSearch.companyType = 'provider'
 		                break
 	                case 'company':
-		                url = '/api/sysmgr-web/company/query-customer-company'
+		                url = '/api/sysmgr-web/commom/query-customer-company-page-list'
 		                formSearch = _.cloneDeep(this.formCompany)
 		                break
                 }
