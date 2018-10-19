@@ -677,15 +677,6 @@
                     this.getWait()
                 })
             },
-            // checkRight() {
-            //     console.log('1')
-            //     this.userInformation && this.userInformation.roles.forEach(e => {
-            //         console.log(e.name)
-            //         if(e.name == "发票管理员" || e.name == "开票审批") {
-            //             this.isCan = true
-            //         }
-            //     })
-            // },
             isWait() {
                 this.resetForm('formSearch')
                 this.formSearch.status = '1'
