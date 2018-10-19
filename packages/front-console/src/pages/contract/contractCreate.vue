@@ -80,12 +80,6 @@
                     value-format="yyyy-MM-dd">
                 </el-date-picker>
             </el-form-item>
-
-            <!-- <el-form-item label="结算周期" prop="settleType" >
-                <el-select v-model="contractForm.settleType" placeholder="请选择" style="width:100%;">
-                    <el-option v-for="item in searchOptions.ContractGenSettleType" :key="item.value" :label="item.text" :value="item.value"></el-option>
-                </el-select>
-            </el-form-item> -->
             <h4 class="ml50 mt50">合同报价</h4>
             <el-form-item label-width="110px" prop="offer">
                 <div class="item_div">
@@ -107,15 +101,15 @@
                     <el-table-column label="月总额下限" prop="range">
                         <template slot-scope="scope">
                             <template v-if="scope.$index === 0">
-                                <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step1Amount', 0)" v-model="contractForm.lv1Step1Amount"></el-input>万以下
+                                <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step1Amount', 0)" v-model="contractForm.lv1Step1Amount"></el-input> 万以下
                             </template>
                             <template v-if="scope.$index === 1">
                                 <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step2Amount1', 0)" v-model="contractForm.lv1Step2Amount1"></el-input>
                                 -
-                                <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step2Amount2', 0)" v-model="contractForm.lv1Step2Amount2"></el-input>万
+                                <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step2Amount2', 0)" v-model="contractForm.lv1Step2Amount2"></el-input> 万
                             </template>
                             <template v-if="scope.$index === 2">
-                                <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step3Amount', 0)" v-model="contractForm.lv1Step3Amount"></el-input>万以上
+                                <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step3Amount', 0)" v-model="contractForm.lv1Step3Amount"></el-input> 万以上
                             </template>
                         </template>
                     </el-table-column>
@@ -134,15 +128,15 @@
                     <el-table-column label="月总额下限" prop="range">
                         <template slot-scope="scope">
                             <template v-if="scope.$index === 0">
-                                <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step1Amount', 1)" v-model="contractForm.lv2Step1Amount"></el-input>万以下
+                                <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step1Amount', 1)" v-model="contractForm.lv2Step1Amount"></el-input> 万以下
                             </template>
                             <template v-if="scope.$index === 1">
                                 <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step2Amount1', 1)" v-model="contractForm.lv2Step2Amount1"></el-input>
                                 -
-                                <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step2Amount2', 1)" v-model="contractForm.lv2Step2Amount2"></el-input>万
+                                <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step2Amount2', 1)" v-model="contractForm.lv2Step2Amount2"></el-input> 万
                             </template>
                             <template v-if="scope.$index === 2">
-                                <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step3Amount', 1)" v-model="contractForm.lv2Step3Amount"></el-input>万以上
+                                <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step3Amount', 1)" v-model="contractForm.lv2Step3Amount"></el-input> 万以上
                             </template>
                         </template>
                     </el-table-column>
@@ -496,20 +490,69 @@
             autoFill(a) {
                 if(!a) {
                     var time = new Date(new Date(this.contractForm.contractStartDate).getTime() - 24 * 60 * 60 * 1000)
-                    this.contractForm.contractEndDate = `${time.getFullYear() + 1}-${time.getMonth() + 1}-${time.getDate() > 9 ? time.getDate() : `0${time.getDate()}`}`
+                    this.contractForm.contractEndDate = `${time.getFullYear() + 1}-${(time.getMonth() + 1) > 9 ? (time.getMonth() + 1) : `0${time.getMonth() + 1} `}-${time.getDate() > 9 ? time.getDate() : `0${time.getDate()}`}`
                 }
                 else {
                     var time = new Date(new Date(this.contractForm.contractEndDate).getTime() + 24 * 60 * 60 * 1000)
-                    this.contractForm.contractStartDate = `${time.getFullYear() - 1}-${time.getMonth() + 1}-${time.getDate() > 9 ? time.getDate() : `0${time.getDate()}`}`
+                    this.contractForm.contractStartDate = `${time.getFullYear() - 1}-${(time.getMonth() + 1) > 9 ? (time.getMonth() + 1) : `0${time.getMonth() + 1} `}-${time.getDate() > 9 ? time.getDate() : `0${time.getDate()}`}`
                 }
             },
             checkTable(a, index) {
+                console.log('check')
                 if(this.contractForm[a] && !isNaN(this.contractForm[a])) {
                     this.contractForm[`table_${index}`] = '1'
                 }
                 else {
                     this.contractForm[`table_${index}`] = ''
                 }
+                var relevance = ''
+                switch (a) {
+                    case 'lv1Step1Amount':
+                        relevance = 'lv1Step2Amount1'
+                        this.compare_0(a, 'lv1Step2Amount2', index)
+                        break;
+                    case 'lv1Step2Amount1':
+                        relevance = 'lv1Step1Amount'
+                        this.compare_0(a, 'lv1Step2Amount2', index)
+                        break;
+                    case 'lv1Step2Amount2':
+                        relevance = 'lv1Step3Amount'
+                        this.compare_1(a, 'lv1Step2Amount1', index)
+                        break;
+                    case 'lv1Step3Amount':
+                        relevance = 'lv1Step2Amount2'
+                        this.compare_1(a, 'lv1Step2Amount1', index)
+                        break;
+                    case 'lv2Step1Amount':
+                        relevance = 'lv2Step2Amount1'
+                        this.compare_0(a, 'lv2Step2Amount2', index)
+                        break;
+                    case 'lv2Step2Amount1':
+                        relevance = 'lv2Step1Amount'
+                        this.compare_0(a, 'lv2Step2Amount2', index)
+                        break;
+                    case 'lv2Step2Amount2':
+                        relevance = 'lv2Step3Amount'
+                        this.compare_1(a, 'lv2Step2Amount1', index)
+                        break;
+                    case 'lv2Step3Amount':
+                        relevance = 'lv2Step2Amount2'
+                        this.compare_1(a, 'lv2Step2Amount1', index)
+                        break;
+                    default:
+                        break;
+                }
+                this.contractForm[relevance] = this.contractForm[a]
+            },
+            compare_0(a, b, index) {
+                console.log(this.contractForm[b])
+                console.log(this.contractForm[b] < this.contractForm[a])
+                this.contractForm[b] && ((this.contractForm[b] - this.contractForm[a]) < 0) && (this.contractForm[`table_${index}`] = '')
+            },
+            compare_1(a, b, index) {
+                console.log(this.contractForm[b], this.contractForm[a])
+                console.log((this.contractForm[b] - this.contractForm[a]) > 0)
+                this.contractForm[b] && ((this.contractForm[b] - this.contractForm[a]) > 0) && (this.contractForm[`table_${index}`] = '')
             },
             checkRate(a, index) {
                 if(this.contractForm[a] && !isNaN(this.contractForm[a]) && this.contractForm[a] > 0 && this.contractForm[a] < 100) {
