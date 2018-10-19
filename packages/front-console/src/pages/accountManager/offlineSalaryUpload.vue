@@ -14,7 +14,7 @@
                     <el-option v-for="(item, index) in customNameList" :label="item.text" :value="item.value" :key="index"></el-option>
                 </el-select>
             </el-form-item>
-			<el-form-item label="发放渠道：" prop="type">
+			<el-form-item label="导入模板：" prop="type">
 				<el-select placeholder="请选择" v-model="formInfo.type" v-on:change="setImportOptions">
 					<el-option v-for="(item, index) in typeList" :label="item.text" :value="item.value" :key="index">
 					</el-option>

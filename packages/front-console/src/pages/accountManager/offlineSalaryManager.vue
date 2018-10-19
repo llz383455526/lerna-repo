@@ -17,7 +17,7 @@
             <el-form-item label="发放渠道:" size="small">
                 <el-select filterable style="width: 150px" v-model="formSearch.paymentThirdType" placeholder="请选择">
                 	<el-option label="所有" value=""></el-option>
-                	<el-option v-for="(item, index) in paymentThirdTypeList" :label="item.text" :value="item.value" :key="index"></el-option>
+                	<el-option v-for="(item, index) in selectList2" :label="item.text" :value="item.value" :key="index"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="状态:" size="small">
@@ -91,14 +91,15 @@
                     state: '',
 					page: 1,
 					pageSize: 10,
-                },
+				},
+				selectList2: []
             }
         },
         computed: {
             ...mapGetters({
                 customCompanyList: 'customCompanyList',
                 serviceCompanyList: 'serviceCompanyList',
-                paymentThirdTypeList: 'paymentThirdTypeList',
+                // paymentThirdTypeList: 'paymentThirdTypeList',
 				stateList: 'stateList',
 				offlineSalaryPage: 'offlineSalaryPage',
             })
@@ -106,9 +107,12 @@
 		created: function () {
 			this.$store.dispatch('getCustomCompanyList');
 			this.$store.dispatch('getServiceCompanyList');
-			this.$store.dispatch('getPaymentThirdTypeList');
+			// this.$store.dispatch('getPaymentThirdTypeList');
 			this.$store.dispatch('getStateList');
-            this.search();
+			this.search();
+			get('/api/console-dlv/pay-order/payment-third-types').then(data => {
+				this.selectList2 = data;
+			});
         },
 		methods: {
 			search() {

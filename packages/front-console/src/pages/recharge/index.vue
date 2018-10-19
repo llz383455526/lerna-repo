@@ -34,10 +34,12 @@
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="query" size="small">查询</el-button>
                 <el-button size="small" @click="clear">重置</el-button>
+                <el-button size="small" @click="exportFile">导出</el-button>
             </el-form-item>
         </el-form>
-        <el-button type="primary" @click="dialogCreateVisible=true">创建充值申请</el-button>
+        <el-button type="primary" @click="dialogCreateVisible=true" v-if="checkRight(permissions, 'balance-web:/recharge-order/comfirm')">充值申请</el-button>
         <el-table :data="rechargeApplyList.list" style="width: 100%;margin-top: 20px;">
+                <el-table-column prop="stateName" label="处理状态" width="100px"></el-table-column>
                 <el-table-column prop="companyName" label="充值单号" width="120px">
                     <template slot-scope="scope">
                         <el-button @click="getDetail(scope.row)" type="text">{{scope.row.orderNo}}</el-button>
@@ -48,7 +50,6 @@
                         <span>{{scope.row.createAt |formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="stateName" label="处理状态" width="100px"></el-table-column>
                 <el-table-column prop="appName" label="商户名称"></el-table-column>
                 <el-table-column prop="companyName" label="公司名称"></el-table-column>
                 <el-table-column label="服务商信息" width="240px">
@@ -64,16 +65,11 @@
                         {{scope.row.payUser.thirdPaymentTypeName}}
                     </template>
                 </el-table-column>
-                <el-table-column label="充值金额" width="160px">
+                <el-table-column label="充值明细" width="180px">
                     <template slot-scope="scope">
-                        <span>{{scope.row.amount + scope.row.serviceFee | formatMoney}}</span>
-                        <el-tooltip class="item" effect="dark" placement="right">
-                            <div slot="content">
-                                <div>实发金额：{{scope.row.amount | formatMoney}}</div>
-                                <div>服务费：{{scope.row.serviceFee | formatMoney}}</div>
-                            </div>
-                            <i class="iconfont icon-xinxi"></i>
-                        </el-tooltip>
+                        <div>收款总金额：{{scope.row.amount + scope.row.serviceFee | formatMoney}}</div>
+                        <div>实发金额：{{scope.row.amount | formatMoney}}</div>
+                        <div>服务费：{{scope.row.serviceFee | formatMoney}}</div>
                     </template>
                 </el-table-column>
                 <el-table-column prop="purpose" label="备注"></el-table-column>
@@ -120,25 +116,36 @@
                          </el-form-item>
                      </div>
                 </div>
-                <div class="input-container" v-if="msg">
-                    <div class="label"></div>
-                    <div class="input">
-                        <div>开户行：{{msg.depositBank}}</div>
-                        <div>账户名称：{{msg.accountName}}</div>
-                        <div>账号：{{msg.serviceCompanyAccountNo}}</div>
-                        <div>(请通过线下支付方式支付费用到该收款账号)</div>
-                    </div>
-                </div>
                 <div class="input-container">
                     <div class="label">业务类型：<span>*</span></div>
                     <div class="input">
                         <el-form-item prop="channelBusinessType">
-                            <el-select filterable v-model="dialogCreateForm.channelBusinessType" :no-data-text="dialogCreateForm.serviceCompanyId ? '无数据' : '请先选择商户'" @change="getServiceFee">
+                            <el-select filterable v-model="dialogCreateForm.channelBusinessType" :no-data-text="dialogCreateForm.serviceCompanyId ? '无数据' : '请先选择商户'" @change="getRechargeMsg">
                                 <el-option v-for="(item, index) in channelTypes" :label="item.text" :value="item.value" :key="item.value"></el-option>
                             </el-select>
                         </el-form-item>
                     </div>
                 </div>
+                <div class="input-container" v-if="msg && !rechargeMsg && isRecharge">
+                    <div class="label"></div>
+                    <div class="input">
+                        <div>开户行：{{msg.depositBank}}</div>
+                        <div>账户名称：{{msg.accountName}}</div>
+                        <div>账号：{{msg.accountNo}}</div>
+                        <div>(请通过线下支付方式支付费用到该收款账号)</div>
+                    </div>
+                </div>
+                <template v-if="rechargeMsg && dialogCreateForm.channelBusinessType == 'bank'">
+                    <div class="input-container">
+                        <div class="label"></div>
+                        <div class="input">
+                            <div>开户行：{{rechargeMsg.depositBankName}}</div>
+                            <div>账户名称：{{rechargeMsg.mainAcctName}}</div>
+                            <div>账号：{{rechargeMsg.payUserNo}}</div>
+                            <div>(请通过线下支付方式支付费用到该收款账号)</div>
+                        </div>
+                    </div>
+                </template>
                 <div class="input-container">
                     <div class="label">实发金额：<span>*</span></div>
                     <div class="input">
@@ -148,16 +155,10 @@
                     </div>
                 </div>
                 <div class="input-container">
-                    <div class="label"></div>
-                    <div class="input auto">
-                        当前合作方式：充值金额=实发金额+实发金额*服务费收费比例；
-                    </div>
-                </div>
-                <div class="input-container">
                     <div class="label">服务费金额：<span>*</span></div>
                     <div class="input">
                         <el-form-item>
-                            <el-input placeholder="实发金额*服务费收费比例" disabled v-model="serviceFee"></el-input>
+                            <el-input placeholder="实发金额*服务费收费比例" disabled :value="serviceFee.toFixed(2)"></el-input>
                         </el-form-item>
                     </div>
                 </div>
@@ -165,46 +166,65 @@
                     <div class="label">充值金额：<span>*</span></div>
                     <div class="input">
                         <el-form-item>
-                            <el-input disabled :value="dialogCreateForm.amount - 0 + serviceFee"></el-input>
+                            <el-input disabled :value="(dialogCreateForm.amount - 0 + serviceFee).toFixed(2)"></el-input>
                         </el-form-item>
                     </div>
-                </div>
-                <div class="input-container">
-                   <div class="label">充值凭证：<span>*</span></div>
-                   <div class="input">
-                       <el-form-item prop="attachmentId">
-                           <el-upload
-                                class="det"
-                                ref="upload"
-                                :show-file-list="false"
-                                :action="`/api/sysmgr-web/file/upload`"
-                                :auto-upload="false"
-                                :on-change="getAttachment"
-                                :multiple="false"
-                                name="file"
-                                accept=".jpg, .png">
-                                <img v-if="attachmentUrl" :src="attachmentUrl" class="avatar">
-                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                            </el-upload>
-                       </el-form-item>
-                   </div>
-                </div>
-                <div class="input-container">
-                    <div class="label">备注：<span>*</span></div>
-                    <div class="input">
-                        <el-form-item prop="purpose">
-                            <el-input :maxlength=50 v-model="dialogCreateForm.purpose" placeholder=""></el-input>
-                        </el-form-item>
+                    <div v-if="prePayContent">
+                        合计充值金额 = 
+                        <template v-if="prePayContent.secondType == 'real'">
+                            实发金额 + 实发金额 * {{prePayContent.serviceFeeRate}}%
+                        </template>
+                        <template v-else>
+                            实发金额 / (1 - {{prePayContent.serviceFeeRate}}%)
+                        </template>
+                        ;保留2位小数，四舍五入
                     </div>
                 </div>
-                <div class="input-container">
-                    <div class="label"></div>
-                    <div class="input">
-                        <el-checkbox checked @change="setSmsOpen">
-                            <span class="f14">目前支持线下转账充值，充值到账处理成功，免费短信通知至手机</span>
-                        </el-checkbox>
+                <template v-if="!rechargeMsg">
+                    <div class="input-container">
+                        <div class="label">充值凭证：<span>*</span></div>
+                       <div class="input">
+                           <el-form-item prop="attachmentId">
+                               <el-upload
+                                    class="det"
+                                    ref="upload"
+                                    :show-file-list="false"
+                                    :action="`/api/sysmgr-web/file/upload`"
+                                    :auto-upload="false"
+                                    :on-change="getAttachment"
+                                    :multiple="false"
+                                    name="file"
+                                    accept=".jpg, .png">
+                                    <img v-if="attachmentUrl" :src="attachmentUrl" class="avatar">
+                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                </el-upload>
+                           </el-form-item>
+                       </div>
                     </div>
-                </div>
+                    <div class="input-container">
+                        <div class="label">备注：<span>*</span></div>
+                        <div class="input">
+                            <el-form-item prop="purpose">
+                                <el-input :maxlength=50 v-model="dialogCreateForm.purpose" placeholder=""></el-input>
+                            </el-form-item>
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <div class="label"></div>
+                        <div class="input">
+                            <el-checkbox checked @change="setSmsOpen">
+                                <span class="f14">目前支持线下转账充值，充值到账处理成功，免费短信通知至手机</span>
+                            </el-checkbox>
+                        </div>
+                    </div>
+                </template>
+                <template v-if="rechargeMsg">
+                    <div class="tip">温馨提示</div>
+                    <hr>
+                    <div class="input">
+                        请线下汇款，由于银行对公转账的相关限制，建议在工作日周一 至 周五 09:30-15:30之间进行充值汇款，超过该时间则顺延至第二个工作日办理。预计2个小时内到账，如需按时发放请提前做好相关工作准备。
+                    </div>
+                </template>
                 <template v-if="sub">
                     <hr>
                     <div class="input-container mb0">
@@ -227,45 +247,16 @@
                             <div>账号：{{sub.accountNo}}</div>
                         </div>
                     </div>
-                    <!-- <div class="input-container mb0" v-if="payUserMsg">
-                        <div class="label">支付渠道：</div>
-                        <div class="input">
-                            {{payUserMsg.thirdPaymentTypeName}}
-                        </div>
-                    </div> -->
-                    <!-- <div class="input-container mb0" v-if="payUserMsg">
-                        <div class="label"></div>
-                        <div class="input">
-                            <div>子账号名称：{{payUserMsg.payUserName}}</div>
-                            <div>登录账户：{{payUserMsg.payUserNo}}</div>
-                            <div>商户号：{{payUserMsg.payUserId}}</div>
-                        </div>
-                    </div> -->
-                    <!-- <div class="input-container">
-                       <div class="label">充值凭证：<span>*</span></div>
-                       <div class="input">
-                           <el-form-item prop="attachmentId">
-                               <el-upload
-                                    class="det"
-                                    ref="upload"
-                                    :show-file-list="false"
-                                    :action="`/api/sysmgr-web/file/upload`"
-                                    :auto-upload="false"
-                                    :on-change="getSubUploadId"
-                                    :multiple="false"
-                                    name="file"
-                                    accept=".jpg, .png">
-                                    <img v-if="supUrl" :src="supUrl" class="avatar">
-                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                                </el-upload>
-                           </el-form-item>
-                       </div>
-                    </div> -->
                 </template>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button size="small" @click="dialogCreateVisible = false;$refs['dialogCreateForm'].resetFields()">取 消</el-button>
-                <el-button size="small" type="primary" @click="submitDialogCreateForm()">确 定</el-button>
+                <template v-if="rechargeMsg">
+                    <el-button size="small" type="primary" @click="dialogCreateVisible = false;$refs['dialogCreateForm'].resetFields()">知道了</el-button>
+                </template>
+                <template v-else>
+                    <el-button size="small" @click="dialogCreateVisible = false;$refs['dialogCreateForm'].resetFields()">取 消</el-button>
+                    <el-button size="small" type="primary" @click="submitDialogCreateForm()">确 定</el-button>
+                </template>
             </div>
         </el-dialog>
         <el-dialog title=""  :visible.sync="dialogConfirmVisible" width="40%">
@@ -297,15 +288,15 @@
                 <el-button type="primary" @click="submitConfirmOrder">确 定</el-button>
             </div>
         </el-dialog>
-        <el-dialog title="上传充值凭证"  :visible.sync="show" width="960px">
+        <el-dialog :title="detail.state == 20 ? '待制单' : detail.state == 21 ? '待审核' : '查看'"  :visible.sync="show" width="960px">
             <div class="title">客户充值凭证</div>
             <div class="det">企业名称：{{detail.companyName}}</div>
             <div class="det">商户名称：{{detail.appName}}</div>
-            <div class="det">充值金额：{{detail.amount + detail.serviceFee | formatMoney}}</div>
-            <div class="det" v-if="detail.serviceFee">实发金额：{{detail.amount | formatMoney}}</div>
+            <div class="det">收款总金额：{{detail.amount + detail.serviceFee | formatMoney}}</div>
+            <div class="det" v-if="detail.serviceFee">充值到第三方渠道金额：{{detail.amount | formatMoney}}</div>
             <div class="det" v-if="detail.serviceFee">服务费金额：{{detail.serviceFee | formatMoney}}</div>
             <div class="det pad">
-                *充值金额=实发金额+服务费金额<br>
+                *收款总金额=充值到第三方渠道金额+服务费金额<br>
                 阶梯报价时，服务费金额按商定预收比例计算
             </div>
             <!-- <div class="title">转账凭证</div> -->
@@ -333,12 +324,12 @@
                 </div>
             </template>
             <!-- <div class="voucher"></div> -->
-            <template v-if="!detail.subServiceCompanyId">
+            <template v-if="!detail.subServiceCompanyId && detail.state == 21 || detail.state == 30 && detail.financeDownloadCode">
                 <div class="title">渠道金额充值</div>
-                <div class="det" v-if="(detail.state != 30 && detail.state != 40) || detail.financeDownloadCode ">
+                <div class="det">
                     <div style="float: left;">上传充值凭证：</div>
                     <el-upload
-                        v-if="detail.state != 30 && detail.state != 40"
+                        v-if="!imageUrl"
                         class="upload"
                         :file-list="fileList"
                         ref="upload"
@@ -349,15 +340,18 @@
                         :multiple="false"
                         name="file"
                         accept=".jpg, .png">
-                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        <!-- <img v-if="imageUrl" :src="imageUrl" class="avatar"> -->
+                        <!-- v-else  -->
+                        <i class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
-                    <img @click="showVoucher = true" style="width: 300px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${detail.financeDownloadCode}`" alt="">
+                    <img @click="showVoucher = true" style="width: 300px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${imageUrl}`" alt="">
+                    &nbsp;<el-button type="text" class="clear" @click="clearImg">重新上传充值凭证</el-button>
                 </div>
             </template>
+            <!-- v-if="detail.state != 20 && detail.state != 40" -->
             <div class="det">备注：
-                <el-input size="small" v-model="memo" style="width: 300px" v-if="detail.state != 30 && detail.state != 40"></el-input>
-                <span>{{detail.memo}}</span>
+                <el-input size="small" v-model="memo" style="width: 300px" v-if="detail.state == 21 || detail.state == 20"></el-input>
+                <span v-else>{{detail.memo}}</span>
             </div>
             <template v-if="detail.subServiceCompanyId">
                 <hr>
@@ -372,45 +366,51 @@
                 <div class="det">开户行：{{subMsg.depositBank}}</div>
                 <div class="det">账户名称：{{subMsg.accountNo}}</div>
                 <div class="det">账号：{{subMsg.accountName}}</div>
-                <div class="title">渠道金额充值</div>
-                <div class="det" v-if="(detail.state != 30 && detail.state != 40) || detail.financeDownloadCode ">
-                    <div style="float: left;">上传充值凭证：</div>
-                    <el-upload
-                        v-if="detail.state != 30 && detail.state != 40"
-                        class="upload"
-                        :file-list="fileList"
-                        ref="upload"
-                        :show-file-list="false"
-                        :action="`/api/sysmgr-web/file/upload`"
-                        :auto-upload="false"
-                        :on-change="getImg"
-                        :multiple="false"
-                        name="file"
-                        accept=".jpg, .png">
-                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                    </el-upload>
-                    <img @click="showVoucher = true" style="width: 300px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${detail.financeDownloadCode}`" alt="">
-                </div>
-                <div class="title">充值凭证</div>
-                <div class="det">
-                    <div style="float: left;">上传充值凭证：</div>
-                    <el-upload
-                        v-if="detail.state != 30 && detail.state != 40"
-                        class="det"
-                        ref="upload"
-                        :show-file-list="false"
-                        :action="`/api/sysmgr-web/file/upload`"
-                        :auto-upload="false"
-                        :on-change="getUploadId"
-                        :multiple="false"
-                        name="file"
-                        accept=".jpg, .png">
-                        <img v-if="uploadUrl" :src="uploadUrl" class="avatar">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                    </el-upload>
-                    <img @click="showSub = true" style="width: 300px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${detail.subDownloadCode}`" alt="">
-                </div>
+                <template v-if="detail.state == 21 || detail.state == 30">
+                    <div class="title">渠道金额充值</div>
+                    <div class="det">
+                        <div style="float: left;">上传充值凭证：</div>
+                        <el-upload
+                            v-if="!detail.financeDownloadCode"
+                            class="upload"
+                            :file-list="fileList"
+                            ref="upload"
+                            :show-file-list="false"
+                            :action="`/api/sysmgr-web/file/upload`"
+                            :auto-upload="false"
+                            :on-change="getImg"
+                            :multiple="false"
+                            name="file"
+                            accept=".jpg, .png">
+                            <!-- <img v-if="imageUrl" :src="imageUrl" class="avatar"> -->
+                            <!-- v-else  -->
+                            <i class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
+                        <img @click="showVoucher = true" style="width: 300px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${detail.financeDownloadCode}`" alt="">
+                        &nbsp;<el-button type="text" class="clear" @click="clearImg">重新上传充值凭证</el-button>
+                    </div>
+                    <div class="title">充值凭证</div>
+                    <div class="det">
+                        <div style="float: left;">上传充值凭证：</div>
+                        <el-upload
+                            v-if="!detail.subDownloadCode"
+                            ref="upload"
+                            class="upload"
+                            :show-file-list="false"
+                            :action="`/api/sysmgr-web/file/upload`"
+                            :auto-upload="false"
+                            :on-change="getUploadId"
+                            :multiple="false"
+                            name="file"
+                            accept=".jpg, .png">
+                            <!-- <img v-if="uploadUrl" :src="uploadUrl" class="avatar"> -->
+                            <!-- v-else -->
+                            <i class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
+                        <img @click="showSub = true" style="width: 300px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${detail.subDownloadCode}`" alt="">
+                        &nbsp;<el-button type="text" class="clear" @click="clearUploadId">重新上传充值凭证</el-button>
+                    </div>
+                </template>
                 <div class="det">选择渠道帐号：
                     <el-select size="small" v-model="balanceAccountId" @change="getSuggest" style="width: 500px" :disabled="detail.state != 20 ? true : false">
                         <el-option v-for="e in channlList" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}`" :value="e.balanceAccountId"></el-option>
@@ -422,9 +422,20 @@
             </template>
             <div slot="footer" class="dialog-footer">
                 <el-button size="small" @click="show = false">取消</el-button>
-                <template v-if="detail.state != 30 && detail.state != 40">
+                <template v-if="detail.state == 20 && checkRight(permissions, 'balance-web:/recharge-order/failOnRechargeDocumentMake')">
+                    <el-button size="small" type="primary" @click="ensure(40, 1)">未到账</el-button>
+                </template>
+                <template v-if="detail.state == 21 && checkRight(permissions, 'balance-web:/recharge-order/approve')">
                     <el-button size="small" type="primary" @click="ensure(40)">未到账</el-button>
+                </template>
+                <template v-if="detail.state == 20 && checkRight(permissions, 'balance-web:/recharge-order/rechargeDocumentMake')">
+                    <el-button size="small" type="primary" @click="touch">我已制单</el-button>
+                </template>
+                <template v-if="detail.state == 21 && checkRight(permissions, 'balance-web:/recharge-order/approve')">
                     <el-button size="small" type="primary" @click="ensure(30)">确认到账</el-button>
+                </template>
+                <template v-if="detail.state == 30 && checkRight(permissions, 'balance-web:/recharge-order/editRechargeCertificate')">
+                    <el-button size="small" type="primary" @click="save">保存</el-button>
                 </template>
             </div>
         </el-dialog>
@@ -567,7 +578,9 @@ export default {
       subServiceCompanyId: '',
       uploadUrl: '',
       subMsg: '',
-      showDetail: false
+      showDetail: false,
+      rechargeMsg: '',
+      isRecharge: false
     };
   },
   watch: {
@@ -593,7 +606,8 @@ export default {
       curServiceCompanies: "curServiceCompanies",
       userInformation: "userInformation",
       productName: "productName",
-      customCompanies: "customCompanies"
+      customCompanies: "customCompanies",
+      permissions: 'permissions'
     })
   },
   mounted() {
@@ -621,6 +635,20 @@ export default {
         })
         // this.$store.dispatch("getRechargeApplyList", this.formSearch);
     },
+    exportFile() {
+        var str = ''
+        for(var k in this.formSearch) {
+            if(k != 'page' && k != 'pageSize') {
+                if(!str) {
+                    str += `?${k}=${this.formSearch[k]}`
+                }
+                else {
+                    str += `&${k}=${this.formSearch[k]}`
+                }
+            }
+        }
+        location.href = `${baseUrl}/api/balance-web/recharge-order/export-recharge-order-list${str}`
+    },
     sizeChange(a) {
         this.formSearch.pageSize = a
         this.query()
@@ -629,6 +657,8 @@ export default {
         this.attachmentId = ''
         this.imageUrl = ''
         this.memo = ''
+        this.uploadUrl = ''
+        this.subUploadId = ''
         get('/api/balance-web/recharge-order/query-detail', {
             orderNo: a.orderNo
         }).then(data => {
@@ -636,6 +666,8 @@ export default {
             this.show = true
             this.showDetail = false
             this.subServiceCompanyId = this.detail.subServiceCompanyId
+            this.imageUrl = this.detail.financeDownloadCode
+            this.memo = this.detail.memo
             console.log(this.subServiceCompanyId)
             // this.subUploadId = this.detail.subUploadId
             // this.uploadUrl = this.detail.subDownloadCode ? `/api/sysmgr-web/file/download?downloadCode=${this.detail.subDownloadCode}` : ''
@@ -713,12 +745,25 @@ export default {
             serviceCompanyId: this.dialogCreateForm.serviceCompanyId
         }).then(data => {
             // serviceInfos
-            this.msg = data.serviceCompany
+            this.msg = data.serviceCompanyInfo
             this.sub = data.subCompanyInfo
             this.sub && (this.dialogCreateForm.subServiceCompanyId = this.sub.companyId)
             this.channelTypes = data.channelTypes
             this.calcServiceFee = data.calcServiceFee
+            this.prePayContent = JSON.parse(data.prePayContent)
+            this.isRecharge = false
             this.getServiceFee()
+        })
+    },
+    getRechargeMsg() {
+        get('/api/balance-web/recharge-order/query-direct-recharge-user-account', {
+            appId: this.dialogCreateForm.appId,
+            serviceCompanyId: this.dialogCreateForm.serviceCompanyId,
+            channelType: this.dialogCreateForm.channelBusinessType
+        }).then(data => {
+            this.rechargeMsg = data
+            !this.rechargeMsg && this.getServiceFee()
+            this.isRecharge = true
         })
     },
     getServiceFee() {
@@ -746,14 +791,21 @@ export default {
         }
     },
     getImg(a) {
-      this.imageUrl = URL.createObjectURL(a.raw);
+    //   this.imageUrl = URL.createObjectURL(a.raw);
       var formData = new FormData()
       formData.append('targetType', 'recharge_voucher_img')
       formData.append('fileName', a.name)
       formData.append('file', a.raw)
       importPost('/api/sysmgr-web/file/upload', formData).then(data => {
         this.attachmentId = data.referId
+        this.imageUrl = data.downloadCode
+        this.detail.financeDownloadCode = data.downloadCode
       })
+    },
+    clearImg() {
+        this.imageUrl = ''
+        this.attachmentId = ''
+        // this.detail.financeDownloadCode = ''
     },
     getUploadId(a) {
       this.uploadUrl = URL.createObjectURL(a.raw);
@@ -763,7 +815,13 @@ export default {
       formData.append('file', a.raw)
       importPost('/api/sysmgr-web/file/upload', formData).then(data => {
         this.subUploadId = data.referId
+        this.detail.subDownloadCode = data.downloadCode
       })
+    },
+    clearUploadId() {
+        this.uploadUrl = ''
+        this.subUploadId = ''
+        this.detail.subDownloadCode = ''
     },
     getAttachment(a) {
       this.attachmentUrl = URL.createObjectURL(a.raw);
@@ -796,22 +854,55 @@ export default {
         })
         this.getChannlList()
     },
-    ensure(state) {
-        if(!this.attachmentId && this.subUploadId && state == 30) {
+    save() {
+        post('/api/balance-web/recharge-order/editRechargeCertificate', {
+            orderNo: this.detail.orderNo,
+            attachmentId: this.attachmentId,
+            subUploadId: this.subUploadId
+        }).then(data => {
+            showNotify("success", "操作成功！");
+            this.attachmentId = ''
+            this.imageUrl = ''
+            this.subUploadId = ''
+            this.uploadUrl = ''
+            this.show = false;
+            this.query()
+        })
+    },
+    touch() {
+        post('/api/balance-web/recharge-order/rechargeDocumentMake', {
+            orderNo: this.detail.orderNo,
+            state: 21,
+            payUserId: this.payUserId,
+            memo: this.memo
+        }).then(data => {
+            this.show = false;
+            this.query()
+        })
+    },
+    ensure(state, type) { 
+        if((!this.attachmentId || (!this.subUploadId && this.detail.subServiceCompanyId)) && state == 30) {
             this.$message({
                 type: 'warning',
                 message: '请上传凭证！'
             })
             return
         }
-        if(!this.balanceAccountId && state == 30) {
+        if(!this.balanceAccountId && state == 21) {
             this.$message({
                 type: 'warning',
                 message: '请选择渠道账号！'
             })
             return
         }
-        post("/api/balance-web/recharge-order/approve", {
+        if(!this.memo && state == 40) {
+            this.$message({
+                type: 'warning',
+                message: '请填写备注！'
+            })
+            return
+        }
+        post(`/api/balance-web/recharge-order/${type ? 'failOnRechargeDocumentMake' : 'approve'}`, {
             attachmentId: this.attachmentId,
             memo: this.memo,
             orderNo: this.detail.orderNo,
@@ -936,6 +1027,9 @@ export default {
       this.msg = ''
       this.sub = ''
       this.$refs["dialogCreateForm"] && this.$refs["dialogCreateForm"].resetFields();
+      this.rechargeMsg = ''
+      this.isRecharge = false
+      this.prePayContent = ''
       next && next();
     },
     submitConfirmOrder() {
@@ -995,6 +1089,7 @@ export default {
     margin-bottom: 15px;
 }
 .det {
+    position: relative;
     margin-bottom: 10px;
     padding-left: 20px;
 }
@@ -1009,7 +1104,7 @@ export default {
     display: inline-block;
 }
 .v-modal {
-    z-index: 2100;
+    z-index: 9999;
     opacity: 1;
     background-color: rgba(0, 0, 0, 0.5);
     background-repeat: no-repeat;
@@ -1033,5 +1128,12 @@ export default {
     margin-left: 50px;
     cursor: pointer;
     user-select: none;
+}
+.tip {
+    font-size: 16px;
+}
+.clear {
+    position: absolute;
+    bottom: 0px;
 }
 </style>
