@@ -189,9 +189,6 @@
             <el-form-item label="客户联系邮箱" prop="customMail1">
                 <el-input v-model="contractForm.customMail1"></el-input>
             </el-form-item>
-            <!-- <el-form-item label="客户联系邮箱2" prop="customMail2">
-                <el-input v-model="contractForm.customMail2"></el-input>
-            </el-form-item> -->
 
             <h4 class="ml50 mt50">客户（公司）开票信息</h4>
             <el-form-item label="发票类型" prop="invoiceType" >
@@ -282,7 +279,7 @@
                 showDesc:'展开',
                 templateDetail: {},
                 contractForm: {
-                    offer: '',
+                    offer: '1',
 	                invoiceType: '',
 	                invoiceTypeName: '',
 	                invoiceSubjectId: '',
@@ -298,16 +295,13 @@
 	                customCollectorPhone: '',
 	                customCollectorAddr: '',
 	                customMail1: '',
-	                // customMail2: '',
 	                invoiceCompanyName: '',
 	                customTaxIdcd: '',
 	                customAddr: '',
 	                customPhone: '',
 	                customBankName: '',
 	                customBankAccount: '',
-                    // dateValue: '',
                     serviceId:'',
-                    // settleType:'',
                     serviceAccountName:'',
                     serviceAccountNo:'',
                     serviceDepositBank:'',
@@ -395,9 +389,6 @@
                     serviceId: [
 						{required: true, message: '请选择服务类型', trigger: 'change'}
                     ],
-                    // settleType: [
-					// 	{required: true, message: '请选择结算周期', trigger: 'change'}
-					// ],
                     contractPerson: [
 						{required: true, message: '销售姓名', trigger: 'blur'}
 					],
@@ -718,7 +709,6 @@
                     this.tplId = result.tplId
                     this.getTemplateDetail(this.tplId);
                     this.getInvoiceOptions(result.serviceId,""+result.invoiceSubjectId);
-                    this.contractForm = result
                     for(var k in this.contractForm) {
                         if(result[k]) {
                             this.contractForm[k] = result[k]
