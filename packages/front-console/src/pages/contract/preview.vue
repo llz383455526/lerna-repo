@@ -40,7 +40,7 @@
                     {{'固定金额，每笔' + detail.serviceFeeContent.fixFee + '元'}}
                 </template>
                 <template v-else-if="detail.serviceFeeContent.serviceFeeType == 'ratio'">
-                    {{`${detail.prePayContent.secondType == 'real' ? '实发金额' : '应发金额'} * ${detail.serviceFeeContent.serviceFeeRate}%`}}
+                    {{`${detail.serviceFeeContent.secondType == 'real' ? '实发金额' : '应发金额'} * ${detail.serviceFeeContent.serviceFeeRate}%`}}
                 </template>
                 <template v-else-if="detail.serviceFeeContent.serviceFeeType == 'step' && detail.serviceFeeContent.secondType == '0'">
                     {{`月收入阶梯收费：`}}
