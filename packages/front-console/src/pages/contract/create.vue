@@ -28,9 +28,7 @@
             </el-form-item>
             <el-form-item label="行业类型" prop="cotractType" required>
                 <el-select v-model="contractForm.cotractType" placeholder="请选择" style="width:100%;">
-                    <el-option label="直播" value="ZhiBo"></el-option>
-                    <el-option label="保险" value="BaoXian"></el-option>
-                    <el-option label="市场推广" value="sctg"></el-option>
+                    <el-option v-for="item in invoiceTypeList" :key="item.value" :label="item.text" :value="item.value"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="服务类型" prop="serviceTypeList" >
@@ -494,9 +492,7 @@
     import {baseUrl} from '../../config/address';
     import {showNotify} from '../../plugin/utils-notify';
     import fileUploader from '../../component/fileUploader'
-
     import { checkPhone } from '../../plugin/utils-element-validator'
-
     export default {
         components: {
             fileUploader
@@ -703,7 +699,8 @@
                     pageSize: 10
                 },
                 company: {},
-                serviceTypes: []
+                serviceTypes: [],
+                invoiceTypeList: []
             }
         },
         created() {
@@ -725,6 +722,9 @@
             })
 	        get('/api/contract-web/service-mgr/get-service-type-options', {}).then(result => {
                 this.serviceTypes = result
+            })
+            get('/api/sysmgr-web/commom/option?enumType=IndustryType').then(data => {
+                this.invoiceTypeList = data
             })
             this.initColumn()
             // this.query()

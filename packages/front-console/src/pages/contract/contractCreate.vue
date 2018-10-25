@@ -15,9 +15,12 @@
 
             <h4 class="ml50 mt50">合同内容</h4>
             <el-form-item label="客户从事" prop="customIndustry">
-                <el-input v-model="contractForm.customIndustry" placeholder="客户是做什么的">
-                    <template slot="append">行业</template>
-                </el-input>
+                <el-input v-model="contractForm.customIndustry" placeholder="客户是做什么的，客户企业主要从事的业务"></el-input>
+            </el-form-item>
+            <el-form-item label="行业类型" prop="industryType" >
+                <el-select v-model="contractForm.industryType" placeholder="请选择" style="width:100%;">
+                    <el-option v-for="item in invoiceTypeList" :key="item.value" :label="item.text" :value="item.value"></el-option>
+                </el-select>
             </el-form-item>
             <el-form-item label="服务类型" prop="serviceTypeList" >
                 <template slot="label">
@@ -457,6 +460,9 @@
             }
             this.aCompany();
             this.initColumn();
+            get('/api/sysmgr-web/commom/option?enumType=IndustryType').then(data => {
+                this.invoiceTypeList = data
+            })
             // get('/api/contract-web/commom/option?enumType=InvoiceType').then(data => {
             //     this.invoiceTypeList = data
             // })
@@ -474,6 +480,7 @@
                 contractForm: {
                     customIndustry: '',
                     serviceTypeList: [],
+                    industryType: '',
                     offer: '1',
 	                invoiceType: '',
 	                invoiceTypeName: '',
@@ -559,7 +566,10 @@
                     // ],
 					serviceCompanyId: [
 						{required: true, message: '请选择服务商', trigger: 'change'}
-					],
+                    ],
+                    industryType: [
+                        {required: true, message: '请选择行业类型', trigger: 'change'}
+                    ],
 					contractStartDate: [
 						{ required: true, message: '请选择合同期限', trigger: 'blur' }
                     ],
@@ -660,8 +670,8 @@
                 ],
                 channelTypes: [],
                 columnIndex: 0,
-                columnIndex2: 0
-                // invoiceTypeList: []
+                columnIndex2: 0,
+                invoiceTypeList: []
             }
         },
         computed: {
