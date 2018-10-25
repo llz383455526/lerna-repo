@@ -90,7 +90,7 @@
             <h4 class="ml50 mt50">合同报价</h4>
             <el-form-item label-width="110px" prop="offer">
                 <div class="item_div">
-                    <el-radio @change="resetTable(1)" v-model="proType" label="0">标准报价：</el-radio>
+                    <el-radio @change="resetTable(1)" v-model="contractForm.serviceFeeContent.serviceFeeType" label="step">标准报价：</el-radio>
                     <el-input @change="setOffer('standardRate')" class="input_300" v-model="contractForm.standardRate" placeholder="请输入数值" :disabled="proType != '0'">
                          <template slot="append">%</template>
                     </el-input>
