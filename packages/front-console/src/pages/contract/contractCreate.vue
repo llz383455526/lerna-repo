@@ -100,9 +100,9 @@
                         </el-radio>
                     </el-col>
                     <el-col :span="15">
-                        <el-input placeholder="请输入内容" v-model="inputStandard" @blur="checkInputRate"
+                        <el-input placeholder="请输入内容" v-model="inputStandard" @blur="calcuServiceFee(0)"
                                   :disabled="!(showInputRatio == 0)">
-                            <template slot="append">元 每笔</template>
+                            <template slot="append">%</template>
                         </el-input>
                     </el-col>
                     <el-col :span="1" style="text-align: right;">
@@ -922,7 +922,7 @@
             calcuServiceFee(a) {
                 this.inputRate = ''
                 if(this.contractForm.serviceFeeContent.serviceFeeType == 'standard') {
-                    this.contractForm.offer = this.inputStandard ? 0 : '';
+                    this.contractForm.offer = (this.inputStandard && (this.inputStandard - 0 > 0 && this.inputStandard <= 100)) ? 0 : '';
                     this.showInputRatio = a;
                 }
                 // if (this.contractForm.serviceFeeContent.serviceFeeType == 'dummy') {
