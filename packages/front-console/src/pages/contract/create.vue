@@ -1085,7 +1085,6 @@
             //     }
             // },
             calcuServiceFee(a) {
-                console.log(this.contractForm)
                 if (this.contractForm.serviceFeeContent.serviceFeeType == 'dummy') {
                     this.contractForm.serviceFeeContent.fixFee = 0;
                     this.showInputRatio = a;
