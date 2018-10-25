@@ -442,13 +442,27 @@
                 return company[0] || {}
             },
             serviceContent() {
-                var str = ''
+                var str = '', contents = []
                 this.contractForm.serviceTypeList.forEach(e => {
                     var content = _.find(this.serviceTypes, serviceType => serviceType.serviceId === e)
                     if(content) {
-                        str += `${str ? '<br>' : ''}${content.seqNo}、${content.serviceContent}`
+                        contents.push(content)
                     }
+                    // if(content) {
+                    //     str += `${str ? '<br>' : ''}${content.seqNo}、${content.serviceContent}`
+                    // }
                 })
+                for(var i =  0; i < contents.length; i++) {
+                    for(var j = i; j < contents.length; j++) {
+                        console.log(contents[i].seqNo, contents[j].seqNo)
+                        if(contents[i].seqNo > contents[j].seqNo) {
+                            var a = contents[i]
+                            contents[i] = contents[j]
+                            contents[j] = a
+                        }
+                    }
+                    str += `${str ? '<br>' : ''}${contents[i].seqNo}、${contents[i].serviceContent}`
+                }
                 return str
             }
         },
@@ -649,11 +663,16 @@
 			        })
             },
             getInvoiceOptions() {
-	            post('/api/contract-web/service-mgr/get-service-subject-options', {
-	            	serviceIds: this.contractForm.serviceTypeList,
-                }).then(result => {
-                    this.invoiceOptions = result;
-		        })
+                if(this.contractForm.serviceTypeList.length) {
+                    post('/api/contract-web/service-mgr/get-service-subject-options', {
+	                	serviceIds: this.contractForm.serviceTypeList,
+                    }).then(result => {
+                        this.invoiceOptions = result;
+		            })
+                }
+                else {
+                    this.invoiceOptions = []
+                }
             },
             getServiceTypesOptions() {
 	            get('/api/contract-web/service-mgr/get-service-type-options', {}).then(result => {
