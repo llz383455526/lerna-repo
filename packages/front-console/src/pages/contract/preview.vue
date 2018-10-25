@@ -11,8 +11,14 @@
             <el-col :span="8">{{detail.serviceCompanyName}}</el-col>
         </el-row>
         <el-row class="mb15" style="font-weight: normal;">
-            <el-col :span="4" style="text-align: right; margin-right: 20px;">合同类型：</el-col>
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">行业类型：</el-col>
             <el-col :span="8">{{detail.cotractTypeName}}</el-col>
+        </el-row>
+        <el-row class="mb15" style="font-weight: normal;">
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">服务类型：</el-col>
+            <el-col :span="8">
+                <span class="mr8" v-for="e in detail.serviceTypeList">{{e.serviceName}}</span>
+            </el-col>
         </el-row>
         <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">结算方式：</el-col>
@@ -242,5 +248,8 @@
     .back {
         float: right;
         margin-right: 40px;
+    }
+    .mr8 {
+        margin-right: 8px;
     }
 </style>

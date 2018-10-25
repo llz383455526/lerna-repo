@@ -26,12 +26,17 @@
                     </div> -->
                 </div>
             </el-form-item>
-            <el-form-item label="合同类型" prop="cotractType" required>
+            <el-form-item label="行业类型" prop="cotractType" required>
                 <el-select v-model="contractForm.cotractType" placeholder="请选择" style="width:100%;">
                     <el-option label="直播" value="ZhiBo"></el-option>
                     <el-option label="保险" value="BaoXian"></el-option>
                     <el-option label="市场推广" value="sctg"></el-option>
                 </el-select>
+            </el-form-item>
+            <el-form-item label="服务类型" prop="serviceTypeList" >
+                <el-checkbox-group v-model="contractForm.serviceTypeList">
+                    <el-checkbox v-for="item in serviceTypes" :key="item.serviceId" :label="item.serviceId">{{item.serviceName}}</el-checkbox>
+                </el-checkbox-group>
             </el-form-item>
             <el-form-item label="结算方式" prop="settleType" required>
                 <el-select v-model="contractForm.settleType" placeholder="请选择" style="width:100%;"> <!-- @change="showType" -->
@@ -189,7 +194,7 @@
                 </el-row>
                 <el-row class="mb15">
                     <el-col :span="6">
-                        <el-radio label="step" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(3)">月收入阶梯收费</el-radio>
+                        <el-radio label="step" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(3)">分2.8万 - 无流水阶梯报价</el-radio>
                     </el-col><br>
                     <el-col :span="24" v-show="showInputRatio == 3">
                         <el-table :data="contractForm.serviceFeeContent.stepwiseList">
@@ -236,7 +241,7 @@
                 </el-row>
                 <el-row class="mb15">
                     <el-col :span="6">
-                        <el-radio label="step_0" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(4)">月总额阶梯收费</el-radio>
+                        <el-radio label="step_0" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(4)">不分2.8万 - 按流水总额阶梯报价</el-radio>
                     </el-col><br>
                     <el-col :span="24" v-show="showInputRatio == 4">
                         <el-table :data="contractForm.serviceFeeContent.stepwiseList">
@@ -283,7 +288,7 @@
                 </el-row>
                 <el-row class="mb15">
                     <el-col :span="6">
-                        <el-radio label="step_1" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(5)">月总额按月收入阶梯收费</el-radio>
+                        <el-radio label="step_1" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(5)">分2.8万 - 按流水分阶梯报价</el-radio>
                     </el-col><br>
                     <el-col :span="24" v-show="showInputRatio == 5">
                         <div>
@@ -631,6 +636,7 @@
                     type: 'customer',
                     openInvoiceType: '',
                     branchs: [],
+                    serviceTypeList: [],
                     serviceCompanyIds: [null],
                     prePayType: '',
                     prePayContent: {
@@ -696,7 +702,8 @@
                     page: 1,
                     pageSize: 10
                 },
-                company: {}
+                company: {},
+                serviceTypes: []
             }
         },
         created() {
@@ -715,6 +722,9 @@
             })
             get('/api/contract-web/commom/option?enumType=InvoiceType').then(data => {
                 this.invoiceType_0 = data
+            })
+	        get('/api/contract-web/service-mgr/get-service-type-options', {}).then(result => {
+                this.serviceTypes = result
             })
             this.initColumn()
             // this.query()
@@ -1002,6 +1012,17 @@
                         if(err) {
                             showNotify('error', '收费比例在0%到100%之间！')
                             return
+                        }
+                        if(contractForm.serviceTypeList) {
+                            var serviceTypeList = []
+                            contractForm.serviceTypeList.forEach(e => {
+                                this.serviceTypes.forEach(ev => {
+                                    if(e == ev.serviceId) {
+                                        serviceTypeList.push(ev)
+                                    }
+                                })
+                            })
+                            contractForm.serviceTypeList = serviceTypeList
                         }
                         delete contractForm.prePayContent.stepwiseList //临时 需要删除
                         post(url, contractForm).then(data => {
@@ -1299,6 +1320,16 @@
                             serviceFeeRate: '',
                             serviceFeeType: 'ratio'
                         }
+                    }
+                    if(!this.contractForm.serviceTypeList) {
+                        this.contractForm.serviceTypeList = []
+                    }
+                    else {
+                        var serviceTypeList = []
+                        this.contractForm.serviceTypeList.forEach(e => {
+                            serviceTypeList.push(e.serviceId)
+                        })
+                        this.contractForm.serviceTypeList = serviceTypeList
                     }
                     this.contractForm.prePayContent.fixFee = this.contractForm.prePayContent.fixFee || 0
                     this.contractForm.serviceFeeContent.fixFee = this.contractForm.serviceFeeContent.fixFee || 0

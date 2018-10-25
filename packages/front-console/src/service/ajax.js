@@ -23,7 +23,11 @@ export default (type = 'GET', url, param = {}, callback, async=true) => {
 			link = '&'
 		}
 		Object.keys(param).forEach(key => {
-			dataStr += key + '=' + param[key] + '&'
+			var value = param[key]
+			if(typeof param[key] == 'object') {
+				value = JSON.stringify(param[key])
+			}
+			dataStr += key + '=' + value + '&'
 		})
 		dataStr = dataStr.substr(0, dataStr.lastIndexOf('&'))
 		if(dataStr) url += `${link}${dataStr}&t=${parseInt(Math.random() * 100000)}`

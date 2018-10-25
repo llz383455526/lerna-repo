@@ -14,16 +14,25 @@
             </el-form-item>
 
             <h4 class="ml50 mt50">合同内容</h4>
-            <el-form-item label="服务类型" prop="serviceId" >
-                <el-select v-model="contractForm.serviceId" @change="seviceTypeChange" placeholder="请选择" style="width:100%;">
-                    <el-option v-for="item in serviceTypes" :key="item.serviceId" :label="item.serviceName"
-                               :value="item.serviceId"></el-option>
-                </el-select>
+            <el-form-item label="客户从事" prop="customIndustry">
+                <el-input v-model="contractForm.customIndustry" placeholder="客户是做什么的">
+                    <template slot="append">行业</template>
+                </el-input>
+            </el-form-item>
+            <el-form-item label="服务类型" prop="serviceTypeList" >
+                <template slot="label">
+                    <i class="el-icon-question" title="请参考《服务内容确认书》"></i>服务类型
+                </template>
+                <el-checkbox-group v-model="contractForm.serviceTypeList" @change="seviceTypeChange">
+                    <el-checkbox v-for="item in serviceTypes" :key="item.serviceId" :label="item.serviceId">{{item.serviceName}}</el-checkbox>
+                </el-checkbox-group>
             </el-form-item>
             <el-form-item label="服务内容：">
-				{{serviceContent}}
+                <div v-html="serviceContent"></div>
 			</el-form-item>
-
+            <el-form-item label="发票类目：">
+                <el-button size="mini" class="mr8" v-for="item in invoiceOptions" :key="item.value">{{item.text}}</el-button>
+            </el-form-item>
             <el-form-item label="服务商名称" prop="serviceCompanyId" >
                 <el-select v-model="contractForm.serviceCompanyId" placeholder="请选择" style="width:100%;" @change="serviceBank">
                     <el-option v-for="item in serviceList" :key="item.companyId" :label="item.name" :value="item.companyId"></el-option>
@@ -61,8 +70,6 @@
                     {{contractForm.aygAddress}}
                 </el-form-item>
             </div>
-           
-                    
             <el-form-item label="合同期限:" prop="contractStartDate" size="small" >
                 <el-date-picker
                     @change="autoFill()"
@@ -90,64 +97,66 @@
                 </div>
                 <div class="item_div">
                     <el-radio @change="resetTable(0)" v-model="proType" label="1">阶梯报价：</el-radio>
-                    <el-input @change="setOffer('laddersRate')" class="input_300" v-model="contractForm.laddersRate" placeholder="请输入数值" :disabled="proType != '1'">
-                         <template slot="append">%</template>
-                    </el-input>
+                    <div class="ml86">
+                        <div class="table_head">月收入  2.8万  元（含）以下</div>
+                        <el-table :data="table_0">
+                            <el-table-column label="月总额下限" prop="range">
+                                <template slot-scope="scope">
+                                    <template v-if="scope.$index === 0">
+                                        <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step1Amount', 0)" v-model="contractForm.lv1Step1Amount"></el-input> 万以下
+                                    </template>
+                                    <template v-if="scope.$index === 1">
+                                        <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step2Amount1', 0)" v-model="contractForm.lv1Step2Amount1"></el-input>
+                                        -
+                                        <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step2Amount2', 0)" v-model="contractForm.lv1Step2Amount2"></el-input> 万
+                                    </template>
+                                    <template v-if="scope.$index === 2">
+                                        <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step3Amount', 0)" v-model="contractForm.lv1Step3Amount"></el-input> 万以上
+                                    </template>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="管理费率" prop="rate">
+                                <template slot-scope="scope">
+                                    <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkRate(scope.row.rate, 0)" v-model="contractForm[scope.row.rate]">
+                                        <template slot="append">%</template>
+                                    </el-input>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <div class="table_head">月收入  2.8万  元（含）以上</div>
+                        <el-table :data="table_1">
+                            <el-table-column label="月总额下限" prop="range">
+                                <template slot-scope="scope">
+                                    <template v-if="scope.$index === 0">
+                                        <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step1Amount', 1)" v-model="contractForm.lv2Step1Amount"></el-input> 万以下
+                                    </template>
+                                    <template v-if="scope.$index === 1">
+                                        <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step2Amount1', 1)" v-model="contractForm.lv2Step2Amount1"></el-input>
+                                        -
+                                        <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step2Amount2', 1)" v-model="contractForm.lv2Step2Amount2"></el-input> 万
+                                    </template>
+                                    <template v-if="scope.$index === 2">
+                                        <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step3Amount', 1)" v-model="contractForm.lv2Step3Amount"></el-input> 万以上
+                                    </template>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="管理费率" prop="rate">
+                                <template slot-scope="scope">
+                                    <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkRate(scope.row.rate, 1)" v-model="contractForm[scope.row.rate]">
+                                        <template slot="append">%</template>
+                                    </el-input>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <div style="width: 900px">
+                            甲乙双方同意在结算当日暂按
+                            <el-input @change="setOffer('laddersRate')" class="input_200" v-model="contractForm.laddersRate" placeholder="请输入数值" :disabled="proType != '1'">
+                                <template slot="append">%</template>
+                            </el-input>
+                            的标准计算管理费，并在此基础上计算服务费总额
+                        </div>
+                    </div>
                 </div>
-            </el-form-item>
-            <el-form-item prop="table_0">
-                <div class="table_head">月收入  2.8万  元（含）以下</div>
-                <el-table :data="table_0">
-                    <el-table-column label="月总额下限" prop="range">
-                        <template slot-scope="scope">
-                            <template v-if="scope.$index === 0">
-                                <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step1Amount', 0)" v-model="contractForm.lv1Step1Amount"></el-input> 万以下
-                            </template>
-                            <template v-if="scope.$index === 1">
-                                <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step2Amount1', 0)" v-model="contractForm.lv1Step2Amount1"></el-input>
-                                -
-                                <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step2Amount2', 0)" v-model="contractForm.lv1Step2Amount2"></el-input> 万
-                            </template>
-                            <template v-if="scope.$index === 2">
-                                <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv1Step3Amount', 0)" v-model="contractForm.lv1Step3Amount"></el-input> 万以上
-                            </template>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="管理费率" prop="rate">
-                        <template slot-scope="scope">
-                            <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkRate(scope.row.rate, 0)" v-model="contractForm[scope.row.rate]">
-                                <template slot="append">%</template>
-                            </el-input>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </el-form-item>
-            <el-form-item prop="table_1">
-                <div class="table_head">月收入  2.8万  元（含）以上</div>
-                <el-table :data="table_1">
-                    <el-table-column label="月总额下限" prop="range">
-                        <template slot-scope="scope">
-                            <template v-if="scope.$index === 0">
-                                <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step1Amount', 1)" v-model="contractForm.lv2Step1Amount"></el-input> 万以下
-                            </template>
-                            <template v-if="scope.$index === 1">
-                                <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step2Amount1', 1)" v-model="contractForm.lv2Step2Amount1"></el-input>
-                                -
-                                <el-input class="input_100" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step2Amount2', 1)" v-model="contractForm.lv2Step2Amount2"></el-input> 万
-                            </template>
-                            <template v-if="scope.$index === 2">
-                                <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkTable('lv2Step3Amount', 1)" v-model="contractForm.lv2Step3Amount"></el-input> 万以上
-                            </template>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="管理费率" prop="rate">
-                        <template slot-scope="scope">
-                            <el-input class="input_200" :disabled="proType != '1'" placeholder="请输入数值" @change="checkRate(scope.row.rate, 1)" v-model="contractForm[scope.row.rate]">
-                                <template slot="append">%</template>
-                            </el-input>
-                        </template>
-                    </el-table-column>
-                </el-table>
             </el-form-item>
             <h4 class="ml50 mt50">客户发放方式</h4>
             <el-form-item label="薪酬发放渠道" prop="channelType">
@@ -193,17 +202,10 @@
             <h4 class="ml50 mt50">客户（公司）开票信息</h4>
             <el-form-item label="发票类型" prop="invoiceType" >
                 <el-select v-model="contractForm.invoiceType" placeholder="请选择" style="width:100%;">
-                    <el-option v-for="item in searchOptions.ContractGenInvoiceType" :key="item.value" :label="item.text"
-                               :value="item.value"></el-option>
+                    <el-option v-for="item in searchOptions.ContractGenInvoiceType" :key="item.value" :label="item.text" :value="item.value"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="发票类目" prop="invoiceSubjectId" >
-                <el-select v-model="contractForm.invoiceSubjectId" placeholder="请选择" style="width:100%;">
-                    <el-option v-for="item in invoiceOptions" :key="item.value" :label="item.text"
-                               :value="item.value"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="公司名称" prop="invoiceCompanyName" >
+            <el-form-item label="公司名称" prop="invoiceCompanyName">
                 <el-input v-model="contractForm.invoiceCompanyName"></el-input>
             </el-form-item>
             <el-form-item label="纳税人识别号" prop="customTaxIdcd" >
@@ -221,29 +223,6 @@
             <el-form-item label="银行账号" prop="customBankAccount">
                 <el-input v-model="contractForm.customBankAccount"></el-input>
             </el-form-item>
-
-            <!-- <div v-if="this.contractId">
-                <h4 class="ml50 mt50">合同文件</h4>
-                <div class="pl50 mb50">
-                    <el-table :data="fileList">
-                        <el-table-column prop="displayname" label="文件名称"></el-table-column>
-                        <el-table-column prop="createByName" label="操作人"></el-table-column>
-                        <el-table-column prop="createTime" label="上传时间">
-                            <template slot-scope="scope">
-                                <span>{{scope.row.createTime | formatTime}}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="操作">
-                            <template slot-scope="scope">
-                                <el-button @click="handleDownload(scope.row.downloadCode)" type="text" size="medium"
-                                           style="padding:0;">下载
-                                </el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                </div>
-            </div> -->
-
             <el-form-item>
                 <el-button type="primary" @click="submitForm('contractForm')">保存</el-button>
                 <el-button @click="backToList">取消</el-button>
@@ -272,6 +251,9 @@
 	            this.getTemplateDetail(tplId)
             }
             this.aCompany();
+            // get('/api/contract-web/commom/option?enumType=InvoiceType').then(data => {
+            //     this.invoiceTypeList = data
+            // })
         },
         data() {
 			return {
@@ -279,10 +261,12 @@
                 showDesc:'展开',
                 templateDetail: {},
                 contractForm: {
+                    customIndustry: '',
+                    serviceTypeList: [],
                     offer: '1',
 	                invoiceType: '',
 	                invoiceTypeName: '',
-	                invoiceSubjectId: '',
+	                // invoiceSubjectId: '',
 	                invoiceSubjectName: '',
 	                serviceCompanyId: '',
 	                serviceCompanyName: '',
@@ -301,7 +285,7 @@
 	                customPhone: '',
 	                customBankName: '',
 	                customBankAccount: '',
-                    serviceId:'',
+                    // serviceId:'',
                     serviceAccountName:'',
                     serviceAccountNo:'',
                     serviceDepositBank:'',
@@ -323,7 +307,7 @@
                     lv1Step2Rate: '',
                     lv1Step3Amount: '',
                     lv1Step3Rate: '',
-                    table_0: '',
+                    // table_0: '',
                     lv2Step1Amount: '',
                     lv2Step1Rate: '',
                     lv2Step2Amount1: '',
@@ -331,19 +315,22 @@
                     lv2Step2Rate: '',
                     lv2Step3Amount: '',
                     lv2Step3Rate: '',
-                    table_1: '',
+                    // table_1: '',
                     channelType: ''
                 },
 				rules: {
+                    customIndustry: [
+                        {required: true, message: '请填写客户从事', trigger: 'blur'}
+                    ],
                     offer: [
                         {required: true, message: '请选择并正确填写报价（大于零且最多两位小数）', trigger: 'blur'}
                     ],
 					invoiceType: [
 						{required: true, message: '请选择发票类型', trigger: 'change'}
                     ],
-					invoiceSubjectId: [
-						{required: true, message: '请选择发票类目', trigger: 'change'}
-                    ],
+					// invoiceSubjectId: [
+					// 	{required: true, message: '请选择发票类目', trigger: 'change'}
+                    // ],
 					serviceCompanyId: [
 						{required: true, message: '请选择服务商', trigger: 'change'}
 					],
@@ -386,7 +373,10 @@
                     customMail1: [
                         { required: true, message: '请填写邮箱地址', trigger: 'blur'}
                     ],
-                    serviceId: [
+                    // serviceId: [
+					// 	{required: true, message: '请选择服务类型', trigger: 'change'}
+                    // ],
+                    serviceTypeList: [
 						{required: true, message: '请选择服务类型', trigger: 'change'}
                     ],
                     contractPerson: [
@@ -401,12 +391,12 @@
                     contractAddr: [
 						{required: true, message: '销售联系人地址', trigger: 'blur'}
                     ],
-                    table_0: [
-                        {required: true, message: '请正确填写（大于零且最多两位小数）', trigger: 'blur'}
-                    ],
-                    table_1: [
-                        {required: true, message: '请正确填写（大于零且最多两位小数）', trigger: 'blur'}
-                    ],
+                    // table_0: [
+                    //     {required: true, message: '请正确填写（大于零且最多两位小数）', trigger: 'blur'}
+                    // ],
+                    // table_1: [
+                    //     {required: true, message: '请正确填写（大于零且最多两位小数）', trigger: 'blur'}
+                    // ],
                     channelType: [
                         {required: true, message: '至少选择一项', trigger: 'blur'}
                     ]
@@ -442,7 +432,8 @@
                         rate: 'lv2Step3Rate'
                     }
                 ],
-                channelTypes: []
+                channelTypes: [],
+                // invoiceTypeList: []
             }
         },
         computed: {
@@ -451,12 +442,14 @@
                 return company[0] || {}
             },
             serviceContent() {
-                let content = _.find(this.serviceTypes, serviceType => serviceType.serviceId === this.contractForm.serviceId)
-                if(content){
-                    return content.serviceContent
-                }else{
-                    return ''
-                }
+                var str = ''
+                this.contractForm.serviceTypeList.forEach(e => {
+                    var content = _.find(this.serviceTypes, serviceType => serviceType.serviceId === e)
+                    if(content) {
+                        str += `${str ? '<br>' : ''}${content.seqNo}、${content.serviceContent}`
+                    }
+                })
+                return str
             }
         },
         methods: {
@@ -467,7 +460,10 @@
                 else {
                     this.contractForm.standardRate = ''
                 }
-                this.$refs['contractForm'].clearValidate('offer', 'table_0', 'table_1')
+                this.$refs['contractForm'].clearValidate('offer')
+                if(this.contractForm.laddersRate) {
+                    this.checkAll(true)
+                }
             },
             setOffer(a) {
                 if(this.contractForm[a] && !isNaN(this.contractForm[a]) && this.contractForm[a] > 0 && this.contractForm[a] < 100) {
@@ -482,6 +478,9 @@
                 else {
                     this.contractForm.offer = ''
                 }
+                if(this.contractForm.laddersRate) {
+                    this.checkAll(true)
+                }
             },
             autoFill(a) {
                 if(!a) {
@@ -493,18 +492,21 @@
                     this.contractForm.contractStartDate = `${time.getFullYear() - 1}-${(time.getMonth() + 1) > 9 ? (time.getMonth() + 1) : `0${time.getMonth() + 1}`}-${time.getDate() > 9 ? time.getDate() : `0${time.getDate()}`}`
                 }
             },
-            checkTable(a, index) {
+            checkTable(a, index, b) {
+                if(b && !this.contractForm[a]) {
+                    return
+                }
                 if(this.contractForm[a] && !isNaN(this.contractForm[a]) && this.contractForm[a] > 0) {
                     var str = this.contractForm[a].toString().split('.')[1]
                     if(str && str.length > 2) {
-                        this.contractForm[`table_${index}`] = ''
+                        this.contractForm.offer = ''
                     }
                     else {
-                        this.contractForm[`table_${index}`] = '1'
+                        this.contractForm.offer = '1'
                     }
                 }
                 else {
-                    this.contractForm[`table_${index}`] = ''
+                    this.contractForm.offer = ''
                 }
                 var relevance = ''
                 switch (a) {
@@ -546,26 +548,29 @@
                 this.contractForm[relevance] = this.contractForm[a]
             },
             compare_0(a, b, index) {
-                this.contractForm[b] && ((this.contractForm[b] - this.contractForm[a]) < 0) && (this.contractForm[`table_${index}`] = '')
+                this.contractForm[b] && ((this.contractForm[b] - this.contractForm[a]) < 0) && (this.contractForm.offer = '')
             },
             compare_1(a, b, index) {
-                this.contractForm[b] && ((this.contractForm[b] - this.contractForm[a]) > 0) && (this.contractForm[`table_${index}`] = '')
+                this.contractForm[b] && ((this.contractForm[b] - this.contractForm[a]) > 0) && (this.contractForm.offer = '')
             },
-            checkRate(a, index) {
+            checkRate(a, index, b) {
+                if(b && !this.contractForm[a]) {
+                    return
+                }
                 if(this.contractForm[a] && !isNaN(this.contractForm[a]) && this.contractForm[a] > 0 && this.contractForm[a] < 100) {
                     var str = this.contractForm[a].toString().split('.')[1]
                     if(str && str.length > 2) {
-                        this.contractForm[`table_${index}`] = ''
+                        this.contractForm.offer = ''
                     }
                     else {
-                        this.contractForm[`table_${index}`] = '1'
+                        this.contractForm.offer = '1'
                     }
                 }
                 else {
-                    this.contractForm[`table_${index}`] = ''
+                    this.contractForm.offer = ''
                 }
             },
-            checkAll() {
+            checkAll(b) {
                 var amount = [
                     ['lv1Step1Amount', 'lv1Step2Amount1', 'lv1Step2Amount2', 'lv1Step3Amount'],
                     ['lv2Step1Amount', 'lv2Step2Amount1', 'lv2Step2Amount2', 'lv2Step3Amount']
@@ -575,12 +580,12 @@
                 ]
                 amount.forEach((e, i) => {
                     e.forEach(ev => {
-                        this.checkTable(ev, i)
+                        this.checkTable(ev, i, b)
                     })
                 })
                 rate.forEach((e, i) => {
                     e.forEach(ev => {
-                        this.checkRate(ev, i)
+                        this.checkRate(ev, i, b)
                     })
                 })
             },
@@ -643,12 +648,11 @@
 				        this.searchOptions = result
 			        })
             },
-            getInvoiceOptions(serviceId,invoiceSubjectId) {
-	            get('/api/contract-web/service-mgr/get-service-subject-options', {
-	            	serviceId: serviceId,
+            getInvoiceOptions() {
+	            post('/api/contract-web/service-mgr/get-service-subject-options', {
+	            	serviceIds: this.contractForm.serviceTypeList,
                 }).then(result => {
                     this.invoiceOptions = result;
-                    this.contractForm.invoiceSubjectId = invoiceSubjectId;
 		        })
             },
             getServiceTypesOptions() {
@@ -656,11 +660,12 @@
                     this.serviceTypes = result
                 })
             },
-             seviceTypeChange(serviceId){
-                this.getInvoiceOptions(serviceId, '');
+            seviceTypeChange(){
+                this.getInvoiceOptions();
             },
             setContractFormData(options, key, idKey, nKey, value) {
-            	let obj = _.find(options, item => item[idKey] === value)
+                let obj = _.find(options, item => item[idKey] === value)
+                console.log(arguments)
             	this.contractForm[`${key}Name`] = obj[nKey]
             },
 	        backToList() {
@@ -672,20 +677,17 @@
                     this.checkAll()
                 }
                 else {
-                    this.contractForm.table_0 = '1',
-                    this.contractForm.table_1 = '1'
+                    this.contractForm.offer = '1'
                 }
 		        this.$refs[formName].validate(valid => {
 			        if (valid) {
 				        this.setContractFormData(this.searchOptions.ContractGenInvoiceType, 'invoiceType', 'value', 'text', this.contractForm.invoiceType)
-				        this.setContractFormData(this.invoiceOptions, 'invoiceSubject', 'value', 'text', this.contractForm.invoiceSubjectId)
+				        // this.setContractFormData(this.invoiceOptions, 'invoiceSubject', 'value', 'text', this.contractForm.invoiceSubjectId)
 				        this.setContractFormData(this.serviceList, 'serviceCompany', 'companyId', 'name', this.contractForm.serviceCompanyId)
 
 				        let contractForm = _.cloneDeep(this.contractForm)
                         contractForm.tplId = this.templateDetail.id
                         delete contractForm.offer
-                        delete contractForm.table_0
-                        delete contractForm.table_1
                         if(!contractForm.laddersRate) {
                             contractForm.lv1Step1Amount = ''
                             contractForm.lv1Step1Rate = ''
@@ -708,7 +710,20 @@
 					        serviceRegisterAddr: this.serviceCompany.address,
                             servicePhone: this.serviceCompany.telephone
                         })
-
+                        if(contractForm.serviceTypeList) {
+                            var serviceTypeList = []
+                            contractForm.serviceTypeList.forEach(e => {
+                                this.serviceTypes.forEach(ev => {
+                                    if(e == ev.serviceId) {
+                                        serviceTypeList.push({
+                                            serviceId: ev.serviceId,
+                                            serviceName: ev.serviceName
+                                        })
+                                    }
+                                })
+                            })
+                            contractForm.serviceTypeList = serviceTypeList
+                        }
                         if(this.contractId) contractForm.id = this.contractId
                         post(url, contractForm)
                             .then(result => {
@@ -726,7 +741,6 @@
                 }).then(result => {
                     this.tplId = result.tplId
                     this.getTemplateDetail(this.tplId);
-                    this.getInvoiceOptions(result.serviceId,""+result.invoiceSubjectId);
                     for(var k in this.contractForm) {
                         if(result[k]) {
                             this.contractForm[k] = result[k]
@@ -735,6 +749,14 @@
                     if(this.contractForm.laddersRate) {
                         this.proType = '1'
                     }
+                    if(this.contractForm.serviceTypeList) {
+                        var serviceTypeList = []
+                        this.contractForm.serviceTypeList.forEach(e => {
+                            serviceTypeList.push(e.serviceId)
+                        })
+                        this.contractForm.serviceTypeList = serviceTypeList
+                    }
+                    this.getInvoiceOptions();
                     if(this.contractForm.channelType) {
                         this.channelTypes = this.contractForm.channelType.split(',')
                     }
@@ -771,22 +793,15 @@
     .input_100 {
         width: 100px;
     }
+    .mr8 {
+        margin-right: 8px;
+    }
+    .ml86 {
+        margin-left: 86px;
+    }
+    .el-icon-question {
+        margin-right: 5px;
+        color: #f56c6c;
+        cursor: pointer;
+    }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

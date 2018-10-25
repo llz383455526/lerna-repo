@@ -13,7 +13,7 @@
     <el-button size="small" type="primary" @click="add">新增</el-button>
 
     <el-table :data="page.list" style="width: 100%;margin-top: 20px;">
-        <el-table-column prop="id" label="ID" ></el-table-column>
+        <el-table-column prop="seqNo" label="序号"></el-table-column>
         <el-table-column prop="serviceName" label="服务类型"></el-table-column>
         <el-table-column prop="serviceContent" label="服务类型内容"></el-table-column>
         <el-table-column label="开票类目">
@@ -38,36 +38,26 @@
         :currentPage="currentPage">
     </ayg-pagination>
 
-    <el-dialog :title="editFormTitle"  :visible.sync="editFormShow" width="70%">
-        <el-form label-width="120px" :rules="rules" :model="editForm">
-            <el-form-item label="服务类型" prop="serviceName">
+    <el-dialog :title="editFormTitle"  :visible.sync="editFormShow" :before-close="clearForm" width="70%">
+        <el-form label-width="120px" :rules="rules" :model="editForm" ref="editForm">
+            <el-form-item label="服务类型：" prop="serviceName">
                 <el-input v-model="editForm.serviceName" class="f_input"></el-input>
             </el-form-item>
-            <el-form-item label="备注：" prop="serviceContent">
-				<el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="editForm.serviceContent">
-				</el-input>
+            <el-form-item label="序号：" prop="seqNo">
+				<el-input v-model="editForm.seqNo"></el-input>
 			</el-form-item>
-            
-            <el-form-item label="开票类目" prop="inv">
-            <el-select
-                v-model="editSubjects"
-                multiple
-                filterable
-                style="width: 500px"
-                placeholder="请选择开票类目">
-                <el-option
-                    v-for="item in subjects"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
-                >
-                </el-option>
-            </el-select>
+            <el-form-item label="备注：" prop="serviceContent">
+				<el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="editForm.serviceContent"></el-input>
+			</el-form-item>
+            <el-form-item label="开票类目：" prop="subjects">
+                <el-select v-model="editSubjects" multiple filterable style="width: 500px" placeholder="请选择开票类目" @change="getSubjects">
+                    <el-option v-for="item in subjects" :key="item.id" :label="item.fullName" :value="item.id"></el-option>
+                </el-select>
             </el-form-item>
         </el-form>
           <span class="form_footer" slot="footer">
               <el-button @click="sure" type="primary">保存</el-button>
-              <el-button @click="editFormShow = false" type="warning">关闭</el-button>
+              <el-button @click="editFormShow = false">关闭</el-button>
           </span>
       </el-dialog>
   </div>
@@ -75,8 +65,18 @@
 <script>
 import { get, post, formPost, postButNoErrorToast } from "../../store/api";
 import {showNotify} from '../../plugin/utils-notify'
+import { valid } from 'semver';
 export default {
     data() {
+        var checkNo = (rule, value, callback) => {
+            if(!/^[0-9]+$/.test(value)) {
+                return callback(new Error('必须为整数'))
+            }
+            if(value.length > 3) {
+                return callback(new Error('最多三位'));
+            }
+            return callback()
+        }
         return {
             searchForm: {
                 serviceName: '',
@@ -89,20 +89,31 @@ export default {
             editFormShow: false,
             editForm: {
                 serviceId: '',
+                seqNo: '',
                 serviceName: '',
                 serviceContent: '',
-                subjects: [],
+                subjects: []
+            },
+            rules: {
+                serviceName: [
+                    { required: true, message: '请填写服务类型', trigger: 'blur' }
+                ],
+                seqNo: [
+                    { required: true, message: '请填写序号', trigger: 'blur' },
+                    { validator: checkNo, trigger: 'blur'}
+                ],
+                subjects: [
+                    { required: true, message: '请选择开票类目', trigger: 'blur' }
+                ]
             },
             editSubjects:[],
             currentPage: 1,
             pageSize: 10,
         }
     },
-
     created() {
         this.search()
     },
-
     mounted() {
         let url = '/api/invoice-web/custom-invoice-subject/qry';
         let param = {
@@ -116,7 +127,6 @@ export default {
             self.subjects = data.list;
         })
     },
-  
     methods: {
         search() {
             this.searchForm.page = this.currentPage;
@@ -142,19 +152,42 @@ export default {
             this.editForm.id = '';
             this.editForm.serviceName = '';
             this.editForm.serviceContent = '';
+            this.editForm.seqNo = ''
             this.editForm.subjects = [];
+            this.editForm.serviceId = ''
+            console.log()
+            // this.$refs['editForm'].clearValidate()
         },
         edit(model){
+            console.log(model)
             this.editFormShow = true;
             this.editFormTitle = '服务类型修改';
             let tmp = [];
             model.subjects.forEach((value, key)=>{
                 tmp.push(value['subjectId'])
             })
+            this.editForm.seqNo = model.seqNo
             this.editSubjects = tmp;
             this.editForm.serviceId = model.id;
             this.editForm.serviceName = model.serviceName;
             this.editForm.serviceContent = model.serviceContent;
+            this.getSubjects()
+        },
+        clearForm(next) {
+            this.$refs['editForm'].clearValidate()
+            next()
+        },
+        getSubjects() {
+            let editSubjects = this.editSubjects;
+            let tmp = [];
+            let index = 'id';
+            this.subjects.forEach((value, key)=>{
+                if(editSubjects.indexOf(value[index]) > -1){
+                    let obj = {"subjectId": value['id'],"subjectName":value['fullName']};
+                    tmp.push(obj);
+                }
+            })
+            this.editForm.subjects = tmp;
         },
         remove(id){
             let param = {
@@ -174,32 +207,35 @@ export default {
             })
         },
         sure(){
-            let editSubjects = this.editSubjects;
-            let tmp = [];
-            let index = 'id';
-            this.subjects.forEach((value, key)=>{
-                if(editSubjects.indexOf(value[index]) > -1){
-                    let obj = {"subjectId": value['id'],"subjectName":value['name']};
-                    tmp.push(obj);
+            this.$refs['editForm'].validate(valid => {
+                if(valid) {
+                    // let editSubjects = this.editSubjects;
+                    // let tmp = [];
+                    // let index = 'id';
+                    // this.subjects.forEach((value, key)=>{
+                    //     if(editSubjects.indexOf(value[index]) > -1){
+                    //         let obj = {"subjectId": value['id'],"subjectName":value['name']};
+                    //         tmp.push(obj);
+                    //     }
+                    // })
+                    // this.editForm.subjects = tmp;
+                    let selt = this;
+                    let url = '';
+                    if(this.editForm.serviceId){
+                        url = "/api/contract-web/service-mgr/update-service-type";
+                    }else{
+                        url = "/api/contract-web/service-mgr/create-service-type";
+                    }
+                    post(url, this.editForm).then(
+                        function(data){
+                            showNotify('success','操作成功！');
+                            selt.editFormShow = false;
+                            selt.search();
+                        }
+                    );
                 }
             })
-            this.editForm.subjects = tmp;
-            let selt = this;
-            let url = '';
-            if(this.editForm.serviceId){
-                url = "/api/contract-web/service-mgr/update-service-type";
-            }else{
-                url = "/api/contract-web/service-mgr/create-service-type";
-            }
-            post(url, this.editForm).then(
-                function(data){
-                    showNotify('success','操作成功！');
-                    selt.editFormShow = false;
-                    selt.search();
-                }
-            );
         },
-
         clear() {
           this.searchForm.serviceName = ''
         },

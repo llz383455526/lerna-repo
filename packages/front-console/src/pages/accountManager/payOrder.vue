@@ -108,6 +108,7 @@
 				<el-table-column prop="subServiceCompanyName" label="转包服务公司" width="140"></el-table-column>7
                 <el-table-column prop="paymentThirdTypeName" label="发放渠道" width="80"></el-table-column>
                 <el-table-column prop="sourceTypeName" label="发放方式" width="80"></el-table-column>
+				<el-table-column prop="paymentTradeNo" label="支付订单号" width="90"></el-table-column>
                 <el-table-column prop="paymentThirdTradeNo" label="渠道交易流水号" width="120"></el-table-column>
                 <el-table-column prop="createAt" label="请求时间" width="160">
                     <template slot-scope="scope">
