@@ -199,10 +199,10 @@
                             <el-table-column label="月收入下限" width="175">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence">
-                                        <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 3)" class="input_100" @change="amount(scope.$index, 0)">
+                                        <el-input v-model="scope.row.startAmount" disabled class="input_100" @change="amount(scope.$index, 0)">
                                             <template slot="append">万</template>
                                         </el-input>
-                                        <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 3)" @change="equals(scope.$index, 0)">含</el-checkbox>
+                                        <el-checkbox v-model="scope.row.equalsStart" disabled @change="equals(scope.$index, 0)">含</el-checkbox>
                                     </template>
                                     <template v-else>
                                         <div class="center">无</div>
@@ -212,10 +212,10 @@
                             <el-table-column label="月收入上限" width="175">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence != columnIndex - 1">
-                                        <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 3)" class="input_100" @change="amount(scope.$index, 1)">
+                                        <el-input v-model="scope.row.endAmount" disabled class="input_100" @change="amount(scope.$index, 1)">
                                             <template slot="append">万</template>
                                         </el-input>
-                                        <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 3)" @change="equals(scope.$index, 1)">含</el-checkbox>
+                                        <el-checkbox v-model="scope.row.equalsEnd" disabled @change="equals(scope.$index, 1)">含</el-checkbox>
                                     </template>
                                     <template v-else>
                                         <div class="center">无</div>
@@ -824,7 +824,10 @@
                     stepwiseList[this.columnIndex- 1].endAmount = ''
                 }
             },
-            initColumn() {
+            initColumn(a) {
+                if(isNaN(a)) {
+                    a = 3
+                }
                 this.contractForm.serviceFeeContent.stepwiseList = []
                 if(!this.contractForm.serviceFeeContent2) {
                     this.contractForm.serviceFeeContent2 = {}
@@ -832,11 +835,11 @@
                 this.contractForm.serviceFeeContent2.stepwiseList = []
                 this.columnIndex = 0
                 this.columnIndex2 = 0
-                for(var i = 0; i < 2; i++) {
+                for(var i = 0; i < a; i++) {
                     this.addColumn()
                 }
                 if(this.showInputRatio == 5) {
-                    for(var i = 0; i < 2; i++) {
+                    for(var i = 0; i < a; i++) {
                         this.addColumn(1)
                     }
                 }
@@ -1105,7 +1108,9 @@
                 if (this.contractForm.serviceFeeContent.serviceFeeType == 'step') {
                     this.contractForm.serviceFeeContent.fixFee = 0;
                     this.showInputRatio = a;
-                    this.initColumn()
+                    this.initColumn(2)
+                    this.contractForm.serviceFeeContent.stepwiseList[0].endAmount = 2.8
+                    this.contractForm.serviceFeeContent.stepwiseList[1].startAmount = 2.8
                 }
                 if (this.contractForm.serviceFeeContent.serviceFeeType == 'step_0') {
                     this.contractForm.serviceFeeContent.fixFee = 0;

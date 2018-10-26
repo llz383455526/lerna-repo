@@ -954,7 +954,7 @@
                 if (this.contractForm.serviceFeeContent.serviceFeeType == 'step') {
                     this.contractForm.offer = 0;
                     this.showInputRatio = a;
-                    this.initColumn()
+                    this.initColumn(2)
                     this.contractForm.serviceFeeContent.stepwiseList[0].endAmount = 2.8
                     this.contractForm.serviceFeeContent.stepwiseList[1].startAmount = 2.8
                     console.log(this.contractForm.serviceFeeContent)
@@ -1009,7 +1009,10 @@
                     stepwiseList[this.columnIndex- 1].endAmount = ''
                 }
             },
-            initColumn() {
+            initColumn(a) {
+                if(isNaN(a)) {
+                    a = 3
+                }
                 this.contractForm.serviceFeeContent.stepwiseList = []
                 if(!this.contractForm.serviceFeeContent2) {
                     this.contractForm.serviceFeeContent2 = {}
@@ -1017,11 +1020,11 @@
                 this.contractForm.serviceFeeContent2.stepwiseList = []
                 this.columnIndex = 0
                 this.columnIndex2 = 0
-                for(var i = 0; i < 2; i++) {
+                for(var i = 0; i < a; i++) {
                     this.addColumn()
                 }
                 if(this.showInputRatio == 5) {
-                    for(var i = 0; i < 2; i++) {
+                    for(var i = 0; i < a; i++) {
                         this.addColumn(1)
                     }
                 }
