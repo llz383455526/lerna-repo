@@ -291,7 +291,7 @@
                     <el-col :span="24" v-show="showInputRatio == 5">
                         <div>
                             月收入
-                            <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount">
+                            <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount" disabled>
                                 <template slot="append">万</template>
                             </el-input>
                             <el-checkbox v-model="contractForm.serviceFeeContent.containMonthAmount" :disabled="!(showInputRatio == 5)" @change="equalsIncomeAmount(0)">含</el-checkbox>
@@ -339,7 +339,7 @@
                         <el-button class="top_24" @click="addColumn" size="small" type="primary">增加阶梯</el-button>
                         <div class="top_24">
                             月收入
-                            <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount">
+                            <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount" disabled>
                                 <template slot="append">万</template>
                             </el-input>
                             <el-checkbox v-model="contractForm.serviceFeeContent2.containMonthAmount" :disabled="!(showInputRatio == 5)" @change="equalsIncomeAmount(1)">含</el-checkbox>
@@ -1121,6 +1121,7 @@
                     this.contractForm.serviceFeeContent.fixFee = 0;
                     this.showInputRatio = a;
                     this.initColumn()
+                    this.contractForm.serviceFeeContent.monthIncomeAmount = 2.8
                 }
                 this.$refs['contractForm'].validateField('serviceFeeContent.fixFee')
             },
