@@ -12,6 +12,9 @@
           <el-form-item label="发票类目名字">
             <el-input v-model="form.name" class="form_input" placeholder="请输入类目名字"></el-input>
           </el-form-item>
+		  <el-form-item label="发票类目全称">
+            <el-input v-model="form.fullName" class="form_input" placeholder="请输入类目全称"></el-input>
+          </el-form-item>
           <el-form-item label="税率">
               <el-select v-model="rateText" class="form_input" @change="change">
                 <el-option v-for="e in rate" :key="e.text" :label="e.text" :value="e.text"></el-option>
@@ -67,7 +70,7 @@ export default {
         name: "",
         taxRate: "",
         code: "",
-        name: "",
+        fullName: "",
         id: ""
       },
       show: false,
@@ -97,7 +100,7 @@ export default {
       name: "",
       taxRate: "",
       code: "",
-      name: "",
+      fullName: "",
       id: ""
     }
     this.form = form

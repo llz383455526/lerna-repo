@@ -18,6 +18,7 @@
           <el-table-column prop="taxRate" label="税率"></el-table-column>
           <el-table-column prop="abbreviation" label="简称"></el-table-column>
           <el-table-column prop="code" label="税收分类编码"></el-table-column>
+          <el-table-column prop="updateByName" label="最后操作人"></el-table-column>
           <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-button @click="modification(scope.row)" size="small" type="text">修改</el-button>
