@@ -153,26 +153,34 @@
                     </el-col><br>
                     <el-col :span="24" v-show="showInputRatio == 3">
                         <el-table :data="contractForm.serviceFeeContent.stepwiseList">
-                            <el-table-column label="月收入下限" width="175">
+                            <el-table-column label="月收入下限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence">
                                         <el-input v-model="scope.row.startAmount" disabled class="input_100" @change="amount(scope.$index, 0)">
                                             <template slot="append">万</template>
                                         </el-input>
-                                        <el-checkbox v-model="scope.row.equalsStart" disabled @change="equals(scope.$index, 0)">含</el-checkbox>
+                                        <el-checkbox v-model="scope.row.equalsStart" @change="equals(scope.$index, 0)">含 
+                                            <template v-if="scope.row.sequence == columnIndex - 1">
+                                                以上
+                                            </template>
+                                        </el-checkbox>
                                     </template>
                                     <template v-else>
                                         <div class="center">无</div>
                                     </template>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="月收入上限" width="175">
+                            <el-table-column label="月收入上限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence != columnIndex - 1">
                                         <el-input v-model="scope.row.endAmount" disabled class="input_100" @change="amount(scope.$index, 1)">
                                             <template slot="append">万</template>
                                         </el-input>
-                                        <el-checkbox v-model="scope.row.equalsEnd" disabled @change="equals(scope.$index, 1)">含</el-checkbox>
+                                        <el-checkbox v-model="scope.row.equalsEnd" @change="equals(scope.$index, 1)">含 
+                                            <template v-if="!scope.row.sequence">
+                                                以下
+                                            </template>
+                                        </el-checkbox>
                                     </template>
                                     <template v-else>
                                         <div class="center">无</div>
@@ -207,26 +215,34 @@
                     </el-col><br>
                     <el-col :span="24" v-show="showInputRatio == 4">
                         <el-table :data="contractForm.serviceFeeContent.stepwiseList">
-                            <el-table-column label="月总额下限" width="175">
+                            <el-table-column label="月总额下限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence">
                                         <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 4)" class="input_100" @change="amount(scope.$index, 0)">
                                             <template slot="append">万</template>
                                         </el-input>
-                                        <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 4)" @change="equals(scope.$index, 0)">含</el-checkbox>
+                                        <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 4)" @change="equals(scope.$index, 0)">含 
+                                            <template v-if="scope.row.sequence == columnIndex - 1">
+                                                以上
+                                            </template>
+                                        </el-checkbox>
                                     </template>
                                     <template v-else>
                                         <div class="center">无</div>
                                     </template>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="月总额上限" width="175">
+                            <el-table-column label="月总额上限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence != columnIndex - 1">
                                         <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 4)" class="input_100" @change="amount(scope.$index, 1)">
                                             <template slot="append">万</template>
                                         </el-input>
-                                        <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 4)" @change="equals(scope.$index, 1)">含</el-checkbox>
+                                        <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 4)" @change="equals(scope.$index, 1)">含 
+                                            <template v-if="!scope.row.sequence">
+                                                以下
+                                            </template>
+                                        </el-checkbox>
                                     </template>
                                     <template v-else>
                                         <div class="center">无</div>
@@ -245,7 +261,7 @@
                                 </template>
                             </el-table-column>
                         </el-table>
-                        <el-button class="top_24" @click="addColumn" size="small" type="primary">增加阶梯</el-button>
+                        <el-button class="top_24" v-if="contractForm.serviceFeeContent.stepwiseList.length < 10" @click="addColumn" size="small" type="primary">增加阶梯</el-button>
                         <div class="top_24">
                             甲乙双方同意在结 算当日暂按
                             <el-input class="input_200" v-model="inputRate" @blur="checkInputRate">
@@ -269,26 +285,34 @@
                             以下
                         </div>
                         <el-table :data="contractForm.serviceFeeContent.stepwiseList">
-                            <el-table-column label="月总额下限" width="175">
+                            <el-table-column label="月总额下限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence">
                                         <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="amount(scope.$index, 0)">
                                             <template slot="append">万</template>
                                         </el-input>
-                                        <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0)">含</el-checkbox>
+                                        <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0)">含 
+                                            <template v-if="scope.row.sequence == columnIndex - 1">
+                                                以上
+                                            </template>
+                                        </el-checkbox>
                                     </template>
                                     <template v-else>
                                         <div class="center">无</div>
                                     </template>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="月总额上限" width="175">
+                            <el-table-column label="月总额上限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence != columnIndex - 1">
                                         <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="amount(scope.$index, 1)">
                                             <template slot="append">万</template>
                                         </el-input>
-                                        <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 1)">含</el-checkbox>
+                                        <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 1)">含 
+                                            <template v-if="!scope.row.sequence">
+                                                以下
+                                            </template>
+                                        </el-checkbox>
                                     </template>
                                     <template v-else>
                                         <div class="center">无</div>
@@ -307,7 +331,7 @@
                                 </template>
                             </el-table-column>
                         </el-table>
-                        <el-button class="top_24" @click="addColumn" size="small" type="primary">增加阶梯</el-button>
+                        <el-button class="top_24" v-if="contractForm.serviceFeeContent.stepwiseList.length < 10" @click="addColumn" size="small" type="primary">增加阶梯</el-button>
                         <div class="top_24">
                             月收入
                             <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount" disabled>
@@ -317,26 +341,34 @@
                             以上
                         </div>
                         <el-table :data="contractForm.serviceFeeContent2.stepwiseList">
-                            <el-table-column label="月总额下限" width="175">
+                            <el-table-column label="月总额下限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence">
                                         <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="amount(scope.$index, 0, 2)">
                                             <template slot="append">万</template>
                                         </el-input>
-                                        <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0, 2)">含</el-checkbox>
+                                        <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0, 2)">含 
+                                            <template v-if="scope.row.sequence == columnIndex - 1">
+                                                以上
+                                            </template>
+                                        </el-checkbox>
                                     </template>
                                     <template v-else>
                                         <div class="center">无</div>
                                     </template>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="月总额上限" width="175">
+                            <el-table-column label="月总额上限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence != columnIndex2 - 1">
                                         <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="amount(scope.$index, 1, 2)">
                                             <template slot="append">万</template>
                                         </el-input>
-                                        <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 1, 2)">含</el-checkbox>
+                                        <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 1, 2)">含 
+                                            <template v-if="!scope.row.sequence">
+                                                以下
+                                            </template>
+                                        </el-checkbox>
                                     </template>
                                     <template v-else>
                                         <div class="center">无</div>
@@ -355,7 +387,7 @@
                                 </template>
                             </el-table-column>
                         </el-table>
-                        <el-button class="top_24" @click="addColumn(1)" size="small" type="primary">增加阶梯</el-button>
+                        <el-button class="top_24" v-if="contractForm.serviceFeeContent2.stepwiseList.length < 10" @click="addColumn(1)" size="small" type="primary">增加阶梯</el-button>
                         <div class="top_24">
                             甲乙双方同意在结 算当日暂按
                             <el-input class="input_200" v-model="inputRate" @blur="checkInputRate">
