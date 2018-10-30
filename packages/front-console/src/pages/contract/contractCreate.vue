@@ -400,8 +400,8 @@
                 </el-row>
             </el-form-item>
             <h4 class="ml50 mt50">客户发放方式</h4>
-            <el-form-item label="薪酬发放渠道" prop="channelType">
-                <el-checkbox-group v-model="channelTypes" @change="setChannelType">
+            <el-form-item label="薪酬发放渠道" prop="channelTypeList">
+                <el-checkbox-group v-model="contractForm.channelTypeList">
                     <el-checkbox label="A">银行</el-checkbox>
                     <el-checkbox label="B">支付宝</el-checkbox>
                     <el-checkbox label="C">微信</el-checkbox>
@@ -567,7 +567,7 @@
                     // lv2Step3Amount: '',
                     // lv2Step3Rate: '',
                     // table_1: '',
-                    channelType: '',
+                    channelTypeList: [],
                     serviceFeeContent: {
                         discountRate: '',
                         secondType: '',
@@ -666,7 +666,7 @@
                     // table_1: [
                     //     {required: true, message: '请正确填写（大于零且最多两位小数）', trigger: 'blur'}
                     // ],
-                    channelType: [
+                    channelTypeList: [
                         {required: true, message: '至少选择一项', trigger: 'blur'}
                     ]
                 },
@@ -874,23 +874,23 @@
                     })
                 })
             },
-            setChannelType() {
-                if(!this.channelTypes.length) {
-                    this.contractForm.channelType = ''
-                }
-                else {
-                    var str = ''
-                    for (var i = 0; i < this.channelTypes.length; i++) {
-                        if(str) {
-                            str += `,${this.channelTypes[i]}`
-                        }
-                        else {
-                            str += `${this.channelTypes[i]}`
-                        }
-                    }
-                    this.contractForm.channelType = str
-                }
-            },
+            // setChannelType() {
+            //     if(!this.channelTypes.length) {
+            //         this.contractForm.channelType = ''
+            //     }
+            //     else {
+            //         var str = ''
+            //         for (var i = 0; i < this.channelTypes.length; i++) {
+            //             if(str) {
+            //                 str += `,${this.channelTypes[i]}`
+            //             }
+            //             else {
+            //                 str += `${this.channelTypes[i]}`
+            //             }
+            //         }
+            //         this.contractForm.channelType = str
+            //     }
+            // },
             aCompany(){
                 get('/api/sysmgr-web/commom/company-infos', {
                         companyId: 1
@@ -1276,9 +1276,9 @@
                         this.contractForm.serviceTypeList = serviceTypeList
                     }
                     this.getInvoiceOptions();
-                    if(this.contractForm.channelType) {
-                        this.channelTypes = this.contractForm.channelType.split(',')
-                    }
+                    // if(this.contractForm.channelType) {
+                    //     this.channelTypes = this.contractForm.channelType.split(',')
+                    // }
                 })
             },
 	        handleDownload(downloadCode) {
