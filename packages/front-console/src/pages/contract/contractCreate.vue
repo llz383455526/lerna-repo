@@ -102,15 +102,16 @@
                         <el-radio label="standard" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(0)">标准报价
                         </el-radio>
                     </el-col>
-                    <el-col :span="15">
-                        <el-input placeholder="请输入内容" v-model="inputStandard" @blur="calcuServiceFee(0)"
-                                  :disabled="!(showInputRatio == 0)">
-                            <template slot="append">%</template>
-                        </el-input>
-                    </el-col>
-                    <el-col :span="1" style="text-align: right;">
-                        <i class="el-icon-question" title="表示按照固定金额来收取服务费。计算公式：固定收费金额 = 服务费"></i>
-                    </el-col>
+                    <template v-if="showInputRatio == 0">
+                        <el-col :span="15">
+                            <el-input placeholder="请输入内容" v-model="inputStandard" @blur="calcuServiceFee(0)" :disabled="!(showInputRatio == 0)">
+                                <template slot="append">%</template>
+                            </el-input>
+                        </el-col>
+                        <el-col :span="1" style="text-align: right;">
+                            <i class="el-icon-question" title="表示按照固定金额来收取服务费。计算公式：固定收费金额 = 服务费"></i>
+                        </el-col>
+                    </template>
                 </el-row>
                 <!-- <el-row class="mb15">
                     <el-col :span="6">
