@@ -637,7 +637,7 @@
 						{ required: true, message: '请填写开户银行', trigger: 'blur'}
 					],
 					customBankAccount: [
-						{ required: true, message: '银行账号为5至21位的数字', trigger: 'blur', validator: checkBankNo  }
+						{ required: true, message: '银行账号至少为5位数字', trigger: 'blur', validator: checkBankNo  }
                     ],
                     customMail1: [
                         { required: true, message: '请填写邮箱地址', trigger: 'blur'}

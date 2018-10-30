@@ -1,6 +1,6 @@
 let checkBankNo = (rule, value, callback) => {
 	//格式为银行卡号
-	if(!/^\d{5,21}$/g.test(value)) {
+	if(!/^\d{5,}$/g.test(value)) {
 		callback(new Error('账号为5至20位的数字'));
 	} else {
 		callback();
