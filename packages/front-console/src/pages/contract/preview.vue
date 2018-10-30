@@ -49,7 +49,7 @@
                     {{`${detail.serviceFeeContent.secondType == 'real' ? '实发金额' : '应发金额'} * ${detail.serviceFeeContent.serviceFeeRate}%`}}
                 </template>
                 <template v-else-if="detail.serviceFeeContent.serviceFeeType == 'step' && detail.serviceFeeContent.secondType == '0'">
-                    {{`月收入阶梯收费：`}}
+                    {{`分${detail.serviceFeeContent.monthIncomeAmount}万 - 无流水阶梯报价：`}}
                     <div v-for="(e, i) in detail.serviceFeeContent.stepwiseList">
                         <div class="indent">
                             <span class="inline">
@@ -68,7 +68,7 @@
                     </div>
                 </template>
                 <template v-else-if="detail.serviceFeeContent.serviceFeeType == 'step' && detail.serviceFeeContent.secondType == '1'">
-                    {{`月总额阶梯收费：`}}
+                    {{`不分2.8万 - 按流水总额阶梯报价：`}}
                     <div v-for="(e, i) in detail.serviceFeeContent.stepwiseList">
                         <div class="indent">
                             <span class="inline">
@@ -87,7 +87,7 @@
                     </div>
                 </template>
                 <template v-else-if="detail.serviceFeeContent.serviceFeeType == 'step' && detail.serviceFeeContent.secondType == '2'">
-                    {{`月总额按月收入阶梯收费：`}}
+                    {{`分${detail.serviceFeeContent.monthIncomeAmount}万 - 按流水分阶梯报价：`}}
                     <div class="indent">
                         {{`（1）月收入小于${detail.serviceFeeContent.monthIncomeAmount}万（含）：`}}
                         <div v-for="(e, i) in detail.serviceFeeContent.stepwiseList">

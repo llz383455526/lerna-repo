@@ -145,36 +145,41 @@
                         <el-radio label="fixed" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(0)">固定金额收费
                         </el-radio>
                     </el-col>
-                    <el-col :span="15">
-                        <el-input placeholder="请输入内容" v-model="inputFixed" @blur="calcuServiceFee(0)"
-                                  :disabled="!(showInputRatio == 0)">
-                            <template slot="append">元 每笔</template>
-                        </el-input>
-                    </el-col>
-                    <el-col :span="1" style="text-align: right;">
-                        <i class="el-icon-question" title="表示按照固定金额来收取服务费。计算公式：固定收费金额 = 服务费"></i>
-                    </el-col>
+                    <template v-if="showInputRatio == 0">
+                        <el-col :span="15">
+                            <el-input placeholder="请输入内容" v-model="inputFixed" @blur="calcuServiceFee(0)"
+                                      :disabled="!(showInputRatio == 0)">
+                                <template slot="append">元 每笔</template>
+                            </el-input>
+                        </el-col>
+                        <el-col :span="1" style="text-align: right;">
+                            <i class="el-icon-question" title="表示按照固定金额来收取服务费。计算公式：固定收费金额 = 服务费"></i>
+                        </el-col>
+                    </template>
                 </el-row>
                 <el-row class="mb15">
                     <el-col :span="6">
                         <el-radio label="ratio" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(1)">固定比例收费<br>（实发金额）</el-radio>
                     </el-col>
-                    <el-col :span="15">
-                        <div style="float: left; width: 70px; color: #606266;">实发金额 * </div>
-                        <el-input v-model="inputRatio" @blur="calcuServiceFee(1)"
-                                  :disabled="!(showInputRatio == 1)" style="width: calc(100% - 70px);">
-                            <template slot="append">% 每笔</template>
-                        </el-input>
-                    </el-col>
-                    <el-col :span="1" style="text-align: right;">
-                        <i class="el-icon-question" title="表示按照固定比例来收取服务费。计算公式：实发发金额 * 收费比例 = 服务费"></i>
-                    </el-col>
+                    <template v-if="showInputRatio == 1">
+                        <el-col :span="15">
+                            <div style="float: left; width: 70px; color: #606266;">实发金额 * </div>
+                            <el-input v-model="inputRatio" @blur="calcuServiceFee(1)"
+                                      :disabled="!(showInputRatio == 1)" style="width: calc(100% - 70px);">
+                                <template slot="append">% 每笔</template>
+                            </el-input>
+                        </el-col>
+                        <el-col :span="1" style="text-align: right;">
+                            <i class="el-icon-question" title="表示按照固定比例来收取服务费。计算公式：实发发金额 * 收费比例 = 服务费"></i>
+                        </el-col>
+                    </template>
                 </el-row>
                 <el-row>
                     <el-col :span="6">
                         <el-radio label="ratio_1" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(2)">固定比例收费<br>（应发金额）</el-radio>
                     </el-col>
-                    <el-col :span="15">
+                    <template v-if="showInputRatio == 2">
+                        <el-col :span="15">
                         <div style="display: inline-block; width: 110px; color: #606266;">实发金额 / ( 1 -  </div>
                         <el-input v-model="inputRatio_1" @blur="calcuServiceFee(2)"
                                   :disabled="!(showInputRatio == 2)" style="width: 135px;">
@@ -189,17 +194,18 @@
                     <el-col :span="1" style="text-align: right;">
                         <i class="el-icon-question" title="表示按照固定比例来收取服务费。计算公式：实发发金额 * 收费比例 = 服务费"></i>
                     </el-col>
+                    </template>
                 </el-row>
                 <el-row class="mb15">
                     <el-col :span="6">
-                        <el-radio label="step" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(3)">分2.8万 - 无流水阶梯报价</el-radio>
+                        <el-radio label="step" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(3)">分{{showInputRatio == 3 ? contractForm.serviceFeeContent.stepwiseList[0].endAmount : '2.8'}}万 - 无流水阶梯报价</el-radio>
                     </el-col><br>
                     <el-col :span="24" v-show="showInputRatio == 3">
                         <el-table :data="contractForm.serviceFeeContent.stepwiseList">
                             <el-table-column label="月收入下限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence">
-                                        <el-input v-model="scope.row.startAmount" disabled class="input_100" @change="amount(scope.$index, 0)">
+                                        <el-input v-model="scope.row.startAmount" class="input_100" @change="amount(scope.$index, 0)">
                                             <template slot="append">万</template>
                                         </el-input>
                                         <el-checkbox v-model="scope.row.equalsStart" @change="equals(scope.$index, 0)">含 
@@ -216,7 +222,7 @@
                             <el-table-column label="月收入上限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence != columnIndex - 1">
-                                        <el-input v-model="scope.row.endAmount" disabled class="input_100" @change="amount(scope.$index, 1)">
+                                        <el-input v-model="scope.row.endAmount" class="input_100" @change="amount(scope.$index, 1)">
                                             <template slot="append">万</template>
                                         </el-input>
                                         <el-checkbox v-model="scope.row.equalsEnd" @change="equals(scope.$index, 1)">含 
@@ -302,12 +308,12 @@
                 </el-row>
                 <el-row class="mb15">
                     <el-col :span="6">
-                        <el-radio label="step_1" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(5)">分2.8万 - 按流水分阶梯报价</el-radio>
+                        <el-radio label="step_1" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(5)">分{{showInputRatio == 5 ? contractForm.serviceFeeContent.monthIncomeAmount : '2.8'}}万 - 按流水分阶梯报价</el-radio>
                     </el-col><br>
                     <el-col :span="24" v-show="showInputRatio == 5">
                         <div>
                             月收入
-                            <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount" disabled>
+                            <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount">
                                 <template slot="append">万</template>
                             </el-input>
                             <el-checkbox v-model="contractForm.serviceFeeContent.containMonthAmount" :disabled="!(showInputRatio == 5)" @change="equalsIncomeAmount(0)">含</el-checkbox>
@@ -363,7 +369,7 @@
                         <el-button class="top_24" v-if="contractForm.serviceFeeContent.stepwiseList.length < 10" @click="addColumn" size="small" type="primary">增加阶梯</el-button>
                         <div class="top_24">
                             月收入
-                            <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount" disabled>
+                            <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount">
                                 <template slot="append">万</template>
                             </el-input>
                             <el-checkbox v-model="contractForm.serviceFeeContent2.containMonthAmount" :disabled="!(showInputRatio == 5)" @change="equalsIncomeAmount(1)">含</el-checkbox>
@@ -980,6 +986,7 @@
                         }
                         if(contractForm.serviceFeeContent.serviceFeeType == 'step'){
                             contractForm.serviceFeeContent.secondType = 0
+                            contractForm.serviceFeeContent.monthIncomeAmount = contractForm.serviceFeeContent.stepwiseList[0].endAmount
                             contractForm.serviceFeeContent.stepwiseList.forEach((e, i, arr) => {
                                 try {
                                     e.endAmount = this.Fixed(e.endAmount)
@@ -1019,6 +1026,7 @@
                         if(contractForm.serviceFeeContent.serviceFeeType == 'step_1'){
                             contractForm.serviceFeeContent.serviceFeeType = 'step'
                             contractForm.serviceFeeContent.secondType = 2
+                            contractForm.serviceFeeContent.monthIncomeAmount = contractForm.serviceFeeContent.monthIncomeAmount
                             contractForm.serviceFeeContent.stepwiseList.forEach((e, i, arr) => {
                                 try {
                                     e.endAmount = this.Fixed(e.endAmount)
@@ -1444,7 +1452,7 @@
 </script>
 <style lang="scss" scoped>
     .demo-contractForm {
-        width: 900px;
+        width: 1200px;
     }
 
     .line {
