@@ -232,7 +232,7 @@
                             </el-table-column>
                             <el-table-column label="阶梯收费" width="270px">
                                 <template slot-scope="scope">
-                                    实发金额 * <el-input type="number" step="0.01" max="99" min="1" :disabled="!(showInputRatio == 3)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                                    实发金额 * <el-input type="number" step="0.01" max="99" min="1" @blur="setPass" :disabled="!(showInputRatio == 3)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                                 </template>
                             </el-table-column>
                             <el-table-column label="操作">
@@ -287,7 +287,7 @@
                             </el-table-column>
                             <el-table-column label="阶梯收费" width="270px">
                                 <template slot-scope="scope">
-                                    实发金额 * <el-input type="number" step="0.01" max="99" min="1" :disabled="!(showInputRatio == 4)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                                    实发金额 * <el-input type="number" step="0.01" max="99" min="1" @blur="setPass" :disabled="!(showInputRatio == 4)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                                 </template>
                             </el-table-column>
                             <el-table-column label="操作">
@@ -350,7 +350,7 @@
                             </el-table-column>
                             <el-table-column label="阶梯收费" width="270px">
                                 <template slot-scope="scope">
-                                    实发金额 * <el-input type="number" step="0.01" max="99" min="1" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                                    实发金额 * <el-input type="number" step="0.01" max="99" min="1" @blur="setPass" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                                 </template>
                             </el-table-column>
                             <el-table-column label="操作">
@@ -406,7 +406,7 @@
                             </el-table-column>
                             <el-table-column label="阶梯收费" width="270px">
                                 <template slot-scope="scope">
-                                    实发金额 * <el-input type="number" step="0.01" max="99" min="1" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                                    实发金额 * <el-input type="number" step="0.01" max="99" min="1" @blur="setPass" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                                 </template>
                             </el-table-column>
                             <el-table-column label="操作">
@@ -895,6 +895,7 @@
                 // else {
                 //     this.contractForm.serviceFeeContent.fixFee = 0
                 // }
+                this.setPass()
             },
             equals(a, b, c) {
                 console.log(a, b)
@@ -979,12 +980,15 @@
                         }
                         if(contractForm.serviceFeeContent.serviceFeeType == 'step'){
                             contractForm.serviceFeeContent.secondType = 0
-                            contractForm.serviceFeeContent.stepwiseList.forEach(e => {
+                            contractForm.serviceFeeContent.stepwiseList.forEach((e, i, arr) => {
                                 try {
                                     e.endAmount = this.Fixed(e.endAmount)
                                     e.startAmount = this.Fixed(e.startAmount)
                                     e.percent = this.Fixed(e.percent)
-                                    if(e.percent < 0 || e.percent >= 100) {
+                                    console.log(e.percent)
+                                    console.log(e.percent < 0)
+                                    console.log(e.percent >= 100)
+                                    if((!e.startAmount && i != 0) || (!e.endAmount && i != arr.length - 1) || !e.percent || e.percent < 0 || e.percent >= 100) {
                                         err = true
                                     }
                                 }
@@ -997,12 +1001,12 @@
                         if(contractForm.serviceFeeContent.serviceFeeType == 'step_0'){
                             contractForm.serviceFeeContent.serviceFeeType = 'step'
                             contractForm.serviceFeeContent.secondType = 1
-                            contractForm.serviceFeeContent.stepwiseList.forEach(e => {
+                            contractForm.serviceFeeContent.stepwiseList.forEach((e, i, arr) => {
                                 try {
                                     e.endAmount = this.Fixed(e.endAmount)
                                     e.startAmount = this.Fixed(e.startAmount)
                                     e.percent = this.Fixed(e.percent)
-                                    if(e.percent < 0 || e.percent >= 100) {
+                                    if((!e.startAmount && i != 0) || (!e.endAmount && i != arr.length - 1) || !e.percent || e.percent < 0 || e.percent >= 100) {
                                         err = true
                                     }
                                 }
@@ -1015,12 +1019,12 @@
                         if(contractForm.serviceFeeContent.serviceFeeType == 'step_1'){
                             contractForm.serviceFeeContent.serviceFeeType = 'step'
                             contractForm.serviceFeeContent.secondType = 2
-                            contractForm.serviceFeeContent.stepwiseList.forEach(e => {
+                            contractForm.serviceFeeContent.stepwiseList.forEach((e, i, arr) => {
                                 try {
                                     e.endAmount = this.Fixed(e.endAmount)
                                     e.startAmount = this.Fixed(e.startAmount)
                                     e.percent = this.Fixed(e.percent)
-                                    if(e.percent < 0 || e.percent >= 100) {
+                                    if((!e.startAmount && i != 0) || (!e.endAmount && i != arr.length - 1) || !e.percent || e.percent < 0 || e.percent >= 100) {
                                         err = true
                                     }
                                 }
@@ -1028,12 +1032,12 @@
                                     err = true
                                 }
                             })
-                            contractForm.serviceFeeContent2.stepwiseList.forEach(e => {
+                            contractForm.serviceFeeContent2.stepwiseList.forEach((e, i, arr) => {
                                 try {
                                     e.endAmount = this.Fixed(e.endAmount)
                                     e.startAmount = this.Fixed(e.startAmount)
                                     e.percent = this.Fixed(e.percent)
-                                    if(e.percent < 0 || e.percent >= 100) {
+                                    if((!e.startAmount && i != 0) || (!e.endAmount && i != arr.length - 1) || !e.percent || e.percent < 0 || e.percent >= 100) {
                                         err = true
                                     }
                                 }
@@ -1045,7 +1049,9 @@
                             contractForm.serviceFeeContent2.monthIncomeAmount = contractForm.serviceFeeContent.monthIncomeAmount
                         }
                         if(err) {
-                            showNotify('error', '收费比例在0%到100%之间！')
+                            showNotify('error', '请正确填写服务费收费比例!')
+                            this.contractForm.serviceFeeContent.fixFee = ''
+                            this.$refs[formName].validateField('serviceFeeContent.fixFee')
                             return
                         }
                         if(contractForm.serviceTypeList) {
@@ -1429,6 +1435,9 @@
                     var value = (a - 0).toFixed(2)
                     return value * 100 <= a * 100 ? value : (value - 0.01).toFixed(2)
                 }
+            },
+            setPass() {
+                this.contractForm.serviceFeeContent.fixFee = 0
             }
         }
     }
