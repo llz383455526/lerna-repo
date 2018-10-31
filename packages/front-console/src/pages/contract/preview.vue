@@ -17,7 +17,9 @@
         <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">服务类型：</el-col>
             <el-col :span="8">
-                <span class="mr8" v-for="e in detail.serviceTypeList">{{e.serviceName}}</span>
+                <span v-for="(e, i) in detail.serviceTypeList">
+                    {{e.serviceName}}<template v-if="i + 1 != detail.serviceTypeList.length">，</template>
+                </span>
             </el-col>
         </el-row>
         <el-row class="mb15" style="font-weight: normal;">
