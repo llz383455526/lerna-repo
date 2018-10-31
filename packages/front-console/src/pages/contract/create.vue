@@ -205,7 +205,7 @@
                             <el-table-column label="月收入下限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence">
-                                        <el-input v-model="scope.row.startAmount" class="input_100" @change="amount(scope.$index, 0)">
+                                        <el-input v-model="scope.row.startAmount" class="input_100" @change="checkTable">
                                             <template slot="append">万</template>
                                         </el-input>
                                         <el-checkbox v-model="scope.row.equalsStart" @change="equals(scope.$index, 0)">含 
@@ -222,7 +222,7 @@
                             <el-table-column label="月收入上限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence != columnIndex - 1">
-                                        <el-input v-model="scope.row.endAmount" class="input_100" @change="amount(scope.$index, 1)">
+                                        <el-input v-model="scope.row.endAmount" class="input_100" @change="checkTable">
                                             <template slot="append">万</template>
                                         </el-input>
                                         <el-checkbox v-model="scope.row.equalsEnd" @change="equals(scope.$index, 1)">含 
@@ -238,7 +238,7 @@
                             </el-table-column>
                             <el-table-column label="阶梯收费" width="270px">
                                 <template slot-scope="scope">
-                                    实发金额 * <el-input @blur="setPass(scope.row.percent)" :disabled="!(showInputRatio == 3)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                                    实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 3)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                                 </template>
                             </el-table-column>
                             <el-table-column label="操作" width="100">
@@ -260,7 +260,7 @@
                             <el-table-column label="月总额下限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence">
-                                        <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 4)" class="input_100" @change="amount(scope.$index, 0)">
+                                        <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 4)" class="input_100" @change="checkTable">
                                             <template slot="append">万</template>
                                         </el-input>
                                         <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 4)" @change="equals(scope.$index, 0)">含 
@@ -277,7 +277,7 @@
                             <el-table-column label="月总额上限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence != columnIndex - 1">
-                                        <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 4)" class="input_100" @change="amount(scope.$index, 1)">
+                                        <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 4)" class="input_100" @change="checkTable">
                                             <template slot="append">万</template>
                                         </el-input>
                                         <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 4)" @change="equals(scope.$index, 1)">含 
@@ -293,7 +293,7 @@
                             </el-table-column>
                             <el-table-column label="阶梯收费" width="270px">
                                 <template slot-scope="scope">
-                                    实发金额 * <el-input @blur="setPass(scope.row.percent)" :disabled="!(showInputRatio == 4)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                                    实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 4)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                                 </template>
                             </el-table-column>
                             <el-table-column label="操作" width="100">
@@ -313,7 +313,7 @@
                     <el-col :span="24" v-show="showInputRatio == 5">
                         <div>
                             月收入
-                            <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount">
+                            <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount" @blur="checkTable">
                                 <template slot="append">万</template>
                             </el-input>
                             <el-checkbox v-model="contractForm.serviceFeeContent.containMonthAmount" :disabled="!(showInputRatio == 5)" @change="equalsIncomeAmount(0)">含</el-checkbox>
@@ -323,7 +323,7 @@
                             <el-table-column label="月总额下限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence">
-                                        <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="amount(scope.$index, 0)">
+                                        <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable">
                                             <template slot="append">万</template>
                                         </el-input>
                                         <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0)">含 
@@ -340,7 +340,7 @@
                             <el-table-column label="月总额上限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence != columnIndex - 1">
-                                        <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="amount(scope.$index, 1)">
+                                        <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable">
                                             <template slot="append">万</template>
                                         </el-input>
                                         <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 1)">含 
@@ -356,7 +356,7 @@
                             </el-table-column>
                             <el-table-column label="阶梯收费" width="270px">
                                 <template slot-scope="scope">
-                                    实发金额 * <el-input @blur="setPass(scope.row.percent)" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                                    实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                                 </template>
                             </el-table-column>
                             <el-table-column label="操作" width="100">
@@ -369,7 +369,7 @@
                         <el-button class="top_24" v-if="contractForm.serviceFeeContent.stepwiseList.length < 10" @click="addColumn" size="small" type="primary">增加阶梯</el-button>
                         <div class="top_24">
                             月收入
-                            <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount">
+                            <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount" @blur="checkTable">
                                 <template slot="append">万</template>
                             </el-input>
                             <el-checkbox v-model="contractForm.serviceFeeContent2.containMonthAmount" :disabled="!(showInputRatio == 5)" @change="equalsIncomeAmount(1)">含</el-checkbox>
@@ -379,7 +379,7 @@
                             <el-table-column label="月总额下限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence">
-                                        <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="amount(scope.$index, 0, 2)">
+                                        <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable">
                                             <template slot="append">万</template>
                                         </el-input>
                                         <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0, 2)">含 
@@ -396,7 +396,7 @@
                             <el-table-column label="月总额上限" width="240">
                                 <template slot-scope="scope">
                                     <template v-if="scope.row.sequence != columnIndex2 - 1">
-                                        <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="amount(scope.$index, 1, 2)">
+                                        <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable">
                                             <template slot="append">万</template>
                                         </el-input>
                                         <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 1, 2)">含 
@@ -412,7 +412,7 @@
                             </el-table-column>
                             <el-table-column label="阶梯收费" width="270px">
                                 <template slot-scope="scope">
-                                    实发金额 * <el-input @blur="setPass(scope.row.percent)" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                                    实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                                 </template>
                             </el-table-column>
                             <el-table-column label="操作" width="100">
@@ -884,7 +884,7 @@
                 }
             },
             amount(a, b, c) {
-                var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList, amount = ''
+                var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList, amount = '', result = ''
                 if(c) {
                     stepwiseList = this.contractForm.serviceFeeContent2.stepwiseList
                 }
@@ -897,11 +897,10 @@
                     amount = stepwiseList[a].startAmount
                 }
                 if(this.float2.test(amount) && stepwiseList[a].startAmount - 0 < stepwiseList[a].endAmount) {
-                    this.contractForm.serviceFeeContent.fixFee = 0
+                    result = 0
                 }
-                else {
-                    this.contractForm.serviceFeeContent.fixFee = ''
-                }
+                // this.contractForm.serviceFeeContent.fixFee = result
+                return result
             },
             equals(a, b, c) {
                 var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList
@@ -929,12 +928,6 @@
                     this.contractForm.openInvoiceType = this.invoiceType[0].value
                 })
             },
-            // invoiceUpdate(data) {
-            //     post('/api/invoice-web/custom-company/save-update', this.invoiceForm).then(e => {
-            //         showNotify('success', data);
-            //         this.$router.push({path: '/main/contract/list'});
-            //     })
-            // },
             routerPush(val) {
                 this.$router.push({
                     path: val,
@@ -1101,37 +1094,6 @@
                     this.showSelectExpDay = false;
                 }
             },
-            // showType(val) {
-            //     if (val == 'day' || val == 'each') {
-            //         this.contractForm.settleExp = '每天';
-            //         this.weekVisible = false;
-            //         this.monthVisible = false;
-            //     }
-            //     if (val == 'week') {
-            //         if (!this.contractForm.settleExp || this.contractForm.settleExp.split(',')[1] != undefined) {
-            //             this.contractForm.settleExp = '';
-            //         }
-            //         this.weekVisible = true;
-            //         this.monthVisible = false;
-            //         this.contractForm.settleExp.indexOf('周') == -1 && (this.contractForm.settleExp = '每周一')
-            //     }
-            //     if (val == 'month') {
-            //         if (this.contractForm.settleExp.split(',')[1] != undefined) {
-            //             this.radio = '范围日';
-            //             this.settleExpStart = this.contractForm.settleExp.split(',')[0];
-            //             this.settleExpEnd = this.contractForm.settleExp.split(',')[1];
-            //         } else {
-            //             this.radio = '固定日';
-            //             if (this.contractForm.settleExp.split('周').length == 2) {
-            //                 this.settleExpDay = '';
-            //             } else {
-            //                 this.settleExpDay = this.contractForm.settleExp.split(',')[0];
-            //             }
-            //         }
-            //         this.weekVisible = false;
-            //         this.monthVisible = true;
-            //     }
-            // },
             calcuServiceFee(a) {
                 if (this.contractForm.serviceFeeContent.serviceFeeType == 'dummy') {
                     this.contractForm.serviceFeeContent.fixFee = 0;
@@ -1185,6 +1147,30 @@
                     this.showPrev = a;
                 }
                 this.$refs['contractForm'].validateField('prePayContent.fixFee')
+            },
+            checkTable() {
+                var results = []
+                console.log(this.contractForm.serviceFeeContent2.stepwiseList)
+                for(var i =0; i < this.contractForm.serviceFeeContent.stepwiseList.length; i++) {
+                    for(var j = 0; j < 2; j++) {
+                        (j || i) && (i + 1 < this.contractForm.serviceFeeContent.stepwiseList.length) && results.push(this.amount(i, j))
+                    }
+                    var a = this.contractForm.serviceFeeContent.stepwiseList[i].percent
+                    results.push((this.float2.test(a) && a <= 100) ? 0 : '')
+                }
+                var m = this.contractForm.serviceFeeContent.monthIncomeAmount
+                results.push((this.float2.test(m) && m <= 100) ? 0 : '')
+                if(this.contractForm.serviceFeeContent2.stepwiseList.length) {
+                    for(var i = 0; i < this.contractForm.serviceFeeContent2.stepwiseList.length; i++) {
+                        for(var j = 0; j < 2; j++) {
+                           (j || i) && (i + 1 < this.contractForm.serviceFeeContent2.stepwiseList.length) && results.push(this.amount(i, j, 2))
+                        }
+                        var a = this.contractForm.serviceFeeContent2.stepwiseList[i].percent
+                        results.push((this.float2.test(a) && a <= 100) ? 0 : '')
+                    }
+                }
+                this.contractForm.serviceFeeContent.fixFee = results.indexOf('') > -1 ? '' : 0
+                console.log(results)
             },
             calcuServiceFeeReverse() {
                 if(this.contractForm.prePayContent.secondType == 'real') {
@@ -1495,7 +1481,7 @@
     }
 
     .input_100 {
-        width: 100px;
+        width: 120px;
     }
 
     .center {
