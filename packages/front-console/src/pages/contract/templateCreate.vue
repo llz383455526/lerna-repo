@@ -280,17 +280,15 @@
 			        	let templateForm = _.cloneDeep(this.templateForm)
                         let serviceTypeArr = []
                         let status
-                        console.log(templateForm)
                         _.forEach(templateForm.industryTypes, value => {
                             if(value) {
                                 let service = _.find(this.searchOptions.IndustryType, item => {
                                     return item.text === value
                                 })
-                                serviceTypeArr.push(service.value)
+                                service && serviceTypeArr.push(service.value)
                             }
                         })
 				        templateForm.industryTypes = serviceTypeArr
-                        console.log(serviceTypeArr)
                         status = _.find(this.searchOptions.ValidationType, item => {
                             return item.text === templateForm.status
                         })
