@@ -1251,6 +1251,7 @@
                         })
                         this.contractForm.serviceTypeList = serviceTypeList
                     }
+                    !this.contractForm.serviceFeeContent.monthIncomeAmount && (this.contractForm.serviceFeeContent.monthIncomeAmount = 1)
                     this.getInvoiceOptions();
                     // if(this.contractForm.channelType) {
                     //     this.channelTypes = this.contractForm.channelType.split(',')
