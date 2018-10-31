@@ -684,7 +684,7 @@
                         discountRate: '',
                         secondType: '',
                         fixFee: 0,
-                        monthIncomeAmount: '',
+                        monthIncomeAmount: 1,
                         serviceFeeRate: '',
                         serviceFeeType: 'dummy',
                         containMonthAmount: true,
