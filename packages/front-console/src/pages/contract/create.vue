@@ -241,7 +241,7 @@
                                     实发金额 * <el-input type="number" step="0.01" max="99" min="1" @blur="setPass" :disabled="!(showInputRatio == 3)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="操作">
+                            <el-table-column label="操作" width="100">
                                 <template slot-scope="scope">
                                     <el-button type="text" @click="deleteColumn(scope.$index)" v-if="scope.$index > 1 && scope.$index == columnIndex - 1">删除</el-button>
                                     <div class="center" v-else>-</div>
@@ -296,7 +296,7 @@
                                     实发金额 * <el-input type="number" step="0.01" max="99" min="1" @blur="setPass" :disabled="!(showInputRatio == 4)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="操作">
+                            <el-table-column label="操作" width="100">
                                 <template slot-scope="scope">
                                     <el-button type="text" @click="deleteColumn(scope.$index)" v-if="scope.$index > 1 && scope.$index == columnIndex - 1">删除</el-button>
                                     <div class="center" v-else>-</div>
@@ -359,7 +359,7 @@
                                     实发金额 * <el-input type="number" step="0.01" max="99" min="1" @blur="setPass" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="操作">
+                            <el-table-column label="操作" width="100">
                                 <template slot-scope="scope">
                                     <el-button type="text" @click="deleteColumn(scope.$index)" v-if="scope.$index > 1 && scope.$index == columnIndex - 1">删除</el-button>
                                     <div class="center" v-else>-</div>
@@ -415,7 +415,7 @@
                                     实发金额 * <el-input type="number" step="0.01" max="99" min="1" @blur="setPass" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="操作">
+                            <el-table-column label="操作" width="100">
                                 <template slot-scope="scope">
                                     <el-button type="text" @click="deleteColumn(scope.$index, 1)" v-if="scope.$index > 1 && scope.$index == columnIndex2 - 1">删除</el-button>
                                     <div class="center" v-else>-</div>
