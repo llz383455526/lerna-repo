@@ -190,7 +190,7 @@
                             </el-table-column>
                             <el-table-column label="阶梯收费" width="270px">
                                 <template slot-scope="scope">
-                                    实发金额 * <el-input type="number" step="0.01" max="99" min="1" @blur="setPass" :disabled="!(showInputRatio == 3)" v-model="scope.row.percent" style="width: 100px;"></el-input> %  
+                                    实发金额 * <el-input @blur="setPass(scope.row.percent)" :disabled="!(showInputRatio == 3)" v-model="scope.row.percent" style="width: 100px;"></el-input> %  
                                     <!-- 每人<i class="el-icon-question" title="按每人月收入分阶梯收费"></i> -->
                                 </template>
                             </el-table-column>
@@ -253,7 +253,7 @@
                             </el-table-column>
                             <el-table-column label="阶梯收费" width="270px">
                                 <template slot-scope="scope">
-                                    实发金额 * <el-input type="number" step="0.01" max="99" min="1" @blur="setPass" :disabled="!(showInputRatio == 4)" v-model="scope.row.percent" style="width: 100px;"></el-input> %  
+                                    实发金额 * <el-input @blur="setPass(scope.row.percent)" :disabled="!(showInputRatio == 4)" v-model="scope.row.percent" style="width: 100px;"></el-input> %  
                                     <!-- 每人<i class="el-icon-question" title="按每人月收入分阶梯收费"></i> -->
                                 </template>
                             </el-table-column>
@@ -324,7 +324,7 @@
                             </el-table-column>
                             <el-table-column label="阶梯收费" width="270px">
                                 <template slot-scope="scope">
-                                    实发金额 * <el-input type="number" step="0.01" max="99" min="1" @blur="setPass" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> %  
+                                    实发金额 * <el-input @blur="setPass(scope.row.percent)" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> %  
                                     <!-- 每人<i class="el-icon-question" title="按每人月收入分阶梯收费"></i> -->
                                 </template>
                             </el-table-column>
@@ -381,7 +381,7 @@
                             </el-table-column>
                             <el-table-column label="阶梯收费" width="270px">
                                 <template slot-scope="scope">
-                                    实发金额 * <el-input type="number" step="0.01" max="99" min="1" @blur="setPass" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> %  
+                                    实发金额 * <el-input @blur="setPass(scope.row.percent)" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> %  
                                     <!-- 每人<i class="el-icon-question" title="按每人月收入分阶梯收费"></i> -->
                                 </template>
                             </el-table-column>
@@ -708,7 +708,8 @@
                 channelTypes: [],
                 columnIndex: 0,
                 columnIndex2: 0,
-                invoiceTypeList: []
+                invoiceTypeList: [],
+                float2: /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/
             }
         },
         computed: {
@@ -940,7 +941,8 @@
             calcuServiceFee(a) {
                 this.inputRate = ''
                 if(this.contractForm.serviceFeeContent.serviceFeeType == 'standard') {
-                    this.contractForm.offer = (this.inputStandard && (this.inputStandard - 0 > 0 && this.inputStandard <= 100)) ? 0 : '';
+                    this.contractForm.offer = (this.float2.test(this.inputStandard) && this.inputStandard <= 100) ? 0 : '';
+                    // (this.inputStandard && (this.inputStandard - 0 > 0 && this.inputStandard <= 100)) ? 0 : '';
                     this.showInputRatio = a;
                 }
                 if (this.contractForm.serviceFeeContent.serviceFeeType == 'step') {
@@ -1022,21 +1024,23 @@
                 }
             },
             amount(a, b, c) {
-                var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList
+                var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList, amount = ''
                 if(c) {
                     stepwiseList = this.contractForm.serviceFeeContent2.stepwiseList
                 }
                 if(b) {
                     stepwiseList[a + 1] && (stepwiseList[a + 1].startAmount = stepwiseList[a].endAmount)
+                    amount = stepwiseList[a].endAmount
                 }
                 else {
                     stepwiseList[a - 1] && (stepwiseList[a - 1].endAmount = stepwiseList[a].startAmount)
+                    amount = stepwiseList[a].startAmount
                 }
-                if(stepwiseList[a].startAmount - 0 >= stepwiseList[a].endAmount) {
-                    this.contractForm.offer = ''
+                if(this.float2.test(amount) && stepwiseList[a].startAmount - 0 < stepwiseList[a].endAmount) {
+                    this.contractForm.offer = 0
                 }
                 else {
-                    this.contractForm.offer = 0
+                    this.contractForm.offer = ''
                 }
             },
             equals(a, b, c) {
@@ -1060,7 +1064,8 @@
                 }
             },
             checkInputRate() {
-                this.contractForm.offer = this.inputRate ? 0 : ''
+                this.contractForm.offer = (this.float2.test(this.inputRate) && this.inputRate <= 100) ? 0 : ''
+                // this.inputRate ? 0 : ''
             },
             // -------------------------------------
 	        submitForm(formName) {
@@ -1249,8 +1254,8 @@
                     return value * 100 <= a * 100 ? value : (value - 0.01).toFixed(2)
                 }
             },
-            setPass() {
-                this.contractForm.offer = 0
+            setPass(a) {
+                this.contractForm.offer = (this.float2.test(a) && a <= 100) ? 0 : ''
             }
         }
     }

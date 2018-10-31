@@ -238,7 +238,7 @@
                             </el-table-column>
                             <el-table-column label="阶梯收费" width="270px">
                                 <template slot-scope="scope">
-                                    实发金额 * <el-input type="number" step="0.01" max="99" min="1" @blur="setPass" :disabled="!(showInputRatio == 3)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                                    实发金额 * <el-input @blur="setPass(scope.row.percent)" :disabled="!(showInputRatio == 3)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                                 </template>
                             </el-table-column>
                             <el-table-column label="操作" width="100">
@@ -293,7 +293,7 @@
                             </el-table-column>
                             <el-table-column label="阶梯收费" width="270px">
                                 <template slot-scope="scope">
-                                    实发金额 * <el-input type="number" step="0.01" max="99" min="1" @blur="setPass" :disabled="!(showInputRatio == 4)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                                    实发金额 * <el-input @blur="setPass(scope.row.percent)" :disabled="!(showInputRatio == 4)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                                 </template>
                             </el-table-column>
                             <el-table-column label="操作" width="100">
@@ -356,7 +356,7 @@
                             </el-table-column>
                             <el-table-column label="阶梯收费" width="270px">
                                 <template slot-scope="scope">
-                                    实发金额 * <el-input type="number" step="0.01" max="99" min="1" @blur="setPass" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                                    实发金额 * <el-input @blur="setPass(scope.row.percent)" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                                 </template>
                             </el-table-column>
                             <el-table-column label="操作" width="100">
@@ -412,7 +412,7 @@
                             </el-table-column>
                             <el-table-column label="阶梯收费" width="270px">
                                 <template slot-scope="scope">
-                                    实发金额 * <el-input type="number" step="0.01" max="99" min="1" @blur="setPass" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                                    实发金额 * <el-input @blur="setPass(scope.row.percent)" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                                 </template>
                             </el-table-column>
                             <el-table-column label="操作" width="100">
@@ -593,7 +593,7 @@
                         {required: true, message: '请选择发票类型', trigger: 'blur'}
                     ],
                     'serviceFeeContent.fixFee': [
-                        {type: 'number', required: true, message: '请输入正确的服务费收费', trigger: 'blur'}
+                        {type: 'number', required: true, message: '请输入正确的服务费收费（大于零且最多两位小数）', trigger: 'blur'}
                     ],
                     startDate: [
                         {required: true, message: '请选择合同起止时间', trigger: 'blur'}
@@ -602,7 +602,7 @@
                         {required: true, message: '请选择合同起止时间', trigger: 'blur'}
                     ],
                     'prePayContent.fixFee': [
-                        {type: 'number', required: true, message: '请输入正确的服务费收费', trigger: 'blur'}
+                        {type: 'number', required: true, message: '请输入正确的服务费收费（大于零且最多两位小数）', trigger: 'blur'}
                     ],
                     openInvoiceType: [
                         {required: true, message: '请输入开票类型', trigger: 'blur'}
@@ -738,7 +738,8 @@
                 },
                 company: {},
                 serviceTypes: [],
-                invoiceTypeList: []
+                invoiceTypeList: [],
+                float2: /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/
             }
         },
         created() {
@@ -883,23 +884,24 @@
                 }
             },
             amount(a, b, c) {
-                var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList
+                var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList, amount = ''
                 if(c) {
                     stepwiseList = this.contractForm.serviceFeeContent2.stepwiseList
                 }
                 if(b) {
                     stepwiseList[a + 1] && (stepwiseList[a + 1].startAmount = stepwiseList[a].endAmount)
+                    amount = stepwiseList[a].endAmount
                 }
                 else {
                     stepwiseList[a - 1] && (stepwiseList[a - 1].endAmount = stepwiseList[a].startAmount)
+                    amount = stepwiseList[a].startAmount
                 }
-                if(stepwiseList[a].startAmount - 0 >= stepwiseList[a].endAmount) {
-                    this.contractForm.serviceFeeContent.fixFee = ''
-                }
-                else {
+                if(this.float2.test(amount) && stepwiseList[a].startAmount - 0 < stepwiseList[a].endAmount) {
                     this.contractForm.serviceFeeContent.fixFee = 0
                 }
-                // this.setPass()
+                else {
+                    this.contractForm.serviceFeeContent.fixFee = ''
+                }
             },
             equals(a, b, c) {
                 var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList
@@ -1136,16 +1138,16 @@
                     this.showInputRatio = a;
                 }
                 if (this.contractForm.serviceFeeContent.serviceFeeType == 'fixed') {
-                    this.contractForm.serviceFeeContent.fixFee = this.inputFixed ? 0 : '';
+                    this.contractForm.serviceFeeContent.fixFee = this.float2.test(this.inputFixed) ? 0 : '';
                     this.showInputRatio = a;
                 }
                 if (this.contractForm.serviceFeeContent.serviceFeeType == 'ratio') {
                     console.log(this.inputRatio)
-                    this.contractForm.serviceFeeContent.fixFee = (this.inputRatio && (this.inputRatio - 0 > 0 && this.inputRatio <= 100)) ? 0 : '' ;
+                    this.contractForm.serviceFeeContent.fixFee = (this.float2.test(this.inputRatio) && this.inputRatio <= 100) ? 0 : '';
                     this.showInputRatio = a;
                 }
                 if (this.contractForm.serviceFeeContent.serviceFeeType == 'ratio_1') {
-                    this.contractForm.serviceFeeContent.fixFee = (this.inputRatio_1 && (this.inputRatio_1 - 0 > 0 && this.inputRatio_1 <= 100)) ? 0 : '';
+                    this.contractForm.serviceFeeContent.fixFee = (this.float2.test(this.inputRatio_1) && this.inputRatio_1 <= 100) ? 0 : '';
                     this.showInputRatio = a;
                 }
                 if (this.contractForm.serviceFeeContent.serviceFeeType == 'step') {
@@ -1172,14 +1174,14 @@
                 if (this.contractForm.prePayContent.serviceFeeType == 'ratio') {
                     this.contractForm.prePayContent.secondType = 'real'
                     this.contractForm.prePayContent.serviceFeeRate = this.Fixed(this.prevRatio);
-                    this.contractForm.prePayContent.fixFee = (this.prevRatio && (this.prevRatio - 0 > 0 && this.prevRatio <= 100))  ? 0 : ''
+                    this.contractForm.prePayContent.fixFee = (this.float2.test(this.prevRatio) && this.prevRatio <= 100) ? 0 : ''
                     this.showPrev = a;
                 }
                 if (this.contractForm.prePayContent.serviceFeeType == 'ratio_1') {
                     this.contractForm.prePayContent.secondType = 'should'
                     this.contractForm.prePayContent.discountRate = this.Fixed(this.prevRatio_1);
                     this.contractForm.prePayContent.serviceFeeRate = this.Fixed(this.prevRatio_1);
-                    this.contractForm.prePayContent.fixFee = (this.prevRatio_1 && (this.prevRatio_1 - 0 > 0 && this.prevRatio_1 <= 100)) ? 0 : ''
+                    this.contractForm.prePayContent.fixFee = (this.float2.test(this.prevRatio_1) && this.prevRatio_1 <= 100) ? 0 : ''
                     this.showPrev = a;
                 }
                 this.$refs['contractForm'].validateField('prePayContent.fixFee')
@@ -1441,8 +1443,9 @@
                     return value * 100 <= a * 100 ? value : (value - 0.01).toFixed(2)
                 }
             },
-            setPass() {
-                this.contractForm.serviceFeeContent.fixFee = 0
+            setPass(a) {
+                console.log(a)
+                this.contractForm.serviceFeeContent.fixFee = (this.float2.test(a) && a <= 100) ? 0 : ''
             }
         }
     }
