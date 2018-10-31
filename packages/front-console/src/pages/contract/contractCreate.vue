@@ -742,18 +742,6 @@
             }
         },
         methods: {
-            resetTable(a) {
-                // if(a) {
-                //     this.contractForm.laddersRate = ''
-                // }
-                // else {
-                //     this.contractForm.standardRate = ''
-                // }
-                // this.$refs['contractForm'].clearValidate('offer')
-                // if(this.contractForm.laddersRate) {
-                //     this.checkAll(true)
-                // }
-            },
             setOffer(a) {
                 if(this.contractForm[a] && !isNaN(this.contractForm[a]) && this.contractForm[a] > 0 && this.contractForm[a] < 100) {
                     var str = this.contractForm[a].toString().split('.')[1]
@@ -878,23 +866,6 @@
                     })
                 })
             },
-            // setChannelType() {
-            //     if(!this.channelTypes.length) {
-            //         this.contractForm.channelType = ''
-            //     }
-            //     else {
-            //         var str = ''
-            //         for (var i = 0; i < this.channelTypes.length; i++) {
-            //             if(str) {
-            //                 str += `,${this.channelTypes[i]}`
-            //             }
-            //             else {
-            //                 str += `${this.channelTypes[i]}`
-            //             }
-            //         }
-            //         this.contractForm.channelType = str
-            //     }
-            // },
             aCompany(){
                 get('/api/sysmgr-web/commom/company-infos', {
                         companyId: 1
@@ -972,29 +943,12 @@
                     this.contractForm.offer = (this.inputStandard && (this.inputStandard - 0 > 0 && this.inputStandard <= 100)) ? 0 : '';
                     this.showInputRatio = a;
                 }
-                // if (this.contractForm.serviceFeeContent.serviceFeeType == 'dummy') {
-                //     this.contractForm.serviceFeeContent.fixFee = 0;
-                //     this.showInputRatio = a;
-                // }
-                // if (this.contractForm.serviceFeeContent.serviceFeeType == 'fixed') {
-                //     this.contractForm.serviceFeeContent.fixFee = this.inputFixed ? 0 : '';
-                //     this.showInputRatio = a;
-                // }
-                // if (this.contractForm.serviceFeeContent.serviceFeeType == 'ratio') {
-                //     this.contractForm.serviceFeeContent.fixFee = (this.inputRatio && (this.inputRatio - 0 > 0 && this.inputRatio <= 100)) ? 0 : '' ;
-                //     this.showInputRatio = a;
-                // }
-                // if (this.contractForm.serviceFeeContent.serviceFeeType == 'ratio_1') {
-                //     this.contractForm.serviceFeeContent.fixFee = (this.inputRatio_1 && (this.inputRatio_1 - 0 > 0 && this.inputRatio_1 <= 100)) ? 0 : '';
-                //     this.showInputRatio = a;
-                // }
                 if (this.contractForm.serviceFeeContent.serviceFeeType == 'step') {
                     this.contractForm.offer = 0;
                     this.showInputRatio = a;
                     this.initColumn(2)
                     this.contractForm.serviceFeeContent.stepwiseList[0].endAmount = 2.8
                     this.contractForm.serviceFeeContent.stepwiseList[1].startAmount = 2.8
-                    console.log(this.contractForm.serviceFeeContent)
                 }
                 if (this.contractForm.serviceFeeContent.serviceFeeType == 'step_0') {
                     this.contractForm.offer = 0;
@@ -1068,7 +1022,6 @@
                 }
             },
             amount(a, b, c) {
-                console.log(a, b)
                 var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList
                 if(c) {
                     stepwiseList = this.contractForm.serviceFeeContent2.stepwiseList
@@ -1079,17 +1032,14 @@
                 else {
                     stepwiseList[a - 1] && (stepwiseList[a - 1].endAmount = stepwiseList[a].startAmount)
                 }
-                console.log(stepwiseList[a])
-                // if(stepwiseList[a].startAmount - 0 >= stepwiseList[a].endAmount) {
-                //     this.contractForm.serviceFeeContent.fixFee = ''
-                // }
-                // else {
-                //     this.contractForm.serviceFeeContent.fixFee = 0
-                // }
-                this.setPass()
+                if(stepwiseList[a].startAmount - 0 >= stepwiseList[a].endAmount) {
+                    this.contractForm.offer = ''
+                }
+                else {
+                    this.contractForm.offer = 0
+                }
             },
             equals(a, b, c) {
-                console.log(a, b)
                 var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList
                 if(c) {
                     stepwiseList = this.contractForm.serviceFeeContent2.stepwiseList
@@ -1115,12 +1065,6 @@
             // -------------------------------------
 	        submitForm(formName) {
 		        let url = this.contractId ? '/api/contract-web/contract-generate/update-contract-generate' : '/api/contract-web/contract-generate/create-contract-generate'
-                // if(this.contractForm.laddersRate) {
-                //     this.checkAll()
-                // }
-                // else {
-                //     this.contractForm.offer = '1'
-                // }
                 if(this.contractForm.serviceFeeContent.serviceFeeType != 'standard' && this.inputRate === '') {
                     this.contractForm.offer = ''
                 }

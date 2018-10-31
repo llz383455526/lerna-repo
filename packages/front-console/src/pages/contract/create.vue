@@ -883,7 +883,6 @@
                 }
             },
             amount(a, b, c) {
-                console.log(a, b)
                 var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList
                 if(c) {
                     stepwiseList = this.contractForm.serviceFeeContent2.stepwiseList
@@ -894,17 +893,15 @@
                 else {
                     stepwiseList[a - 1] && (stepwiseList[a - 1].endAmount = stepwiseList[a].startAmount)
                 }
-                console.log(stepwiseList[a])
-                // if(stepwiseList[a].startAmount - 0 >= stepwiseList[a].endAmount) {
-                //     this.contractForm.serviceFeeContent.fixFee = ''
-                // }
-                // else {
-                //     this.contractForm.serviceFeeContent.fixFee = 0
-                // }
-                this.setPass()
+                if(stepwiseList[a].startAmount - 0 >= stepwiseList[a].endAmount) {
+                    this.contractForm.serviceFeeContent.fixFee = ''
+                }
+                else {
+                    this.contractForm.serviceFeeContent.fixFee = 0
+                }
+                // this.setPass()
             },
             equals(a, b, c) {
-                console.log(a, b)
                 var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList
                 if(c) {
                     stepwiseList = this.contractForm.serviceFeeContent2.stepwiseList
