@@ -154,37 +154,67 @@
                     </el-tabs>
                 </div>
             </el-card>
-            <!-- 公司业务状态及备注 e-->
-
-            <!-- 业务方案管理 s-->
-            <!-- <el-card class="box-card">
+            <!-- 税优地业务方案管理 s-->
+            <el-card class="box-card">
                 <div slot="header">
-                    <span>业务方案管理</span>
-                    <el-button type="primary" style="margin-left: 20px;" size="small" @click="businessShow = true;">新增</el-button>
+                    <span>税优地业务方案管理</span>
                 </div>
                 <div class="text">
-                    <el-table class="table" :data="tableData" border="">
-                        <el-table-column prop="channelAlias" label="方案类型"></el-table-column>
-                        <el-table-column prop="thirdpaySystemId" label="关联税优地"></el-table-column>
-                        <el-table-column prop="thirdpaySystemId" label="适用行业"></el-table-column>
-                        <el-table-column prop="thirdpaySystemId" label="开票类目"></el-table-column>
-                        <el-table-column prop="thirdpaySystemId" label="报税资料"></el-table-column>
-                        <el-table-column prop="thirdpaySystemId" label="税费方案"></el-table-column>
-                        <el-table-column prop="thirdpaySystemId" label="方案成本"></el-table-column>
-                        <el-table-column prop="thirdpaySystemId" label="税费方案"></el-table-column>
+                    <router-link to="scheme">
+                        <el-button type="primary" size="small">新增方案</el-button>
+                    </router-link>
+                    <el-table v-if="schemeData.list" :data="schemeData.list">
+                        <el-table-column label="方案名称" prop="name"></el-table-column>
+                        <el-table-column label="适用行业">
+                            <template slot-scope="scope">
+                                <div v-if="scope.row.industies" v-for="e in scope.row.industies">
+                                    {{e.text}}
+                                </div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="服务类型">
+                            <template slot-scope="scope">
+                                <div v-if="scope.row.serviceTypes" v-for="e in scope.row.serviceTypes" :key="e.id">
+                                    {{e.serviceName}}
+                                    <!-- （{{e.taxRate}}%） -->
+                                </div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="销售结算成本">
+                            <template slot-scope="scope">
+                                <div v-if="scope.row.costs" v-for="e in scope.row.costs" :key="e.id">
+                                    {{e.name}}：{{e.rate}}%
+                                </div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="合伙人分佣">
+                            <template slot-scope="scope">
+                                <div v-if="scope.row.commission">
+                                    {{scope.row.commission.name}} * {{scope.row.commission.rate}}%
+                                </div>
+                            </template>
+                        </el-table-column>
                         <el-table-column label="操作">
                             <template slot-scope="scope">
-                                <el-button @click="businessShow = true;business = scope.row" type="text">
-                                    修改
-                                </el-button>
+                                <router-link :to="`scheme?id=${scope.row.id}`">
+                                    <el-button type="text">修改</el-button>
+                                </router-link>
                             </template>
                         </el-table-column>
                     </el-table>
+                    <div class="page">
+      	                <el-pagination
+      	                    background
+      	                    layout="prev, pager, next"
+      	                    :page-size="schemeForm.pageSize"
+      	                    :total="schemeData.total"
+      	                    @current-change="getSchemeList"
+      	                    :currentPage="schemeForm.pageNo">
+      	                </el-pagination>
+                    </div>
                 </div>
-            </el-card> -->
-            <!-- 业务方案管理 e-->
-            
-            <!-- 银行账号 s-->
+            </el-card>
+            <!-- 税优地业务方案管理 e-->
             <el-card class="box-card">
                 <div slot="header">
                     <span>银行账号</span>
@@ -717,10 +747,17 @@ export default {
                     value:false
                 }
             ],
+            schemeForm: {
+                pageNo: 1,
+                pageSize: 10,
+                serviceCompanyId: ''
+            },
+            schemeData: {}
         };
     },
     activated() {
         this.form.companyId = localStorage.getItem("appId");
+        this.schemeForm.serviceCompanyId = localStorage.getItem("appId");
         this.fullName = localStorage.getItem('fullName')
         this.getData();
         this.getBankList();
@@ -730,6 +767,7 @@ export default {
         /*get("/api/console-dlv/option/get-option-service-companies").then(data => {
             this.company = data;
         });*/
+        this.getSchemeList();
     },
     mounted() {},
     // computed: {
@@ -952,6 +990,17 @@ export default {
                     showNotify('success', data);
                     this.getMemoList();
                 })
+            })
+        },
+        // 税优地业务方案管理
+        getSchemeList(a) {
+            if(isNaN(a)) {
+                a = 1
+            }
+            this.schemeForm.pageNo = a
+            post('/api/salemgt/goods/page', this.schemeForm).then(data => {
+                console.log(data)
+                this.schemeData = data
             })
         },
         //银行账号

@@ -76,6 +76,7 @@ let serverManager = r => require.ensure([], () => r(require('../pages/clientMana
 let addServer = r => require.ensure([], () => r(require('../pages/clientManager/addServer')), 'addServer')
 let serverDetail = r => require.ensure([], () => r(require('../pages/clientManager/serverDetail')), 'serverDetail')
 let report = r => require.ensure([], () => r(require('../pages/clientManager/report')), 'report')
+let scheme = r => require.ensure([], () => r(require('../pages/clientManager/scheme')), 'scheme')
 
 let advertisingList = r => require.ensure([], () => r(require('../pages/management/advertisingList')), 'advertisingList')
 let advertisingCreate = r => require.ensure([], () => r(require('../pages/management/advertisingCreate')), 'advertisingCreate')
@@ -651,6 +652,13 @@ export default [
                             {
                                 path: 'report',
                                 component: report,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'scheme',
+                                component: scheme,
                                 meta: {
                                     keepAlive: false
                                 }
