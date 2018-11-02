@@ -103,6 +103,11 @@
             <el-table :data="flowTableList.list" style="width: 100%">
 				<el-table-column prop="companyName" label="客户公司" width="140" fixed></el-table-column>
                 <el-table-column prop="appName" label="商户名称" width="140" fixed></el-table-column>
+                <el-table-column prop="salesList" label="关联销售" width="120">
+                    <template slot-scope="scope">
+                        <div v-for="e in scope.row.salesList" :key="e.id">{{e.name}}</div>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="outOrderNo" label="客户订单号" width="120"></el-table-column>
                 <el-table-column prop="serviceCompanyName" label="服务公司" width="140"></el-table-column>
 				<el-table-column prop="subServiceCompanyName" label="转包服务公司" width="140"></el-table-column>7
@@ -139,6 +144,7 @@
                 <el-table-column prop="costTimeName" label="发放时长(秒)" width="140">
                 </el-table-column>
                 <el-table-column prop="notifyStateName" label="通知用户状态" width="120"></el-table-column>
+                <el-table-column prop="memo" label="款项属性" width="120"></el-table-column>
             </el-table>
         </div>
 

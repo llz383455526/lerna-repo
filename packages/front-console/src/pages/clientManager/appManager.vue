@@ -13,50 +13,58 @@
 	        <div class="box">
             	<el-row :gutter="20">
             	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">企业名称</el-col><el-col :span="10">{{msg.fullName}}</el-col>
-	        		  </el-col>
+	        			<el-col :span="5" class="right">企业名称</el-col><el-col :span="10">{{msg.fullName}}</el-col>
+	        		</el-col>
             	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">Company ID</el-col><el-col :span="10">{{msg.id}}</el-col>
+	        			<el-col :span="5" class="right">Company ID</el-col><el-col :span="10">{{msg.id}}</el-col>
 	        		</el-col>
             	</el-row>
 	        	  <el-row :gutter="20">
             	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">企业简称</el-col><el-col :span="10">{{msg.name}}</el-col>
-	        		  </el-col>
+	        			<el-col :span="5" class="right">企业简称</el-col><el-col :span="10">{{msg.name}}</el-col>
+	        		</el-col>
             	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">创建人</el-col><el-col :span="10">{{msg.createByName}}</el-col>
+	        			<el-col :span="5" class="right">创建人</el-col><el-col :span="10">{{msg.createByName}}</el-col>
 	        		</el-col>
             	</el-row>
 	        	  <el-row :gutter="20">
             	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">企业地址</el-col><el-col :span="10">{{msg.areaName}}</el-col>
-	        		  </el-col>
+	        			<el-col :span="5" class="right">企业地址</el-col><el-col :span="10">{{msg.areaName}}</el-col>
+	        		</el-col>
             	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">创建时间</el-col><el-col :span="10">{{msg.createTime}}</el-col>
+	        			<el-col :span="5" class="right">创建时间</el-col><el-col :span="10">{{msg.createTime}}</el-col>
 	        		</el-col>
             	</el-row>
 	        	  <el-row :gutter="20">
             	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">企业类型</el-col><el-col :span="10">{{msg.custom ? '客户' : msg.service ? '服务商' : '' }}</el-col>
-	        		  </el-col>
+	        			<el-col :span="5" class="right">企业类型</el-col><el-col :span="10">{{msg.custom ? '客户' : msg.service ? '服务商' : '' }}</el-col>
+	        		</el-col>
             	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">更新人</el-col><el-col :span="10">{{msg.updateByName}}</el-col>
+	        			<el-col :span="5" class="right">更新人</el-col><el-col :span="10">{{msg.updateByName}}</el-col>
 	        		</el-col>
             	</el-row>
 	        	  <el-row :gutter="20">
             	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">更新时间</el-col><el-col :span="10">{{msg.updateTime}}</el-col>
+	        			<el-col :span="5" class="right">更新时间</el-col><el-col :span="10">{{msg.updateTime}}</el-col>
 	        		</el-col>
             	</el-row>
 	        	  <el-row :gutter="20">
             	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">注册日期</el-col><el-col :span="10">{{msg.registerDate}}</el-col>
-	        		  </el-col>
+	        			<el-col :span="5" class="right">注册日期</el-col><el-col :span="10">{{msg.registerDate}}</el-col>
+	        		</el-col>
             	</el-row>
 	        	<el-row :gutter="20">
             	    <el-col :span="10">
-	        			  <el-col :span="5" class="right">负责人</el-col><el-col :span="10">{{msg.chargeByName}}</el-col>
-	        		  </el-col>
+	        			<el-col :span="5" class="right">负责人</el-col><el-col :span="10">{{msg.chargeByName}}</el-col>
+	        		</el-col>
+            	</el-row>
+                <el-row :gutter="20">
+            	    <el-col :span="10">
+	        			<el-col :span="5" class="right">关联销售</el-col>
+                        <el-col :span="10">
+                            <span v-for="e in msg.salesList" :key="e.id" class="mr8">{{e.name}}</span>
+                        </el-col>
+	        		</el-col>
             	</el-row>
 	        </div>
             <el-button style="margin-top: 30px" type="primary" @click="add">添加商户</el-button>
@@ -151,12 +159,57 @@
                     value-format="yyyy-MM-dd">
                   </el-date-picker>
               </el-form-item>
+              <el-form-item label="关联销售" prop="salesList">
+                <el-button type="primary" @click="show = true">添加</el-button>
+                <el-table :data="cform.salesList" class="form_input">
+                    <el-table-column label="姓名" prop="name"></el-table-column>
+                    <el-table-column label="手机号" prop="mobilephone"></el-table-column>
+                    <el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button type="text" @click="deleteSale(scope.$index)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-form-item>
           </el-form>
           <span class="form_footer" slot="footer">
               <el-button @click="upDate" type="primary" size="small">保存</el-button>
               <el-button @click="coshow = false" size="small">关闭</el-button>
           </span>
       </el-dialog>
+      <el-dialog title="添加" :visible.sync="show">
+            <el-form :model="queryForm" size="small" :inline="true">
+                <el-form-item label="姓名/电话：">
+                    <el-input v-model="queryForm.accountInfo" class="form_input200"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button @click="queryForm.accountInfo = ''">清除</el-button>
+                    <el-button type="primary" @click="cquery">查询</el-button>
+                </el-form-item>
+            </el-form>
+            <el-table :data="result.list">
+                <el-table-column label="姓名" prop="name"></el-table-column>
+                <el-table-column label="电话" prop="mobilephone"></el-table-column>
+                <el-table-column label="操作">
+                    <template slot-scope="scope">
+                        <el-button type="text" size="mini" v-if="isHas(scope.row)" @click="addSale(scope.row)">添加</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <div class="page" v-show="result.total / queryForm.pageSize > 1">
+                <el-pagination
+                    background
+                    layout="prev, pager, next"
+                    :page-size="queryForm.pageSize"
+                    :total="result.total"
+                    @current-change="cquery"
+                    :currentPage="queryForm.page">
+                </el-pagination>
+            </div>
+            <span slot="footer">
+                <el-button size="small" type="primary" @click="show = false">关闭</el-button>
+            </span>
+        </el-dialog>
       <el-dialog title="添加应用" :visible.sync="eshow" width="70%">
           <el-form label-width="120px" :rules="rules" :model="aform">
               <el-form-item label="商户名称" size="small">
@@ -260,6 +313,13 @@ export default {
       baseUrl: baseUrl,
       fullName: '',
       cform: {},
+      show: false,
+      queryForm: {
+          accountInfo: '',
+          pageSize: 5,
+          page: 1
+      },
+      result: {},
       crules: {
           fullName: [
           {
@@ -401,12 +461,37 @@ export default {
     this.getDetail()
     this.getPhone();
     this.createId();
+    this.cquery();
     this.authCode = localStorage.getItem("authCode");
   },
 //   mounted() {
 // 	  this.getList()
 //   },
   methods: {
+    cquery(a) {
+        if(isNaN(a)) {
+            a = 1
+        }
+        this.queryForm.page = a
+        post('/api/sysmgr-web/user/list', this.queryForm).then(data => {
+            this.result = data
+        })
+    },
+    addSale(a) {
+        this.cform.salesList.push(a)
+    },
+    isHas(a) {
+        var arr = []
+        arr = this.cform.salesList.filter(e => {
+            return e.id == a.id
+        })
+        return !arr.length
+    },
+    deleteSale(a) {
+        console.log(a)
+        this.cform.salesList.splice(a, 1)
+    },
+    // -------------------------------------------------
     getDetail() {
         get('/api/sysmgr-web/company/get-company-detail', {
           companyId: this.form.companyId
@@ -454,13 +539,26 @@ export default {
             chargeByName: this.msg.chargeByName,
             legalPerson: this.msg.legalPerson,
             areaName: this.msg.areaName,
-            registerDate: this.msg.registerDate
+            registerDate: this.msg.registerDate,
+            salesList: this.msg.salesList || []
         }
     },
     upDate() {
         this.$refs['cform'].validate((valid) => {
             if(valid) {
-                post('/api/sysmgr-web/company/edit-company', this.cform).then(data => {
+                var cform = JSON.parse(JSON.stringify(this.cform))
+                if(cform.salesList) {
+                    var salesList = []
+                    cform.salesList.forEach(e => {
+                        salesList.push({
+                            id: e.id,
+                            name: e.name,
+                            mobilephone: e.mobilephone
+                        })
+                    })
+                    cform.salesList = salesList
+                }
+                post('/api/sysmgr-web/company/edit-company', cform).then(data => {
                     this.$message({
                         type: 'success',
                         message: '更改成功！'
@@ -717,5 +815,8 @@ export default {
 }
 .content {
   margin-left: 30px;
+}
+.mr8 {
+    margin-right: 8px;
 }
 </style>
