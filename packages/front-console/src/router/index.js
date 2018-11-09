@@ -69,6 +69,7 @@ let serviceInvoiceManager = r => require.ensure([], () => r(require('../pages/co
 
 let clientManager = r => require.ensure([], () => r(require('../pages/clientManager/clientManager')), 'clientManager')
 let appManager = r => require.ensure([], () => r(require('../pages/clientManager/appManager')), 'appManager')
+let appExamine = r => require.ensure([], () => r(require('../pages/clientManager/appExamine')), 'appExamine')
 let appDetail = r => require.ensure([], () => r(require('../pages/clientManager/appDetail')), 'appDetail')
 let addClient = r => require.ensure([], () => r(require('../pages/clientManager/addClient')), 'addClient')
 let addApp = r => require.ensure([], () => r(require('../pages/clientManager/addApp')), 'addApp')
@@ -666,6 +667,10 @@ export default [
                             {
                                 path: 'appManager',
                                 component: appManager
+                            },
+                            {
+                                path: 'appExamine',
+                                component: appExamine
                             },
                             {
                                 path: 'appDetail',

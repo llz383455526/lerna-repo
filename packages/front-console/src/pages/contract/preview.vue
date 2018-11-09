@@ -30,7 +30,7 @@
             <el-col :span="4" style="text-align: right; margin-right: 20px;">结算日期：</el-col>
             <el-col :span="8">{{detail.settleExp}}</el-col>
         </el-row> -->
-        <el-row class="mb15" style="font-weight: normal;">
+        <el-row class="mb15" style="font-weight: normal;" v-if="!isExamine">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">服务费是否预开：</el-col>
             <el-col :span="8">{{detail.prePayType == 1 ? `是（${detail.prePayContent.secondType == 'real' ? '实发金额' : '应发金额'} * ${detail.prePayContent.serviceFeeRate}%）` : '否'}}</el-col>
         </el-row>
@@ -38,7 +38,7 @@
             <el-col :span="4" style="text-align: right; margin-right: 20px;">开票类型：</el-col>
             <el-col :span="8">{{detail.invoiceTypeName}}</el-col>
         </el-row>
-        <el-row class="mb15" style="font-weight: normal;">
+        <el-row class="mb15" style="font-weight: normal;" v-if="!isExamine">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">服务费收费比例/金额：</el-col>
             <el-col :span="8" v-if="detail.serviceFeeContent && detail.serviceFeeContent.serviceFeeType">
                 <template v-if="detail.serviceFeeContent.serviceFeeType == 'dummy'">
@@ -150,8 +150,8 @@
                 </el-table-column>
             </el-table>
         </div>
-        <h4 class="ml50 mt50">关联企业名称</h4>
-        <div class="flex">
+        <h4 class="ml50 mt50" v-if="!isExamine">关联企业名称</h4>
+        <div class="flex" v-if="!isExamine">
             <div v-for="(e, i) in detail.branchs" :key="e.branchId">
                 {{e.branchName}}
             </div>
@@ -168,7 +168,7 @@
             return {
                 tableList: [],
                 detail: {},
-                invoiceMsg: {}
+                isExamine: false
             }
         },
         methods: {
@@ -194,30 +194,14 @@
                 let self = this;
                 get(url).then(data => {
                     self.customerCompaniesList = data;
-                    this.getInvoice()
                 })
-            },
-            getInvoice() {
-                var id = ''
-                this.customerCompaniesList.forEach(e => {
-                    if(e.companyName == this.detail.customerName) {
-                        id = e.companyId
-                    }
-                })
-                get('/api/invoice-web/custom-company/detail', {
-                    id: id
-                }).then(data => {
-                    if(data) {
-                        this.invoiceMsg = data
-                    }
-                })
-            },
+            }
         },
         created() {
             this.getAttachments(this.$route.query.contractId);
             this.getDetail(this.$route.query.contractId)
-            // this. getOptionCustomerCompanies()
-        },
+            this.isExamine = this.$route.query.examine ? true : false
+        }
     }
 </script>
 

@@ -16,9 +16,9 @@
                 <el-button type="primary" @click="query">查询</el-button><el-button @click="clear">重置</el-button>
             </el-form-item>
         </el-form>
-    	  <router-link to="addClient">
-    		  <el-button size="small" type="primary">新建企业</el-button>
-    	  </router-link>
+    	<router-link to="addClient" v-if="checkRight(permissions, 'sysmgr-web:/company/add-company')">
+    	    <el-button size="small" type="primary">新建企业</el-button>
+    	</router-link>
         <el-table class="table" :data="tableData" border="">
             <el-table-column prop="name" label="企业简称"></el-table-column>
             <el-table-column prop="fullName" label="企业全称"></el-table-column>
@@ -34,8 +34,8 @@
             <el-table-column prop="updateByName" label="更新人"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-    				<el-button v-if="scope.row.service" @click="serverManager(scope.row)" type="text">管理</el-button>
-                    <el-button v-else @click="appManager(scope.row)" type="text">管理</el-button>
+                    <el-button v-if="checkRight(permissions, 'sysmgr-web:/company/edit-company')" @click="appManager(scope.row)" type="text">管理</el-button>
+                    <el-button @click="appExamine(scope.row)" type="text">查看</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -50,6 +50,7 @@
     </div>
 </template>
 <script>
+import {mapGetters} from 'vuex';
 import { get, post, formPost, postButNoErrorToast } from "../../store/api";
 export default {
   data() {
@@ -67,6 +68,11 @@ export default {
       remoteData: [],
       activeData: ''
     };
+  },
+  computed: {
+      ...mapGetters({
+          permissions: 'permissions'
+      })
   },
   activated() {
       this.activeData && (this.form = JSON.parse(this.activeData))
@@ -131,7 +137,12 @@ export default {
       localStorage.setItem('appId', e.id)
       localStorage.setItem('fullName', e.fullName)
       this.$router.push("/main/clientManager/appManager");
-	},
+    },
+    appExamine(e) {
+      localStorage.setItem('appId', e.id)
+      localStorage.setItem('fullName', e.fullName)
+      this.$router.push("/main/clientManager/appExamine");
+    },
 	serverManager(e) {
 	  localStorage.setItem('appId', e.id)
       localStorage.setItem('fullName', e.fullName)

@@ -1,8 +1,9 @@
 <template>
 
     <div class="main-container">
-        <div style="margin: 0 0 20px;">电子签约记录</div>
-
+        <div style="margin: 0 40px 20px 0; display: inline-block;">电子签约记录</div>
+        <el-button size="small" type="primary" @click="$router.back()">返回</el-button>
+        <!-- <el-button type="small" type="primary" @click="$router.back()">返回</el-button> -->
         <el-tabs v-model="activeTab" @tab-click="handleTabClick">
             <el-tab-pane label="全部" name="first"></el-tab-pane>
             <el-tab-pane label="签约完成" name="second"></el-tab-pane>

@@ -5,11 +5,11 @@
                 客户管理
             </el-breadcrumb-item>
             <el-breadcrumb-item>
-                {{isExamine ? '查看' : '应用管理'}}
+                查看
             </el-breadcrumb-item>
         </el-breadcrumb>
         <div class="content">
-            <div class="title">基本信息</div><el-button v-if="!isExamine" type="primary" style="margin-left: 120px;" size="small" @click="editCompany">编辑</el-button>
+            <div class="title">基本信息</div>
     	    <div class="box">
                 <el-row :gutter="20">
                     <el-col :span="10">
@@ -67,7 +67,6 @@
     	        	</el-col>
                 </el-row>
     	    </div>
-            <el-button style="margin-top: 30px" type="primary" @click="add">添加商户</el-button>
             <el-table class="table" :data="tableData" border="">
                 <el-table-column prop="appName" label="商户名称"></el-table-column>
                 <el-table-column label="商户状态">
@@ -77,22 +76,6 @@
                 </el-table-column>
     	      	<el-table-column prop="updateByName" label="更新人"></el-table-column>
     	      	<el-table-column prop="updateTime" label="更新时间"></el-table-column>
-                <el-table-column label="操作">
-                    <template slot-scope="scope">
-                        <el-button @click="edit(scope.row)" type="text">
-                            配置
-                        </el-button>
-                        <el-button v-show="scope.row.isEnable" @click="set(scope.row)" type="text">
-                            关闭
-                        </el-button>
-                        <el-button v-show="!scope.row.isEnable" @click="set(scope.row)" type="text">
-                            开启
-                        </el-button>
-                        <el-button v-show="scope.row.status == 'dealing'" @click="reviewDialog = true,reviewForm.appId = scope.row.appId" type="text">
-                            上线审核
-                        </el-button>
-                    </template>
-                </el-table-column>
             </el-table>
             <ayg-pagination
                 v-if="total"
@@ -106,11 +89,8 @@
         <div class="content">
             <div class="title">签约信息</div>
             <el-table class="table" :data="contractData.list" border="">
-                <el-table-column label="合同编号" prop="id"></el-table-column>
                 <el-table-column label="签约服务商" prop="serviceCompanyName"></el-table-column>
                 <el-table-column label="结算方式" prop="settleTypeName"></el-table-column>
-                <el-table-column label="服务费比例" prop="serviceFeeName"></el-table-column>
-                <el-table-column label="发票类型" prop="invoiceTypeName"></el-table-column>
                 <el-table-column label="合同起止时间" prop="lastUpdateAt">
                     <template slot-scope="scope">
                         {{scope.row.contractStartDate}} 至 {{scope.row.contractEndDate}}
@@ -131,6 +111,35 @@
                 :currentSize="contractForm.pageSize"
                 v-on:handleCurrentChange="contractQuery"
                 :currentPage="contractForm.page">
+            </ayg-pagination>
+        </div>
+        <div class="content">
+            <div class="title">C端协议信息</div>
+            <el-table class="table" v-if="msgData.data" :data="msgData.data">
+                <el-table-column label="商户名称" prop="platformName"></el-table-column>
+                <el-table-column label="合同模板名称" prop="name"></el-table-column>
+                <el-table-column label="服务商名称" prop="serviceCompanyName">
+                    <template slot-scope="scope">
+                        <div v-for="(e, i) in scope.row.serviceCompanyName" :key="i">{{e}}</div>
+                    </template>
+                </el-table-column>
+                <el-table-column label="对接方式" prop="accessTypeDesc"></el-table-column>
+                <el-table-column label="操作">
+                    <template slot-scope="scope">
+                        <el-button type="text" @click="prevFile(scope.row)">预览协议原件</el-button>
+                        <router-link :to="`/main/eContract/index?templateName=${scope.row.name}`">
+                            <el-button type="text">查看签约记录</el-button>
+                        </router-link>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <ayg-pagination
+                v-if="msgData.total"
+                :total="msgData.total"
+                v-on:handleSizeChange="msgSizeChange"
+                :currentSize="msgForm.pageSize"
+                v-on:handleCurrentChange="msgQuery"
+                :currentPage="msgForm.pageNo">
             </ayg-pagination>
         </div>
         <el-button class="back" type="primary" size="small" @click="$router.back()">返回</el-button>
@@ -176,7 +185,7 @@
                 <el-button @click="coshow = false" size="small">关闭</el-button>
             </span>
         </el-dialog>
-        <el-dialog title="添加" :visible.sync="show">
+        <!-- <el-dialog title="添加" :visible.sync="show">
             <el-form :model="queryForm" size="small" :inline="true">
                 <el-form-item label="姓名/电话：">
                     <el-input v-model="queryForm.accountInfo" class="form_input200"></el-input>
@@ -208,8 +217,8 @@
             <span slot="footer">
                 <el-button size="small" type="primary" @click="show = false">关闭</el-button>
             </span>
-        </el-dialog>
-        <el-dialog title="添加应用" :visible.sync="eshow" width="70%">
+        </el-dialog> -->
+        <!-- <el-dialog title="添加应用" :visible.sync="eshow" width="70%">
             <el-form label-width="120px" :rules="rules" :model="aform">
                 <el-form-item label="商户名称" size="small">
                     {{fullName}}
@@ -245,8 +254,8 @@
                 <el-button @click="sureSet" type="primary" size="small">确定</el-button>
                 <el-button @click="sshow = false" size="small">取消</el-button>
             </span>
-        </el-dialog>
-        <el-dialog title="获取验证码" :visible.sync="cshow" width="70%">
+        </el-dialog> -->
+        <!-- <el-dialog title="获取验证码" :visible.sync="cshow" width="70%">
             <span class="tip">为了保障您的账号安全，请完成一下身份验证。</span>
             <el-form label-width="150px">
                 <el-form-item label="手机号码：">
@@ -267,8 +276,8 @@
                 <el-button @click="submit" type="primary">提交</el-button>
                 <el-button @click="cshow = false" type="warning">关闭</el-button>
             </span>
-        </el-dialog>
-        <el-dialog title="上线审核" :visible.sync="reviewDialog" width="40%">
+        </el-dialog> -->
+        <!-- <el-dialog title="上线审核" :visible.sync="reviewDialog" width="40%">
             <el-form :model="reviewForm" ref="reviewFormValidate" :rules="reviewRules" label-width="100px">
                 <el-form-item label="是否上线：" prop="approve">
                     <el-switch v-model="reviewForm.approve"></el-switch>
@@ -281,7 +290,7 @@
                 <el-button @click="reviewDialog = false">取 消</el-button>
                 <el-button type="primary" @click="review('reviewFormValidate')">确 定</el-button>
             </div>
-        </el-dialog>
+        </el-dialog> -->
     </div>
 </template>
 <script>
@@ -460,21 +469,22 @@ export default {
         this.company = data;
       });
       this.getDetail()
-      this.getPhone();
+    //   this.getPhone();
       this.createId();
-      this.cquery();
+    //   this.cquery();
       this.authCode = localStorage.getItem("authCode");
+      this.msgQuery()
     },
     methods: {
-      cquery(a) {
-          if(isNaN(a)) {
-              a = 1
-          }
-          this.queryForm.page = a
-          post('/api/sysmgr-web/user/list', this.queryForm).then(data => {
-              this.result = data
-          })
-      },
+    //   cquery(a) {
+    //       if(isNaN(a)) {
+    //           a = 1
+    //       }
+    //       this.queryForm.page = a
+    //       post('/api/sysmgr-web/user/list', this.queryForm).then(data => {
+    //           this.result = data
+    //       })
+    //   },
       addSale(a) {
           this.cform.salesList.push(a)
       },
@@ -630,11 +640,11 @@ export default {
           this.aform.appId = localStorage.getItem("appId")
         }
       },
-      getPhone() {
-        post("/api/sysmgr-web/company-app/get-two-step-phone").then(data => {
-          this.phone = data;
-        });
-      },
+    //   getPhone() {
+    //     post("/api/sysmgr-web/company-app/get-two-step-phone").then(data => {
+    //       this.phone = data;
+    //     });
+    //   },
       guid() {
         function S4() {
           return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -733,6 +743,27 @@ export default {
               }
           })
       },
+      //   -----------------------------------
+      msgQuery(a) {
+          if(isNaN(a)) {
+              a = 1
+          }
+          this.msgForm.pageNo = a
+          post('/api/econtract/template/client-signqry', this.msgForm).then(data => {
+            this.msgData = data
+          })
+      },
+      msgSizeChange(a) {
+          this.msgForm.pageSize = a
+          this.msgQuery()
+      },
+      prevFile(a) {
+        //   /api/econtract/template/download?fileName=${}
+        console.log(a.templateFileName)
+        a.templateFileName.forEach(e => {
+            window.open(`/api/econtract/template/preview?templateId=${e.templateId}`)
+        })
+      }
     }
 };
 </script>
