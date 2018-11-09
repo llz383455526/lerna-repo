@@ -85,17 +85,8 @@
                             {{item}}
                         </div>
                     </div>
-
-                    <!--{{scope.row.partys[0].userName}}-->
                 </template>
             </el-table-column>
-            <!--<el-table-column label="签约对象" v-if="tabName == 'contract'">
-                <template slot-scope="scope">
-                    <div v-for="(e, i) in scope.row.partys">
-                        {{partys[i]}}：{{e.userName ? e.userName : '个人'}}
-                    </div>
-                </template>
-            </el-table-column>-->
             <el-table-column label="对接方式" prop="accessTypeDesc"></el-table-column>
             <el-table-column label="是否发短信" prop="smsTypeDesc"></el-table-column>
             <el-table-column label="短信引导内容" prop="signSmsTypeDesc"></el-table-column>
@@ -111,7 +102,6 @@
                             <a target="_bank" :href="`${baseUrl}/api/econtract/template/download?fileName=${item}`">{{item}}</a>
                         </div>
                     </div>
-                    <!--<a target="_bank" :href="`${baseUrl}/api/econtract/template/download?fileName=${scope.row.fname}`">{{scope.row.fname}}</a>-->
                 </template>
             </el-table-column>
             <el-table-column label="状态" prop="enableDesc"></el-table-column>
@@ -154,11 +144,14 @@ export default {
             objects: [],
             baseUrl: baseUrl,
             partys: ['甲方', '乙方', '丙方'],
-            tabName: 'contract'
+            tabName: 'contract',
+            activeData: ''
         }
     },
-    mounted() {
-        this.query()
+    activated() {
+        this.activeData && (this.form = JSON.parse(this.activeData))
+        this.query(sessionStorage.getItem('resetPage') ? 1 : this.form.pageNo)
+        sessionStorage.removeItem('resetPage')
     },
     methods: {
         remoteMethod(a) {
@@ -201,6 +194,7 @@ export default {
             }
             this.form.pageNo = a
             let url = this.tabName === 'contract' ? '/api/econtract/template/qrylist' : '/api/econtract/template-group/list'
+            this.activeData = JSON.stringify(this.form)
             post(url, this.form).then(data => {
                 this.list = data.data
                 this.total = data.total

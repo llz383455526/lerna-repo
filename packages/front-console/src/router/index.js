@@ -137,54 +137,111 @@ export default [
                 children: [
                     {
                         path: 'accountManager',
-                        component: account,
-                        children: [{
-                            path: 'payOrder',
-                            component: payOrder
-                        }, {
-							path:'offlineSalaryUpload',
-							component:offlineSalaryUpload
-						}, {
-							path:'offlineSalaryImport',
-							component:offlineSalaryImport
-						}, {
-							path:'offlineSalaryManager',
-							component:offlineSalaryManager
-							
-						}, {
-                            path: 'index',
-                            component: accountIndex
-                        }, {
-                            path: 'payOrderReject',
-                            component: payOrderReject
-                        }, {
-                            path: 'amountManager',
-                            component: amountManager
-                        }, {
-                            path: 'companyCreditRecord',
-                            component: companyCreditRecord
-                        }, {
-                            path: 'creditBill',
-                            component: creditBill
-                        }, {
-                            path: 'fundDetail',
-                            component: fundDetail
-                        }, {
-                            path: 'payManager',
-                            component: payManager
-                        }, {
-                            path: 'regulation',
-                            component: regulation
-                        }, {
-                            path: 'clientDetail',
-                            component: clientDetail
-                        }, {
-                            path: 'serviceDetail',
-                            component: serviceDetail
-                        }, {
-                            path: 'assignDetail',
-                            component: assignDetail
-                        }]
+                        component: index,
+                        children: [
+                            {
+                                path: 'payOrder',
+                                component: payOrder,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+						    	path:'offlineSalaryUpload',
+                                component:offlineSalaryUpload,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+						    	path:'offlineSalaryImport',
+                                component:offlineSalaryImport,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+						    	path:'offlineSalaryManager',
+						    	component:offlineSalaryManager,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'index',
+                                component: accountIndex
+                            },
+                            {
+                                path: 'payOrderReject',
+                                component: payOrderReject,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'amountManager',
+                                component: amountManager,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'companyCreditRecord',
+                                component: companyCreditRecord,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'creditBill',
+                                component: creditBill,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'fundDetail',
+                                component: fundDetail,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'payManager',
+                                component: payManager,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'regulation',
+                                component: regulation,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'clientDetail',
+                                component: clientDetail,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'serviceDetail',
+                                component: serviceDetail,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'assignDetail',
+                                component: assignDetail,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            }
+                        ]
                     }, {
                         path: 'amountManager',
                         component: index,
@@ -203,9 +260,9 @@ export default [
                             {
                                 path: 'orderManager',
                                 component: orderManager,
-                                meta: {
-                                    keepAlive: false
-                                }
+                                // meta: {
+                                //     keepAlive: false
+                                // }
                             },
                             {
                                 path: 'statistics',
@@ -286,7 +343,7 @@ export default [
                                 path: 'contractList',
                                 component: contractList,
                                 meta: {
-                                    keepAlive: false
+                                    keepAlive: true
                                 }
                             }, {
                                 path: 'contractCreate',
@@ -369,7 +426,7 @@ export default [
                         	path: 'accountList',
 	                        component: accountList,
 	                        meta: {
-		                        keepAlive: false
+		                        keepAlive: true
 	                        }
                         }, {
 	                        path: 'accountCreate',
@@ -425,7 +482,7 @@ export default [
                                 path: 'contractManager',
                                 component: contractManager,
                                 meta: {
-                                    keepAlive: false
+                                    keepAlive: true
                                 }
                             },
                             {
@@ -460,7 +517,7 @@ export default [
                                 path: 'signManager',
                                 component: signManager,
                                 meta: {
-                                    keepAlive: false
+                                    keepAlive: true
                                 }
                             },
                             {
@@ -668,31 +725,40 @@ export default [
                     {
                         path: 'reconciliationCenter',
                         component: index,
-                        children: [{
-                            path: 'invoiceList',
-                            component: invoiceListNew
-                        }, {
-                            path: 'invoiceDetail',
-                            component: invoiceDetail
-                        }, {
-                            path: 'contractList',
-                            component: contractListNew
-                        }, {
-                            path: 'contractDetail',
-                            component: contractDetail
-                        }, {
-                            path: 'rechargeList',
-                            component: rechargeList
-                        }, {
-                            path: 'rechargeDetail',
-                            component: rechargeIndexNew
-                        }, {
-                            path: 'payOrder',
-                            component: payOrderNew
-                        }, {
-                            path: 'billList',
-                            component: billList
-                        }]
+                        children: [
+                            {
+                                path: 'invoiceList',
+                                component: invoiceListNew
+                            },
+                            {
+                                path: 'invoiceDetail',
+                                component: invoiceDetail
+                            },
+                            {
+                                path: 'contractList',
+                                component: contractListNew
+                            },
+                            {
+                                path: 'contractDetail',
+                                component: contractDetail
+                            },
+                            {
+                                path: 'rechargeList',
+                                component: rechargeList
+                            },
+                            {
+                                path: 'rechargeDetail',
+                                component: rechargeIndexNew
+                            },
+                            {
+                                path: 'payOrder',
+                                component: payOrderNew
+                            },
+                            {
+                                path: 'billList',
+                                component: billList
+                            }
+                        ]
                     },
                     {
                         path: 'individual',

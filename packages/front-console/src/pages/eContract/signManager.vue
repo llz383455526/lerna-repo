@@ -146,12 +146,18 @@ export default {
             total: 0,
             range: [],
             partys: ['甲方', '乙方', '丙方'],
-	        tabName: 'contract'
+            tabName: 'contract',
+            activeData: ''
         }
     },
-    mounted() {
-        Object.assign(this.form, this.$route.query)
-        this.query()
+    activated() {
+        if(JSON.stringify(this.$route.query) == '{}') {
+            this.activeData && (this.form = JSON.parse(this.activeData))
+        }
+        else {
+            Object.assign(this.form, this.$route.query)
+        }
+        this.query(this.form.pageNo)
     },
     methods: {
         getName(a) {
@@ -179,7 +185,8 @@ export default {
                 a = 1
             }
             this.form.pageNo = a
-	        let url = this.tabName === 'contract' ? '/api/econtract/template/signqry' : '/api/econtract/template-group/signqry'
+            let url = this.tabName === 'contract' ? '/api/econtract/template/signqry' : '/api/econtract/template-group/signqry'
+            this.activeData = JSON.stringify(this.form)
             post(url, this.form).then(data => {
                 this.list = data.data
                 this.total = data.total

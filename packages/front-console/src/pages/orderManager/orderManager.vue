@@ -254,8 +254,13 @@ export default {
         orderId: "",
         channelCode: "",
         channelAccount: ""
-      }
+      },
+      activeData: ''
     };
+  },
+  activated() {
+      this.activeData && (this.form = JSON.parse(this.activeData))
+      this.query(this.form.page);
   },
   mounted() {
     get("/api/console-dlv/option/get-by-type", {
@@ -268,7 +273,6 @@ export default {
     }).then(data => {
       this.type = data;
     });
-    this.query();
   },
   methods: {
     query(a) {
@@ -289,6 +293,7 @@ export default {
         this.form.acceptState = "";
         this.form.confirmState = "";
       }
+      this.activeData = JSON.stringify(this.form)
       post(
         "/api/console-dlv/company/salary-online-order/query-salary-order",
         this.form

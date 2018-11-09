@@ -429,7 +429,8 @@
                     name: '',
                     orderBy: '',
                     page: 0,
-                    pageSize: 0
+                    pageSize: 0,
+                    status: 1
                 };
                 let self = this;
                 post(url, param).then(res => {

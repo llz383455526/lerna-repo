@@ -556,6 +556,7 @@ export default {
                     type: 'success',
                     message: '修改成功！'
                 })
+                sessionStorage.setItem('resetPage', '1')
                 this.back()
             })
         },

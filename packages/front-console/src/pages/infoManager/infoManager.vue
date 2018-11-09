@@ -90,7 +90,7 @@
       </el-form>
       <span slot="footer" class="form_footer">
         <el-button type="primary" @click="sure">确定</el-button>
-        <el-button type="warning" @click="query();show = false">取消</el-button>
+        <el-button @click="query(form.page);show = false">取消</el-button>
       </span>
     </el-dialog>
   </div>

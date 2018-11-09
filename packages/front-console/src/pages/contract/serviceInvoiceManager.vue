@@ -3,14 +3,23 @@
     <el-form :inline="true" size="small">
         <el-form-item label="服务类型">
             <el-input v-model="searchForm.serviceName" class="in_input" placeholder="请输入名称"></el-input>
+        </el-form-item>
+        <el-form-item label="状态">
+            <el-select v-model="searchForm.status">
+                <el-option v-for="e in statusList" :key="e.value" :value="e.value" :label="e.text"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item>
             <span style="padding-left :20px;" >
                 <el-button type="primary" @click="search">查询</el-button><el-button @click="clear">清除</el-button>
             </span>
         </el-form-item>
-     
     </el-form>
 
-    <el-button size="small" type="primary" @click="add">新增</el-button>
+    <el-button class="mr20" size="small" type="primary" @click="add">新增</el-button>
+    <router-link to="/main/infoManager/categoryManager">
+        <el-button size="small" type="primary">开票类目管理</el-button>
+    </router-link>
 
     <el-table :data="page.list" style="width: 100%;margin-top: 20px;">
         <el-table-column prop="seqNo" label="序号"></el-table-column>
@@ -23,10 +32,11 @@
                 </template>
             </template>
         </el-table-column>
+        <el-table-column prop="statusName" label="状态"></el-table-column>
 		<el-table-column align="center" label="操作" width="160">
 			<template slot-scope="scope">
 				<el-button @click="edit(scope.row)" type="text" size="medium" style="padding:0;">修改</el-button>
-                <el-button @click="remove(scope.row.id)" type="text" size="medium" style="padding:0;">删除</el-button>
+                <el-button @click="toggle(scope.row)" type="text" size="medium" style="padding:0;">{{scope.row.status == 1 ? '禁用' : '启用'}}</el-button>
             </template>
 		</el-table-column>
     </el-table>
@@ -80,6 +90,7 @@ export default {
         return {
             searchForm: {
                 serviceName: '',
+                status: '',
                 page: 1,
                 pageSize: 10
             },
@@ -109,10 +120,8 @@ export default {
             editSubjects:[],
             currentPage: 1,
             pageSize: 10,
+            statusList: []
         }
-    },
-    created() {
-        this.search()
     },
     mounted() {
         let url = '/api/invoice-web/custom-invoice-subject/qry';
@@ -120,11 +129,17 @@ export default {
             name: '',
             orderBy: '',
             page: 0,
-            pageSize: 0
+            pageSize: 0,
+            status: 1
         };
         let self = this;
         post(url, param).then(data => {
             self.subjects = data.list;
+        })
+        get('/api/contract-web/commom/option?enumType=Status').then(data => {
+            this.statusList = data
+            this.searchForm.status = data[0].value
+            this.search()
         })
     },
     methods: {
@@ -155,11 +170,8 @@ export default {
             this.editForm.seqNo = ''
             this.editForm.subjects = [];
             this.editForm.serviceId = ''
-            console.log()
-            // this.$refs['editForm'].clearValidate()
         },
         edit(model){
-            console.log(model)
             this.editFormShow = true;
             this.editFormTitle = '服务类型修改';
             let tmp = [];
@@ -189,20 +201,33 @@ export default {
             })
             this.editForm.subjects = tmp;
         },
-        remove(id){
-            let param = {
-                serviceId: id,
-            };
-            this.$confirm('是否确定要删除?', '提示', {
+        // remove(id){
+        //     let param = {
+        //         serviceId: id,
+        //     };
+        //     this.$confirm('是否确定要删除?', '提示', {
+        //         confirmButtonText: '确定',
+        //         cancelButtonText: '取消',
+        //         type: 'warning'
+        //     }).then(() => {
+        //         let url = "/api/contract-web/service-mgr/delete-service-type";
+        //         let selt = this;
+        //         post(url, param).then(data => {
+        //             showNotify('success','操作成功！')
+        //             selt.search();
+        //         })
+        //     })
+        // },
+        toggle(a) {
+            this.$confirm(`是否确定要${a.status == 1 ? '禁用' : '启用'}?`, '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                let url = "/api/contract-web/service-mgr/delete-service-type";
-                let selt = this;
-                post(url, param).then(data => {
-                    showNotify('success','操作成功！')
-                    selt.search();
+                post('/api/contract-web/service-mgr/swich-service-type-status', {
+                    serviceId: a.id
+                }).then(data => {
+                    this.search()
                 })
             })
         },
@@ -238,6 +263,7 @@ export default {
         },
         clear() {
           this.searchForm.serviceName = ''
+          this.searchForm.status = ''
         },
      }
 }
@@ -276,6 +302,9 @@ export default {
 }
 .dpage{
     margin-top: 30px;
+}
+.mr20 {
+    margin-right: 20px;
 }
 </style>
 

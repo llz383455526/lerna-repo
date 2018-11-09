@@ -84,7 +84,7 @@
             v-on:handleSizeChange="sizeChange"
             v-on:handleCurrentChange="query">
         </ayg-pagination>
-        <el-dialog title="创建充值申请" @open="closeEditDialog" :before-close="closeEditDialog"  :visible.sync="dialogCreateVisible" width="50%">
+        <el-dialog title="创建充值申请" @open="closeEditDialog" :before-close="closeEditDialog"  :visible.sync="dialogCreateVisible" width="900px">
             <el-form :model="dialogCreateForm" :rules="dialogCreateFormRules" ref="dialogCreateForm">
                 <div class="input-container">
                     <div class="label">客户公司：<span>*</span></div>
@@ -183,23 +183,32 @@
                 <template v-if="!rechargeMsg">
                     <div class="input-container">
                         <div class="label">充值凭证：<span>*</span></div>
-                       <div class="input">
-                           <el-form-item prop="attachmentId">
-                               <el-upload
-                                    class="det"
-                                    ref="upload"
-                                    :show-file-list="false"
-                                    :action="`/api/sysmgr-web/file/upload`"
-                                    :auto-upload="false"
-                                    :on-change="getAttachment"
-                                    :multiple="false"
-                                    name="file"
-                                    accept=".jpg, .png">
-                                    <img v-if="attachmentUrl" :src="attachmentUrl" class="avatar">
-                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                                </el-upload>
-                           </el-form-item>
-                       </div>
+                        <div class="input auto">
+                            <div class="uploadBox" v-for="(e, i) in uploadList" @click.capture="currentIndex = i">
+                                <el-form-item prop="attachmentIds">
+                                    <el-upload
+                                        v-show="!uploadList[i].imageUrl"
+                                        class="det mb35"
+                                        ref="upload"
+                                        :show-file-list="false"
+                                        :action="`/api/sysmgr-web/file/upload`"
+                                        :auto-upload="false"
+                                        :on-change="getAttachment"
+                                        :multiple="true"
+                                        name="file"
+                                        accept=".jpg, .png">
+                                        <i class="el-icon-plus avatar-uploader-icon">
+                                            <div>可以同时上传多张</div>
+                                        </i>
+                                    </el-upload>
+                                    <div v-if="uploadList[i].imageUrl" class="avatar" :style="{'background-image': `url(${uploadList[i].imageUrl})`}">
+                                        <div class="magnify" @click="prevImg(uploadList[i].imageUrl)"></div>
+                                    </div>
+                                    <el-button type="text" v-show="uploadList[i].imageUrl" @click="reUpload()">重新上传</el-button><br>
+                                    <el-button type="text" @click="deleteImg()" v-show="(uploadList.length > 1 && uploadList.length -1 != i) || i == 9">删除</el-button>
+                                </el-form-item>
+                            </div>
+                        </div>
                     </div>
                     <div class="input-container">
                         <div class="label">备注：<span>*</span></div>
@@ -299,10 +308,9 @@
                 *收款总金额=充值到第三方渠道金额+服务费金额<br>
                 阶梯报价时，服务费金额按商定预收比例计算
             </div>
-            <!-- <div class="title">转账凭证</div> -->
-            <div class="det">
+            <div class="det" v-if="detail.customDownloadCodes">
                 <div style="float: left;">转账凭证：</div>
-                <img @click="showAttr = true" style="width: 300px" :src="`/api/sysmgr-web/file/download?downloadCode=${detail.customDownloadCode}`" alt="">
+                <div class="avatar mr20" v-for="(e, i) in detail.customDownloadCodes" @click="showAttr = true;attrIndex = i" :style="{'background-image': `url(/api/sysmgr-web/file/download?downloadCode=${e})`}"></div>
             </div>
             <div class="title">服务商信息</div>
             <div class="det">名称：{{detail.serviceCompanyName}}<div class="toggle" @click="showDetail = !showDetail">{{ showDetail ? '收起' : '展开'}}</div></div>
@@ -323,8 +331,7 @@
                     日发放限额：{{suggest.limitAvailBalance | formatMoney}}元&#x3000;当日已发：{{suggest.outAvailBalance | formatMoney}}元
                 </div>
             </template>
-            <!-- <div class="voucher"></div> -->
-            <template v-if="!detail.subServiceCompanyId && detail.state == 21 || detail.state == 30 && detail.financeDownloadCode">
+            <template v-if="!detail.subServiceCompanyId && (detail.state == 21 || (detail.state == 30 && detail.financeDownloadCode))">
                 <div class="title">渠道金额充值</div>
                 <div class="det">
                     <div style="float: left;">上传充值凭证：</div>
@@ -340,15 +347,12 @@
                         :multiple="false"
                         name="file"
                         accept=".jpg, .png">
-                        <!-- <img v-if="imageUrl" :src="imageUrl" class="avatar"> -->
-                        <!-- v-else  -->
                         <i class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
                     <img @click="showVoucher = true" style="width: 300px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${imageUrl}`" alt="">
                     &nbsp;<el-button type="text" class="clear" @click="clearImg">重新上传充值凭证</el-button>
                 </div>
             </template>
-            <!-- v-if="detail.state != 20 && detail.state != 40" -->
             <div class="det">备注：
                 <el-input size="small" v-model="memo" style="width: 300px" v-if="detail.state == 21 || detail.state == 20"></el-input>
                 <span v-else>{{detail.memo}}</span>
@@ -371,7 +375,7 @@
                     <div class="det">
                         <div style="float: left;">上传充值凭证：</div>
                         <el-upload
-                            v-if="!detail.financeDownloadCode"
+                            v-if="!imageUrl"
                             class="upload"
                             :file-list="fileList"
                             ref="upload"
@@ -382,11 +386,9 @@
                             :multiple="false"
                             name="file"
                             accept=".jpg, .png">
-                            <!-- <img v-if="imageUrl" :src="imageUrl" class="avatar"> -->
-                            <!-- v-else  -->
                             <i class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
-                        <img @click="showVoucher = true" style="width: 300px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${detail.financeDownloadCode}`" alt="">
+                        <img @click="showVoucher = true" style="width: 300px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${imageUrl}`" alt="">
                         &nbsp;<el-button type="text" class="clear" @click="clearImg">重新上传充值凭证</el-button>
                     </div>
                     <div class="title">充值凭证</div>
@@ -403,8 +405,6 @@
                             :multiple="false"
                             name="file"
                             accept=".jpg, .png">
-                            <!-- <img v-if="uploadUrl" :src="uploadUrl" class="avatar"> -->
-                            <!-- v-else -->
                             <i class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                         <img @click="showSub = true" style="width: 300px" v-else :src="`/api/sysmgr-web/file/download?downloadCode=${detail.subDownloadCode}`" alt="">
@@ -439,7 +439,8 @@
                 </template>
             </div>
         </el-dialog>
-        <div class="v-modal" v-if="detail" v-show="showAttr" @click="showAttr = false" :style="{ backgroundImage: `url(/api/sysmgr-web/file/download?downloadCode=${detail.customDownloadCode}`}"></div>
+        <div class="v-modal" v-show="showExa" @click="showExa = false" :style="prevUrl ? {'background-image': `url(${prevUrl})`} : ''"></div>
+        <div class="v-modal" v-if="detail && detail.customDownloadCodes" v-show="showAttr" @click="showAttr = false" :style="{ backgroundImage: `url(/api/sysmgr-web/file/download?downloadCode=${detail.customDownloadCodes[attrIndex]}`}"></div>
         <div class="v-modal" v-if="detail" v-show="showVoucher" @click="showVoucher = false" :style="{ backgroundImage: `url(/api/sysmgr-web/file/download?downloadCode=${detail.financeDownloadCode}`}"></div>
         <div class="v-modal" v-if="detail" v-show="showSub" @click="showSub = false" :style="{ backgroundImage: `url(/api/sysmgr-web/file/download?downloadCode=${detail.subDownloadCode}`}"></div>
     </div>
@@ -454,6 +455,7 @@ import { showNotify } from "../../plugin/utils-notify";
 import { showConfirm, showAlert } from "../../plugin/utils-message";
 import { baseUrl } from "../../config/address";
 import { get, post, importPost } from "../../store/api";
+import {showLoading, hideLoading} from '../../plugin/utils-loading'
 
 export default {
   name: "credit-bill",
@@ -473,7 +475,7 @@ export default {
         amount: "",
         purpose: "",
         serviceCompanyId: '',
-        attachmentId: '',
+        attachmentIds: [],
         smsOpen: true,
         subServiceCompanyId: '',
         subUploadId: ''
@@ -524,7 +526,7 @@ export default {
             validator: checkMoney
           }
         ],
-        attachmentId: [
+        attachmentIds: [
             {
             required: true,
             message: "请上传凭证",
@@ -580,12 +582,23 @@ export default {
       subMsg: '',
       showDetail: false,
       rechargeMsg: '',
-      isRecharge: false
+      isRecharge: false,
+      showExa: false,
+      uploadList: [
+          {
+            imageUrl: '',
+            attachmentId: ''
+          }
+      ],
+      attrIndex: 0,
+      currentIndex: 0,
+      readyList: [],
+      delay: 0,
+      isRe: false
     };
   },
   watch: {
     "dialogCreateForm.companyId": function() {
-      console.log(this.dialogCreateForm.companyId);
       if (this.dialogCreateForm.companyId) {
         this.$store.dispatch("getProductName", {
           companyId: this.dialogCreateForm.companyId
@@ -628,9 +641,7 @@ export default {
             a = 1
         }
         this.formSearch.page = a
-        console.log(this.formSearch)
         post('/api/balance-web/recharge-order/query-list', this.formSearch).then(data => {
-            console.log(data)
             this.rechargeApplyList = data
         })
         // this.$store.dispatch("getRechargeApplyList", this.formSearch);
@@ -668,7 +679,6 @@ export default {
             this.subServiceCompanyId = this.detail.subServiceCompanyId
             this.imageUrl = this.detail.financeDownloadCode
             this.memo = this.detail.memo
-            console.log(this.subServiceCompanyId)
             // this.subUploadId = this.detail.subUploadId
             // this.uploadUrl = this.detail.subDownloadCode ? `/api/sysmgr-web/file/download?downloadCode=${this.detail.subDownloadCode}` : ''
             this.getChannlList()
@@ -686,7 +696,6 @@ export default {
             this.channlList = data
             this.balanceAccountId = ''
             this.channlList.forEach(e => {
-                console.log(e.payUserId == this.detail.payUser.payUserId)
                 if(e.payUserId == this.detail.payUser.payUserId) {
                     this.balanceAccountId = e.balanceAccountId
                     this.getSuggest()
@@ -704,10 +713,8 @@ export default {
     },
     getSuggest() {
         this.channlList.forEach(e => {
-            console.log(e.balanceAccountId, this.balanceAccountId)
             if(e.balanceAccountId == this.balanceAccountId) {
                 this.payUserId = e.payUserId
-                console.log(e)
                 get('/api/balance-web/balance-account/get-avail-balance-info', {
                     balanceAccountId: e.balanceAccountId,
                     payUserId: e.payUserId,
@@ -729,7 +736,6 @@ export default {
         get('/api/sysmgr-web/commom/app-service-company-list', {
             appId: this.dialogCreateForm.appId
         }).then(data => {
-            console.log(data)
             this.dialogCreateForm.channelBusinessType = ''
             this.dialogCreateForm.serviceCompanyId = ''
             this.msg = ''
@@ -744,7 +750,6 @@ export default {
             companyId: this.dialogCreateForm.companyId,
             serviceCompanyId: this.dialogCreateForm.serviceCompanyId
         }).then(data => {
-            // serviceInfos
             this.msg = data.serviceCompanyInfo
             this.sub = data.subCompanyInfo
             this.sub && (this.dialogCreateForm.subServiceCompanyId = this.sub.companyId)
@@ -791,7 +796,6 @@ export default {
         }
     },
     getImg(a) {
-    //   this.imageUrl = URL.createObjectURL(a.raw);
       var formData = new FormData()
       formData.append('targetType', 'recharge_voucher_img')
       formData.append('fileName', a.name)
@@ -824,14 +828,50 @@ export default {
         this.detail.subDownloadCode = ''
     },
     getAttachment(a) {
-      this.attachmentUrl = URL.createObjectURL(a.raw);
-      var formData = new FormData()
-      formData.append('targetType', 'recharge_voucher_img')
-      formData.append('fileName', a.name)
-      formData.append('file', a.raw)
-      importPost('/api/sysmgr-web/file/upload', formData).then(data => {
-        this.dialogCreateForm.attachmentId = data.referId
-      })
+        this.readyList.push(a)
+        clearTimeout(this.delay)
+        this.delay = setTimeout(() => {
+            showLoading()
+            this.uploadByOrder()
+        }, 10)
+    },
+    uploadByOrder() {
+        var a = this.readyList.shift()
+        if(!a) {
+            hideLoading()
+            return
+        }
+        if(this.uploadList.length >= 10 && this.uploadList[this.uploadList.length - 1].imageUrl && !this.isRe) {
+            hideLoading()
+            this.$message({
+                type: 'warning',
+                message: '最多只能上传10张图片！'
+            })
+          return
+        }
+        this.uploadList[this.currentIndex].imageUrl = URL.createObjectURL(a.raw);
+        var formData = new FormData()
+        formData.append('targetType', 'recharge_voucher_img')
+        formData.append('fileName', a.name)
+        formData.append('file', a.raw)
+        importPost('/api/sysmgr-web/file/upload', formData, true).then(data => {
+            this.uploadList[this.currentIndex].attachmentId = data.referId
+            if(this.currentIndex + 1 == this.uploadList.length && this.uploadList.length < 10) {
+                this.uploadList.push({
+                    imageUrl: '',
+                    attachmentId: ''
+                })
+            }
+            if(!this.isRe) {
+                this.currentIndex++
+                this.uploadByOrder()
+            }
+            else {
+                hideLoading()
+                this.readyList.length = 0
+                this.isRe = false
+            }
+        })
     },
     getSubUploadId(a) {
       this.supUrl = URL.createObjectURL(a.raw);
@@ -866,7 +906,7 @@ export default {
             this.subUploadId = ''
             this.uploadUrl = ''
             this.show = false;
-            this.query()
+            this.query(this.formSearch.page)
         })
     },
     touch() {
@@ -877,7 +917,7 @@ export default {
             memo: this.memo
         }).then(data => {
             this.show = false;
-            this.query()
+            this.query(this.formSearch.page)
         })
     },
     ensure(state, type) { 
@@ -918,7 +958,7 @@ export default {
             this.uploadUrl = ''
             showNotify("success", "操作成功！");
             this.show = false;
-            this.query()
+            this.query(this.formSearch.page)
           }
         );
     },
@@ -938,7 +978,6 @@ export default {
             this.formSearch.createAtBegin = ''
             this.formSearch.createAtEnd = ''
         }
-        console.log(this.formSearch)
     },
     clear: function() {
       this.$refs["formSearch"].resetFields();
@@ -1005,7 +1044,10 @@ export default {
       });
     },
     submitDialogCreateForm() {
-        console.log(this.dialogCreateForm)
+      this.dialogCreateForm.attachmentIds = []
+      this.uploadList.forEach(e => {
+          e.attachmentId && this.dialogCreateForm.attachmentIds.push(e.attachmentId)
+      })
       this.$refs["dialogCreateForm"].validate(valid => {
         if (valid) {
           post("/api/balance-web/recharge-order/comfirm", this.dialogCreateForm).then(data => {
@@ -1030,6 +1072,12 @@ export default {
       this.rechargeMsg = ''
       this.isRecharge = false
       this.prePayContent = ''
+      this.uploadList = [
+          {
+            imageUrl: '',
+            attachmentId: ''
+          }
+      ]
       next && next();
     },
     submitConfirmOrder() {
@@ -1043,20 +1091,35 @@ export default {
     },
     setSmsOpen(a) {
         this.dialogCreateForm.smsOpen = a
+    },
+    prevImg(a) {
+        this.prevUrl = a
+        this.showExa = true
+    },
+    reUpload() {
+        this.isRe = true
+        this.$refs.upload[this.currentIndex].$el.children[0].children[1].click()
+    },
+    deleteImg() {
+        this.uploadList.splice(this.currentIndex, 1)
+        if(this.uploadList.length == 9 && this.uploadList[this.uploadList.length -1].imageUrl) {
+            this.uploadList.push({
+                imageUrl: '',
+                attachmentId: ''
+            })
+        }
     }
-    // getArrt(a) {
-    //     get('/api/balance-web/recharge-order/query-detail', {
-    //         orderNo: a.orderNo
-    //     }).then(data => {
-    //         this.showAttr = true
-    //         this.detail = data
-    //     })
-    // }
   }
 };
 </script>
 
 <style scoped>
+.uploadBox {
+  width: 140px;
+  float: left;
+  text-align: center;
+  margin-right: 20px;
+}
 .avatar-uploader .el-upload {
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
@@ -1076,13 +1139,29 @@ export default {
   text-align: center;
   background: #FCFCFC;
   border: 1px solid #CCCCCC;
-  margin-top: 8px;
 }
 .avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
-  margin: auto;
+  position: relative;
+  width: 140px;
+  height: 140px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: inline-block;
+}
+.avatar-uploader-icon > div {
+  line-height: 20px;
+  font-size: 12px;
+  margin-top: -32px;
+}
+.magnify {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 30px;
+  height: 30px;
+  background-image: url(../../image/magnify.png);
+  cursor: pointer;
 }
 .title {
     font-weight: bold;
@@ -1092,6 +1171,9 @@ export default {
     position: relative;
     margin-bottom: 10px;
     padding-left: 20px;
+}
+.mb35 {
+    margin-bottom: 35px;
 }
 .voucher {
     position: absolute;
@@ -1135,5 +1217,15 @@ export default {
 .clear {
     position: absolute;
     bottom: 0px;
+}
+.auto {
+    max-width: 700px;
+}
+.input-container .label {
+    float: left;
+}
+.mr20 {
+    margin-right: 20px;
+    cursor: pointer;
 }
 </style>

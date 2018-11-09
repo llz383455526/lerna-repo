@@ -8,7 +8,7 @@
             发票类型添加
         </el-breadcrumb-item>
       </el-breadcrumb>
-      <el-form class="form" :model="form" :inline="true" :rules="rules" label-width="120px">
+      <el-form class="form" :model="form" :inline="true" :rules="rules" label-width="120px" size="small">
           <el-form-item label="发票类目名字">
             <el-input v-model="form.name" class="form_input" placeholder="请输入类目名字"></el-input>
           </el-form-item>
@@ -29,7 +29,7 @@
           </el-form-item>
           <el-form-item class="form_foot">
               <el-button @click="save" type="primary">保存</el-button>
-              <el-button @click="cancel" type="warning">取消</el-button>
+              <el-button @click="cancel">取消</el-button>
           </el-form-item>
       </el-form>
       <el-dialog class="dialog" title="商品和服务税收分类编码" width="80%" :visible.sync="show">
@@ -95,7 +95,6 @@ export default {
     }
   },
   activated() {
-    console.log(JSON.parse(sessionStorage.getItem('categoryData')))
     var form = JSON.parse(sessionStorage.getItem('categoryData')) || {
       name: "",
       taxRate: "",
@@ -129,7 +128,6 @@ export default {
     getRate() {
       get('/api//invoice-web/commom/invoice-rate-list').then(
         function(data) {
-          console.log(data)
           this.rate = data
         }.bind(this)
       )
@@ -138,13 +136,11 @@ export default {
       this.show = true;
       setTimeout(
         function() {
-          console.log(this.$refs.tree)
         }.bind(this),
         100
       );
     },
     handleNodeClick(data) {
-      console.log(data);
       if (data.children.length) {
         this.tableData = data.children;
         this.backData = data.children;
@@ -155,12 +151,8 @@ export default {
     },
     checkSearch() {
       this.filterText = this.search
-      // this.tableData = this.backData.filter(function(e) {
-      //   return e.name.indexOf(this.search) > -1;
-      // }, this);
     },
     choose(a) {
-      console.log(a);
       if (!a.children[0]) {
         this.show = false;
         this.form.taxRate = a.taxRate || 0;
@@ -181,17 +173,17 @@ export default {
         return;
       }
       post("/api/invoice-web/custom-invoice-subject/save-update", this.form).then(function(data) {
-          console.log(data);
           this.$message({
             type: 'success',
             message: this.seccessText
           })
-          this.$router.back(-1)
+          sessionStorage.setItem('resetPage', '1')
+          this.$router.back()
         }.bind(this)
       );
     },
     cancel() {
-      this.$router.back(-1)
+      this.$router.back()
     },
     refresh() {
       this.getMsg()
@@ -207,7 +199,6 @@ export default {
             this.form.taxRate = e.value
           }
         }, this)
-      console.log(this.form.taxRate)
     }
   }
 };

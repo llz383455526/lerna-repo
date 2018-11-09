@@ -9,12 +9,6 @@
             <el-form-item label="企业名称" size="small">
                 <el-input v-model="form.fullName" class="in_input"></el-input>
             </el-form-item>
-            <!-- <el-form-item label="开通状态">
-                <el-select v-model="form.orderBy" class="in_input">
-                    <el-option value="1" label="开通"></el-option>
-                    <el-option value="0" label="未开通"></el-option>
-                </el-select>
-            </el-form-item> -->
             <el-form-item label="企业简称" size="small">
                 <el-input v-model="form.name" class="in_input"></el-input>
             </el-form-item>
@@ -28,11 +22,6 @@
         <el-table class="table" :data="tableData" border="">
             <el-table-column prop="name" label="企业简称"></el-table-column>
             <el-table-column prop="fullName" label="企业全称"></el-table-column>
-            <!-- <el-table-column prop="service" label="企业类型">
-              <template slot-scope="scope">
-                {{scope.row.service ? '服务商' : '客户'}}
-              </template>
-            </el-table-column> -->
             <el-table-column prop="chargeByName" label="企业负责人"></el-table-column>
             <el-table-column prop="createTime" label="添加时间"></el-table-column>
             <el-table-column prop="createByName" label="创建人"></el-table-column>
@@ -50,30 +39,14 @@
                 </template>
             </el-table-column>
         </el-table>
-        <div class="page" v-show="total / form.pageSize > 1">
-            <el-pagination
-            background
-            layout="prev, pager, next"
-            :page-size="form.pageSize"
+        <ayg-pagination
+            v-if="total"
             :total="total"
-            @current-change="query"
-            :currentPage="form.page"
-            >
-          </el-pagination>
-        </div>
-        <!-- <el-dialog title="添加客户" :visible.sync="eshow" width="50%">
-            <el-form :inline="true" label-width="80px">
-                <el-form-item label="商户名称">
-                    <el-select v-model="appId" filterable remote :remote-method="remoteMethod" :loading="loading">
-                        <el-option v-for="item in remoteData" :label="item.text" :value="item.value"></el-option>
-                    </el-select>
-                </el-form-item>
-            </el-form>
-            <span class="form_footer" slot="footer">
-                <el-button @click="sure" type="primary">确定</el-button>
-                <el-button @click="eshow = false" type="warning">取消</el-button>
-            </span>
-        </el-dialog> -->
+            v-on:handleSizeChange="setSize"
+            :currentSize="form.pageSize"
+            v-on:handleCurrentChange="query"
+            :currentPage="form.page">
+        </ayg-pagination>
     </div>
 </template>
 <script>
@@ -85,33 +58,37 @@ export default {
         name: "",
         fullName: "",
         page: 1,
-        pageSize: 5
+        pageSize: 10
       },
       tableData: [],
       total: 0,
-    //   eshow: false,
       appId: "",
       loading: false,
-      remoteData: []
+      remoteData: [],
+      activeData: ''
     };
   },
   activated() {
-    this.query();
+      this.activeData && (this.form = JSON.parse(this.activeData))
+      this.query(this.form.page);
   },
-  mounted() {},
   methods: {
     query(a) {
       this.form.page = 1;
       if (a && !isNaN(a)) {
         this.form.page = a;
       }
+      this.activeData = JSON.stringify(this.form)
       post("/api/sysmgr-web/company/query-company", this.form).then(
         function(data) {
-          console.log(data);
           this.tableData = data.list;
           this.total = data.total;
         }.bind(this)
       );
+    },
+    setSize(a) {
+      this.form.pageSize = a
+      this.query()
     },
     clear() {
       this.form = {
@@ -123,7 +100,6 @@ export default {
       };
     },
     remoteMethod(query) {
-      console.log(query);
       if (query !== "") {
         var that = this;
         this.loading = true;
@@ -135,17 +111,12 @@ export default {
         });
       }
     },
-    // add(a) {
-    //   console.log(a);
-    //   this.eshow = true;
-    // },
     sure(e) {
       if (this.appId) {
         post("/api/sysmgr-web/company/add-customer-company", {
           id: this.appId
         }).then(
           function(data) {
-            console.log(data);
             this.appId = "";
             this.eshow = false;
             this.$message({
@@ -157,7 +128,6 @@ export default {
       }
     },
     appManager(e) {
-      console.log(e);
       localStorage.setItem('appId', e.id)
       localStorage.setItem('fullName', e.fullName)
       this.$router.push("/main/clientManager/appManager");

@@ -6,8 +6,20 @@
           </el-breadcrumb-item>
       </el-breadcrumb>
       <div class="r_head">
-          <el-input class="in_input" size="small" v-model="form.name" placeholder="输入发票类目" @keyup.enter.native="query()"></el-input>
-          <el-button type="primary" size="small" @click="query()">搜索</el-button>
+          <el-form :model="form" :inline="true" size="small" ref="form">
+              <el-form-item label="类目名称" prop="name">
+                  <el-input class="in_input" v-model="form.name" placeholder="输入发票类目"></el-input>
+              </el-form-item>
+              <el-form-item label="状态" prop="status">
+                  <el-select class="in_input" v-model="form.status">
+                      <el-option v-for="e in statusList" :key="e.value" :value="e.value" :label="e.text"></el-option>
+                  </el-select>
+              </el-form-item>
+              <el-form-item>
+                  <el-button type="primary" @click="query()">搜索</el-button>
+                  <el-button @click="$refs['form'].resetFields()">清除</el-button>
+              </el-form-item>
+          </el-form>
           <div class="f_left">
                 <el-button type="primary" size="small" @click="add">添加新类目</el-button>
           </div>
@@ -18,150 +30,87 @@
           <el-table-column prop="taxRate" label="税率"></el-table-column>
           <el-table-column prop="abbreviation" label="简称"></el-table-column>
           <el-table-column prop="code" label="税收分类编码"></el-table-column>
+          <el-table-column prop="statusName" label="状态"></el-table-column>
           <el-table-column prop="updateByName" label="最后操作人"></el-table-column>
           <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-button @click="modification(scope.row)" size="small" type="text">修改</el-button>
-                <el-button @click="delet(scope.row)" size="small" type="text">删除</el-button>
+                <el-button @click="toggle(scope.row)" size="small" type="text">{{scope.row.status == 1 ? '禁用' : '启用'}}</el-button>
               </template>
           </el-table-column>
       </el-table>
-      <div class="page" v-show="total / form.pageSize > 1">
-        <el-pagination
-        background
-        layout="prev, pager, next"
-        :page-size="form.pageSize"
+      <ayg-pagination v-if="total" 
         :total="total"
-        @current-change="query"
-        :currentPage="form.page"
-        >
-      </el-pagination>
-      </div>
-      <!-- <el-dialog title="修改发票类目名" width="50%" :visible.sync="show" :inline="true" label-width="120px">
-        <el-form :model="mform">
-          <el-form-item label="发票类目名" >
-            <el-input v-model="mform.name" style="width: 75%;"></el-input>
-          </el-form-item>
-          <el-form-item class="form_footer">
-            <el-button @click="cancel">取消</el-button>
-            <el-button @click="save" type="primary">确定</el-button>
-          </el-form-item>
-        </el-form>
-      </el-dialog> -->
+        v-on:handleSizeChange="setSize"
+        v-on:handleCurrentChange="query" 
+        :currentPage="form.page">
+    </ayg-pagination>
   </div>
 </template>
 <script>
 import { get, post, formPost } from "../../store/api";
 export default {
-  data() {
-    return {
-      form: {
-        name: "",
-        page: 1,
-        pageSize: 5
-      },
-      tableData: [],
-      total: 0,
-      // show: false,
-      // mform: {
-      //   abbreviation: "",
-      //   code: "",
-      //   id: "",
-      //   name: "",
-      //   taxRate: ""
-      // }
-    };
-  },
-  activated() {
-    this.query();
-  },
-  methods: {
-    query(a) {
-      this.form.page = 1
-      if (a && !isNaN(a)) {
-        this.form.page = a;
-      }
-      post("/api/invoice-web/custom-invoice-subject/qry", this.form).then(
-        function(data) {
-          console.log(data);
-          this.tableData = data.list;
-          this.total = data.total;
-        }.bind(this)
-      );
+    data() {
+      return {
+        form: {
+          name: "",
+          status: "",
+          page: 1,
+          pageSize: 10
+        },
+        tableData: [],
+        total: 0,
+        statusList: [],
+        activeData: ''
+      };
     },
-    add(){
-      sessionStorage.removeItem('categoryData')
-      this.$router.push('/main/infoManager/addCategory')
+    activated() {
+        this.activeData && (this.form = JSON.parse(this.activeData))
+        get('/api/invoice-web/commom/option?enumType=Status').then(data => {
+            this.statusList = data
+            this.form.status = data[0].value
+            this.query(sessionStorage.getItem('resetPage') ? 1 : this.form.page);
+        })
     },
-    modification(e) {
-      sessionStorage.setItem('categoryData', JSON.stringify(e))
-      this.$router.push('/main/infoManager/addCategory')
-    },
-    // cancel() {
-    //   this.show = false;
-    //   this.$message({
-    //     type: "info",
-    //     message: "取消修改。"
-    //   });
-    // },
-    // save() {
-    //   if (!this.mform.name) {
-    //     this.$alert("请填写发票类目名！").catch(function() {
-    //       console.log("取消");
-    //     });
-    //     return;
-    //   }
-    //   post(
-    //     "/api/invoice-web/custom-invoice-subject/save-update",
-    //     this.mform
-    //   ).then(
-    //     function(data) {
-    //       console.log(data);
-    //       this.show = false;
-    //       this.$message({
-    //         type: "success",
-    //         message: "修改成功！"
-    //       });
-    //       this.query();
-    //     }.bind(this)
-    //   );
-    // },
-    delet(e) {
-      this.$confirm("此操作将永久删除该类目, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(
-          function() {
-            post("/api/invoice-web/custom-invoice-subject/del", {
-              id: e.id
-            }).then(
-              function(data) {
-                console.log(data);
-                this.show = false;
-                this.$message({
-                  type: "success",
-                  message: "删除成功！"
-                });
-                if (this.tableData.length == 1) {
-                  this.form.page--;
-                }
-                this.query();
-              }.bind(this)
-            );
-          }.bind(this)
-        )
-        .catch(
-          function() {
-            this.$message({
-              type: "info",
-              message: "已取消删除！"
-            });
+    methods: {
+      query(a) {
+        this.form.page = 1
+        if (a && !isNaN(a)) {
+          this.form.page = a;
+        }
+        this.activeData = JSON.stringify(this.form)
+        post("/api/invoice-web/custom-invoice-subject/qry", this.form).then(function(data) {
+            this.tableData = data.list;
+            this.total = data.total;
           }.bind(this)
         );
+      },
+      setSize(a) {
+          this.form.pageSize = a
+          this.query();
+      },
+      add(){
+        sessionStorage.removeItem('categoryData')
+        this.$router.push('/main/infoManager/addCategory')
+      },
+      modification(e) {
+        sessionStorage.setItem('categoryData', JSON.stringify(e))
+        this.$router.push('/main/infoManager/addCategory')
+      },
+      toggle(a) {
+        this.$confirm(`是否确定要${a.status == 1 ? '禁用' : '启用'}?`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            post('/api/invoice-web/custom-invoice-subject/swich-subject-status', {
+              id: a.id
+          }).then(data => {
+              this.query(this.form.page)
+          })
+        }).catch(() => {})
+      }
     }
-  }
 };
 </script>
 <style scoped>

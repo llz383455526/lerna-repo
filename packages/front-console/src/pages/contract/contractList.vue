@@ -86,18 +86,17 @@
 	import { showNotify } from '../../plugin/utils-notify'
 
 	export default {
-        created() {
+        // created() {
             // this.getArchiveType()
-	        let param = this.$route.query
-	        if(!_.isEmpty(param)) {
-		        this.pageIndex = parseInt(param.page)
-		        this.pageSize = parseInt(param.pageSize)
-		        this.formSearch = JSON.parse(param.param)
-                this.dateValue = this.formSearch.startAt ? [this.formSearch.startAt, this.formSearch.endAt] : ''
-	        }
-
-            this.getList()
-        },
+	        // let param = this.$route.query
+	        // if(!_.isEmpty(param)) {
+		    //     this.pageIndex = parseInt(param.page)
+		    //     this.pageSize = parseInt(param.pageSize)
+		    //     this.formSearch = JSON.parse(param.param)
+            //     this.dateValue = this.formSearch.startAt ? [this.formSearch.startAt, this.formSearch.endAt] : ''
+	        // }
+            // this.getList()
+        // },
         data() {
         	return {
 		        searchOptions: {},
@@ -113,8 +112,13 @@
 		        pageSize: 10,
 		        pageIndex: 1,
 		        dialogVisible: false,
-                selectedId: ''
+                selectedId: '',
+                activeData: ''
             }
+        },
+        activated() {
+            this.activeData && (this.formSearch = JSON.parse(this.activeData))
+            this.getList()
         },
         methods: {
 	        getArchiveType() {
@@ -155,19 +159,19 @@
 			        page: this.pageIndex,
 			        pageSize: this.pageSize
 		        })
-
+                this.activeData = JSON.stringify(this.formSearch)
                 post('/api/contract-web/contract-generate/query-contract-list', options)
                     .then(result => {
 	                    this.tableList = result
 
-	                    this.$router.replace({
-		                    path: 'contractList',
-		                    query: {
-			                    page: this.pageIndex,
-			                    pageSize: this.pageSize,
-			                    param: JSON.stringify(this.formSearch)
-		                    }
-	                    })
+	                    // this.$router.replace({
+		                //     path: 'contractList',
+		                //     query: {
+			            //         page: this.pageIndex,
+			            //         pageSize: this.pageSize,
+			            //         param: JSON.stringify(this.formSearch)
+		                //     }
+	                    // })
                     })
             },
             downloadContract(id) {

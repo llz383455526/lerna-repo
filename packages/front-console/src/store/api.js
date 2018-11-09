@@ -139,13 +139,13 @@ function formPost(url, param) {
     });
 }
 
-function importPost(url, param, withLoading) {
+function importPost(url, param, withLoading = false) {
     return new Promise((resolve, reject) => {
         //param = requestBefore(param);
         if(!withLoading) {
             showLoading('上传中')
         }
-        ajaxAction('import', url, param, resolve, reject, true, false);
+        ajaxAction('import', url, param, resolve, reject, true, false, withLoading);
     });
 }
 

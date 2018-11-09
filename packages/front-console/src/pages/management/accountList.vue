@@ -38,28 +38,27 @@
                     <template slot-scope="scope">
                         <el-button @click="toDetail(scope.row.id)" type="text" size="medium" style="padding:0;">配置</el-button>
                         <el-button @click="changeState(scope.row.id, !scope.row.isEnable)" type="text" size="medium" style="padding:0;">{{scope.row.isEnable ? '停用' : '启用'}}</el-button>
+                        <el-button @click="resetPassword(scope.row.id)" type="text" size="medium">重置密码</el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </div>
-        <ayg-pagination v-if="tableList.total" :total="tableList.total"
-                        v-on:handleSizeChange="handleSizeChange" :currentSize="pageSize"
-                        v-on:handleCurrentChange="handleCurrentChange" :currentPage="pageIndex"></ayg-pagination>
-
+        <ayg-pagination
+            v-if="tableList.total"
+            :total="tableList.total"
+            v-on:handleSizeChange="handleSizeChange"
+            :currentSize="pageSize"
+            v-on:handleCurrentChange="handleCurrentChange"
+            :currentPage="pageIndex">
+        </ayg-pagination>
     </div>
-
-
 </template>
 
 <script>
     import { post } from "../../store/api";
     import { showNotify } from '../../plugin/utils-notify'
     import _ from 'lodash'
-
     export default {
-		created() {
-			this.getList()
-        },
         data() {
 			return {
 				tableList: [],
@@ -68,8 +67,13 @@
 				multipleSelection: [],
 				formSearch: {
 					accountInfo: ''
-				}
+                },
+                activeData: ''
             }
+        },
+        activated() {
+            this.activeData && (this.formSearch = JSON.parse(this.activeData))
+			this.getList()
         },
         methods: {
 	        resetForm(formName) {
@@ -94,7 +98,7 @@
 			        page: this.pageIndex,
 			        pageSize: this.pageSize
 		        })
-
+                this.activeData = JSON.stringify(this.formSearch)
 		        post('/api/sysmgr-web/user/list', options)
                     .then(result => {
                         this.tableList = result
@@ -117,6 +121,22 @@
                     query: {
                     	id: id
                     }
+                })
+            },
+            resetPassword(id) {
+                this.$confirm('确认要重置密码吗？', '提示', {
+                    type: 'warning',
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                }).then(() =>{
+                    post(`/api/sysmgr-web/user/adminResetPwd?userId=${id}`).then(data => {
+                        this.$message({
+                            type: 'success',
+                            message: '密码已重置！'
+                        })
+                    })
+                }).catch(err =>{
+                    
                 })
             }
         }

@@ -34,6 +34,9 @@
       		    <el-col :span="10">
 					  <el-col :span="8" class="right">登录账号</el-col><el-col :span="10">{{data.loginAcctno}}</el-col>
 				</el-col>
+                <el-col :span="10">
+					  <el-col :span="8" class="right">渠道标识</el-col><el-col :span="10">{{data.id}}</el-col>
+				</el-col>
       		</el-row>
       		<template v-if="data.thirdpaySystemId == 'changjie'">
 				<el-row :gutter="20">

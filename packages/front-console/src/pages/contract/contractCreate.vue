@@ -935,7 +935,7 @@
             	this.contractForm[`${key}Name`] = obj[nKey]
             },
 	        backToList() {
-            	this.$router.push('contractList')
+            	this.$router.back()
             },
             // -------------------------------------
             calcuServiceFee(a) {
@@ -1098,6 +1098,7 @@
                 }
 		        this.$refs[formName].validate(valid => {
 			        if (valid) {
+                        console.log('----------------------------------------------------------')
 				        this.setContractFormData(this.searchOptions.ContractGenInvoiceType, 'invoiceType', 'value', 'text', this.contractForm.invoiceType)
 				        this.setContractFormData(this.serviceList, 'serviceCompany', 'companyId', 'name', this.contractForm.serviceCompanyId)
                         var err = false, contractForm = JSON.parse(JSON.stringify(this.contractForm))

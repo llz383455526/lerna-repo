@@ -558,7 +558,7 @@ export default {
                 type: 'success',
                 message: '开票成功！'
             })
-            this.query()
+            this.query(this.form.page)
         }.bind(this))
       },
       preview(a) {
