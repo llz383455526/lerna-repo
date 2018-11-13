@@ -2,14 +2,17 @@
     <div class="bg-white p15">
         <div class="mb30">流水账单</div>
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
-            <el-form-item label="商户名称" size="small">
-                <el-autocomplete
+            <el-form-item label="商户名称" size="small" placeholder="请输入内容">
+                <el-select class="inline-input" v-model="formSearch.appId" filterable>
+                    <el-option v-for="e in allAppList" :key="e.value" :value="e.value" :label="e.text"></el-option>
+                </el-select>
+                <!-- <el-autocomplete
                         class="inline-input"
                         v-model="appName"
                         :fetch-suggestions="querySearch1"
                         placeholder="请输入内容"
                         style="width:100%;">
-                </el-autocomplete>
+                </el-autocomplete> -->
             </el-form-item>
             <el-form-item size="small">
                 <el-radio-group v-model="formSearch.billType" @change="search">
@@ -136,7 +139,6 @@
                     startAt: '',
                     endAt: '',
                 },
-                restaurants1: [],
                 showDatePick: 'day',
                 valueMonth: '',
                 valueDate: '',
@@ -148,17 +150,17 @@
             }
         },
         methods: {
-            querySearch1(queryString, cb) {
-                var restaurants = this.restaurants1;
-                var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
-                // 调用 callback 返回建议列表的数据
-                cb(results);
-            },
-            createFilter(queryString) {
-                return (restaurant) => {
-                    return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-                };
-            },
+            // querySearch1(queryString, cb) {
+            //     var restaurants = this.restaurants1;
+            //     var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+            //     // 调用 callback 返回建议列表的数据
+            //     cb(results);
+            // },
+            // createFilter(queryString) {
+            //     return (restaurant) => {
+            //         return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+            //     };
+            // },
             exportFile() {
 	            if (this.formSearch.billType === 'month') {
 		            this.formSearch.startAt = this.valueMonth
@@ -175,11 +177,14 @@
                 let self = this;
                 get(url).then(data => {
                     self.allAppList = data;
-                    _.foreach(data, function (value) {
-                        self.restaurants1.push({
-                            "value": value['text']
-                        });
-                    });
+                    // data.foreach(e => {
+                    //     arr.concat(e)
+                    // })
+                    // _.foreach(data, function (value) {
+                    //     self.restaurants1.push({
+                    //         "value": value['text']
+                    //     });
+                    // });
                 })
             },
             resetForm(formName) {
@@ -200,14 +205,6 @@
             requestAction(pageInfo) {
                 let url = '/api/recon/settled/flow-order-list';
                 let self = this;
-                _.foreach(this.allAppList, function (value) {
-                    if (value['text'] == self.appName) {
-                        self.formSearch.appId = value['value'];
-                        return false;
-                    } else {
-                        self.formSearch.appId = '';
-                    }
-                });
                 let startAt = '';
                 let endAt = '';
                 if (this.formSearch.billType === 'month') {
