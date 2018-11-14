@@ -16,5 +16,12 @@
 ## 公用css
 ### ./src/style
 
+>## 开发环境发布
+
+http://192.168.1.94:8082/view/test94.aiyuangong.com/
+
+admin 94Jks#Adm
+
+
 
 console-admin 123456

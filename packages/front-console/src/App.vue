@@ -54,6 +54,7 @@ html, body {
     margin-left: 8px;
     margin-top: -3px;
 }
+
 .el-step__head.is-process {
   color: #c0c4cc;
   border-color: #c0c4cc;

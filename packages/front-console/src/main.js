@@ -12,6 +12,8 @@ import './style/iconfont'
 import { AreaSelect } from 'vue-area-linkage'
 
 import {
+	Collapse,
+	CollapseItem,
 	Menu,
 	Submenu,
 	MenuItem,
@@ -110,6 +112,8 @@ Vue.use(BreadcrumbItem)
 Vue.use(Tree)
 Vue.use(Cascader)
 Vue.use(Card)
+Vue.use(Collapse)
+Vue.use(CollapseItem)
 
 Vue.use(Loading.directive)
 Vue.prototype.$loading = Loading.service

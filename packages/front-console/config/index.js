@@ -1,5 +1,22 @@
 let path = require('path')
 
+let proxypath = null
+
+switch (process.env.NODE_SERVER_ENV) {
+  case 'test':
+    proxypath = 'https://openadmintest.aiyuangong.com'
+    break
+  case '94':
+    proxypath = 'http://openadmintest94.aiyuangong.com'
+    break
+  case '92':
+    proxypath = 'https://openadmintest92.aiyuangong.com'
+    break
+  default :
+    break
+}
+
+
 module.exports = {
     prod: {
         env: {
@@ -24,7 +41,7 @@ module.exports = {
         context: [ //代理路径
 	        '/api'
         ],
-        proxypath: 'https://openadmintest92.aiyuangong.com',
+        proxypath: proxypath,
         cssSourceMap: false
     }
 }

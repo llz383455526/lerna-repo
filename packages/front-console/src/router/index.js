@@ -104,6 +104,12 @@ let individualIndex = r => require.ensure([], () => r(require('../pages/individu
 let taxDiscountHome = r => require.ensure([], () => r(require('../pages/taxDiscount/home')), 'taxDiscountHome')
 let taxDiscountList = r => require.ensure([], () => r(require('../pages/taxDiscount/list')), 'taxDiscountList')
 let taxDiscountDetail = r => require.ensure([], () => r(require('../pages/taxDiscount/detail')), 'taxDiscountDetail')
+const taxDiscountAdd = r => require.ensure([], () => r(require('../pages/taxDiscount/add')), 'taxDiscountAdd')
+const taxDiscountStep1 = r => require.ensure([], () => r(require('../pages/taxDiscount/step/1')), 'taxDiscountStep1')
+const taxDiscountStep2 = r => require.ensure([], () => r(require('../pages/taxDiscount/step/2')), 'taxDiscountStep2')
+const taxDiscountStep3 = r => require.ensure([], () => r(require('../pages/taxDiscount/step/3')), 'taxDiscountStep3')
+const taxDiscountStep4 = r => require.ensure([], () => r(require('../pages/taxDiscount/step/4')), 'taxDiscountStep4')
+const taxDiscountStep5 = r => require.ensure([], () => r(require('../pages/taxDiscount/step/5')), 'taxDiscountStep5')
 let taxDiscountSetting = r => require.ensure([], () => r(require('../pages/taxDiscount/userSetting')), 'taxDiscountSetting')
 
 
@@ -148,29 +154,32 @@ export default [
                                 }
                             },
                             {
-						    	path:'offlineSalaryUpload',
-                                component:offlineSalaryUpload,
+                                path: 'offlineSalaryUpload',
+                                component: offlineSalaryUpload,
                                 meta: {
                                     keepAlive: false
                                 }
                             },
                             {
-						    	path:'offlineSalaryImport',
-                                component:offlineSalaryImport,
+                                path: 'offlineSalaryImport',
+                                component: offlineSalaryImport,
                                 meta: {
                                     keepAlive: false
                                 }
                             },
                             {
-						    	path:'offlineSalaryManager',
-						    	component:offlineSalaryManager,
+                                path: 'offlineSalaryManager',
+                                component: offlineSalaryManager,
                                 meta: {
                                     keepAlive: false
                                 }
                             },
                             {
                                 path: 'index',
-                                component: accountIndex
+                                component: accountIndex,
+                                meta: {
+                                    keepAlive: false
+                                }
                             },
                             {
                                 path: 'payOrderReject',
@@ -261,9 +270,9 @@ export default [
                             {
                                 path: 'orderManager',
                                 component: orderManager,
-                                // meta: {
-                                //     keepAlive: false
-                                // }
+                                meta: {
+                                    keepAlive: false
+                                }
                             },
                             {
                                 path: 'statistics',
@@ -394,53 +403,53 @@ export default [
                                 keepAlive: false
                             }
                         }, {
-                        	path: 'documentList',
-	                        component: documentList,
-	                        meta: {
-		                        keepAlive: false
-	                        }
+                            path: 'documentList',
+                            component: documentList,
+                            meta: {
+                                keepAlive: false
+                            }
                         }, {
-                        	path: 'documentDetail',
-	                        component: documentDetail,
-	                        meta: {
-		                        keepAlive: false
-	                        }
+                            path: 'documentDetail',
+                            component: documentDetail,
+                            meta: {
+                                keepAlive: false
+                            }
                         }, {
-	                        path: 'documentCreate',
-	                        component: documentCreate,
-	                        meta: {
-		                        keepAlive: false
-	                        }
+                            path: 'documentCreate',
+                            component: documentCreate,
+                            meta: {
+                                keepAlive: false
+                            }
                         }, {
-                        	path: 'roleList',
-	                        component: roleList,
-	                        meta: {
-		                        keepAlive: false
-	                        }
+                            path: 'roleList',
+                            component: roleList,
+                            meta: {
+                                keepAlive: false
+                            }
                         }, {
-	                        path: 'roleCreate',
-	                        component: roleCreate,
-	                        meta: {
-		                        keepAlive: false
-	                        }
+                            path: 'roleCreate',
+                            component: roleCreate,
+                            meta: {
+                                keepAlive: false
+                            }
                         }, {
-                        	path: 'accountList',
-	                        component: accountList,
-	                        meta: {
-		                        keepAlive: true
-	                        }
+                            path: 'accountList',
+                            component: accountList,
+                            meta: {
+                                keepAlive: true
+                            }
                         }, {
-	                        path: 'accountCreate',
-	                        component: accountCreate,
-	                        meta: {
-		                        keepAlive: false
-	                        }
+                            path: 'accountCreate',
+                            component: accountCreate,
+                            meta: {
+                                keepAlive: false
+                            }
                         }, {
-	                        path: 'accountDetail',
-	                        component: accountDetail,
-	                        meta: {
-		                        keepAlive: false
-	                        }
+                            path: 'accountDetail',
+                            component: accountDetail,
+                            meta: {
+                                keepAlive: false
+                            }
                         }]
                     }, {
                         path: 'bigAmount',
@@ -527,7 +536,7 @@ export default [
                                 meta: {
                                     keepAlive: false
                                 }
-                            },{
+                            }, {
                                 path: 'checkObject',
                                 component: checkObject,
                                 meta: {
@@ -548,13 +557,13 @@ export default [
                                     keepAlive: false
                                 }
                             },
-	                        {
-		                        path: 'start/:id',
-		                        component: flowSigning,
-		                        hidden: true,
-		                        name: 'flowSigning',
-		                        meta: { title: '签约流程', keepAlive: false }
-	                        },
+                            {
+                                path: 'start/:id',
+                                component: flowSigning,
+                                hidden: true,
+                                name: 'flowSigning',
+                                meta: { title: '签约流程', keepAlive: false }
+                            },
                         ]
                     }, {
                         path: 'recharge',
@@ -778,34 +787,100 @@ export default [
                             }
                         ]
                     }, {
-                	    path: 'taxDiscount',
-		                component: index,
-		                children: [{
-                	    	path: 'home',
-			                component: taxDiscountHome,
-			                meta: {
-				                keepAlive: false
-			                }
-		                }, {
-			                path: 'list',
-			                component: taxDiscountList,
-			                meta: {
-				                keepAlive: false
-			                }
-		                }, {
-			                path: 'detail',
-			                component: taxDiscountDetail,
-			                meta: {
-				                keepAlive: false
-			                }
-		                }, {
-			                path: 'setting',
-			                component: taxDiscountSetting,
-			                meta: {
-				                keepAlive: false
-			                }
-		                }]
-	                },
+                        path: 'taxDiscount',
+                        component: index,
+                        children: [{
+                            path: 'home',
+                            component: taxDiscountHome,
+                            meta: {
+                                keepAlive: false
+                            }
+                        }, {
+                            path: 'list',
+                            component: taxDiscountList,
+                            meta: {
+                                keepAlive: false
+                            }
+                        }, {
+                            path: 'detail',
+                            component: taxDiscountDetail,
+                            meta: {
+                                keepAlive: false
+                            }
+                        }, {
+                            path: 'setting',
+                            component: taxDiscountSetting,
+                            meta: {
+                                keepAlive: false
+                            }
+                        },
+                        {
+                            path: 'landingCompany',
+                            component: index,
+                            children: [{
+                                path: 'list',
+                                component: landingCompanyList,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            }, {
+                                path: 'create',
+                                component: landingCompanyCreate,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            }]
+                        },
+                        {
+                            path: 'add',
+                            component: taxDiscountAdd,
+                            meta: {
+                                keepAlive: false
+                            }
+                        },
+                        {
+                            path: 'step1',
+                            component: taxDiscountStep1,
+                            meta: {
+                                keepAlive: false
+                            }
+                        },
+                        {
+                            path: 'step2',
+                            component: taxDiscountStep2,
+                            meta: {
+                                keepAlive: false
+                            }
+                        },
+                        {
+                            path: 'step3',
+                            component: taxDiscountStep3,
+                            meta: {
+                                keepAlive: false
+                            }
+                        },
+                        {
+                            path: 'step4',
+                            component: taxDiscountStep4,
+                            meta: {
+                                keepAlive: false
+                            }
+                        },
+                        {
+                            path: 'step5',
+                            component: taxDiscountStep5,
+                            meta: {
+                                keepAlive: false
+                            }
+                        },
+                        {
+                            path: 'setting',
+                            component: taxDiscountSetting,
+                            meta: {
+                                keepAlive: false
+                            }
+                        }]
+                    },
                     {
                         path: 'landingCompany',
                         component: index,
@@ -815,7 +890,7 @@ export default [
                             meta: {
                                 keepAlive: false
                             }
-                        },{
+                        }, {
                             path: 'create',
                             component: landingCompanyCreate,
                             meta: {
