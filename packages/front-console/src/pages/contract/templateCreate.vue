@@ -58,23 +58,12 @@
             </div>
 
             <h4 class="ml50 mt50">解决方案</h4>
-            <el-upload
-                    v-if="editable"
-                    class="upload-demo ml50"
-                    :action=uploadUrl
-                    :on-error="handleError"
-                    :before-upload="handleBeforeUpload"
-                    :http-request="handleHttpRequest"
-                    multiple
-                    accept=".docx, .xlsx, .xls"
-                    :show-file-list=false
-                    :file-list="fileList">
-                <el-button size="small" type="primary">点击上传</el-button>
-            </el-upload>
+            <el-button class="ml50" size="small" type="primary" @click="show = true">点击上传</el-button>
 
             <div class="pl50 mb50">
                 <el-table :data="fileList">
                     <el-table-column prop="fileName" label="文件名称"></el-table-column>
+                    <el-table-column prop="tplAttachTypeName" label="文件类型"></el-table-column>
                     <el-table-column prop="createTime" label="上传时间">
                         <template slot-scope="scope">
                             <span>{{scope.row.createTime | formatTime}}</span>
@@ -101,6 +90,27 @@
             <el-form-item v-else>
                 <el-button @click="backToListTwo">返回</el-button>
             </el-form-item>
+            <el-dialog title="选择文件类型" :visible.sync="show" width="500px">
+                <el-form-item label="文件类型" prop="tplAttachType" required label-width="120px">
+                    <el-radio v-model="templateForm.tplAttachType" v-for="e in tplList" :label="e.value" :key="e.value">{{e.text}}</el-radio>
+                </el-form-item>
+                <span slot="footer">
+                    <el-button size="small" @click="show = false">取消</el-button>
+                    <el-upload
+                            v-if="editable"
+                            class="upload-demo ml20"
+                            :action=uploadUrl
+                            :on-error="handleError"
+                            :before-upload="handleBeforeUpload"
+                            :http-request="handleHttpRequest"
+                            multiple
+                            accept=".docx, .xlsx, .xls"
+                            :show-file-list=false
+                            :file-list="fileList">
+                        <el-button size="small" type="primary">点击上传</el-button>
+                    </el-upload>
+                </span>
+            </el-dialog>
         </el-form>
 
         <el-dialog :visible.sync="dialogVisible" width="30%">
@@ -110,9 +120,7 @@
                 <el-button type="primary" @click="handleDelete">确 定</el-button>
             </div>
         </el-dialog>
-
     </div>
-
 </template>
 
 <script>
@@ -134,9 +142,10 @@
 
 			this.uploadUrl = baseUrl + "/api/contract-web/file/upload"
             this.tplId = this.$route.query.tplId
-            /*if(this.tplId) {
-	            this.getTemplateDetail(this.tplId)
-            }*/
+            get('/api/sysmgr-web/commom/option?enumType=ContractTplAttachment').then(data => {
+                this.tplList = data
+                this.templateForm.tplAttachType = data[0].value
+            })
         },
         data() {
 			return {
@@ -147,7 +156,9 @@
                     tplType: '',
 	                remark: '',
 	                usage: '',
-	                status: '有效'
+                    status: '有效',
+                    attachments: [],
+                    tplAttachType: ''
                 },
 				rules: {
 					contractType: [
@@ -176,7 +187,9 @@
                 deleteKey: 0,
                 tplId: '',
                 editable: true,
-                templateDetail: {}
+                templateDetail: {},
+                show: false,
+                tplList: []
             }
         },
         methods: {
@@ -189,11 +202,16 @@
 				        this.templateDetail.remark = result.remark.split('\n')
 				        this.templateDetail.usage = result.usage.split('\n')
 			        }
-
 			        _.forEach(result.attachments, attachment => {
 				        attachment.fileName = attachment.displayname
 				        this.fileList.push(attachment)
-				        this.referArr.push(attachment.id)
+                        // this.referArr.push(attachment.id)
+                        typeof this.templateForm.attachments != 'object' && (this.templateForm.attachments = [])
+                        this.templateForm.attachments.push({
+                            referId: attachment.id,
+                            tplAttachType: attachment.tplAttachType
+                        })
+                        console.log(this.templateForm.attachments)
 			        })
 
                     this.templateForm = {
@@ -202,7 +220,8 @@
                         tplType:result.tplType,
 	                    remark: result.remark,
                         usage: result.usage,
-	                    status: _.find(this.searchOptions.ValidationType, item => item.value === result.status).text
+                        status: _.find(this.searchOptions.ValidationType, item => item.value === result.status).text,
+                        attachments: this.templateForm.attachments
                     }
 		        })
 	        },
@@ -239,9 +258,18 @@
 	        handleHttpRequest() {
 		        formPost('/api/contract-web/file/upload', this.formData)
                     .then(result => {
-	                    this.fileList.push(result)
-	                    this.referArr.push(result.referId)
-	                    showNotify('success', '上传成功!')
+                        this.show = false
+                        this.tplList.forEach(e => {
+                            if(e.value == this.templateForm.tplAttachType) {
+                                result.tplAttachTypeName = e.text
+                            }
+                        })
+                        this.fileList.push(result)
+                        this.templateForm.attachments.push({
+                            referId: result.referId,
+                            tplAttachType: this.templateForm.tplAttachType
+                        })
+                        showNotify('success', '上传成功!')
                     })
             },
 	        handleDownload(downloadCode) {
@@ -258,7 +286,7 @@
                 }).then(result => {
 	                showNotify('success', '删除成功')
                     this.fileList.splice(this.deleteKey, 1)
-	                this.referArr.splice(this.deleteKey, 1)
+	                this.templateForm.attachments.splice(this.deleteKey, 1)
 	                this.dialogVisible = false
                 })
             },
@@ -269,7 +297,7 @@
 		        this.$router.back()
             },
 	        submitForm(formName) {
-	        	if(!this.referArr.length) {
+	        	if(!this.templateForm.attachments.length) {
 			        showNotify('error', '解决方案不能为空！')
                     return false
                 }
@@ -294,7 +322,7 @@
                         })
 				        templateForm.status = status.value
 
-			        	templateForm.referIds = this.referArr
+			        	// templateForm.referIds = this.referArr
                         if(this.tplId) templateForm.id = this.tplId
 				        post(url, templateForm).then(result => {
 					        showNotify('success', this.tplId ? '编辑成功' : '新建成功')
@@ -313,27 +341,13 @@
     .demo-contractForm {
         width: 800px;
     }
-
-</style>
-
-<style lang="scss">
     .el-checkbox {
         margin-right: 15px;
     }
-
+    .ml20 {
+        margin-left: 20px;
+    }
+    .upload-demo {
+        display: inline-block;
+    }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

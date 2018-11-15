@@ -111,7 +111,7 @@
                 </template>
             </el-table-column>
         </el-table>
-        <ayg-pagination
+        <ayg-pagination 
             v-if="tableData.total"
             :total="tableData.total"
             v-on:handleSizeChange="handleSizeChange"

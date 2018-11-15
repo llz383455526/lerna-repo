@@ -439,16 +439,16 @@
             </el-form-item>
             <h4 class="ml50 mt50">合同文件</h4>
             <el-upload
-                    class="upload-demo ml50"
-                    :action=uploadUrl
-                    :on-success="handleSuccess"
-                    :on-error="handleError"
-                    :before-upload="handleBeforeUpload"
-                    :http-request="hanldleHttpRequest"
-                    multiple
-                    accept=".pdf,.doc,.docx,.jpg,.png,.gif"
-                    :show-file-list=false
-                    :file-list="fileList">
+                class="upload-demo ml50"
+                :action=uploadUrl
+                :on-success="handleSuccess"
+                :on-error="handleError"
+                :before-upload="handleBeforeUpload"
+                :http-request="hanldleHttpRequest"
+                multiple
+                accept=".pdf,.doc,.docx,.jpg,.png,.gif"
+                :show-file-list=false
+                :file-list="fileList">
                 <el-button size="small" type="primary">点击上传</el-button>
             </el-upload>
             <div class="pl50 mb50">
@@ -699,6 +699,7 @@
                     settleExp: '1',
                     // serviceFeeRate: '',
                     // shouldAmountRate: ''
+                    tplAttachType: ''
                 },
                 columnIndex: 0,
                 columnIndex2: 0,
@@ -765,7 +766,7 @@
             get('/api/sysmgr-web/commom/option?enumType=IndustryType').then(data => {
                 this.invoiceTypeList = data
             })
-            this.initColumn()
+            // this.initColumn()
             // this.query()
         },
         methods: {
@@ -1530,5 +1531,11 @@
     .el-radio__label {
         text-align: center;
         display: inline-block;
+    }
+    .upload-demo {
+        display: inline-block;
+    }
+    .ml20 {
+        margin-left: 20px;
     }
 </style>

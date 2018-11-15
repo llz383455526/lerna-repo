@@ -12,10 +12,13 @@
             <el-form-item label="备注">
                 <span>{{templateDetail.remark}}</span>
             </el-form-item>
-
             <h4 class="ml50 mt50">合同内容</h4>
             <el-form-item label="客户从事" prop="customIndustry">
                 <el-input v-model="contractForm.customIndustry" placeholder="客户是做什么的，客户企业主要从事的业务"></el-input>
+            </el-form-item>
+            <el-form-item label="客户性质" prop="customNature" >
+                <el-radio v-model="contractForm.customNature" v-for="item in customNatureList" :key="item.value" :label="item.value">{{item.text}}</el-radio>
+                <i class="el-icon-question ml10" title="非直接用工企业：人力资源公司、服务外包公司、城市合伙人公司、第三方平台等"></i>
             </el-form-item>
             <el-form-item label="行业类型" prop="industryType" >
                 <el-select v-model="contractForm.industryType" placeholder="请选择" style="width:100%;">
@@ -36,12 +39,55 @@
             <el-form-item label="发票类目：">
                 <el-button size="mini" class="mr8" v-for="item in invoiceOptions" :key="item.value">{{item.text}}</el-button>
             </el-form-item>
-            <el-form-item label="服务商名称" prop="serviceCompanyId" >
-                <el-select v-model="contractForm.serviceCompanyId" placeholder="请选择" style="width:100%;" @change="serviceBank">
-                    <el-option v-for="item in serviceList" :key="item.companyId" :label="item.name" :value="item.companyId"></el-option>
+            <template v-if="hasInsurance()">
+                <el-form-item label="商业保险" prop="vciBuyType">
+                    <el-radio v-model="contractForm.vciBuyType" v-for="e in vciBuyTypeList" :key="e.value" :label="e.value">{{e.text}}</el-radio>
+                </el-form-item>
+                <el-form-item label="保险计划名称" prop="vciPlanName">
+                    <el-input v-model="contractForm.vciPlanName" placeholder="请输入保险计划名称">
+                        <template slot="append">
+                            保险
+                        </template>
+                    </el-input>
+                </el-form-item>
+            </template>
+            <el-form-item label="付款方式" prop="vciPayType">
+                <el-select v-model="contractForm.vciPayType" placeholder="请选择" style="width:100%;">
+                    <el-option v-for="item in VciPayTypeList" :key="item.value" :label="item.text" :value="item.value"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="法定代表人" required>
+            <el-form-item label="" prop="vciSettleExp" v-if="contractForm.vciPayType == 30">
+                <el-input v-model="contractForm.vciSettleExp" placeholder="请输入整数">
+                    <template slot="prepend">
+                        甲乙双方确认以每月
+                    </template>
+                    <template slot="append">
+                        日为结算日期
+                    </template>
+                </el-input>
+            </el-form-item>
+            <el-form-item label="服务商名称" prop="serviceCompanyId">
+                <template v-if="!contractId">
+                    <div :class="`w1050 ${i + 1 == contractForm.serviceCompanyList.length ? '' : 'mb24'}`" v-for="(e, i) in contractForm.serviceCompanyList" :key="i">
+                        <!-- @change="serviceBank" -->
+                        <el-select class="w550 mr20" v-model="contractForm.serviceCompanyList[i].serviceCompanyId" placeholder="请选择" @change="checkServiceCompanyList(i)">
+                            <el-option v-for="item in filterServiceList(i)" :key="item.companyId" :label="item.name" :value="item.companyId"></el-option>
+                        </el-select>
+                        <el-checkbox v-model="contractForm.serviceCompanyList[i].showServiceCompanyInfo">合同中显示服务商收款帐户信息</el-checkbox>
+                        <el-button v-if="i != 0" type="text" @click="deleteServiceCompany">删除</el-button>
+                    </div>
+                    <el-button type="text" @click="addServiceCompany">添加</el-button>
+                </template>
+                <template v-else>
+                    <div class="w1050">
+                        <el-select class="w550 mr20" v-model="contractForm.serviceCompanyId" placeholder="请选择">
+                            <el-option v-for="item in serviceList" :key="item.companyId" :label="item.name" :value="item.companyId"></el-option>
+                        </el-select>
+                        <el-checkbox v-model="contractForm.showServiceCompanyInfo">合同中显示服务商收款帐户信息</el-checkbox>
+                    </div>
+                </template>
+            </el-form-item>
+            <!-- <el-form-item label="法定代表人" required>
                 <el-input v-model="serviceCompany.corporateName" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item  label="公司电话" >
@@ -50,8 +96,8 @@
             <el-form-item label="公司地址" required>
                 <el-input v-model="serviceCompany.address" :disabled="true"></el-input>
                 <el-button @click="show" type="text">{{showDesc}}</el-button>
-            </el-form-item>
-            <div v-if="isShow">
+            </el-form-item> -->
+            <!-- <div v-if="isShow">
                  <el-form-item label="服务商开户银行" >
                     {{contractForm.serviceDepositBank}}
                 </el-form-item>
@@ -72,7 +118,7 @@
                 <el-form-item label="合摩地址" >
                     {{contractForm.aygAddress}}
                 </el-form-item>
-            </div>
+            </div> -->
             <el-form-item label="合同期限:" prop="contractStartDate" size="small" >
                 <el-date-picker
                     @change="autoFill()"
@@ -92,316 +138,7 @@
             </el-form-item>
             <h4 class="ml50 mt50">合同报价</h4>
             <el-form-item label-width="110px" prop="offer">
-                <!-- <el-row class="mb15" v-show="contractForm.settleType != 'each'">
-                    <el-col :span="6">
-                        <el-radio label="dummy" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(-1)">无</el-radio>
-                    </el-col>
-                </el-row> -->
-                <el-row class="mb15" v-show="contractForm.settleType != 'each'">
-                    <el-col :span="6">
-                        <el-radio label="standard" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(0)">标准报价
-                        </el-radio>
-                    </el-col>
-                    <template v-if="showInputRatio == 0">
-                        <el-col :span="15">
-                            <el-input placeholder="请输入内容" v-model="inputStandard" @blur="calcuServiceFee(0)" :disabled="!(showInputRatio == 0)">
-                                <template slot="append">%</template>
-                            </el-input>
-                        </el-col>
-                        <!-- <el-col :span="1" style="text-align: right;">
-                            <i class="el-icon-question" title="表示按照固定金额来收取服务费。计算公式：固定收费金额 = 服务费"></i>
-                        </el-col> -->
-                    </template>
-                </el-row>
-                <!-- <el-row class="mb15">
-                    <el-col :span="6">
-                        <el-radio label="ratio" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(1)">固定比例收费<br>（实发金额）</el-radio>
-                    </el-col>
-                    <el-col :span="15">
-                        <div style="float: left; width: 70px; color: #606266;">实发金额 * </div>
-                        <el-input v-model="inputRatio" @blur="calcuServiceFee(1)"
-                                  :disabled="!(showInputRatio == 1)" style="width: calc(100% - 70px);">
-                            <template slot="append">% 每笔</template>
-                        </el-input>
-                    </el-col>
-                    <el-col :span="1" style="text-align: right;">
-                        <i class="el-icon-question" title="表示按照固定比例来收取服务费。计算公式：实发发金额 * 收费比例 = 服务费"></i>
-                    </el-col>
-                </el-row> -->
-                <!-- <el-row>
-                    <el-col :span="6">
-                        <el-radio label="ratio_1" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(2)">固定比例收费<br>（应发金额）</el-radio>
-                    </el-col>
-                    <el-col :span="15">
-                        <div style="display: inline-block; width: 110px; color: #606266;">实发金额 / ( 1 -  </div>
-                        <el-input v-model="inputRatio_1" @blur="calcuServiceFee(2)"
-                                  :disabled="!(showInputRatio == 2)" style="width: 135px;">
-                            <template slot="append">%</template>
-                        </el-input>
-                        <div style="display: inline-block; width: 20px; color: #606266;">) * </div>
-                        <el-input v-model="inputRatio_1" @blur="calcuServiceFee(2)"
-                                  :disabled="!(showInputRatio == 2)" style="width: 160px;">
-                            <template slot="append">% 每笔</template>
-                        </el-input>
-                    </el-col>
-                    <el-col :span="1" style="text-align: right;">
-                        <i class="el-icon-question" title="表示按照固定比例来收取服务费。计算公式：实发发金额 * 收费比例 = 服务费"></i>
-                    </el-col>
-                </el-row> -->
-                <el-row class="mb15">
-                    <el-col :span="6">
-                        <el-radio label="step" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(3)">分2.8万 - 无流水阶梯报价</el-radio>
-                    </el-col><br>
-                    <el-col :span="24" v-show="showInputRatio == 3">
-                        <el-table :data="contractForm.serviceFeeContent.stepwiseList">
-                            <el-table-column label="月收入下限" width="240">
-                                <template slot-scope="scope">
-                                    <template v-if="scope.row.sequence">
-                                        <el-input v-model="scope.row.startAmount" disabled class="input_100" @change="checkTable">
-                                            <template slot="append">万</template>
-                                        </el-input>
-                                        <el-checkbox v-model="scope.row.equalsStart" @change="equals(scope.$index, 0)">含 
-                                            <template v-if="scope.row.sequence == columnIndex - 1">
-                                                以上
-                                            </template>
-                                        </el-checkbox>
-                                    </template>
-                                    <template v-else>
-                                        <div class="center">无</div>
-                                    </template>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="月收入上限" width="240">
-                                <template slot-scope="scope">
-                                    <template v-if="scope.row.sequence != columnIndex - 1">
-                                        <el-input v-model="scope.row.endAmount" disabled class="input_100" @change="checkTable">
-                                            <template slot="append">万</template>
-                                        </el-input>
-                                        <el-checkbox v-model="scope.row.equalsEnd" @change="equals(scope.$index, 1)">含 
-                                            <template v-if="!scope.row.sequence">
-                                                以下
-                                            </template>
-                                        </el-checkbox>
-                                    </template>
-                                    <template v-else>
-                                        <div class="center">无</div>
-                                    </template>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="阶梯收费" width="270px">
-                                <template slot-scope="scope">
-                                    实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 3)" v-model="scope.row.percent" style="width: 100px;"></el-input> %  
-                                    <!-- 每人<i class="el-icon-question" title="按每人月收入分阶梯收费"></i> -->
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="操作">
-                                <template slot-scope="scope">
-                                    <el-button type="text" @click="deleteColumn(scope.$index)" v-if="scope.$index > 1 && scope.$index == columnIndex - 1">删除</el-button>
-                                    <div class="center" v-else>-</div>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-                        <!-- <el-button class="top_24" @click="addColumn" size="small" type="primary">增加阶梯</el-button> -->
-                        <div class="top_24">
-                            甲乙双方同意在结 算当日暂按
-                            <el-input class="input_200" v-model="inputRate" @blur="checkTable">
-                                <template slot="append">%</template>
-                            </el-input>
-                            的标准计算管理费，并在此基础上计算服务费总额。
-                        </div>
-                    </el-col>
-                </el-row>
-                <el-row class="mb15">
-                    <el-col :span="6">
-                        <el-radio label="step_0" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(4)">不分2.8万 - 按流水总额阶梯报价</el-radio>
-                    </el-col><br>
-                    <el-col :span="24" v-show="showInputRatio == 4">
-                        <el-table :data="contractForm.serviceFeeContent.stepwiseList">
-                            <el-table-column label="月总额下限" width="240">
-                                <template slot-scope="scope">
-                                    <template v-if="scope.row.sequence">
-                                        <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 4)" class="input_100" @change="checkTable">
-                                            <template slot="append">万</template>
-                                        </el-input>
-                                        <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 4)" @change="equals(scope.$index, 0)">含 
-                                            <template v-if="scope.row.sequence == columnIndex - 1">
-                                                以上
-                                            </template>
-                                        </el-checkbox>
-                                    </template>
-                                    <template v-else>
-                                        <div class="center">无</div>
-                                    </template>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="月总额上限" width="240">
-                                <template slot-scope="scope">
-                                    <template v-if="scope.row.sequence != columnIndex - 1">
-                                        <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 4)" class="input_100" @change="checkTable">
-                                            <template slot="append">万</template>
-                                        </el-input>
-                                        <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 4)" @change="equals(scope.$index, 1)">含 
-                                            <template v-if="!scope.row.sequence">
-                                                以下
-                                            </template>
-                                        </el-checkbox>
-                                    </template>
-                                    <template v-else>
-                                        <div class="center">无</div>
-                                    </template>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="阶梯收费" width="270px">
-                                <template slot-scope="scope">
-                                    实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 4)" v-model="scope.row.percent" style="width: 100px;"></el-input> %  
-                                    <!-- 每人<i class="el-icon-question" title="按每人月收入分阶梯收费"></i> -->
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="操作">
-                                <template slot-scope="scope">
-                                    <el-button type="text" @click="deleteColumn(scope.$index)" v-if="scope.$index > 1 && scope.$index == columnIndex - 1">删除</el-button>
-                                    <div class="center" v-else>-</div>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-                        <el-button class="top_24" v-if="contractForm.serviceFeeContent.stepwiseList.length < 10" @click="addColumn" size="small" type="primary">增加阶梯</el-button>
-                        <div class="top_24">
-                            甲乙双方同意在结 算当日暂按
-                            <el-input class="input_200" v-model="inputRate" @blur="checkTable">
-                                <template slot="append">%</template>
-                            </el-input>
-                            的标准计算管理费，并在此基础上计算服务费总额。
-                        </div>
-                    </el-col>
-                </el-row>
-                <el-row class="mb15">
-                    <el-col :span="6">
-                        <el-radio label="step_1" v-model="contractForm.serviceFeeContent.serviceFeeType" @change="calcuServiceFee(5)">分2.8万 - 按流水分阶梯报价</el-radio>
-                    </el-col><br>
-                    <el-col :span="24" v-show="showInputRatio == 5">
-                        <div>
-                            月收入
-                            <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount" disabled>
-                                <template slot="append">万</template>
-                            </el-input>
-                            <el-checkbox v-model="contractForm.serviceFeeContent.containMonthAmount" :disabled="!(showInputRatio == 5)" @change="equalsIncomeAmount(0)">含</el-checkbox>
-                            以下
-                        </div>
-                        <el-table :data="contractForm.serviceFeeContent.stepwiseList">
-                            <el-table-column label="月总额下限" width="240">
-                                <template slot-scope="scope">
-                                    <template v-if="scope.row.sequence">
-                                        <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable">
-                                            <template slot="append">万</template>
-                                        </el-input>
-                                        <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0)">含 
-                                            <template v-if="scope.row.sequence == columnIndex - 1">
-                                                以上
-                                            </template>
-                                        </el-checkbox>
-                                    </template>
-                                    <template v-else>
-                                        <div class="center">无</div>
-                                    </template>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="月总额上限" width="240">
-                                <template slot-scope="scope">
-                                    <template v-if="scope.row.sequence != columnIndex - 1">
-                                        <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable">
-                                            <template slot="append">万</template>
-                                        </el-input>
-                                        <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 1)">含 
-                                            <template v-if="!scope.row.sequence">
-                                                以下
-                                            </template>
-                                        </el-checkbox>
-                                    </template>
-                                    <template v-else>
-                                        <div class="center">无</div>
-                                    </template>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="阶梯收费" width="270px">
-                                <template slot-scope="scope">
-                                    实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> %  
-                                    <!-- 每人<i class="el-icon-question" title="按每人月收入分阶梯收费"></i> -->
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="操作">
-                                <template slot-scope="scope">
-                                    <el-button type="text" @click="deleteColumn(scope.$index)" v-if="scope.$index > 1 && scope.$index == columnIndex - 1">删除</el-button>
-                                    <div class="center" v-else>-</div>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-                        <el-button class="top_24" v-if="contractForm.serviceFeeContent.stepwiseList.length < 10" @click="addColumn" size="small" type="primary">增加阶梯</el-button>
-                        <div class="top_24">
-                            月收入
-                            <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount" disabled>
-                                <template slot="append">万</template>
-                            </el-input>
-                            <el-checkbox v-model="contractForm.serviceFeeContent2.containMonthAmount" :disabled="!(showInputRatio == 5)" @change="equalsIncomeAmount(1)">含</el-checkbox>
-                            以上
-                        </div>
-                        <el-table :data="contractForm.serviceFeeContent2.stepwiseList">
-                            <el-table-column label="月总额下限" width="240">
-                                <template slot-scope="scope">
-                                    <template v-if="scope.row.sequence">
-                                        <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable">
-                                            <template slot="append">万</template>
-                                        </el-input>
-                                        <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0, 2)">含 
-                                            <template v-if="scope.row.sequence == columnIndex - 1">
-                                                以上
-                                            </template>
-                                        </el-checkbox>
-                                    </template>
-                                    <template v-else>
-                                        <div class="center">无</div>
-                                    </template>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="月总额上限" width="240">
-                                <template slot-scope="scope">
-                                    <template v-if="scope.row.sequence != columnIndex2 - 1">
-                                        <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable">
-                                            <template slot="append">万</template>
-                                        </el-input>
-                                        <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 1, 2)">含 
-                                            <template v-if="!scope.row.sequence">
-                                                以下
-                                            </template>
-                                        </el-checkbox>
-                                    </template>
-                                    <template v-else>
-                                        <div class="center">无</div>
-                                    </template>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="阶梯收费" width="270px">
-                                <template slot-scope="scope">
-                                    实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> %  
-                                    <!-- 每人<i class="el-icon-question" title="按每人月收入分阶梯收费"></i> -->
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="操作">
-                                <template slot-scope="scope">
-                                    <el-button type="text" @click="deleteColumn(scope.$index, 1)" v-if="scope.$index > 1 && scope.$index == columnIndex2 - 1">删除</el-button>
-                                    <div class="center" v-else>-</div>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-                        <el-button class="top_24" v-if="contractForm.serviceFeeContent2.stepwiseList.length < 10" @click="addColumn(1)" size="small" type="primary">增加阶梯</el-button>
-                        <div class="top_24">
-                            甲乙双方同意在结 算当日暂按
-                            <el-input class="input_200" v-model="inputRate" @blur="checkTable">
-                                <template slot="append">%</template>
-                            </el-input>
-                            的标准计算管理费，并在此基础上计算服务费总额。
-                        </div>
-                    </el-col>
-                </el-row>
+                <contract-item :contractForm="contractForm" :checkAttr="`offer`" v-on:result="receive" ref="contractItem"></contract-item>
             </el-form-item>
             <h4 class="ml50 mt50">客户发放方式</h4>
             <el-form-item label="薪酬发放渠道" prop="channelTypeList">
@@ -446,9 +183,12 @@
 
             <h4 class="ml50 mt50">客户（公司）开票信息</h4>
             <el-form-item label="发票类型" prop="invoiceType" >
-                <el-select v-model="contractForm.invoiceType" placeholder="请选择" style="width:100%;">
-                    <el-option v-for="item in searchOptions.ContractGenInvoiceType" :key="item.value" :label="item.text" :value="item.value"></el-option>
-                </el-select>
+                <div class="w1050">
+                    <el-select class="w800 mr20" v-model="contractForm.invoiceType" placeholder="请选择">
+                        <el-option v-for="item in searchOptions.ContractGenInvoiceType" :key="item.value" :label="item.text" :value="item.value"></el-option>
+                    </el-select>
+                    <el-checkbox v-model="contractForm.showSubjectInfo">合同中显示发票类型</el-checkbox>
+                </div>
             </el-form-item>
             <el-form-item label="公司名称" prop="invoiceCompanyName">
                 <el-input v-model="contractForm.invoiceCompanyName"></el-input>
@@ -468,6 +208,29 @@
             <el-form-item label="银行账号" prop="customBankAccount">
                 <el-input v-model="contractForm.customBankAccount"></el-input>
             </el-form-item>
+            <el-form-item label="付款方和收票方是否一致" prop="payAndInvoiceSame">
+                <el-radio v-model="contractForm.payAndInvoiceSame" v-for="e in payAndInvoiceSameList" :key="e.value" :label="e.value">{{e.text}}</el-radio>
+            </el-form-item>
+            <el-form-item v-show="contractForm.payAndInvoiceSame != 1" label="甲方下属公司类型" prop="customCompanyUnderType">
+                <el-radio v-model="contractForm.customCompanyUnderType" v-for="e in customCompanyUnderTypeList" :key="e.value" :label="e.value">{{e.text}}</el-radio>
+            </el-form-item>
+            <el-form-item v-show="contractForm.payAndInvoiceSame != 1" label="上传甲方下属公司清单" prop="customUnderAttachList">
+                <a class="abtn" href="/assets/甲方公司下属公司名单.xlsx" download="甲方公司下属公司名单.xlsx" target="_blank">下载模板</a> <div>请先下载《甲方下属公司清单》模板</div>
+                <el-upload
+        	      class="form_input"
+        	      :action="`/api/econtract/template/parsefile`"
+        	      :auto-upload="false"
+        	      :on-change="upload"
+        	      :on-remove="remove"
+        	      :multiple="false"
+                  :file-list="files"
+        	      accept=".xlsx, .xls">
+        	        <div class="up_icon" v-show="!files.length">
+        	            <div>点击这里上传</div>
+        	            <div>请上传小于5M的xls或xlsx格式文件</div>
+        	        </div>
+        	    </el-upload>
+            </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="submitForm('contractForm')">保存</el-button>
                 <el-button @click="backToList">取消</el-button>
@@ -479,11 +242,15 @@
 </template>
 
 <script>
-	import { post, get } from "../../store/api"
+	import { importPost, post, get } from "../../store/api"
 	import _ from 'lodash'
 	import { showNotify } from '../../plugin/utils-notify'
-    import { checkBankNo, checkPhone } from '../../plugin/utils-element-validator'
+    import { checkBankNo, checkPhone, checkMoney } from '../../plugin/utils-element-validator'
+    import contractItem from '../../pageComponent/contractItem'
 	export default {
+        components: {
+            contractItem
+        },
 		created() {
             this.getCompanyList()
             this.getSearchOptions()
@@ -496,15 +263,37 @@
 	            this.getTemplateDetail(tplId)
             }
             this.aCompany();
-            this.initColumn();
+            // this.initColumn();
             get('/api/sysmgr-web/commom/option?enumType=IndustryType').then(data => {
                 this.invoiceTypeList = data
             })
-            // get('/api/contract-web/commom/option?enumType=InvoiceType').then(data => {
-            //     this.invoiceTypeList = data
-            // })
+            get('/api/sysmgr-web/commom/option?enumType=VciPayType').then(data =>{
+                this.VciPayTypeList = data
+                this.contractForm.vciPayType = this.contractForm.vciPayType || data[0].value
+            })
+            !this.contractId && this.contractForm.serviceCompanyList.push({
+                serviceCompanyId: '',
+                serviceCompanyName: '',
+                showServiceCompanyInfo: ''
+            }),
+            get('/api/sysmgr-web/commom/option?enumType=CustomNature').then(data =>{
+                this.customNatureList = data
+                this.contractForm.customNature = this.contractForm.customNature || data[0].value
+            })
         },
         data() {
+            var checkMonth = (rule, value, cb) => {
+                if(!/^\d+$/.test(value)) {
+                    cb(new Error('请输入整数'))
+                    return
+                }
+                console.log(value)
+                if(value > 31 || value < 1) {
+                    cb(new Error('数值必须在1-31之间'))
+                    return
+                }
+                cb()
+            }
 			return {
                 isShow:false,
                 showDesc:'展开',
@@ -521,7 +310,6 @@
                     offer: '1',
 	                invoiceType: '',
 	                invoiceTypeName: '',
-	                // invoiceSubjectId: '',
 	                invoiceSubjectName: '',
 	                serviceCompanyId: '',
 	                serviceCompanyName: '',
@@ -540,7 +328,6 @@
 	                customPhone: '',
 	                customBankName: '',
 	                customBankAccount: '',
-                    // serviceId:'',
                     serviceAccountName:'',
                     serviceAccountNo:'',
                     serviceDepositBank:'',
@@ -553,24 +340,6 @@
                     contractStartDate: '',
                     contractEndDate: '',
                     contractTel: '',
-                    // standardRate: '',
-                    // laddersRate: '',
-                    // lv1Step1Amount: '',
-                    // lv1Step1Rate: '',
-                    // lv1Step2Amount1: '',
-                    // lv1Step2Amount2: '',
-                    // lv1Step2Rate: '',
-                    // lv1Step3Amount: '',
-                    // lv1Step3Rate: '',
-                    // table_0: '',
-                    // lv2Step1Amount: '',
-                    // lv2Step1Rate: '',
-                    // lv2Step2Amount1: '',
-                    // lv2Step2Amount2: '',
-                    // lv2Step2Rate: '',
-                    // lv2Step3Amount: '',
-                    // lv2Step3Rate: '',
-                    // table_1: '',
                     channelTypeList: [],
                     serviceFeeContent: {
                         discountRate: '',
@@ -586,7 +355,18 @@
                         containMonthAmount: false,
                         monthIncomeAmount: '',
                         stepwiseList: []
-                    }
+                    },
+                    vciBuyType: '',
+                    vciPlanName: '',
+                    vciPayType: '',
+                    vciSettleExp: '',
+                    serviceCompanyList: [],
+                    showSubjectInfo: '',
+                    payAndInvoiceSame: '1',
+                    customCompanyUnderType: '',
+                    showServiceCompanyInfo: '',
+                    customUnderAttachList: [],
+                    customNature: ''
                 },
 				rules: {
                     customIndustry: [
@@ -595,15 +375,15 @@
                     offer: [
                         {required: true, message: '请选择并正确填写报价（大于零且最多两位小数）', trigger: 'blur'}
                     ],
+                    customNature: [
+                        {required: true, message: '请选择客户性质', trigger: 'change'}
+                    ],
 					invoiceType: [
 						{required: true, message: '请选择发票类型', trigger: 'change'}
                     ],
-					// invoiceSubjectId: [
-					// 	{required: true, message: '请选择发票类目', trigger: 'change'}
+					// serviceCompanyId: [
+					// 	{required: true, message: '请选择服务商', trigger: 'change'}
                     // ],
-					serviceCompanyId: [
-						{required: true, message: '请选择服务商', trigger: 'change'}
-                    ],
                     industryType: [
                         {required: true, message: '请选择行业类型', trigger: 'change'}
                     ],
@@ -646,9 +426,6 @@
                     customMail1: [
                         { required: true, message: '请填写邮箱地址', trigger: 'blur'}
                     ],
-                    // serviceId: [
-					// 	{required: true, message: '请选择服务类型', trigger: 'change'}
-                    // ],
                     serviceTypeList: [
 						{required: true, message: '请选择服务类型', trigger: 'change'}
                     ],
@@ -659,26 +436,41 @@
 						{required: true, message: '销售联系人邮箱', trigger: 'blur'}
                     ],
                     contractTel: [
-                        {required: true, message: '销售联系人电话', trigger: 'blur'}
+                        {required: true, message: '销售联系人电话', trigger: 'blur', validator: checkPhone}
                     ],
                     contractAddr: [
 						{required: true, message: '销售联系人地址', trigger: 'blur'}
                     ],
-                    // table_0: [
-                    //     {required: true, message: '请正确填写（大于零且最多两位小数）', trigger: 'blur'}
-                    // ],
-                    // table_1: [
-                    //     {required: true, message: '请正确填写（大于零且最多两位小数）', trigger: 'blur'}
-                    // ],
                     channelTypeList: [
                         {required: true, message: '至少选择一项', trigger: 'blur'}
-                    ]
+                    ],
+                    vciBuyType: [
+                        {required: true, message: '至少选择商业保险类型', trigger: 'blur'}
+                    ],
+                    vciPlanName: [
+                        {required: true, message: '请填写保险计划名称', trigger: 'blur'}
+                    ],
+                    vciPayType: [
+                        {required: true, message: '请选择付款方式', trigger: 'blur'}
+                    ],
+                    vciSettleExp: [
+                        {required: true, trigger: 'blur', validator: checkMonth}
+                    ],
+                    payAndInvoiceSame: [
+                        {required: true, message: '请选择', trigger: 'blur'}
+                    ],
+                    // customCompanyUnderType: [
+                    //     {required: true, message: '请选择甲方下属公司类型', trigger: 'blur'}
+                    // ],
+                    // customUnderAttachList: [
+                    //     {required: true, message: '请上传甲方下属公司清单', trigger: 'blur'}
+                    // ]
                 },
                 customList: [],
                 serviceList: [],
 				searchOptions: {},
                 invoiceOptions: {},
-                serviceTypes:{},
+                serviceTypes: [],
 				dateValue: '',
                 contractId: '',
                 fileList: [],
@@ -709,7 +501,45 @@
                 columnIndex: 0,
                 columnIndex2: 0,
                 invoiceTypeList: [],
-                float2: /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/
+                float2: /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/,
+                vciBuyTypeList: [
+                    {
+                        text: '由客户自行购买',
+                        value: '10'
+                    },
+                    {
+                        text: '我方购买保险的情况，无论保费是否我方承担均适用',
+                        value: '20'
+                    }
+                ],
+                VciPayTypeList: [],
+                payAndInvoiceSameList: [
+                    {
+                        text: '是',
+                        value: '1'
+                    },
+                    {
+                        text: '否',
+                        value: '0'
+                    }
+                ],
+                customCompanyUnderTypeList: [
+                    {
+                        text: '甲方分公司',
+                        value: 'branch'
+                    },
+                    {
+                        text: '甲方子公司',
+                        value: 'sub'
+                    }
+                ],
+                pro: 0,
+                frame: '',
+                isEnd: true,
+                date: 0,
+                files: [],
+                customNatureList: [],
+                resultData: {}
             }
         },
         computed: {
@@ -724,13 +554,9 @@
                     if(content) {
                         contents.push(content)
                     }
-                    // if(content) {
-                    //     str += `${str ? '<br>' : ''}${content.seqNo}、${content.serviceContent}`
-                    // }
                 })
                 for(var i =  0; i < contents.length; i++) {
                     for(var j = i; j < contents.length; j++) {
-                        console.log(contents[i].seqNo, contents[j].seqNo)
                         if(contents[i].seqNo > contents[j].seqNo) {
                             var a = contents[i]
                             contents[i] = contents[j]
@@ -740,6 +566,22 @@
                     str += `${str ? '<br>' : ''}${contents[i].seqNo}、${contents[i].serviceContent}`
                 }
                 return str
+            }
+        },
+        watch: {
+            'contractForm.payAndInvoiceSame'(val) {
+                if(val != '1') {
+                    this.rules.customCompanyUnderType = [
+                        {required: true, message: '请选择甲方下属公司类型', trigger: 'blur'}
+                    ]
+                    this.rules.customUnderAttachList = [
+                        {required: true, message: '请上传甲方下属公司清单', trigger: 'blur'}
+                    ]
+                }
+                else {
+                    delete this.rules.customCompanyUnderType
+                    delete this.rules.customUnderAttachList
+                }
             }
         },
         methods: {
@@ -869,15 +711,15 @@
             },
             aCompany(){
                 get('/api/sysmgr-web/commom/company-infos', {
-                        companyId: 1
-                    }).then(result => {
-                            if(result){
-                                this.contractForm.aygLegalPerson = result.baseInfo.legalPerson 
-                                this.contractForm.aygContactPhone = result.baseInfo.contactPhone1
-                                this.contractForm.aygAddress = result.baseInfo.contactAddr1
-                            }
-                            
-                    })
+                    companyId: 1
+                }).then(result => {
+                    if(result){
+                        this.contractForm.aygLegalPerson = result.baseInfo.legalPerson 
+                        this.contractForm.aygContactPhone = result.baseInfo.contactPhone1
+                        this.contractForm.aygAddress = result.baseInfo.contactAddr1
+                    }
+
+                })
             },
             serviceBank(){
                 if(this.contractForm.serviceCompanyId){
@@ -927,260 +769,184 @@
                 })
             },
             seviceTypeChange(){
+                if(this.contractForm.serviceTypeList.length > 5) {
+                    this.contractForm.serviceTypeList.pop()
+                    this.$message({
+                        type: 'warning',
+                        message: '最多只能选5个'
+                    })
+                }
                 this.getInvoiceOptions();
             },
             setContractFormData(options, key, idKey, nKey, value) {
                 let obj = _.find(options, item => item[idKey] === value)
-                console.log(arguments)
             	this.contractForm[`${key}Name`] = obj[nKey]
             },
 	        backToList() {
             	this.$router.back()
             },
             // -------------------------------------
-            calcuServiceFee(a) {
-                this.inputRate = ''
-                this.contractForm.serviceFeeContent.monthIncomeAmount = 1
-                if(this.contractForm.serviceFeeContent.serviceFeeType == 'standard') {
-                    this.contractForm.offer = (this.float2.test(this.inputStandard) && this.inputStandard <= 100) ? 0 : '';
-                    // (this.inputStandard && (this.inputStandard - 0 > 0 && this.inputStandard <= 100)) ? 0 : '';
-                    this.showInputRatio = a;
-                }
-                if (this.contractForm.serviceFeeContent.serviceFeeType == 'step') {
-                    this.contractForm.offer = 0;
-                    this.showInputRatio = a;
-                    this.initColumn(2)
-                    this.contractForm.serviceFeeContent.stepwiseList[0].endAmount = 2.8
-                    this.contractForm.serviceFeeContent.stepwiseList[1].startAmount = 2.8
-                }
-                if (this.contractForm.serviceFeeContent.serviceFeeType == 'step_0') {
-                    this.contractForm.offer = 0;
-                    this.showInputRatio = a;
-                    this.initColumn()
-                }
-                if (this.contractForm.serviceFeeContent.serviceFeeType == 'step_1') {
-                    this.contractForm.offer = 0;
-                    this.showInputRatio = a;
-                    this.initColumn()
-                    this.contractForm.serviceFeeContent.monthIncomeAmount = 2.8
-                }
-                this.$refs['contractForm'].validateField('offer')
-            },
-            addColumn(a) {
-                if(isNaN(a)) {
-                    a = 0
-                }
-                var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList
-                if(a) {
-                    stepwiseList = this.contractForm.serviceFeeContent2.stepwiseList
-                }
-                stepwiseList.push({
-                    startAmount: stepwiseList[this.columnIndex - 1] ? stepwiseList[this.columnIndex - 1].endAmount : '',
-                    equalsStart: stepwiseList[this.columnIndex - 1] ? !stepwiseList[this.columnIndex - 1].equalsEnd : false,
-                    endAmount: '',
-                    equalsEnd: true,
-                    sequence: a ? this.columnIndex2 : this.columnIndex,
-                    percent: ''
-                })
-                if(a) {
-                    this.columnIndex2++
-                }
-                else {
-                    this.columnIndex++
-                }
-            },
-            deleteColumn(a, b) {
-                var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList
-                if(b) {
-                    stepwiseList = this.contractForm.serviceFeeContent2.stepwiseList
-                }
-                stepwiseList.splice(a, 1)
-                if(b) {
-                    this.columnIndex2--
-                    stepwiseList[this.columnIndex2- 1].endAmount = ''
-                }
-                else {
-                    this.columnIndex--
-                    stepwiseList[this.columnIndex- 1].endAmount = ''
-                }
-            },
-            initColumn(a) {
-                if(isNaN(a)) {
-                    a = 3
-                }
-                this.contractForm.serviceFeeContent.stepwiseList = []
-                if(!this.contractForm.serviceFeeContent2) {
-                    this.contractForm.serviceFeeContent2 = {}
-                }
-                this.contractForm.serviceFeeContent2.stepwiseList = []
-                this.columnIndex = 0
-                this.columnIndex2 = 0
-                for(var i = 0; i < a; i++) {
-                    this.addColumn()
-                }
-                if(this.showInputRatio == 5) {
-                    for(var i = 0; i < a; i++) {
-                        this.addColumn(1)
-                    }
-                }
-            },
-            amount(a, b, c) {
-                var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList, amount = '', result = ''
-                if(c) {
-                    stepwiseList = this.contractForm.serviceFeeContent2.stepwiseList
-                }
-                if(b) {
-                    stepwiseList[a + 1] && (stepwiseList[a + 1].startAmount = stepwiseList[a].endAmount)
-                    amount = stepwiseList[a].endAmount
-                }
-                else {
-                    stepwiseList[a - 1] && (stepwiseList[a - 1].endAmount = stepwiseList[a].startAmount)
-                    amount = stepwiseList[a].startAmount
-                }
-                if(this.float2.test(amount) && stepwiseList[a].startAmount - 0 < stepwiseList[a].endAmount) {
-                    result = 0
-                }
-                return result
-            },
-            checkTable() {
-                var results = []
-                for(var i =0; i < this.contractForm.serviceFeeContent.stepwiseList.length; i++) {
-                    for(var j = 0; j < 2; j++) {
-                        (j || i) && (i + 1 < this.contractForm.serviceFeeContent.stepwiseList.length) && results.push(this.amount(i, j))
-                    }
-                    var a = this.contractForm.serviceFeeContent.stepwiseList[i].percent
-                    results.push((this.float2.test(a) && a <= 100) ? 0 : '')
-                }
-                var m = this.contractForm.serviceFeeContent.monthIncomeAmount
-                results.push((this.float2.test(m) && m <= 100) ? 0 : '')
-                results.push((this.float2.test(this.inputRate) && this.inputRate <= 100) ? 0 : '')
-                if(this.contractForm.serviceFeeContent2.stepwiseList.length) {
-                    for(var i = 0; i < this.contractForm.serviceFeeContent2.stepwiseList.length; i++) {
-                        for(var j = 0; j < 2; j++) {
-                           (j || i) && (i + 1 < this.contractForm.serviceFeeContent2.stepwiseList.length) && results.push(this.amount(i, j, 2))
-                        }
-                        var a = this.contractForm.serviceFeeContent2.stepwiseList[i].percent
-                        results.push((this.float2.test(a) && a <= 100) ? 0 : '')
-                    }
-                }
-                this.contractForm.offer = results.indexOf('') > -1 ? '' : 0
-                console.log(results)
-            },
-            equals(a, b, c) {
-                var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList
-                if(c) {
-                    stepwiseList = this.contractForm.serviceFeeContent2.stepwiseList
-                }
-                if(b) {
-                    stepwiseList[a + 1] && (stepwiseList[a + 1].equalsStart = !stepwiseList[a].equalsEnd)
-                }
-                else {
-                    stepwiseList[a - 1] && (stepwiseList[a - 1].equalsEnd = !stepwiseList[a].equalsStart)
-                }
-            },
-            equalsIncomeAmount(a) {
-                if(!a) {
-                    this.contractForm.serviceFeeContent2.containMonthAmount = !this.contractForm.serviceFeeContent.containMonthAmount
-                }
-                else {
-                    this.contractForm.serviceFeeContent.containMonthAmount = !this.contractForm.serviceFeeContent2.containMonthAmount
-                }
-            },
-            checkInputRate() {
-                this.contractForm.offer = (this.float2.test(this.inputRate) && this.inputRate <= 100) ? 0 : ''
-                // this.inputRate ? 0 : ''
-            },
+            // calcuServiceFee(a) {
+            //     this.inputRate = ''
+            //     this.contractForm.serviceFeeContent.monthIncomeAmount = 1
+            //     if(this.contractForm.serviceFeeContent.serviceFeeType == 'standard') {
+            //         this.contractForm.offer = (this.float2.test(this.inputStandard) && this.inputStandard <= 100) ? 0 : '';
+            //         // (this.inputStandard && (this.inputStandard - 0 > 0 && this.inputStandard <= 100)) ? 0 : '';
+            //         this.showInputRatio = a;
+            //     }
+            //     if (this.contractForm.serviceFeeContent.serviceFeeType == 'step') {
+            //         this.contractForm.offer = 0;
+            //         this.showInputRatio = a;
+            //         this.initColumn(2)
+            //         this.contractForm.serviceFeeContent.stepwiseList[0].endAmount = 2.8
+            //         this.contractForm.serviceFeeContent.stepwiseList[1].startAmount = 2.8
+            //     }
+            //     if (this.contractForm.serviceFeeContent.serviceFeeType == 'step_0') {
+            //         this.contractForm.offer = 0;
+            //         this.showInputRatio = a;
+            //         this.initColumn()
+            //     }
+            //     if (this.contractForm.serviceFeeContent.serviceFeeType == 'step_1') {
+            //         this.contractForm.offer = 0;
+            //         this.showInputRatio = a;
+            //         this.initColumn()
+            //         this.contractForm.serviceFeeContent.monthIncomeAmount = 2.8
+            //     }
+            //     this.$refs['contractForm'].validateField('offer')
+            // },
+            // addColumn(a) {
+            //     if(isNaN(a)) {
+            //         a = 0
+            //     }
+            //     var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList
+            //     if(a) {
+            //         stepwiseList = this.contractForm.serviceFeeContent2.stepwiseList
+            //     }
+            //     stepwiseList.push({
+            //         startAmount: stepwiseList[this.columnIndex - 1] ? stepwiseList[this.columnIndex - 1].endAmount : '',
+            //         equalsStart: stepwiseList[this.columnIndex - 1] ? !stepwiseList[this.columnIndex - 1].equalsEnd : false,
+            //         endAmount: '',
+            //         equalsEnd: true,
+            //         sequence: a ? this.columnIndex2 : this.columnIndex,
+            //         percent: ''
+            //     })
+            //     if(a) {
+            //         this.columnIndex2++
+            //     }
+            //     else {
+            //         this.columnIndex++
+            //     }
+            // },
+            // deleteColumn(a, b) {
+            //     var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList
+            //     if(b) {
+            //         stepwiseList = this.contractForm.serviceFeeContent2.stepwiseList
+            //     }
+            //     stepwiseList.splice(a, 1)
+            //     if(b) {
+            //         this.columnIndex2--
+            //         stepwiseList[this.columnIndex2- 1].endAmount = ''
+            //     }
+            //     else {
+            //         this.columnIndex--
+            //         stepwiseList[this.columnIndex- 1].endAmount = ''
+            //     }
+            // },
+            // initColumn(a) {
+            //     if(isNaN(a)) {
+            //         a = 3
+            //     }
+            //     this.contractForm.serviceFeeContent.stepwiseList = []
+            //     if(!this.contractForm.serviceFeeContent2) {
+            //         this.contractForm.serviceFeeContent2 = {}
+            //     }
+            //     this.contractForm.serviceFeeContent2.stepwiseList = []
+            //     this.columnIndex = 0
+            //     this.columnIndex2 = 0
+            //     for(var i = 0; i < a; i++) {
+            //         this.addColumn()
+            //     }
+            //     if(this.showInputRatio == 5) {
+            //         for(var i = 0; i < a; i++) {
+            //             this.addColumn(1)
+            //         }
+            //     }
+            // },
+            // amount(a, b, c) {
+            //     var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList, amount = '', result = ''
+            //     if(c) {
+            //         stepwiseList = this.contractForm.serviceFeeContent2.stepwiseList
+            //     }
+            //     if(b) {
+            //         stepwiseList[a + 1] && (stepwiseList[a + 1].startAmount = stepwiseList[a].endAmount)
+            //         amount = stepwiseList[a].endAmount
+            //     }
+            //     else {
+            //         stepwiseList[a - 1] && (stepwiseList[a - 1].endAmount = stepwiseList[a].startAmount)
+            //         amount = stepwiseList[a].startAmount
+            //     }
+            //     if(this.float2.test(amount) && stepwiseList[a].startAmount - 0 < stepwiseList[a].endAmount) {
+            //         result = 0
+            //     }
+            //     return result
+            // },
+            // checkTable() {
+            //     var results = []
+            //     for(var i =0; i < this.contractForm.serviceFeeContent.stepwiseList.length; i++) {
+            //         for(var j = 0; j < 2; j++) {
+            //             (j || i) && (i + 1 < this.contractForm.serviceFeeContent.stepwiseList.length) && results.push(this.amount(i, j))
+            //         }
+            //         var a = this.contractForm.serviceFeeContent.stepwiseList[i].percent
+            //         results.push((this.float2.test(a) && a <= 100) ? 0 : '')
+            //     }
+            //     var m = this.contractForm.serviceFeeContent.monthIncomeAmount
+            //     results.push((this.float2.test(m) && m <= 100) ? 0 : '')
+            //     results.push((this.float2.test(this.inputRate) && this.inputRate <= 100) ? 0 : '')
+            //     if(this.contractForm.serviceFeeContent2.stepwiseList.length) {
+            //         for(var i = 0; i < this.contractForm.serviceFeeContent2.stepwiseList.length; i++) {
+            //             for(var j = 0; j < 2; j++) {
+            //                (j || i) && (i + 1 < this.contractForm.serviceFeeContent2.stepwiseList.length) && results.push(this.amount(i, j, 2))
+            //             }
+            //             var a = this.contractForm.serviceFeeContent2.stepwiseList[i].percent
+            //             results.push((this.float2.test(a) && a <= 100) ? 0 : '')
+            //         }
+            //     }
+            //     this.contractForm.offer = results.indexOf('') > -1 ? '' : 0
+            // },
+            // equals(a, b, c) {
+            //     var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList
+            //     if(c) {
+            //         stepwiseList = this.contractForm.serviceFeeContent2.stepwiseList
+            //     }
+            //     if(b) {
+            //         stepwiseList[a + 1] && (stepwiseList[a + 1].equalsStart = !stepwiseList[a].equalsEnd)
+            //     }
+            //     else {
+            //         stepwiseList[a - 1] && (stepwiseList[a - 1].equalsEnd = !stepwiseList[a].equalsStart)
+            //     }
+            // },
+            // equalsIncomeAmount(a) {
+            //     if(!a) {
+            //         this.contractForm.serviceFeeContent2.containMonthAmount = !this.contractForm.serviceFeeContent.containMonthAmount
+            //     }
+            //     else {
+            //         this.contractForm.serviceFeeContent.containMonthAmount = !this.contractForm.serviceFeeContent2.containMonthAmount
+            //     }
+            // },
+            // checkInputRate() {
+            //     this.contractForm.offer = (this.float2.test(this.inputRate) && this.inputRate <= 100) ? 0 : ''
+            // },
             // -------------------------------------
 	        submitForm(formName) {
-		        let url = this.contractId ? '/api/contract-web/contract-generate/update-contract-generate' : '/api/contract-web/contract-generate/create-contract-generate'
-                if(this.contractForm.serviceFeeContent.serviceFeeType != 'standard' && this.inputRate === '') {
-                    this.contractForm.offer = ''
-                }
+                let url = this.contractId ? '/api/contract-web/contract-generate/update-contract-generate' : '/api/contract-web/contract-generate/create-contract-generate'
+                this.$refs['contractItem'].transferObj()
 		        this.$refs[formName].validate(valid => {
 			        if (valid) {
-                        console.log('----------------------------------------------------------')
 				        this.setContractFormData(this.searchOptions.ContractGenInvoiceType, 'invoiceType', 'value', 'text', this.contractForm.invoiceType)
-				        this.setContractFormData(this.serviceList, 'serviceCompany', 'companyId', 'name', this.contractForm.serviceCompanyId)
-                        var err = false, contractForm = JSON.parse(JSON.stringify(this.contractForm))
-                        contractForm.serviceFeeContent.settledRate = this.Fixed(this.inputRate)
-                        if(contractForm.serviceFeeContent.serviceFeeType == 'standard') {
-                            contractForm.serviceFeeContent.serviceFeeRate = this.Fixed(this.inputStandard)
-                        }
-                        if(contractForm.serviceFeeContent.serviceFeeType == 'step'){
-                            contractForm.serviceFeeContent.secondType = 0
-                            contractForm.serviceFeeContent.stepwiseList.forEach((e, i, arr) => {
-                                try {
-                                    e.endAmount = this.Fixed(e.endAmount)
-                                    e.startAmount = this.Fixed(e.startAmount)
-                                    e.percent = this.Fixed(e.percent)
-                                    if((!e.startAmount && i != 0) || (!e.endAmount && i != arr.length - 1) || !e.percent || e.percent < 0 || e.percent >= 100) {
-                                        err = true
-                                    }
-                                }
-                                catch(err) {
-                                    err = true
-                                }
-                            })
-                            // delete this.contractForm.serviceFeeContent2
-                        }
-                        if(contractForm.serviceFeeContent.serviceFeeType == 'step_0'){
-                            console.log('step_0')
-                            contractForm.serviceFeeContent.serviceFeeType = 'step'
-                            contractForm.serviceFeeContent.secondType = 1
-                            contractForm.serviceFeeContent.stepwiseList.forEach((e, i, arr) => {
-                                try {
-                                    e.endAmount = this.Fixed(e.endAmount)
-                                    e.startAmount = this.Fixed(e.startAmount)
-                                    e.percent = this.Fixed(e.percent)
-                                    if((!e.startAmount && i != 0) || (!e.endAmount && i != arr.length - 1) || !e.percent || e.percent < 0 || e.percent >= 100) {
-                                        err = true
-                                    }
-                                }
-                                catch(err) {
-                                    err = true
-                                }
-                            })
-                            // delete this.contractForm.serviceFeeContent2
-                        }
-                        if(contractForm.serviceFeeContent.serviceFeeType == 'step_1'){
-                            contractForm.serviceFeeContent.serviceFeeType = 'step'
-                            contractForm.serviceFeeContent.secondType = 2
-                            contractForm.serviceFeeContent.stepwiseList.forEach((e, i, arr) => {
-                                try {
-                                    e.endAmount = this.Fixed(e.endAmount)
-                                    e.startAmount = this.Fixed(e.startAmount)
-                                    e.percent = this.Fixed(e.percent)
-                                    if((!e.startAmount && i != 0) || (!e.endAmount && i != arr.length - 1) || !e.percent || e.percent < 0 || e.percent >= 100) {
-                                        err = true
-                                    }
-                                }
-                                catch(err) {
-                                    err = true
-                                }
-                            })
-                            contractForm.serviceFeeContent2.stepwiseList.forEach((e, i, arr) => {
-                                try {
-                                    e.endAmount = this.Fixed(e.endAmount)
-                                    e.startAmount = this.Fixed(e.startAmount)
-                                    e.percent = this.Fixed(e.percent)
-                                    if((!e.startAmount && i != 0) || (!e.endAmount && i != arr.length - 1) || !e.percent || e.percent < 0 || e.percent >= 100) {
-                                        err = true
-                                    }
-                                }
-                                catch(err) {
-                                    err = true
-                                }
-                            })
-                            contractForm.serviceFeeContent.monthIncomeAmount = this.Fixed(contractForm.serviceFeeContent.monthIncomeAmount)
-                            contractForm.serviceFeeContent2.monthIncomeAmount = contractForm.serviceFeeContent.monthIncomeAmount
-                        }
-                        if(err) {
-                            showNotify('error', '请正确填写服务费收费比例！')
-                            this.contractForm.offer = ''
-                            this.$refs[formName].validateField('offer')
-                            return
-                        }
+				        this.contractForm.serviceCompanyId && this.setContractFormData(this.serviceList, 'serviceCompany', 'companyId', 'name', this.contractForm.serviceCompanyId)
                         // --------------------------------------------
+                        var contractForm = JSON.parse(JSON.stringify(this.contractForm))
+                        Object.assign(contractForm, this.resultData)
                         contractForm.tplId = this.templateDetail.id
                         delete contractForm.offer
 				        contractForm = _.assign(contractForm, {
@@ -1203,10 +969,28 @@
                             contractForm.serviceTypeList = serviceTypeList
                         }
                         if(this.contractId) contractForm.id = this.contractId
+                        if(contractForm.serviceCompanyList.length) {
+                            var serviceCompanyList = []
+                            contractForm.serviceCompanyList.forEach(e => {
+                                e.showServiceCompanyInfo = e.showServiceCompanyInfo ? '1' : ''
+                                this.serviceList.forEach(ev => {
+                                    if(e.serviceCompanyId == ev.companyId) {
+                                        e.serviceCompanyName = ev.name
+                                    }
+                                })
+                            })
+                        }
+                        else {
+                            contractForm.showServiceCompanyInfo = contractForm.showServiceCompanyInfo ? '1' : ''
+                            console.log(contractForm.showServiceCompanyInfo)
+                        }
+                        contractForm.showSubjectInfo = contractForm.showSubjectInfo ? '1' : ''
+                        console.log(contractForm)
                         post(url, contractForm)
                             .then(result => {
 	                            showNotify('success', this.contractId ? '编辑成功' : '新建成功')
-	                            this.backToList()
+	                            // this.backToList()
+                                this.$router.push('contractList')
                             })
 			        }else {
 			        	showNotify('error', '请检查输入项错误！')
@@ -1224,26 +1008,16 @@
                             this.contractForm[k] = result[k]
                         }
                     }
-                    this.inputRate = this.contractForm.serviceFeeContent.settledRate
-                    this.columnIndex = this.contractForm.serviceFeeContent.stepwiseList.length
-                    if(this.contractForm.serviceFeeContent2) {
-                        this.columnIndex2 = this.contractForm.serviceFeeContent2.stepwiseList.length
-                    }
-                    if(this.contractForm.serviceFeeContent.serviceFeeType == 'standard') {
-                        this.inputStandard = this.contractForm.serviceFeeContent.serviceFeeRate
-                    }
-                    if(this.contractForm.serviceFeeContent.serviceFeeType == 'step') {
-                        if(this.contractForm.serviceFeeContent.secondType == 1) {
-                            this.contractForm.serviceFeeContent.serviceFeeType = 'step_0'
-                            this.showInputRatio = 4
-                        }
-                        else if(this.contractForm.serviceFeeContent.secondType == 2){
-                            this.contractForm.serviceFeeContent.serviceFeeType = 'step_1'
-                            this.showInputRatio = 5
-                        }
-                        else {
-                            this.showInputRatio = 3
-                        }
+                    console.log(this.contractForm.showServiceCompanyInfo)
+                    this.contractForm.showServiceCompanyInfo = this.contractForm.showServiceCompanyInfo == '1'
+                    this.contractForm.showSubjectInfo = this.contractForm.showSubjectInfo == '1'
+                    if(this.contractForm.customUnderAttachList) {
+                        this.contractForm.customUnderAttachList.forEach(e => {
+                            this.files.push({
+                                name: e.displayname,
+                                url: e.downloadCode
+                            })
+                        })
                     }
                     if(this.contractForm.serviceTypeList) {
                         var serviceTypeList = []
@@ -1252,16 +1026,16 @@
                         })
                         this.contractForm.serviceTypeList = serviceTypeList
                     }
-                    !this.contractForm.serviceFeeContent.monthIncomeAmount && (this.contractForm.serviceFeeContent.monthIncomeAmount = 1)
                     this.getInvoiceOptions();
+                    this.$refs['contractItem'].init(this.contractForm)
                     // if(this.contractForm.channelType) {
                     //     this.channelTypes = this.contractForm.channelType.split(',')
                     // }
                 })
             },
-	        handleDownload(downloadCode) {
-            	window.location.href = `/api/contract-web/contract-generate/download-single-attachment?downloadCode=${downloadCode}&id=${this.contractId}&type=docx`
-            },
+	        // handleDownload(downloadCode) {
+            // 	window.location.href = `/api/contract-web/contract-generate/download-single-attachment?downloadCode=${downloadCode}&id=${this.contractId}&type=docx`
+            // },
             show(){
                 this.isShow = !this.isShow;
                 if(this.isShow){
@@ -1270,17 +1044,85 @@
                      this.showDesc = '展开';
                 }
             },
-            Fixed(a) {
-                if(a === '' || isNaN(a)) {
-                    return ''
-                }
-                else {
-                    var value = (a - 0).toFixed(2)
-                    return value * 100 <= a * 100 ? value : (value - 0.01).toFixed(2)
-                }
+            // Fixed(a) {
+            //     if(a === '' || isNaN(a)) {
+            //         return ''
+            //     }
+            //     else {
+            //         var value = (a - 0).toFixed(2)
+            //         return value * 100 <= a * 100 ? value : (value - 0.01).toFixed(2)
+            //     }
+            // },
+            // setPass(a) {
+            //     this.contractForm.offer = (this.float2.test(a) && a <= 100) ? 0 : ''
+            // },
+            hasInsurance() {
+                var isHas = false
+                this.serviceTypes.forEach(e => {
+                    this.contractForm.serviceTypeList.forEach(ev =>{
+                        if(e.serviceId == ev && e.vciStatus == 1) {
+                            isHas = true
+                        }
+                    })
+                })
+                return isHas
             },
-            setPass(a) {
-                this.contractForm.offer = (this.float2.test(a) && a <= 100) ? 0 : ''
+            filterServiceList(a) {
+                return this.serviceList.filter(e => {
+                    return !this.contractForm.serviceCompanyList.filter((el, i) => {
+                        return i < a && e.companyId == el.serviceCompanyId
+                    }).length
+                }) || []
+            },
+            checkServiceCompanyList(a) {
+                this.contractForm.serviceCompanyList.forEach((e, i) => {
+                    if(i > a && e.serviceCompanyId == this.contractForm.serviceCompanyList[a].serviceCompanyId) {
+                        e.serviceCompanyId = ''
+                    }
+                })
+            },
+            addServiceCompany(a) {
+                this.contractForm.serviceCompanyList.push({
+                    serviceCompanyId: '',
+                    serviceCompanyName: '',
+                    showServiceCompanyInfo: ''
+                })
+            },
+            deleteServiceCompany(a) {
+                this.contractForm.serviceCompanyList.splice(a, 1)
+            },
+            upload(a) {
+                var formData = new FormData()
+                formData.append('targetType', 'vci_attach')
+                formData.append('fileName', a.name)
+                formData.append('file', a.raw)
+                importPost('/api/contract-web/file/upload', formData, true).then(data => {
+                    this.contractForm.customUnderAttachList.push({
+                        refId: data.referId,
+                        downloadCode: data.downloadCode,
+                        displayname: data.fileName
+                    })
+                    this.files.push({
+                        name: data.fileName,
+                        url: data.downloadCode
+                    })
+                    this.$message({
+                        type: 'success',
+                        message: '上传成功！'
+                    })
+                })
+            },
+            remove(a) {
+                this.files.pop()
+                this.contractForm.customUnderAttachList.pop()
+            },
+            receive(a) {
+                console.log(a)
+                this.resultData = a
+                this.contractForm.offer = a.check
+                delete this.resultData.check
+                delete this.resultData.arrIndex
+                this.$refs.contractForm.validateField('offer')
             }
         }
     }
@@ -1308,6 +1150,9 @@
     .ml86 {
         margin-left: 86px;
     }
+    .ml10 {
+        margin-left: 10px;
+    }
     .el-icon-question {
         margin-right: 5px;
         color: #f56c6c;
@@ -1318,5 +1163,91 @@
     }
     .mb15 {
         margin-bottom: 15px;
+    }
+    .fr {
+        float: right;
+    }
+    .w1050 {
+        width: 1050px;
+    }
+    .mb24 {
+        margin-bottom: 24px;
+    }
+    .w550 {
+        width: 550px;
+    }
+    .w800 {
+        width: 800px;
+    }
+    .mr20 {
+        margin-right: 20px;
+    }
+    .abtn {
+        display: inline-block;
+        width: 80px;
+        height: 22px;
+        font-size: 12px;
+        color: #666666;
+        text-decoration: none;
+        background-image: url(../../image/download.png);
+        background-size: 10px 10px;
+        background-repeat: no-repeat;
+        background-position: 7px center;
+        border: 1px solid #D9D9D9;
+        border-radius: 4px;
+        text-indent: 22px;
+        line-height: 20px;
+    }
+    .abtn + div {
+        display: inline;
+        font-size: 12px;
+        color: #999;
+    }
+    .form_input {
+        width: 400px;
+        margin-bottom: -8px;
+    }
+    .up_icon {
+        width: 228px;
+        height: 124px;
+        background-image: url(../../image/upload.png);
+        background-size: 41px 33px;
+        background-position: center 20px;
+        background-repeat: no-repeat;
+        padding-top: 70px;
+        border: 1px solid #D9D9D9;
+        line-height: 16px;
+    }
+    .up_icon > div:nth-child(1) {
+        text-align: center;
+        font-size: 12px;
+        color: #666666;
+    }
+    .up_icon > div:nth-child(2) {
+        font-size: 12px;
+        color: #999;
+        margin-top: 5px;
+    }
+    .pro_box {
+    	position: relative;
+    	display: inline-block;
+    	width: 193px;
+    	height: 10px;
+    	border: 1px solid #E9E9E9;
+    	border-radius: 5px;
+    	margin-top: 6px;
+    }
+    .pro_box > div {
+    	position: absolute;
+    	top: 1px;
+    	left: 0;
+    	height: 8px;
+    	border-radius: 4px;
+    	background-color: #108EE9;
+    }
+    .pro_box + span {
+    	margin-top: 6px;
+    	font-size: 12px;
+    	color: #999999;
     }
 </style>

@@ -49,7 +49,7 @@
     </ayg-pagination>
 
     <el-dialog :title="editFormTitle"  :visible.sync="editFormShow" :before-close="clearForm" width="70%">
-        <el-form label-width="120px" :rules="rules" :model="editForm" ref="editForm">
+        <el-form label-width="150px" :rules="rules" :model="editForm" ref="editForm">
             <el-form-item label="服务类型：" prop="serviceName">
                 <el-input v-model="editForm.serviceName" class="f_input"></el-input>
             </el-form-item>
@@ -64,6 +64,9 @@
                     <el-option v-for="item in subjects" :key="item.id" :label="item.fullName" :value="item.id"></el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="是否需要商业保险：" prop="vciStatus" required>
+				<el-radio v-model="editForm.vciStatus" v-for="e in vciStatusList" :key="e.value" :label="e.value">{{e.text}}</el-radio>
+			</el-form-item>
         </el-form>
           <span class="form_footer" slot="footer">
               <el-button @click="sure" type="primary">保存</el-button>
@@ -103,7 +106,8 @@ export default {
                 seqNo: '',
                 serviceName: '',
                 serviceContent: '',
-                subjects: []
+                subjects: [],
+                vciStatus: 0
             },
             rules: {
                 serviceName: [
@@ -120,7 +124,17 @@ export default {
             editSubjects:[],
             currentPage: 1,
             pageSize: 10,
-            statusList: []
+            statusList: [],
+            vciStatusList: [
+                {
+                    text: '是',
+                    value: 1
+                },
+                {
+                    text: '否',
+                    value: 0
+                }
+            ]
         }
     },
     mounted() {
@@ -170,6 +184,7 @@ export default {
             this.editForm.seqNo = ''
             this.editForm.subjects = [];
             this.editForm.serviceId = ''
+            this.editForm.vciStatus = 0
         },
         edit(model){
             this.editFormShow = true;
@@ -183,6 +198,7 @@ export default {
             this.editForm.serviceId = model.id;
             this.editForm.serviceName = model.serviceName;
             this.editForm.serviceContent = model.serviceContent;
+            this.editForm.vciStatus = model.vciStatus == '1' ? 1 : 0
             this.getSubjects()
         },
         clearForm(next) {
