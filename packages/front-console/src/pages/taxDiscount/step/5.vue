@@ -62,7 +62,7 @@
     methods: {
       // 获取第4部数据
       getStep5data() {
-        get('/api/salemgt/taxLanding/tax/img', {
+        get('/api/salemgt/taxLanding/tax/contract/get', {
           taxLandingId: this.$route.query.id
         }).then((data) => {
           if (data.attachmentModelList) {
@@ -104,18 +104,26 @@
           // 合同
           this.upFile().then((data) => {
             const fileId = data.referId || data.id || null
-            const id = parseInt(this.$route.query.id)
-            const url = `/api/salemgt/taxLanding/tax/img?taxLandingId=${id}&contractAttachmentIds=${fileId}`
-            post(url).then(() => {
+            if (fileId) {
+              const id = parseInt(this.$route.query.id)
+              const url = `/api/salemgt/taxLanding/tax/contract?taxLandingId=${id}&contractAttachmentIds=${fileId}`
+              post(url).then(() => {
+                this.$message({
+                  message: '提交成功',
+                  type: 'success'
+                });
+                resolve()
+              }).catch(() => {
+                this.$message.error('提交失败');
+                reject()
+              })
+            } else {
               this.$message({
                 message: '提交成功',
                 type: 'success'
               });
               resolve()
-            }).catch(() => {
-              this.$message.error('提交失败');
-              reject()
-            })
+            }
           }).catch((e) => {
             this.$message.error('文件上传失败');
             reject()

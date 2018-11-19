@@ -145,7 +145,7 @@
         get('/api/salemgt//taxLanding/tax/taxLandingProperty/info/base', {
           taxLandingId: this.$route.query.id
         }).then((result) => {
-          if (result) {
+          if (result && result.taxLandingPropertyDTOS.length > 0) {
             // 三万以下基本税率
             const sanWanYiXiaObjArr = result.taxLandingPropertyDTOS
             if (sanWanYiXiaObjArr && sanWanYiXiaObjArr.length > 0) {
@@ -166,8 +166,9 @@
               })
             }
             // 三万元以上
+            const code = this.form.isSupport3w ? '30thousand-up' : 'commom'
             const sanWanYiShangArr = result.taxLandingTaxDTOList.filter((item) => {
-              return item.taxCollection === '30thousand-up'
+              return item.taxCollection === code
             })
             this.shuiLvShuXingBiaoArr.forEach((item) => {
               const dom = this.$refs[`BASE_3_UP_${item.code}`][0]

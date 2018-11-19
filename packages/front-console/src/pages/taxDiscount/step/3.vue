@@ -122,7 +122,7 @@
         get('/api/salemgt/taxLanding/tax/taxLandingProperty/info/local', {
           taxLandingId: this.$route.query.id
         }).then((data) => {
-          if (data) {
+          if (data && data.taxLandingTaxDTOList[0].items.length > 0) {
             // 三万以下基本税率
             // 业务配比期望值
             const yeWuPeiBiQiWang = data.taxLandingPropertyDTOS.filter((item) => {
@@ -143,9 +143,6 @@
             const diFangLiuCunObj = data.taxLandingTaxDTOList[0]
             const inputArr = []
             const otherArr = []
-            if (diFangLiuCunObj) {
-
-            }
             this.shuiLvShuXingBiao.forEach((item) => {
               let state = false
               diFangLiuCunObj.items.forEach((item1) => {
@@ -197,6 +194,11 @@
         if (this.diFangLiuCunObj.otherArr.length) {
           if (this.diFangLiuCunObj.index >= 0) {
             const inputItem = this.diFangLiuCunObj.otherArr[this.diFangLiuCunObj.index]
+            const num = this.$refs[`DI_FANG_LIU_CUN_EDIT`].form.inputData
+            this.$refs[`DI_FANG_LIU_CUN_EDIT`].setData({
+              taxRate: 0
+            })
+            inputItem.taxRate = num ? num : 0
             this.diFangLiuCunObj.inputArr.push(inputItem)
             this.diFangLiuCunObj.otherArr.splice(this.diFangLiuCunObj.index, 1)
           }
@@ -279,15 +281,15 @@
               })
             }
             // 地方留存政策
-            submitData.taxLandingPropertyDTOS.push({
-              "items": [
-                {
-                  "code": true,
-                  "name": '地方留存政策'
-                }
-              ],
-              "property": "local-tax"
-            })
+            // submitData.taxLandingPropertyDTOS.push({
+            //   "items": [
+            //     {
+            //       "code": true,
+            //       "name": '地方留存政策'
+            //     }
+            //   ],
+            //   "property": "local-tax"
+            // })
             submitData.taxLandingTaxDTOList = [{
               "items": this.diFangLiuCunObj.dataArr,
               "taxCategory": "local-tax",

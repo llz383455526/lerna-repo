@@ -39,7 +39,7 @@
         <el-table-column label="三万免征">
           <template slot-scope="scope">{{scope.row.isExempted ? (scope.row.isExempted === 'true' ? '是' : '否') : ''}}</template>
         </el-table-column>
-        <el-table-column prop="name" label="提交人">
+        <el-table-column prop="createdByName" label="提交人">
         </el-table-column>
         <el-table-column prop="chargePerson" label="负责人">
         </el-table-column>
@@ -61,9 +61,14 @@
             </el-tag>
             <el-tag @click.native="editBtnClick(scope.row, '1')" style="cursor: pointer" v-else type="info">编辑
             </el-tag>
-            <el-tag v-if="scope.row.complete" @click.native="lockClick(scope.row)" style="cursor: pointer"
-                    type="warning">{{ scope.row.lockStatus ? '解锁' : '锁定' }}
-            </el-tag>
+            <template v-if="scope.row.complete">
+              <el-tag v-if="scope.row.lockStatus && checkUnlock" @click.native="lockClick(scope.row)" style="cursor: pointer"
+                      type="warning">解锁
+              </el-tag>
+              <el-tag v-else-if="!scope.row.lockStatus && checkLock" @click.native="lockClick(scope.row)" style="cursor: pointer"
+                      type="warning">锁定
+              </el-tag>
+            </template>
             <el-tag @click.native="removeClick(scope.row)" style="cursor: pointer" v-if="!scope.row.lockStatus"
                     type="danger">删除
             </el-tag>
@@ -82,6 +87,7 @@
 
 <script>
   import {get, post} from '../../store/api'
+  import { mapGetters } from 'vuex'
 
   export default {
     created() {
@@ -111,6 +117,18 @@
           this.formSearch.endTime = null
         }
       }
+    },
+    computed: {
+      // 权限校验
+      checkLock() {
+        return this.checkRight(this.permissions, 'salemgt:/taxLanding/tax/lock')
+      },
+      checkUnlock() {
+        return this.checkRight(this.permissions, 'salemgt:/taxLanding/tax/unlock')
+      },
+      ...mapGetters({
+        permissions: 'permissions'
+      }),
     },
     methods: {
       resetForm() {
@@ -155,14 +173,6 @@
         post('/api/salemgt/taxLanding/tax/page', options).then((result) => {
           this.tableList = result
         }).catch(() => {
-        })
-      },
-      toDetail(id) {
-        this.$router.push({
-          path: 'detail',
-          query: {
-            id: id
-          }
         })
       },
       // 锁定

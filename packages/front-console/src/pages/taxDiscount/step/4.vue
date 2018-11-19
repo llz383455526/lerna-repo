@@ -35,7 +35,7 @@
       </el-form-item>
       <el-form-item prop="name" label="返税阶梯设置" clsss="fan-shui-jie-ti-set">
         <div style="padding-bottom: 20px">
-          <el-button size="mini" type="primary" @click="addQuJianClick">添加区间</el-button>
+          <el-button :disabled="ifInfinity" size="mini" type="primary" @click="addQuJianClick">添加区间</el-button>
         </div>
         <el-row>
           <el-col :span="2" class="text-center">区间序号</el-col>
@@ -51,16 +51,19 @@
                 <el-col :span="4" class="text-center">{{ v.type1 }}</el-col>
                 <el-col :span="4" class="text-center">纳税金额</el-col>
                 <el-col :span="4" class="text-center">{{ v.type2 }}</el-col>
-                <el-col :span="3" class="text-center">{{ v.num2 }}</el-col>
+                <el-col :span="3" class="text-center">{{ v.type2 === '无穷大' ? '---' : v.num2 }}</el-col>
                 <el-col :span="4" class="text-center">
-                  <el-button size="mini" type="danger" icon="el-icon-delete" @click.stop="removeQuJianClick(k)" circle></el-button>
+                  <el-button v-if="k === fanShuiJieTiData.dataArr.length - 1" size="mini" type="danger" icon="el-icon-delete" @click.stop="removeQuJianClick(k)" circle></el-button>
                   <el-button size="mini" type="primary" icon="el-icon-edit-outline" @click.stop="editQuJianClick(k)"
                              circle></el-button>
                 </el-col>
               </el-row>
             </template>
+            <p style="margin-bottom: 0; color: #666; padding-left: 10px">区间返税比例:</p>
             <ul class="fanshui-type-list">
-              <li v-for="(item, index) in shuiZhongShuiLv">{{ item.name }}: {{ v[`ratio_${index}`] }}</li>
+              <li
+                :class="{ 'fan-shui-bi-li-red': v[`ratio_${index}`] === undefined || v[`ratio_${index}`] === '' }"
+                v-for="(item, index) in shuiZhongShuiLv">{{ item.name }}: {{ v[`ratio_${index}`] }}{{ (v[`ratio_${index}`] === undefined || v[`ratio_${index}`] === '') ? '' : '%' }}</li>
             </ul>
           </el-collapse-item>
         </el-collapse>
@@ -77,7 +80,7 @@
 
     <!--返税阶梯设置-->
     <el-dialog
-      title="提示"
+      :title="`${popType}区间`"
       :visible.sync="fanShuiJieTiData.popShow"
       width="800px"
       class="fan-shui-jie-ti-pop">
@@ -86,14 +89,23 @@
           <span>{{ fanShuiJieTiData.popData.type1 }}&nbsp;&nbsp;</span>
           <span>{{ fanShuiJieTiData.popData.num1 }}</span>
         </el-form-item>
-        <el-form-item prop="num2" label="结束值">
-          <el-input :disabled="editIndex < fanShuiJieTiData.length - 1" placeholder="请输入内容" type="number" v-model.number="fanShuiJieTiData.popData.num2" class="input-with-select">
-            <el-select v-model="fanShuiJieTiData.popData.type2" slot="prepend" placeholder="请选择">
+        <el-form-item prop="num2" label="结束值" v-if="fanShuiJieTiData.popData.type2 === '无穷大'">
+          <el-select v-model="fanShuiJieTiData.popData.type2" placeholder="请选择活动区域">
+            <el-option label="小于等于" value="小于等于"></el-option>
+            <el-option label="小于" value="小于"></el-option>
+            <el-option label="无穷大" value="无穷大"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-else prop="num2" label="结束值">
+          <el-input :disabled="(editIndex < fanShuiJieTiData.dataArr.length - 1) && popType === '修改'" placeholder="请输入内容" type="number" v-model.number="fanShuiJieTiData.popData.num2" class="input-with-select">
+            <el-select :disabled="(editIndex < fanShuiJieTiData.dataArr.length - 1) && popType === '修改'" v-model="fanShuiJieTiData.popData.type2" slot="prepend" placeholder="请选择">
               <el-option label="小于等于" value="小于等于"></el-option>
               <el-option label="小于" value="小于"></el-option>
+              <el-option label="无穷大" value="无穷大"></el-option>
             </el-select>
           </el-input>
         </el-form-item>
+        <el-form-item label="设置返税比例:"></el-form-item>
         <el-form-item :prop="`ratio_${k}`" :label="v.name" v-for="(v, k) in shuiZhongShuiLv" :key="k">
           <el-input type="number" v-model.number="fanShuiJieTiData.popData[`ratio_${k}`]">
             <template slot="append">%</template>
@@ -146,16 +158,22 @@
             num2: [{
               required: true, trigger: 'blur', validator: (rule, value, callback) => {
                 const type = typeof this.fanShuiJieTiData.popData.num2
+                const type2 = this.fanShuiJieTiData.popData.type2
                 let str = null
-                if (type === 'number') {
-                  const num1 = this.fanShuiJieTiData.popData.num1
-                  const num2 = this.fanShuiJieTiData.popData.num2
-                  const type1 = this.fanShuiJieTiData.popData.type1
-                  const type2 = this.fanShuiJieTiData.popData.type2
-                  if (type1 === '大于等于') {
-                    if (type2 === '小于等于') {
-                      if (num2 < num1) {
-                        str = '结束值必须大于等于开始值'
+                if (type2 !== '无穷大') {
+                  if (type === 'number') {
+                    const num1 = this.fanShuiJieTiData.popData.num1
+                    const num2 = this.fanShuiJieTiData.popData.num2
+                    const type1 = this.fanShuiJieTiData.popData.type1
+                    if (type1 === '大于等于') {
+                      if (type2 === '小于等于') {
+                        if (num2 < num1) {
+                          str = '结束值必须大于等于开始值'
+                        }
+                      } else {
+                        if (num2 <= num1) {
+                          str = '结束值必须大于开始值'
+                        }
                       }
                     } else {
                       if (num2 <= num1) {
@@ -163,12 +181,8 @@
                       }
                     }
                   } else {
-                    if (num2 <= num1) {
-                      str = '结束值必须大于开始值'
-                    }
+                    str = '请输入数据'
                   }
-                } else {
-                  str = '请输入数据'
                 }
                 callback(str ? new Error(str) : undefined)
               }
@@ -182,7 +196,9 @@
         // 税种税率
         shuiZhongShuiLv: [],
         // 修改索引
-        editIndex: 0
+        editIndex: 0,
+        // 弹窗类型
+        popType: null
       }
     },
     computed: {
@@ -196,6 +212,23 @@
             return '查看'
           default:
             return ''
+        }
+      },
+      // 是否有无穷大
+      ifInfinity() {
+        let infinity = false
+        this.fanShuiJieTiData.dataArr.forEach((item) => {
+          if (item.type2 === '无穷大') {
+            infinity = true
+          }
+        })
+        return infinity
+      }
+    },
+    watch: {
+      'fanShuiJieTiData.popData.type2'() {
+        if (this.$refs.FanShuiJitTiPop) {
+          this.$refs.FanShuiJitTiPop.validateField('num2');
         }
       }
     },
@@ -215,7 +248,7 @@
         get('/api/salemgt/taxLanding/tax/taxLandingPropertyReturnRuleRelate/info', {
           taxLandingId: this.$route.query.id
         }).then((data) => {
-          if (data) {
+          if (data && data.taxLandingReturnRuleDTOList.length > 0) {
             // 返税适用周期
             const fanShuiShiYongZhouQiObjArr = data.taxLandingPropertyDTOS.filter((item) => {
               return item.property === 'return-tax'
@@ -244,12 +277,14 @@
             this.fanShuiJieTiData.dataArr = taxLandingReturnRuleDTOList.map((item, index) => {
               const numsStr = item.rule.substr(1, item.rule.length - 2)
               const numArr = numsStr.split(',')
+              const num2 = parseInt(numArr[1])
+              const type2 = num2 === -1 ? '无穷大' : (item.rule[4] === '[' ? '小于等于' : '小于')
               const section = {
                 index: index + 1,
                 type1: item.rule[0] === '[' ? '大于等于' : '大于',
                 num1: parseInt(numArr[0]),
-                num2: parseInt(numArr[1]),
-                type2: item.rule[4] === '[' ? '小于等于' : '小于',
+                num2: num2 === -1 ? null : num2,
+                type2: type2,
               }
               item.taxRateDTOS.forEach((item2, index) => {
                 this.shuiZhongShuiLv.forEach((item3) => {
@@ -331,6 +366,7 @@
       // 返税阶梯确定按钮点击
       fanShuiJieTiOkBtnClick() {
         this.fanShuiJitTiPopCheck().then(() => {
+          this.fanShuiJieTiData.popData.num2 = this.fanShuiJieTiData.popData.type2 === '无穷大' ? -1 : this.fanShuiJieTiData.popData.num2
           if (this.fanShuiJieTiData.isAdd) {
             this.fanShuiJieTiData.dataArr.push(this.fanShuiJieTiData.popData)
           } else {
@@ -342,6 +378,7 @@
       },
       // 编辑区间
       editQuJianClick(index) {
+        this.popType = '修改'
         this.editIndex = index
         const item = this.fanShuiJieTiData.dataArr[index]
         this.fanShuiJieTiData.popData = {
@@ -376,6 +413,7 @@
             num2: null,
           }
         }
+        this.popType = '添加'
         this.fanShuiJieTiData.isAdd = true
         this.fanShuiJieTiData.popShow = true
       },
@@ -426,32 +464,42 @@
             "property": "return-tax-setting"
           })
           submitData.taxLandingReturnRuleDTOList = []
+          let isNull = false
+          console.log('this.fanShuiJieTiData.dataArr = ', this.fanShuiJieTiData.dataArr)
           this.fanShuiJieTiData.dataArr.forEach((item) => {
             const data = {
               taxLandingId: id,
               taxRateDTOS: []
             }
-            data.rule = `${item.type1 === '大于等于' ? '[' : '('}${item.num1},${item.num2}${item.type2 === '小于等于' ? ']' : ')'}`
+            data.rule = `${item.type1 === '大于等于' ? '[' : '('}${item.num1},${item.type2 === '无穷大' ? -1 : item.num2}${item.type2 === '小于等于' ? ']' : ')'}`
             this.shuiZhongShuiLv.forEach((item1, k) => {
+              const num = item[`ratio_${k}`]
+              if (num === undefined || num === '') {
+                isNull = true
+              }
               data.taxRateDTOS.push({
                 "taxCode": item1.taxCode,
-                "taxRate": item[`ratio_${k}`]
+                "taxRate": num
               })
             })
             submitData.taxLandingReturnRuleDTOList.push(data)
-            resolve()
           })
-          const url = `/api/salemgt/taxLanding/tax/taxLandingPropertyReturnRule`
-          post(url, submitData).then(() => {
-            this.$message({
-              message: '提交成功',
-              type: 'success'
-            });
-            resolve()
-          }).catch(() => {
-            this.$message.error('提交失败');
+          if (isNull) {
+            this.$message.error('请设置返税比例');
             reject()
-          })
+          } else {
+            const url = `/api/salemgt/taxLanding/tax/taxLandingPropertyReturnRule`
+            post(url, submitData).then(() => {
+              this.$message({
+                message: '提交成功',
+                type: 'success'
+              });
+              resolve()
+            }).catch(() => {
+              this.$message.error('提交失败');
+              reject()
+            })
+          }
         })
       },
       // 上一步
@@ -487,6 +535,9 @@
 <style lang="scss" scoped>
 
   .tax-discount-step-4 {
+    .fan-shui-bi-li-red {
+      color: #f0545a;
+    }
     > .page-title {
       font-size: 30px;
       color: #666;
