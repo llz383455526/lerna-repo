@@ -131,7 +131,7 @@
             if (yeWuPeiBiQiWang && yeWuPeiBiQiWang.length > 0) {
               const item = yeWuPeiBiQiWang[0]
               item.items.forEach((cell) => {
-                const code = parseInt(cell.code)
+                const code = Number(cell.code)
                 if (cell.name === '三万以下业务量') {
                   this.form.sanWanYiXiaYeWuLiang = code
                 } else {

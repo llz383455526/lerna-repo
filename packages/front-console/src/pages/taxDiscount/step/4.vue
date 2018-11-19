@@ -277,12 +277,12 @@
             this.fanShuiJieTiData.dataArr = taxLandingReturnRuleDTOList.map((item, index) => {
               const numsStr = item.rule.substr(1, item.rule.length - 2)
               const numArr = numsStr.split(',')
-              const num2 = parseInt(numArr[1])
+              const num2 = Number(numArr[1])
               const type2 = num2 === -1 ? '无穷大' : (item.rule[4] === '[' ? '小于等于' : '小于')
               const section = {
                 index: index + 1,
                 type1: item.rule[0] === '[' ? '大于等于' : '大于',
-                num1: parseInt(numArr[0]),
+                num1: Number(numArr[0]),
                 num2: num2 === -1 ? null : num2,
                 type2: type2,
               }

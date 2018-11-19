@@ -84,7 +84,7 @@
                 taxCategory: this.taxCategory,
                 taxCollection: this.taxCollection,
                 taxCode: this.taxCode,
-                taxRate: parseInt(taxRate)
+                taxRate: Number(taxRate)
               }
               resolve(data)
             } else {

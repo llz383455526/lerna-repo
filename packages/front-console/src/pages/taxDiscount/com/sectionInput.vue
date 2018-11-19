@@ -89,9 +89,9 @@
               const taxRate = this.form.inputData0.toFixed(2)
               const discountRate = this.form.inputData1.toFixed(2)
               const data = {
-                "discountRate": parseInt(discountRate),
+                "discountRate": Number(discountRate),
                 "taxCode": this.taxCode,
-                "taxRate": parseInt(taxRate)
+                "taxRate": Number(taxRate)
               }
               if (this.isShowFree) {
                 data.isExemption = this.form.isFree ? 1 : 0
