@@ -87,6 +87,7 @@
                 </el-form-item>
             </el-form>
             <a target="_bank" :href="`${baseUrl}/api/console-dlv/company/salary-online-order/download-pay-item-details${term}`"><el-button type="primary" size="small" style="float: right;">导出数据</el-button></a>
+            <el-button class="mr20" v-if="checkRight(permissions, 'console-dlv:/company/salary-online-order/download-batch-electronic-return') && msg.supportCertificateDownload" type="primary" size="small" style="float: right;" @click="download">导出流水回单</el-button>
             <el-table :data="detail" >
                 <el-table-column label="收款方账号名称" prop="accountName"></el-table-column>
                 <el-table-column label="身份证" prop="idCard"></el-table-column>
@@ -102,6 +103,11 @@
                 <el-table-column label="成功发放时间" prop="payRespAt"></el-table-column>
                 <el-table-column label="发放结果" prop="payStateName"></el-table-column>
                 <el-table-column label="备注" prop="payMsg"></el-table-column>
+                <el-table-column label="操作" v-if="checkRight(permissions, 'console-dlv:/company/salary-online-order/download-electronic-return')">
+                    <template slot-scope="scope">
+                        <el-button v-if="msg.supportCertificateDownload && scope.row.payState == 30" type="text" @click="downloadSalary(scope.row)">下载流水回单</el-button>
+                    </template>
+                </el-table-column>
             </el-table>
             <ayg-pagination
                 v-if="total"
@@ -111,6 +117,14 @@
                 v-on:handleCurrentChange="query"
                 :currentPage="form.page">
             </ayg-pagination>
+            <el-dialog title="进度" :visible.sync="showPro" :show-close="false" :close-on-press-escape="false" :close-on-click-modal="false">
+                <div class="pro_box">
+                    <div :style="{width: `${proNum}%`}"></div>
+                </div>
+                <div class="pro_num">
+                    {{proNum}}%
+                </div>
+            </el-dialog>
         </div>
         <!-- <div id="list">
             <div>
@@ -137,9 +151,8 @@
     </div>
 </template>
 <script>
-import {post, get} from '../../store/api'
+import {post, get, postWithErrorCallback} from '../../store/api'
 import { mapGetters } from "vuex"
-import { setTimeout } from 'timers';
 var baseUrl = require("../../config/address.js").baseUrl;
 if (!baseUrl) {
   baseUrl = "";
@@ -164,15 +177,19 @@ export default {
       result: [],
       detail: [],
       total: '',
-      baseUrl: baseUrl
-    //   clientId: 1,
-    //   show: false,
-    //   status: ['全部', '发放中', '发放成功', '发放失败']
+      baseUrl: baseUrl,
+      showList: ['huaxia', 'hf', 'pingan'],
+      key: '',
+      showPro: false,
+      delay: '',
+      proNum: 0,
+      frame: ''
     };
   },
   computed: {
       ...mapGetters({
-          payOrderState: 'payOrderState'
+          payOrderState: 'payOrderState',
+          permissions: 'permissions'
       })
   },
   watch: {
@@ -232,6 +249,57 @@ export default {
       },
       reset(name) {
           this.$refs[name].resetFields();
+      },
+      download() {
+          get('/api/console-dlv/company/salary-online-order/download-batch-electronic-return', {
+              orderId: this.data.id
+          }).then(data => {
+              this.key = data
+              this.progress()
+              this.showPro = true
+          })
+      },
+      downloadSalary(a) {
+          console.log(a.id)
+          get('/api/console-dlv/company/salary-online-order/download-electronic-return', {
+              salaryOrderItemId: a.id
+          }).then(data => {
+              this.key = data
+              this.progress()
+              this.showPro = true
+          })
+      },
+      progress() {
+          this.frame = requestAnimationFrame(this.progress)
+          var currTime = new Date().getTime()
+          if(!this.delay || currTime- this.delay > 1000) {
+              this.delay = currTime
+              post(`/api/console-dlv/file/download-progress?key=${this.key}`, {}, true).then(data => {
+                if(data) {
+                    if(data.state == 30) {
+                        this.$message({
+                            type: 'success',
+                            message: '下载成功'
+                        })
+                        this.showPro = false
+                        cancelAnimationFrame(this.frame)
+                        window.open(`/api/sysmgr-web/file/download?downloadCode=${data.downloadCode}`)
+                    }
+                    if(data.state == 40) {
+                        this.$message({
+                            type: 'error',
+                            message: '下载失败'
+                        })
+                        this.showPro = false
+                        cancelAnimationFrame(this.frame)
+                    }
+                    this.proNum = data.progress
+                }
+              }).catch(err =>{
+                  this.showPro = false
+                  cancelAnimationFrame(this.frame)
+              })
+          }
       }
   }
 };
@@ -316,5 +384,31 @@ export default {
 }
 #list span {
     margin-right: 15px;
+}
+.mr20 {
+    margin-right: 20px;
+}
+.pro_box {
+    display: inline-block;
+    width: calc(100% - 50px);
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.pro_box > div {
+    background-color: #0283fb;
+    width: 0%;
+    height: 100%;
+    border-radius: 10px;
+}
+.pro_num {
+    position: relative;
+    top: -5px;
+    margin-left: 5px;
+    display: inline-block;
+    width: 36px;
+    font-size: 14px;
+    color: #606266;
 }
 </style>

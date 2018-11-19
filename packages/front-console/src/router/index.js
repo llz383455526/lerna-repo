@@ -271,7 +271,7 @@ export default [
                                 path: 'orderManager',
                                 component: orderManager,
                                 meta: {
-                                    keepAlive: false
+                                    keepAlive: true
                                 }
                             },
                             {

@@ -101,6 +101,11 @@
 
         <div class="table-container el-table el-table--fit el-table--border el-table--scrollable-x el-table--enable-row-transition">
             <el-table :data="flowTableList.list" style="width: 100%">
+                <el-table-column prop="companyName" label="操作" width="140" fixed v-if="checkRight(permissions, 'console-dlv:/pay-order/download-pay-item-electronic-return')">
+                    <template slot-scope="scope">
+                        <el-button type="text" v-if="scope.row.supportCertificateDownload && scope.row.state == 30" @click="download(scope.row)">下载电子回单</el-button>
+                    </template>
+                </el-table-column>
 				<el-table-column prop="companyName" label="客户公司" width="140" fixed></el-table-column>
                 <el-table-column prop="appName" label="商户名称" width="140" fixed></el-table-column>
                 <el-table-column prop="salesList" label="关联销售" width="120">
@@ -145,6 +150,7 @@
                 </el-table-column>
                 <el-table-column prop="notifyStateName" label="通知用户状态" width="120"></el-table-column>
                 <el-table-column prop="memo" label="款项属性" width="120"></el-table-column>
+                <el-table-column prop="stepName" label="当前步骤" width="120"></el-table-column>
             </el-table>
         </div>
 
@@ -155,6 +161,14 @@
             v-on:handleCurrentChange="query"
 			:currentPage="formSearch.page">
 		</ayg-pagination>
+        <el-dialog title="进度" :visible.sync="showPro" :show-close="false" :close-on-press-escape="false" :close-on-click-modal="false">
+            <div class="pro_box">
+                <div :style="{width: `${proNum}%`}"></div>
+            </div>
+            <div class="pro_num">
+                {{proNum}}%
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -200,14 +214,19 @@
 				companys: [],
 				servers: [],
 				downloadCode: '',
-				interval: ''
+                interval: '',
+                showPro: false,
+                delay: '',
+                proNum: 0,
+                frame: ''
 			}
 		},
 		computed: {
 			...mapGetters({
 				flowTableList: 'flowTableList',
 				customNameList: 'customNameList',
-				moneyFlow: 'moneyFlow'
+				moneyFlow: 'moneyFlow',
+                permissions: 'permissions'
 			})
 		},
 		mounted() {
@@ -315,10 +334,74 @@
 						break
 				}
 				this.query()
-			}
+            },
+            download(a) {
+                get('/api/console-dlv/pay-order/download-pay-item-electronic-return', {
+                    itemId: a.id
+                }).then(data => {
+                    this.key = data
+                    this.progress()
+                    this.showPro = true
+                })
+            },
+            progress() {
+                this.frame = requestAnimationFrame(this.progress)
+                var currTime = new Date().getTime()
+                if(!this.delay || currTime- this.delay > 1000) {
+                    this.delay = currTime
+                    post(`/api/console-dlv/file/download-progress?key=${this.key}`, {}, true).then(data => {
+                      if(data) {
+                          if(data.state == 30) {
+                              this.$message({
+                                  type: 'success',
+                                  message: '下载成功'
+                              })
+                              this.showPro = false
+                              cancelAnimationFrame(this.frame)
+                              window.open(`/api/sysmgr-web/file/download?downloadCode=${data.downloadCode}`)
+                          }
+                          if(data.state == 40) {
+                              this.$message({
+                                  type: 'error',
+                                  message: '下载失败'
+                              })
+                              this.showPro = false
+                              cancelAnimationFrame(this.frame)
+                          }
+                          this.proNum = data.progress
+                      }
+                    }).catch(err =>{
+                        this.showPro = false
+                        cancelAnimationFrame(this.frame)
+                    })
+                }
+            }
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
+.pro_box {
+    display: inline-block;
+    width: calc(100% - 50px);
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.pro_box > div {
+    background-color: #0283fb;
+    width: 0%;
+    height: 100%;
+    border-radius: 10px;
+}
+.pro_num {
+    position: relative;
+    top: -5px;
+    margin-left: 5px;
+    display: inline-block;
+    width: 36px;
+    font-size: 14px;
+    color: #606266;
+}
 </style>

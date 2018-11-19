@@ -308,9 +308,12 @@
                 *收款总金额=充值到第三方渠道金额+服务费金额<br>
                 阶梯报价时，服务费金额按商定预收比例计算
             </div>
-            <div class="det" v-if="detail.customDownloadCodes">
+            <div class="det" v-if="detail.customDownloadCodes || (detail.supportCertificateDownload && detail.state == 30 && checkRight(permissions, 'balance-web:/recharge-order/download-recharge-certificate'))">
                 <div style="float: left;">转账凭证：</div>
-                <div class="avatar mr20" v-for="(e, i) in detail.customDownloadCodes" @click="showAttr = true;attrIndex = i" :style="{'background-image': `url(/api/sysmgr-web/file/download?downloadCode=${e})`}"></div>
+                <div class="avatar mr20" v-if="!detail.supportCertificateDownload" v-for="(e, i) in detail.customDownloadCodes" @click="showAttr = true;attrIndex = i" :style="{'background-image': `url(/api/sysmgr-web/file/download?downloadCode=${e})`}"></div>
+                <el-button v-if="detail.supportCertificateDownload" type="primary" size="small" @click="download">
+                    下载充值凭证
+                </el-button>
             </div>
             <div class="title">服务商信息</div>
             <div class="det">名称：{{detail.serviceCompanyName}}<div class="toggle" @click="showDetail = !showDetail">{{ showDetail ? '收起' : '展开'}}</div></div>
@@ -443,6 +446,14 @@
         <div class="v-modal" v-if="detail && detail.customDownloadCodes" v-show="showAttr" @click="showAttr = false" :style="{ backgroundImage: `url(/api/sysmgr-web/file/download?downloadCode=${detail.customDownloadCodes[attrIndex]}`}"></div>
         <div class="v-modal" v-if="detail" v-show="showVoucher" @click="showVoucher = false" :style="{ backgroundImage: `url(/api/sysmgr-web/file/download?downloadCode=${detail.financeDownloadCode}`}"></div>
         <div class="v-modal" v-if="detail" v-show="showSub" @click="showSub = false" :style="{ backgroundImage: `url(/api/sysmgr-web/file/download?downloadCode=${detail.subDownloadCode}`}"></div>
+        <el-dialog title="进度" :visible.sync="showPro" :show-close="false" :close-on-press-escape="false" :close-on-click-modal="false">
+            <div class="pro_box">
+                <div :style="{width: `${proNum}%`}"></div>
+            </div>
+            <div class="pro_num">
+                {{proNum}}%
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -594,7 +605,11 @@ export default {
       currentIndex: 0,
       readyList: [],
       delay: 0,
-      isRe: false
+      isRe: false,
+      showPro: false,
+      delay: '',
+      proNum: 0,
+      frame: ''
     };
   },
   watch: {
@@ -1106,6 +1121,47 @@ export default {
             this.uploadList.push({
                 imageUrl: '',
                 attachmentId: ''
+            })
+        }
+    },
+    download() {
+        get('/api/balance-web/recharge-order/download-recharge-certificate', {
+            rechargeOrderId: this.detail.id
+        }).then(data => {
+            this.key = data
+            this.progress()
+            this.showPro = true
+        })
+    },
+    progress() {
+        this.frame = requestAnimationFrame(this.progress)
+        var currTime = new Date().getTime()
+        if(!this.delay || currTime- this.delay > 1000) {
+            this.delay = currTime
+            post(`/api/console-dlv/file/download-progress?key=${this.key}`, {}, true).then(data => {
+              if(data) {
+                  if(data.state == 30) {
+                      this.$message({
+                          type: 'success',
+                          message: '下载成功'
+                      })
+                      this.showPro = false
+                      cancelAnimationFrame(this.frame)
+                      window.open(`/api/sysmgr-web/file/download?downloadCode=${data.downloadCode}`)
+                  }
+                  if(data.state == 40) {
+                      this.$message({
+                          type: 'error',
+                          message: '下载失败'
+                      })
+                      this.showPro = false
+                      cancelAnimationFrame(this.frame)
+                  }
+                  this.proNum = data.progress
+              }
+            }).catch(err =>{
+                this.showPro = false
+                cancelAnimationFrame(this.frame)
             })
         }
     }
