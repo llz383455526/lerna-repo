@@ -41,6 +41,9 @@
         <el-row class="mb15" style="font-weight: normal;" v-if="!isExamine">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">服务费收费比例/金额：</el-col>
             <el-col :span="8" v-if="detail.serviceFeeContent && detail.serviceFeeContent.serviceFeeType">
+                <template v-if="detail.serviceFeeContent.serviceFeeType == 'standard'">
+                    {{detail.serviceFeeContent.serviceFeeRate}}
+                </template>
                 <template v-if="detail.serviceFeeContent.serviceFeeType == 'dummy'">
                     {{'无'}}
                 </template>

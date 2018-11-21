@@ -64,7 +64,7 @@
             <div class="mtitle">签约对象设置</div>
             <el-form-item label="签约对象数量：" prop="partycount">
                 <el-select v-model="form.partycount" size="small">
-                    <el-option v-for="e in contracts" :label="e.text" :value="e.value"></el-option>
+                    <el-option v-for="e in contracts" :key="e" :label="e.text" :value="e.value"></el-option>
                 </el-select>
             </el-form-item>
             <template v-for="(item, i) in form.partys">
@@ -81,7 +81,7 @@
                 </div>
                 <el-form-item label="签约对象类型" :prop="`partys[${i}].userType`" :rules="{required: true, message: '请选择签约对象类型', trigger: 'blur'}">
                     <el-select v-model="item.userDetailType" size="small" @change="objectChange(i)">
-                        <el-option v-for="e in type" :label="e.name" :value="e.userDetailType"></el-option>
+                        <el-option v-for="e in type" :key="e" :label="e.name" :value="e.userDetailType"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="选择签约对象" :prop="`partys[${i}].userId`" :rules="item.userType == 2 ? { required: true, message: '请选择签约对象', trigger: 'blur' } : {}">

@@ -64,7 +64,7 @@
 
 			<el-form-item label="身份证认证状态" prop="certState">
 				<el-select v-model="formSearch.certState" size="small">
-					<el-option v-for="e in certStates" :label="e.text" :value="e.value"></el-option>
+					<el-option v-for="e in certStates" :key="e" :label="e.text" :value="e.value"></el-option>
 				</el-select>
 			</el-form-item>
 

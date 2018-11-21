@@ -261,22 +261,22 @@
               </el-form-item>
               <el-form-item label="服务商">
                   <el-select class="f_input" v-model="serviceCompanyId" @change="clear">
-                      <el-option v-for="e in data.serviceCompanyList" :value="e.serviceCompanyId" :label="e.serviceCompanyName"></el-option>
+                      <el-option v-for="e in data.serviceCompanyList" :key="e" :value="e.serviceCompanyId" :label="e.serviceCompanyName"></el-option>
                   </el-select>
               </el-form-item>
               <el-form-item label="转包服务商" v-if="subServiceList.length">
                   <el-select class="f_input" v-model="subServiceCompanyId" @change="getSubServiceCompanyName">
-                      <el-option v-for="e in subServiceList" :value="e.subServiceCompanyId" :label="e.subServiceCompanyName"></el-option>
+                      <el-option v-for="e in subServiceList" :key="e" :value="e.subServiceCompanyId" :label="e.subServiceCompanyName"></el-option>
                   </el-select>
               </el-form-item>
               <el-form-item label="支付渠道">
                   <el-select class="f_input" v-model="paymentThirdType" @change="getList">
-                      <el-option v-for="e in types" :value="e.value" :label="e.text"></el-option>
+                      <el-option v-for="e in types" :key="e" :value="e.value" :label="e.text"></el-option>
                   </el-select>
               </el-form-item>
               <el-form-item label="子账号名称">
                   <el-select class="f_input" v-model="payeruserName" @change="pick">
-                      <el-option v-for="e in others" :value="e.payeruserName" :label="e.payeruserName"></el-option>
+                      <el-option v-for="e in others" :key="e" :value="e.payeruserName" :label="e.payeruserName"></el-option>
                   </el-select>
               </el-form-item>
               <el-form-item v-show="result" label="支付账户" style="color: red;">

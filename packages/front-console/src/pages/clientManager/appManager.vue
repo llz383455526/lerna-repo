@@ -216,7 +216,7 @@
                 </el-form-item>
                 <el-form-item label="服务商名称" prop="serviceCompanyId" size="small">
                     <el-select v-model="aform.serviceCompanyId" class="f_input" filterable>
-                        <el-option v-for="item in company" :value="item.companyId" :label="item.companyName"></el-option>
+                        <el-option v-for="item in company" :key="item" :value="item.companyId" :label="item.companyName"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="应用类型" prop="isFromOutApp" size="small">

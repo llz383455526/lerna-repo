@@ -43,7 +43,7 @@
           <el-col :span="4" class="text-center">操作</el-col>
         </el-row>
         <el-collapse>
-          <el-collapse-item :name="`${k}`" v-for="(v, k) in fanShuiJieTiData.dataArr">
+          <el-collapse-item :name="`${k}`" v-for="(v, k) in fanShuiJieTiData.dataArr" :key="k">
             <template slot="title">
               <el-row>
                 <el-col :span="2" class="text-center">{{ k + 1 }}</el-col>

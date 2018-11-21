@@ -174,7 +174,7 @@
 
                         <el-form-item label="签约对象类型" :prop="`partys[${i}].userType`" :rules="{required: true, message: '请选择签约对象类型', trigger: 'blur'}">
                             <el-select v-model="item.userDetailType" size="small" @change="objectChange(i)">
-                                <el-option v-for="e in type" :label="e.name" :value="e.userDetailType"></el-option>
+                                <el-option v-for="e in type" :key="e" :label="e.name" :value="e.userDetailType"></el-option>
                             </el-select>
                         </el-form-item>
 

@@ -39,7 +39,14 @@
         </el-form>
         <el-button type="primary" @click="dialogCreateVisible=true" v-if="checkRight(permissions, 'balance-web:/recharge-order/comfirm')">充值申请</el-button>
         <el-table :data="rechargeApplyList.list" style="width: 100%;margin-top: 20px;">
-                <el-table-column prop="stateName" label="处理状态" width="100px"></el-table-column>
+                <el-table-column prop="stateName" label="处理状态" width="100px">
+                    <template slot-scope="scope">
+                        {{scope.row.stateName}}
+                        <template v-if="scope.row.isAutoRecharge && scope.row.state == 21">
+                            <div class="red">（风险：打款方“{{scope.row.fromAccountName}}”跟客户企业名称不一致）</div>
+                        </template>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="companyName" label="充值单号" width="120px">
                     <template slot-scope="scope">
                         <el-button @click="getDetail(scope.row)" type="text">{{scope.row.orderNo}}</el-button>
@@ -327,14 +334,14 @@
             <template v-if="!detail.subServiceCompanyId">
                 <div class="det">选择渠道帐号：
                     <el-select size="small" v-model="balanceAccountId" @change="getSuggest" style="width: 500px" :disabled="detail.state != 20 ? true : false">
-                        <el-option v-for="e in channlList" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}`" :value="e.balanceAccountId"></el-option>
+                        <el-option v-for="e in channlList" :key="e" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}`" :value="e.balanceAccountId"></el-option>
                     </el-select>
                 </div>
                 <div class="det" v-if="suggest">帐号今日可充建议：{{suggest.allowAvailBalance | formatMoney}}元&#x3000;帐号当前余额：{{suggest.currentAvailBalance | formatMoney}}元&#x3000;
                     日发放限额：{{suggest.limitAvailBalance | formatMoney}}元&#x3000;当日已发：{{suggest.outAvailBalance | formatMoney}}元
                 </div>
             </template>
-            <template v-if="!detail.subServiceCompanyId && (detail.state == 21 || (detail.state == 30 && detail.financeDownloadCode))">
+            <template v-if="!detail.subServiceCompanyId && (detail.state == 21 || (detail.state == 30 && detail.financeDownloadCode)) && !detail.isAutoRecharge">
                 <div class="title">渠道金额充值</div>
                 <div class="det">
                     <div style="float: left;">上传充值凭证：</div>
@@ -416,7 +423,7 @@
                 </template>
                 <div class="det">选择渠道帐号：
                     <el-select size="small" v-model="balanceAccountId" @change="getSuggest" style="width: 500px" :disabled="detail.state != 20 ? true : false">
-                        <el-option v-for="e in channlList" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}`" :value="e.balanceAccountId"></el-option>
+                        <el-option v-for="e in channlList" :key="e" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}`" :value="e.balanceAccountId"></el-option>
                     </el-select>
                 </div>
                 <div class="det" v-if="suggest">帐号今日可充建议：{{suggest.allowAvailBalance | formatMoney}}元&#x3000;帐号当前余额：{{suggest.currentAvailBalance | formatMoney}}元&#x3000;
@@ -428,13 +435,13 @@
                 <template v-if="detail.state == 20 && checkRight(permissions, 'balance-web:/recharge-order/failOnRechargeDocumentMake')">
                     <el-button size="small" type="primary" @click="ensure(40, 1)">未到账</el-button>
                 </template>
-                <template v-if="detail.state == 21 && checkRight(permissions, 'balance-web:/recharge-order/approve')">
+                <template v-if="detail.state == 21 && checkRight(permissions, `balance-web:/recharge-order/${detail.isAutoRecharge == 1 ? 'risk-approve' : 'approve'}`)">
                     <el-button size="small" type="primary" @click="ensure(40)">未到账</el-button>
                 </template>
                 <template v-if="detail.state == 20 && checkRight(permissions, 'balance-web:/recharge-order/rechargeDocumentMake')">
                     <el-button size="small" type="primary" @click="touch">我已制单</el-button>
                 </template>
-                <template v-if="detail.state == 21 && checkRight(permissions, 'balance-web:/recharge-order/approve')">
+                <template v-if="detail.state == 21 && checkRight(permissions, `balance-web:/recharge-order/${detail.isAutoRecharge == 1 ? 'risk-approve' : 'approve'}`)">
                     <el-button size="small" type="primary" @click="ensure(30)">确认到账</el-button>
                 </template>
                 <template v-if="detail.state == 30 && checkRight(permissions, 'balance-web:/recharge-order/editRechargeCertificate')">
@@ -936,7 +943,7 @@ export default {
         })
     },
     ensure(state, type) { 
-        if((!this.attachmentId || (!this.subUploadId && this.detail.subServiceCompanyId)) && state == 30) {
+        if(((!this.attachmentId || (!this.subUploadId && this.detail.subServiceCompanyId)) && state == 30) && !this.detail.isAutoRecharge) {
             this.$message({
                 type: 'warning',
                 message: '请上传凭证！'
@@ -957,7 +964,7 @@ export default {
             })
             return
         }
-        post(`/api/balance-web/recharge-order/${type ? 'failOnRechargeDocumentMake' : 'approve'}`, {
+        post(`/api/balance-web/recharge-order/${type ? 'failOnRechargeDocumentMake' : this.detail.isAutoRecharge == 1 ? 'risk-approve' : 'approve'}`, {
             attachmentId: this.attachmentId,
             memo: this.memo,
             orderNo: this.detail.orderNo,

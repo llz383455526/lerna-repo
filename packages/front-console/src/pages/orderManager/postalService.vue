@@ -90,7 +90,7 @@
                 </el-form-item>
                 <el-form-item label="发放结果" prop="payState">
                     <el-select v-model="form.payState" filterable size="small">
-                        <el-option v-for="e in payOrderState" :value="e.value" :label="e.text"></el-option>
+                        <el-option v-for="e in payOrderState" :key="e" :value="e.value" :label="e.text"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>

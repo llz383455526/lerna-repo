@@ -39,7 +39,7 @@
             </el-form-item>
             <el-form-item label="法人证件类型：" prop="legalPersonIdentityType">
                 <el-select v-model="form.legalPersonIdentityType" class="form_input" size="small">
-                    <el-option v-for="e in type" :label="e.text" :value="e.value"></el-option>
+                    <el-option v-for="e in type" :key="e" :label="e.text" :value="e.value"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="法人证件号码：" prop="legalPersonIdentity">

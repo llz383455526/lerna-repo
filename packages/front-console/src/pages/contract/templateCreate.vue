@@ -35,7 +35,7 @@
 
                 <el-form-item label="是否有效" prop="status">
                     <el-radio-group v-model="templateForm.status">
-                        <el-radio v-for="item in searchOptions.ValidationType" :label="item.text"></el-radio>
+                        <el-radio v-for="item in searchOptions.ValidationType" :key="item" :label="item.text"></el-radio>
                     </el-radio-group>
                 </el-form-item>
             </div>

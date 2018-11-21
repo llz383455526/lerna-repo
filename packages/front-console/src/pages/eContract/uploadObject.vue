@@ -121,7 +121,7 @@
                 </el-form-item>
                 <el-form-item label="证件类型：" prop="identityType">
                     <el-select v-model="editor.identityType" class="form_input">
-                        <el-option v-for="e in type" :label="e.text" :value="e.value"></el-option>
+                        <el-option v-for="e in type" :key="e" :label="e.text" :value="e.value"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="证件号码：" prop="identity">

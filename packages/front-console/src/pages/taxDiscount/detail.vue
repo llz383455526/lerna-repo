@@ -13,7 +13,7 @@
                     <div class="sub-title">开发动态</div>
 
                     <el-steps :active="activeStep" finish-status="success" :process-status="!errorStep ? 'finish' : 'error'" align-center>
-                        <el-step v-for="item in stepsList" :title="item.name"></el-step>
+                        <el-step v-for="item in stepsList" :key="item" :title="item.name"></el-step>
                     </el-steps>
                 </div>
 

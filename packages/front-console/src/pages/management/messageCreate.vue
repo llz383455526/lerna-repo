@@ -37,7 +37,7 @@
 
             <el-form-item label="是否显示" prop="display">
                 <el-radio-group v-model="messageForm.display">
-                    <el-radio v-for="item in searchOptions.DisplayType" :label="item.text"></el-radio>
+                    <el-radio v-for="item in searchOptions.DisplayType" :key="item" :label="item.text"></el-radio>
                 </el-radio-group>
             </el-form-item>
 

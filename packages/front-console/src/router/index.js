@@ -129,6 +129,10 @@ const accountDetail = () => import('../pages/management/accountDetail')
 
 const flowSigning = () => import('../pages/eContract/flowSigning') //签约流程
 
+const newContractCreate = () => import('../pages/newContract/create')
+const newContractList = () => import('../pages/newContract/list')
+const newContractDetail = () => import('../pages/newContract/detail')
+
 
 export default [
     {
@@ -376,6 +380,28 @@ export default [
                             },
                         ]
                     }, {
+                	    path: 'newContract',
+		                component: index,
+		                children: [{
+                	    	path: 'create',
+			                component: newContractCreate,
+			                meta: {
+				                keepAlive: false
+			                }
+		                }, {
+                	    	path: 'list',
+			                component: newContractList,
+			                meta: {
+				                keepAlive: false
+			                }
+		                }, {
+                	        path: 'detail',
+                            component: newContractDetail,
+                            meta: {
+                	            keepAlive: false
+                            }
+                        }]
+	                }, {
                         path: 'management',
                         component: index,
                         children: [{

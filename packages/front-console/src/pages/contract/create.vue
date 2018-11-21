@@ -693,6 +693,7 @@
                     serviceFeeContent2: {
                         containMonthAmount: false,
                         monthIncomeAmount: '',
+
                         stepwiseList: []
                     },
                     // serviceFee: '',

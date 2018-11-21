@@ -20,7 +20,7 @@
         </div>
         <div class="di-fang-liu-cun-input-box">
           <accessory-input
-            v-for="(v, k) in diFangLiuCunObj.inputArr"
+            v-for="(v, k) in diFangLiuCunObj.inputArr" :key="k"
             :ref="`DI_FANG_LIU_CUN_${k}`"
             taxCategory="local-tax"
             taxCollection="commom"

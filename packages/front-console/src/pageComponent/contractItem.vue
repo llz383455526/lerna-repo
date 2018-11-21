@@ -265,6 +265,7 @@
     </div>
 </template>
 <script>
+import { setTimeout } from 'timers';
 export default {
     props: {
         contractForm: {
@@ -315,7 +316,10 @@ export default {
         }
     },
     mounted() {
-        this.initColumn()
+        if(!this.contractForm.serviceFeeContent.stepwiseList || !this.contractForm.serviceFeeContent.stepwiseList.length) {
+            this.initColumn()
+        }
+        this.init(this.contractForm)
     },
     methods: {
         init(a) {
@@ -350,9 +354,14 @@ export default {
                     this.check = 0
                 }
             }
-            this.$parent.clearValidate()
+            setTimeout(() => {
+                this.$parent.clearValidate()
+            }, 100)
         },
         transferObj() {
+            if(this.contractForm.serviceFeeContent.serviceFeeType != 'standard' && this.inputRate === '') {
+                this.check = ''
+            }
             var contractForm = JSON.parse(JSON.stringify(this.contractForm))
             contractForm.serviceFeeContent.settledRate = this.inputRate
             if(contractForm.serviceFeeContent.serviceFeeType == 'standard') {

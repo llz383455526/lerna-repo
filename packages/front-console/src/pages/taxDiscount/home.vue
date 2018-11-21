@@ -3,6 +3,27 @@
     <div class="main-container">
         <div style="margin: 0 0 20px;">待办事项</div>
 
+        <div class="sub-title">合同审核待办事项</div>
+        <div class="table-container el-table el-table--fit el-table--border el-table--scrollable-x el-table--enable-row-transition">
+            <el-table :data="contractTodo" style="width: 100%">
+                <el-table-column prop="id" label="申请编号"></el-table-column>
+                <el-table-column prop="customerName" label="企业名称"></el-table-column>
+                <el-table-column prop="createdByName" label="申请人"></el-table-column>
+                <el-table-column prop="updatedAt" label="申请时间"></el-table-column>
+                <el-table-column label="合同类型">
+                    <template slot-scope="scope">
+                        {{scope.row.workflowType === 'create_sale_contract' ? '标准' : '非标'}}
+                    </template>
+                </el-table-column>
+
+                <el-table-column label="操作" width="120">
+                    <template slot-scope="scope">
+                        <el-button @click="toContract(scope.row.id)" type="text" size="medium" style="padding:0;">查看</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </div>
+
         <div class="sub-title">税优地开拓待办事项</div>
         <div class="table-container el-table el-table--fit el-table--border el-table--scrollable-x el-table--enable-row-transition">
             <el-table :data="todoList" style="width: 100%">
@@ -24,7 +45,7 @@
                 </el-table-column>
             </el-table>
         </div>
-        
+
         <div class="sub-title">待开通落地公司管理</div>
         <div class="table-container el-table el-table--fit el-table--border el-table--scrollable-x el-table--enable-row-transition">
             <el-table :data="landCompany" style="width: 100%">
@@ -109,6 +130,8 @@
             this.getCompanyData();
             this.getTaxStatistics()
             this.getCompanyStatistics();
+
+            this.getContractTodo()
         },
         data() {
             return {
@@ -116,6 +139,7 @@
                 taxStatistics: [],
                 landCompany:[],
                 landCompanyStatistics:[],
+                contractTodo: []
             }
         },
         methods: {
@@ -157,6 +181,23 @@
                 localStorage.setItem('appId', id)
                 this.$router.push({
                     path: '/main/clientManager/serverManager'
+                })
+            },
+            getContractTodo() {
+                get('/api/opencrm/mine/todo_items', {
+	                workflowType: 'create_sale_contract',
+                    moduleName: 'sale_contract'
+                }).then(result => {
+                	this.contractTodo = result
+                })
+            },
+            toContract(id) {
+            	this.$router.push({
+                    path: '/main/newContract/create',
+                    query: {
+                    	id: id,
+	                    editType: 'workflow'
+                    }
                 })
             }
         }
