@@ -3,6 +3,9 @@ let path = require('path')
 let proxypath = null
 
 switch (process.env.NODE_SERVER_ENV) {
+  case 'prod':
+    proxypath = 'https://openadmin.aiyuangong.com'
+    break
   case 'test':
     proxypath = 'https://openadmintest.aiyuangong.com'
     break

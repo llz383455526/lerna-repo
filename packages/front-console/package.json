@@ -6,6 +6,7 @@
   "author": "bigben",
   "license": "ISC",
   "scripts": {
+    "devprod": "cross-env NODE_SERVER_ENV=prod node build/dev-server.js",
     "dev": "cross-env NODE_SERVER_ENV=test node build/dev-server.js",
     "dev92": "cross-env NODE_SERVER_ENV=92 node build/dev-server.js",
     "dev94": "cross-env NODE_SERVER_ENV=94 node build/dev-server.js",
