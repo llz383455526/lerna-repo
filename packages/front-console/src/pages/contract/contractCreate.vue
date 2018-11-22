@@ -976,6 +976,9 @@
                                 this.serviceList.forEach(ev => {
                                     if(e.serviceCompanyId == ev.companyId) {
                                         e.serviceCompanyName = ev.name
+                                        e.serviceLegalPerson = ev.corporateName
+                                        e.serviceRegisterAddr = ev.address
+                                        e.servicePhone = ev.telephone
                                     }
                                 })
                             })
