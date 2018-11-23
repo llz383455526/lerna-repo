@@ -672,6 +672,11 @@ button{
     margin-right: 10px;
 }
 
+.require::before {
+    content: "*";
+    color: #f56c6c;
+    margin-right: 4px;
+}
 
 
 

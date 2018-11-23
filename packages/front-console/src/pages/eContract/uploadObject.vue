@@ -35,12 +35,13 @@
                     </el-form-item>
                 </el-form>
                 <el-button type="primary" size="small" @click="show = true">批量添加</el-button>
+                <el-button type="primary" size="small" @click="addOrEdit()">添加</el-button>
                 <a :href="`${baseUrl}/api/econtract/order/exporterrors?batchId=${form.batchId}`" v-if="hasChange"><el-button type="primary" size="small">导出文件</el-button></a>
                 <el-table :data="list" @selection-change="handleSelectionChange">
-                    <el-table-column label="姓名" prop="personalName"></el-table-column>
-                    <el-table-column label="证件类型" prop="personalIdentityTypeName"></el-table-column>
-                    <el-table-column label="证件号" prop="personalIdentity"></el-table-column>
-                    <el-table-column label="手机" prop="personalMobile"></el-table-column>
+                    <el-table-column label="姓名" prop="personalName" :render-header="customFieldColumn"></el-table-column>
+                    <el-table-column label="证件类型" prop="personalIdentityTypeName" :render-header="customFieldColumn"></el-table-column>
+                    <el-table-column label="证件号" prop="personalIdentity" :render-header="customFieldColumn"></el-table-column>
+                    <el-table-column label="手机" prop="personalMobile" :render-header="customFieldColumn"></el-table-column>
                     <el-table-column label="错误原因">
                         <template slot-scope="scope">
                             <span class="error">{{scope.row.msg}}</span>
@@ -48,7 +49,7 @@
                     </el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <el-button type="text" size="small" @click="forEdit(scope.row)">修改</el-button>
+                            <el-button type="text" size="small" @click="addOrEdit(scope.row)">修改</el-button>
                             <el-button type="text" size="small" @click="deleteOrder(scope.row)">删除</el-button>
                         </template>
                     </el-table-column>
@@ -114,7 +115,7 @@
                 <el-button size="small" @click="show = false">关闭</el-button>
             </span>
         </el-dialog>
-        <el-dialog title="修改" :visible.sync="eshow">
+        <el-dialog :title="!isAdd ? '修改' : '添加'" :visible.sync="eshow" width="600px">
             <el-form :model="editor" :rules="erules" ref="editor" label-width="100px">
                 <el-form-item label="名字：" prop="name">
                     <el-input v-model="editor.name" class="form_input"></el-input>
@@ -132,7 +133,7 @@
                 </el-form-item>
             </el-form>
             <span slot="footer">
-                <el-button type="primary" size="small" @click="edit">确认</el-button>
+                <el-button type="primary" size="small" @click="save">确认</el-button>
                 <el-button size="small" @click="eshow = false">取消</el-button>
             </span>
         </el-dialog>
@@ -172,19 +173,19 @@ export default {
                 personalMobile: ''
             },
             erules: {
-                /*name: [
+                name: [
                     { required: true, message: '名字不能为空', trigger: 'blur' }
-                ],*/
+                ],
                 identityType: [
                     { required: true, message: '请选择证件类型', trigger: 'blur' }
                 ],
                 identity: [
-                    { required: false, message: '证件号码不能为空', trigger: 'blur' },
-                    { pattern: /^[\w]+$/, message: '请正确输入证件号码'}
+                    { required: true, message: '证件号码不能为空', trigger: 'blur' },
+                    { pattern: /^[\w]+$/, message: '请正确输入证件号码', trigger: 'blur'}
                 ],
                 personalMobile: [
                     { required: true, message: '手机号码不能为空', trigger: 'blur' },
-                    { pattern: /^(1\d{10})$/, message: '请正确输入手机号码'}
+                    { pattern: /^(1\d{10})$/, message: '请正确输入手机号码', trigger: 'blur'}
                 ]
             },
             type: [
@@ -215,7 +216,9 @@ export default {
                 '1': '个人',
                 '2.1': '服务商',
                 '2.2': '公司'
-            }
+            },
+            isAdd: false,
+            signModel: ''
         }
     },
     mounted() {
@@ -225,6 +228,21 @@ export default {
 	        templateGroupId: ''
         }).then(data => {
             this.detail = data.partys
+            this.signModel = data.signModel
+            if(data.signModel == 2) {
+                this.erules = {
+                    identityType: [
+                        { required: true, message: '请选择证件类型', trigger: 'blur' }
+                    ],
+                    identity: [
+                        { pattern: /^[\w]+$/, message: '请正确输入证件号码', trigger: 'blur'}
+                    ],
+                    personalMobile: [
+                        { required: true, message: '手机号码不能为空', trigger: 'blur' },
+                        { pattern: /^(1\d{10})$/, message: '请正确输入手机号码', trigger: 'blur'}
+                    ]
+                }
+            }
             if(this.detail) {
 	            this.detail.forEach(e => {
 		            if(e.userId) {
@@ -309,25 +327,59 @@ export default {
                 })
             }
         },
-        forEdit(a) {
+        addOrEdit(a) {
+            if(!a) {
+                this.isAdd = true
+                a = {}
+            }
+            else {
+                this.isAdd = false
+            }
             this.eshow = true
-            this.editor.batchId = a.batchId
-            this.editor.orderId = a.orderId
-            this.editor.identity = a.personalIdentity
-            this.editor.identityType = a.personalIdentityType
-            this.editor.name = a.personalName
-            this.editor.personalMobile = a.personalMobile
+            this.editor = {
+                name: a.personalName,
+                batchId: a.batchId,
+                identity: a.personalIdentity,
+                identityType: a.personalIdentityType || '0',
+                orderId: a.orderId,
+                personalMobile: a.personalMobile
+            }
+            // this.editor.batchId = a.batchId
+            // this.editor.orderId = a.orderId
+            // this.editor.identity = a.personalIdentity
+            // this.editor.identityType = a.personalIdentityType
+            // this.editor.name = a.personalName
+            // this.editor.personalMobile = a.personalMobile
+            this.$refs['editor'].clearValidate()
         },
-        edit() {
+        save() {
 	        this.$refs['editor'].validate(valid => {
 	        	if(valid) {
-			        post('/api/econtract/contractsigner/modify', this.editor).then(data => {
+                    var form = this.editor
+                    if(this.isAdd) {
+                        form = {
+                            batchId: this.form.batchId,
+                            param: {
+                                batchId: this.form.batchId,
+                                fromGroup: '0',
+                                identity: this.editor.identity,
+                                identityType: this.editor.identityType,
+                                name: this.editor.name,
+                                orderId: this.editor.orderId,
+                                personalMobile: this.editor.personalMobile
+                            },
+                            templateGroupId: '',
+                            templateId: this.msg.templateId
+                        }
+                    }
+			        post(`/api/econtract/contractsigner/${this.isAdd ? 'add' : 'modify'}`, form).then(data => {
 				        this.$message({
 					        type: 'success',
-					        message: '修改成功！'
+					        message: `${this.isAdd ? '添加' : '修改'}成功！`
 				        })
 				        this.eshow = false
-				        this.hasChange = true
+                        this.hasChange = true
+                        this.isSuccess = true
 				        this.query()
 			        })
                 }else {
@@ -337,7 +389,6 @@ export default {
 			        })
 		        }
             })
-
         },
         deleteOrder(a) {
             this.$confirm('确定删除该签约对象吗？', '提示', {
@@ -389,6 +440,16 @@ export default {
         },
         cancle() {
             this.$router.back()
+        },
+        customFieldColumn (h, { column, $index }) {
+            return (
+                h('span', [
+                    h('i', {
+                        class: this.signModel == '1' || (this.signModel == '2' && ($index == 1 || $index == 3)) ? 'require' : ''
+                    }),
+                    h('span', column.label)
+                ])
+            )
         }
     }
 }

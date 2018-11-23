@@ -2,7 +2,7 @@
     <div class="main">
         <div class="title">新增签约对象</div>
         <el-form :model="form" :rules="rules" label-width="150px" ref="form">
-            <el-form-item label="公司全称：" prop="name">
+            <el-form-item label="企业名称：" prop="name">
                 <el-select
                     class="form_input"
                     v-model="form.name"

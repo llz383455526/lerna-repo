@@ -6,7 +6,7 @@
             <el-form-item label="合同模板名称:" prop="name">
                 <el-input v-model="form.name" class="form_input" placeholder="请填写合同模板名称" size="small"></el-input>
             </el-form-item>
-            <el-form-item label="客户平台：" prop="platform">
+            <el-form-item label="商户名称：" prop="platform">
                 <el-select
                     class="form_input"
                     v-model="form.platform"
@@ -110,13 +110,14 @@
                     <span v-else>发起签约时导入</span>
                 </el-form-item>
                 <el-form-item label="签署方式" :prop="`partys[${i}].signMode`" :rules="{required: true, message: '请选择签署方式', trigger: 'blur'}">
-                    <el-radio v-model="item.signMode" label="0">自动签约</el-radio>
+                    <el-radio v-model="item.signMode" v-for="e in signModes" v-if="!(e.value == 2 && item.userType == 1)" :key="e.value" :label="e.value" @change="checkNote">{{e.text}}</el-radio>
+                    <!-- <el-radio v-model="item.signMode" label="0">自动签约</el-radio>
                     <el-radio v-model="item.signMode" label="1">手动签约</el-radio>
-                    <el-radio v-model="item.signMode" label="2" v-if="item.userType == 2">批量手动签约</el-radio>
+                    <el-radio v-model="item.signMode" label="2" v-if="item.userType == 2">批量手动签约</el-radio> -->
                 </el-form-item>
                 <template v-for="(e, j) in item.params">
                     <el-form-item :label="item.userType == 2 ? '公司盖章坐标' : '手写签名坐标'" :prop="`partys[${i}].params[${j}]`" :rules="[
-                    {validator: checkPostion, trigger: 'change'}]">
+                    {validator: checkPostion, trigger: 'blur'}]">
                         <el-input v-model="e.varPages" class="form_short" size="small">
                             <template slot="prepend">页码</template>
                         </el-input>
@@ -133,20 +134,24 @@
             </template>
             <div class="mtitle">签约方式设置</div>
             <el-form-item label="对接方式" prop="accessType">
-                <el-radio v-model="form.accessType" label="1">SaaS对接</el-radio>
-                <el-radio v-model="form.accessType" label="2" >API对接</el-radio>
+                <el-radio v-model="form.accessType" v-for="e in accessTypes" :key="e.value" :label="e.value" @change="accessTypeChange">{{e.text}}</el-radio>
+                <!-- <el-radio v-model="form.accessType" label="1">SaaS对接</el-radio>
+                <el-radio v-model="form.accessType" label="2" >API对接</el-radio> -->
+            </el-form-item>
+            <el-form-item label="实名认证方式" prop="signModel">
+                <el-radio v-model="form.signModel" v-for="e in signModels" :key="e.value" :label="e.value" @change="checkNote" :disabled="form.accessType == '2'">{{e.text}}</el-radio>
+            </el-form-item>
+            <el-form-item label="返回链接" prop="linkType" v-if="form.signModel && form.signModel == 1">
+                <el-radio v-model="form.linkType" label="1">证照上传页面</el-radio>
+                <el-radio v-model="form.linkType" label="2">签约页面</el-radio>
             </el-form-item>
             <el-form-item label="是否发送短信" prop="smsType">
-                <el-radio v-model="form.smsType" label="1">是</el-radio>
-                <el-radio v-model="form.smsType" label="2">否</el-radio>
+                <el-radio v-model="form.smsType" label="1" :disabled="isDisable">是</el-radio>
+                <el-radio v-model="form.smsType" label="2" :disabled="isDisable">否</el-radio>
             </el-form-item>
             <el-form-item label="短信引导内容" prop="smsType">
                 <el-radio v-model="form.signSmsType" label="1">直接签约</el-radio>
                 <el-radio v-model="form.signSmsType" label="2">通过小程序签约</el-radio>
-            </el-form-item>
-            <el-form-item label="返回链接" prop="linkType">
-                <el-radio v-model="form.linkType" label="1">证照上传页面</el-radio>
-                <el-radio v-model="form.linkType" label="2">签约页面</el-radio>
             </el-form-item>
             <el-form-item label="是否需要上传证件照" prop="passportType">
                 <el-radio v-model="form.passportType" label="1">是</el-radio>
@@ -202,12 +207,12 @@ export default {
                                 varY: ''
                             }
                         ],
-                        signMode: '',
+                        signMode: '0',
                         signNo: 1,
                         userId: '',
                         userName: '',
                         userType: '',
-                        userDetailType: ''
+                        userDetailType: '2.1'
                     },
                     {
                         params: [
@@ -219,12 +224,12 @@ export default {
                                 varY: ''
                             }
                         ],
-                        signMode: '',
+                        signMode: '1',
                         signNo: 2,
                         userId: '',
                         userName: '',
                         userType: '',
-                        userDetailType: ''
+                        userDetailType: '1'
                     }
                 ],
                 memo: '',
@@ -236,14 +241,15 @@ export default {
                 smsType: '1',
 	            signSmsType: '1',
                 linkType: '1',
-                passportType: ''
+                passportType: '1',
+                signModel: '2'
             },
             rules: {
                 name: [
                     { required: true, message: '请输入模板名称', trigger: 'blur' }
                 ],
                 platform: [
-                    { required: true, message: '请选择客户平台', trigger: 'blur' }
+                    { required: true, message: '请选择商户名称', trigger: 'blur' }
                 ],
                 fpages: [
                     { required: true, message: '请上传合同模板', trigger: 'blur' }
@@ -256,6 +262,9 @@ export default {
                 ],
                 accessType: [
                     { required: true, message: '请选择对接方式', trigger: 'blur' }
+                ],
+                signModel: [
+                    { required: true, message: '请选择实名认证方式', trigger: 'blur' }
                 ],
                 smsType: [
                     { required: true, message: '请选择是否发送短信', trigger: 'blur' }
@@ -304,7 +313,43 @@ export default {
             fileList: [],
             ltype: '',
             checkPostion,
-            isRe: false
+            isRe: false,
+            defaultPosition: '',
+            signModels: [
+                {
+                    text: '后台发起签约时',
+                    value: '1'
+                },
+                {
+                    text: '由用户上传个人信息',
+                    value: '2'
+                }
+            ],
+            isDisable: false,
+            signModes: [
+                {
+                    text: '自动签约',
+                    value: '0'
+                },
+                {
+                    text: '手动签约',
+                    value: '1'
+                },
+                {
+                    text: '批量手动签约',
+                    value: '2'
+                }
+            ],
+            accessTypes: [
+                {
+                    text: 'SaaS对接',
+                    value: '1'
+                },
+                {
+                    text: 'API对接',
+                    value: '2'
+                }
+            ]
         }
     },
     watch: {
@@ -331,6 +376,7 @@ export default {
                     userDetailType: ''
                 })
             }
+            this.setDefaultPosition()
         },
         'form.platform': function(a) {
             this.platform.forEach(e => {
@@ -368,9 +414,13 @@ export default {
             this.ltype = this.$route.query.type
             this.isRe = true
         }
+        else {
+            this.form.partys.forEach((e, i) => {
+                this.objectChange(i)
+            })
+        }
         if(!this.form.templateId) {
             get('/api/econtract/template/getnextid').then(data => {
-                console.log(data)
                 this.form.templateId = data
             })
         }
@@ -383,7 +433,6 @@ export default {
                     pageNo: 1,
                     pageSize: 10
                 }).then(data => {
-                    console.log(data)
                     this.platform = data
                 })
             }
@@ -395,7 +444,6 @@ export default {
                     pageNo: 1,
                     pageSize: 10
                 }).then(data => {
-                    console.log(data)
                     this.objects = data.data
                 })
             }
@@ -415,6 +463,8 @@ export default {
                     url: a.templateId
                 })
                 this.form.fname = ''
+                this.defaultPosition = data
+                this.setDefaultPosition()
             })
             this.file = a
         },
@@ -425,7 +475,6 @@ export default {
             this.fileList.length = 0
         },
         objectChange(i) {
-            // console.log(this.form.partys[i].userDetailType)
             this.form.partys[i].userType = Math.floor(this.form.partys[i].userDetailType)
             if(this.form.partys[i].userType == 1) {
                 this.form.partys[i].userId = ''
@@ -441,6 +490,7 @@ export default {
                     e.varName = '公司盖章'
                 })
             }
+            this.setDefaultPosition()
         },
         addParams(i) {
             var a = {
@@ -539,7 +589,6 @@ export default {
         },
         add() {
             post('/api/econtract/template/add', this.form).then(data => {
-                console.log(data)
                 this.$message({
                     type: 'success',
                     message: '添加成功！'
@@ -549,7 +598,6 @@ export default {
         },
         change() {
             post('/api/econtract/template/mod', this.form).then(data => {
-                console.log(data)
                 this.$message({
                     type: 'success',
                     message: '修改成功！'
@@ -560,6 +608,52 @@ export default {
         },
         back() {
             this.$router.back()
+        },
+        setDefaultPosition() {
+            if(this.defaultPosition) {
+                this.form.partys.forEach((e, i) => {
+                    e.params.forEach(ev => {
+                        ev.varPages = this.defaultPosition.pageSize
+                        if(this.form.partycount == 2) {
+                            if(e.userType == 1) {
+                                ev.varX = this.defaultPosition.px
+                                ev.varY = this.defaultPosition.py
+                            }
+                            else {
+                                ev.varX = this.defaultPosition.ex
+                                ev.varY = this.defaultPosition.ey
+                            }
+                        }
+                        else {
+                            ev.varX = ''
+                            ev.varY = ''
+                        }
+                    })
+                })
+            }
+            this.checkNote()
+        },
+        checkNote() {
+            var isAuto = this.form.partys.filter(e => {
+                return e.userDetailType == 1 && e.signMode == '0'
+            }).length
+            if(isAuto) {
+                if(this.form.signModel == '1') {
+                    this.form.smsType = '2'
+                }
+                else {
+                    this.form.smsType = '1'
+                }
+                this.isDisable = true
+            }
+            else {
+                this.isDisable = false
+            }
+        },
+        accessTypeChange() {
+            if(this.form.accessType == '2') {
+                this.form.signModel = '1'
+            }
         }
     }
 }

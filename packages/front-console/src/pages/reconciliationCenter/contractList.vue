@@ -8,7 +8,7 @@
                 </el-select>
             </el-form-item>
 
-            <el-form-item label="接入应用"   size="small" prop="extrSystemIds">
+            <el-form-item label="商户名称"   size="small" prop="extrSystemIds">
                 <el-select multiple v-model="formSearch.extrSystemIds">
                     <el-option v-for="item in extrSystemOptions" :label="item.extrSystemName" :value="item.extrSystemId" :key="item.extrSystemId"></el-option>
                 </el-select>

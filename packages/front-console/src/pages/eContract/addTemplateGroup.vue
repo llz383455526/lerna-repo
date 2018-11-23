@@ -6,7 +6,7 @@
             <el-form-item label="合同模板组名称:" prop="groupName">
                 <el-input v-model="form.groupName" class="form_input" placeholder="请填写合同模板组名称" size="small"></el-input>
             </el-form-item>
-            <el-form-item label="客户平台：" prop="platform">
+            <el-form-item label="商户名称：" prop="platform">
                 <el-select
                         class="form_input"
                         v-model="form.platform"
@@ -81,7 +81,7 @@
                     <el-table :data="templateArr">
                         <el-table-column label="合同模板ID" prop="templateId"></el-table-column>
                         <el-table-column label="合同模板名称" prop="name"></el-table-column>
-                        <el-table-column label="客户平台" prop="platformName"></el-table-column>
+                        <el-table-column label="商户名称" prop="platformName"></el-table-column>
                         <el-table-column label="服务商名称" prop="">
                             <template slot-scope="scope">
                                 <div v-for="item in scope.row.partys" v-if="item.userName">{{item.userName}}</div>
@@ -243,7 +243,7 @@
                 :visible.sync="dialogVisibleTwo">
             <el-form :model="queryForm" :inline="true" ref="query">
                 <el-form-item label="关键词：" prop="searchContent">
-                    <el-input style="width: 300px" v-model="queryForm.searchContent" size="small" placeholder="请输入合同模板ID/合同模板名称/客户平台"></el-input>
+                    <el-input style="width: 300px" v-model="queryForm.searchContent" size="small" placeholder="请输入合同模板ID/合同模板名称/商户名称"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" size="small" @click="query">查询</el-button>
@@ -710,7 +710,8 @@
 							partycount: this.form.partyCount,
 							isChange: '1',
 							fromGroup: '1',
-							companyId: this.form.companyId
+                            companyId: this.form.companyId,
+                            signModel: this.form.accessType == '1' ? '2' : '1'
 						})
 
 						// console.log(templateModel)
@@ -822,7 +823,7 @@
 				if(!this.form.groupName || !this.form.platform) {
 					this.$message({
 						type: 'warning',
-						message: '合同模板组名称和客户平台不能为空！'
+						message: '合同模板组名称和商户名称不能为空！'
 					})
 					return
                 }
@@ -838,7 +839,13 @@
 				form.downloadSmsType = form.signSmsType
 				form.templates = this.templateArr
 				form.enable = '1'
-				form.platformName = this.platformName
+                form.platformName = this.platformName
+                if(form.accessType == '1') {
+                    form.signModel = '2'
+                }
+                else {
+                    form.signModel = '1'
+                }
 
 				post('/api/econtract/template-group/add-update', form)
 					.then(result => {
@@ -1062,7 +1069,7 @@
 
 				let _this = this
 				showConfirm({
-					msg: '确认修改后，将自动移除客户平台不一致的合同模板，是否确认修改？',
+					msg: '确认修改后，将自动移除商户名称不一致的合同模板，是否确认修改？',
 					confirmCallback: function() {
 						_this.templateArr = []
 					},

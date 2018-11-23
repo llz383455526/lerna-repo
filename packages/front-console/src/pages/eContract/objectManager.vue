@@ -2,7 +2,7 @@
     <div class="main">
         <div class="title">签约对象（公司）管理</div>
         <el-form :model="form" :inline="true" ref="form">
-            <el-form-item label="公司名称" prop="name">
+            <el-form-item label="企业名称" prop="name">
                 <el-input v-model="form.name" size="small"></el-input>
             </el-form-item>
             <el-form-item>
@@ -12,7 +12,7 @@
         </el-form>
         <router-link to="addObject" tag="span"><el-button size="small" type="primary">新增签约对象</el-button></router-link>
         <el-table :data="list">
-            <el-table-column label="公司全称" prop="name"></el-table-column>
+            <el-table-column label="企业名称" prop="name"></el-table-column>
             <el-table-column label="公司简称" prop="abbrName"></el-table-column>
             <el-table-column label="工商注册号" prop="regCode"></el-table-column>
             <el-table-column label="法人姓名" prop="legalPerson"></el-table-column>
