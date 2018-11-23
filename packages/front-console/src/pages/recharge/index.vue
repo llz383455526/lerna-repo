@@ -13,7 +13,7 @@
                 @change="setTime">
                 </el-date-picker>
             </el-form-item>
-            <el-form-item label="处理状态:"   size="small" prop="state">
+            <el-form-item label="处理状态:"   size="small" prop="state" v-if="!riskApprove">
                 <el-select v-model="formSearch.state">
                     <el-option label="全部" value="" key=""></el-option>
                     <el-option v-for="(item, index) in optionTypes.RechargeOrderStateType" :label="item.text" :value="item.value" :key="item.value"></el-option>
@@ -31,13 +31,13 @@
             <el-form-item label="账户名称:"   size="small" prop="accountName">
                 <el-input v-model="formSearch.accountName"></el-input>
             </el-form-item>
-            <el-form-item style="margin-top: -4px">
+            <el-form-item style="margin-top: -4px" :class="`${riskApprove ? 'fr' : ''}`">
                 <el-button type="primary" @click="query" size="small">查询</el-button>
                 <el-button size="small" @click="clear">重置</el-button>
-                <el-button size="small" @click="exportFile">导出</el-button>
+                <el-button size="small" @click="exportFile" v-if="!riskApprove">导出</el-button>
             </el-form-item>
         </el-form>
-        <el-button type="primary" @click="dialogCreateVisible=true" v-if="checkRight(permissions, 'balance-web:/recharge-order/comfirm')">充值申请</el-button>
+        <el-button type="primary" @click="dialogCreateVisible=true" v-if="checkRight(permissions, 'balance-web:/recharge-order/comfirm') && !riskApprove">充值申请</el-button>
         <el-table :data="rechargeApplyList.list" style="width: 100%;margin-top: 20px;">
                 <el-table-column prop="stateName" label="处理状态" width="100px">
                     <template slot-scope="scope">
@@ -616,7 +616,9 @@ export default {
       showPro: false,
       delay: '',
       proNum: 0,
-      frame: ''
+      frame: '',
+      riskApprove: '',
+      listen: ''
     };
   },
   watch: {
@@ -647,7 +649,6 @@ export default {
   },
   mounted() {
     this.setTime()
-    this.query()
     this.$store.dispatch("getByTypes", [
       "RechargeOrderStateType",
       "ChannelType",
@@ -656,14 +657,39 @@ export default {
     this.$store.dispatch("getCurServiceCompanies");
     //
     this.$store.dispatch("getCustomCompanies");
+    // this.riskApprove = this.$route.query.riskApprove
+    // if(this.riskApprove) {
+    //     this.formSearch.state = 21
+    //     this.formSearch.isAutoRecharge = 1
+    // }
+    // this.query()
+    this.listenSearch()
+  },
+  beforeDestroy() {
+      cancelAnimationFrame(this.listen)
   },
   methods: {
+    listenSearch() {
+        this.listen = requestAnimationFrame(this.listenSearch)
+        if(this.riskApprove != this.$route.query.riskApprove) {
+            this.riskApprove = this.$route.query.riskApprove
+            if(this.riskApprove) {
+                this.formSearch.state = 21
+                this.formSearch.isAutoRecharge = 1
+            }
+            else {
+                this.formSearch.state = ''
+                delete this.formSearch.isAutoRecharge
+            }
+            this.query()
+        }
+    },
     query(a) {
         if(isNaN(a)) {
             a = 1
         }
         this.formSearch.page = a
-        post('/api/balance-web/recharge-order/query-list', this.formSearch).then(data => {
+        post(`/api/balance-web/recharge-order/${this.riskApprove ? 'query-risk-approve-list': 'query-list'}`, this.formSearch).then(data => {
             this.rechargeApplyList = data
         })
         // this.$store.dispatch("getRechargeApplyList", this.formSearch);
@@ -1005,7 +1031,7 @@ export default {
       this.$refs["formSearch"].resetFields();
       this.dateValue = [];
       this.setTime()
-    //   this.query()
+      console.log(this.formSearch)
     },
     handleSizeChange(value) {
       this.pageSize = value;
@@ -1290,5 +1316,9 @@ export default {
 .mr20 {
     margin-right: 20px;
     cursor: pointer;
+}
+.fr {
+    float: right;
+    margin-right: 54px;
 }
 </style>

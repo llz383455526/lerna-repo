@@ -594,10 +594,15 @@ export default [
                     }, {
                         path: 'recharge',
                         component: index,
-                        children: [{
+                        children: [
+                            {
                             path: 'applyList',
-                            component: rechargeIndex
-                        }]
+                            component: rechargeIndex,
+                            meta: {
+                                keepAlive: false
+                            }
+                        }
+                    ]
                     },
                     {
                         path: 'infoManager',
