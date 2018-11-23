@@ -127,7 +127,7 @@
                             <el-button type="primary" style="margin-left: 20px;margin-bottom:20px" size="small" @click="handleChangeTest">{{testStatusWord}}</el-button>
                             <br/>
                             <el-form v-model="testForm" label-width="80px">
-                                <el-form-item v-for="e in msg.testInfoList" :key="e" :label="e.serviceName" size="small" class="form_input">
+                                <el-form-item v-for="(e, i) in msg.testInfoList" :key="i" :label="e.serviceName" size="small" class="form_input">
                                     <el-select :disabled="testCanModify" v-model="e.status">
                                         <el-option v-for="o in testData" :value="o.id" :label="o.name" :key="o.id"></el-option>
                                     </el-select>
@@ -511,7 +511,7 @@
         <!-- 备注管理弹窗 e-->
 
         <el-dialog title="请选择渠道" :visible.sync="eshow" width="70%">
-            <el-button size="small" type="primary" v-for="e in channels" :key="e" @click="add(e.value)">{{e.text}}</el-button>
+            <el-button size="small" type="primary" v-for="e in channels" :key="e.value" @click="add(e.value)">{{e.text}}</el-button>
             <span class="form_footer" slot="footer">
               <el-button @click="eshow = false" size="small">取消</el-button>
           </span>

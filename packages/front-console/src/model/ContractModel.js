@@ -245,13 +245,13 @@ class ContractModel extends BaseModel {
         }];
     }
     // 获取合同id
-    getContractId() {
+    getContractId () {
         get('/api/opencrm/workflow/generate_instance_id').then(result => {
             this.contractId = result
         })
     }
     // 获取合同详细信息
-    getContractDetail(id) {
+    getContractDetail (id) {
         get(`/api/opencrm/workflow/details/${id}`).then(result => {
             this.contractForm = result.datas;
             this.actions = result.actions;
@@ -260,10 +260,18 @@ class ContractModel extends BaseModel {
             this.getServiceTypeList();
             this.getContractDate();
             this.getFiles();
+            this.changeCheckbox();
+        })
+    }
+    // 获取详细信息之后转换checkbox
+    changeCheckbox () {
+        this.contractForm.showSubjectInfo = this.contractForm.showSubjectInfo === '1' ? true : false;
+        this.contractForm.contracts.forEach(item => {
+            item.showServiceCompanyInfo = item.showServiceCompanyInfo === '1' ? true : false;
         })
     }
     // 上传之前处理服务商报价数据
-    changeServiceFeeList() {
+    changeServiceFeeList () {
         let serviceFeeList = this.serviceFeeList;
         if (serviceFeeList) {
             _.forEach(serviceFeeList, (item,key) => {

@@ -11,7 +11,7 @@
             <el-button @click="deleteForm(i)" type="text" size="medium" class="btn-del">删除</el-button>
             <el-form-item label="服务商名称">
                 <el-input v-model="formItem.serviceCompanyName" style="width:250px;" readonly></el-input>
-                <el-checkbox v-model="formItem.showServiceCompanyInfo">合同中显示服务商收款账户信息</el-checkbox>
+                <el-checkbox v-model="formItem.showServiceCompanyInfo" label="1">合同中显示服务商收款账户信息</el-checkbox>
             </el-form-item>
             <el-form-item label="业务方案" :prop="'contracts.'+index+'.goodsId'"
                           :rules="{required: true, message: '请选择业务方案', trigger: 'change'}">

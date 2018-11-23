@@ -97,6 +97,8 @@
 	                instanceId: this.contractModel.contractId,
                     workflowType: this.contractModel.workflowType
                 };
+                // 上传之前处理checkbox
+                this.changeCheckbox();
                 return new Promise((resolve, reject) => {
 	                post(url, _form).then(result => {
                         resolve('save');
@@ -132,7 +134,13 @@
                     }
                 })
             },
-            backToList(path) {
+            changeCheckbox () {
+                this.contractModel.contractForm.showSubjectInfo = this.contractModel.contractForm.showSubjectInfo ? '1' : '';
+                this.contractModel.contractForm.contracts.forEach(item => {
+                    item.showServiceCompanyInfo = item.showServiceCompanyInfo ? '1' : '';
+                })
+            },
+            backToList (path) {
                 this.$router.replace({
                     path: path
                 })
