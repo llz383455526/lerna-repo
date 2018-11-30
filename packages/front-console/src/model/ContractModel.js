@@ -257,6 +257,17 @@ class ContractModel extends BaseModel {
             this.actions = result.actions;
             this.processLogs = result.processLogs;
             this.workflowType = result.workflowType;
+            this.contractForm.contracts.forEach(e => {
+                if(!e.agentFeeContent) {
+                    e.agentFeeContent = {
+                        discountRate: '',
+                        fixFee: '',
+                        secondType: 'real',
+                        serviceFeeRate: '',
+                        serviceFeeType: 'ratio'
+                    }
+                }
+            })
             this.getServiceTypeList();
             this.getContractDate();
             this.getFiles();

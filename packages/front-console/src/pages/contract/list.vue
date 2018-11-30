@@ -14,7 +14,7 @@
                 </el-select>
             </el-form-item>
             <br>
-            <el-form-item label="请求起止时间:" size="small">
+            <el-form-item label="更新时间:" size="small">
                 <el-date-picker
                         v-model="dateValue"
                         type="daterange"

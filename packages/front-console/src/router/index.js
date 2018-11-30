@@ -65,6 +65,8 @@ let contractList = r => require.ensure([], () => r(require('../pages/contract/co
 let contractCreate = r => require.ensure([], () => r(require('../pages/contract/contractCreate')), 'contractCreate')
 let contractPreview = r => require.ensure([], () => r(require('../pages/contract/contractPreview')), 'contractPreview')
 let serviceInvoiceManager = r => require.ensure([], () => r(require('../pages/contract/serviceInvoiceManager')), 'serviceInvoiceManager')
+let agentContractList = r => require.ensure([], () => r(require('../pages/contract/agentContractList')), 'agentContractList')
+let agentContractCreate = r => require.ensure([], () => r(require('../pages/contract/agentContractCreate')), 'agentContractCreate')
 
 
 let clientManager = r => require.ensure([], () => r(require('../pages/clientManager/clientManager')), 'clientManager')
@@ -78,6 +80,9 @@ let addServer = r => require.ensure([], () => r(require('../pages/clientManager/
 let serverDetail = r => require.ensure([], () => r(require('../pages/clientManager/serverDetail')), 'serverDetail')
 let report = r => require.ensure([], () => r(require('../pages/clientManager/report')), 'report')
 let scheme = r => require.ensure([], () => r(require('../pages/clientManager/scheme')), 'scheme')
+let agentManager = r => require.ensure([], () => r(require('../pages/clientManager/agentManager')), 'agentManager')
+let addAgent = r => require.ensure([], () => r(require('../pages/clientManager/addAgent')), 'addAgent')
+let agentDetail = r => require.ensure([], () => r(require('../pages/clientManager/agentDetail')), 'agentDetail')
 
 let advertisingList = r => require.ensure([], () => r(require('../pages/management/advertisingList')), 'advertisingList')
 let advertisingCreate = r => require.ensure([], () => r(require('../pages/management/advertisingCreate')), 'advertisingCreate')
@@ -353,31 +358,49 @@ export default [
                                 meta: {
                                     keepAlive: false
                                 }
-                            }, {
+                            },
+                            {
                                 path: 'contractList',
                                 component: contractList,
                                 meta: {
                                     keepAlive: true
                                 }
-                            }, {
+                            },
+                            {
                                 path: 'contractCreate',
                                 component: contractCreate,
                                 meta: {
                                     keepAlive: false
                                 }
-                            }, {
+                            },
+                            {
                                 path: 'contractPreview',
                                 component: contractPreview,
                                 meta: {
                                     keepAlive: false
                                 }
-                            }, {
+                            },
+                            {
                                 path: 'serviceInvoiceManager',
                                 component: serviceInvoiceManager,
                                 meta: {
                                     keepAlive: false
                                 }
                             },
+                            {
+                                path: 'agentContractList',
+                                component: agentContractList,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'agentContractCreate',
+                                component: agentContractCreate,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            }
                         ]
                     }, {
                 	    path: 'newContract',
@@ -761,6 +784,27 @@ export default [
                             {
                                 path: 'scheme',
                                 component: scheme,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'agentManager',
+                                component: agentManager,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'addAgent',
+                                component: addAgent,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'agentDetail',
+                                component: agentDetail,
                                 meta: {
                                     keepAlive: false
                                 }

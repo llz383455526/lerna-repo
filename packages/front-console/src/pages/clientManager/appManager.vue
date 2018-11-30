@@ -106,7 +106,7 @@
         <div class="content">
             <div class="title">签约信息</div>
             <el-table class="table" :data="contractData.list" border="">
-                <el-table-column label="合同编号" prop="id"></el-table-column>
+                <el-table-column label="合同编号" prop="contractNo"></el-table-column>
                 <el-table-column label="签约服务商" prop="serviceCompanyName"></el-table-column>
                 <el-table-column label="结算方式" prop="settleTypeName"></el-table-column>
                 <el-table-column label="服务费比例" prop="serviceFeeName"></el-table-column>
@@ -216,7 +216,7 @@
                 </el-form-item>
                 <el-form-item label="服务商名称" prop="serviceCompanyId" size="small">
                     <el-select v-model="aform.serviceCompanyId" class="f_input" filterable>
-                        <el-option v-for="item in company" :key="item" :value="item.companyId" :label="item.companyName"></el-option>
+                        <el-option v-for="item in company" :key="item.companyId" :value="item.companyId" :label="item.companyName"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="应用类型" prop="isFromOutApp" size="small">

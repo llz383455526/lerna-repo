@@ -3,8 +3,8 @@
         <h4 class="ml50">企业基本信息</h4>
         <el-form-item label="客户性质" prop="customNature">
             <el-radio v-model="contractModel.contractForm.customNature"
-                      v-for="item in contractModel.customNatureList"
-                      :key="item.value" :label="item.value">{{item.text}}</el-radio>
+                      v-for="(item, i) in contractModel.customNatureList"
+                      :key="i" :label="item.value">{{item.text}}</el-radio>
             <i class="el-icon-question ml10" title="非直接用工企业：人力资源公司、服务外包公司、城市合伙人公司、第三方平台等"></i>
         </el-form-item>
         <el-form-item label="企业名称" prop="customerName">

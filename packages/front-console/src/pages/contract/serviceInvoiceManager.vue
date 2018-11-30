@@ -11,7 +11,7 @@
         </el-form-item>
         <el-form-item>
             <span style="padding-left :20px;" >
-                <el-button type="primary" @click="search">查询</el-button><el-button @click="clear">清除</el-button>
+                <el-button type="primary" @click="currentPage = 1; search()">查询</el-button><el-button @click="clear">清除</el-button>
             </span>
         </el-form-item>
     </el-form>

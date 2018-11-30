@@ -57,6 +57,29 @@
                               :contractForm="{serviceFeeContent:formItem.serviceFeeContent,serviceFeeContent2:formItem.serviceFeeContent2}">
                 </contractItem>
             </el-form-item>
+            <el-form-item label="是否代理商客户" :prop="'contracts.'+index+'.agentClient'" :rules="{required: true, message: '请选择', trigger: 'blur'}">
+                <el-radio v-model="formItem.agentClient" :label="true">是</el-radio>
+                <el-radio v-model="formItem.agentClient" :label="false">否</el-radio>
+            </el-form-item>
+            <template v-if="formItem.agentClient">
+                <el-form-item label="代理商名称" :prop="'contracts.'+index+'.agentCompanyId'" :rules="{required: true, message: '请选择代理商', trigger: 'blur'}">
+                    <el-select v-model="formItem.agentCompanyId" style="width:100%;" @change="companyChange(index)">
+                        <el-option v-for="e in agentList" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="代理商分润比例" :prop="'contracts.'+index+'.agentFeeContent.serviceFeeRate'" 
+                    :rules="[
+                        {required: true, message: '请输入正确的服务费收费（大于零且最多两位小数）', trigger: 'blur'},
+                        {validator: f2, trigger: 'blur'}]">
+                    <div style="float: left; width: 70px; color: #606266;">实发金额 * </div>
+                    <el-input v-model="formItem.agentFeeContent.serviceFeeRate" style="width: calc(100% - 70px);">
+                        <template slot="append">% 每笔</template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="渠道经理" required>
+                    <el-input v-model="chargeByNames[index]" disabled></el-input>
+                </el-form-item>
+            </template>
             <div style="margin-left: 100px;" v-if="contractModel.workflowType === 'create_ns_sale_contract'">
                 <span>合同附件</span>
                 <el-form-item :prop="'contracts.'+index+'.referIds'" label-width="0" style="margin-top:15px;"
@@ -105,8 +128,25 @@
                 serviceCompanyId: '',
                 goodsList: [],
                 payMode: {'A':{label:'银行', value: 'A'}, 'B':{label:'支付宝', value: 'B'}, 'C':{label:'微信', value: 'C'}},
-                customerInvoiceTypes: {'10': {text: '账单开票', value: 10}, '20': {text: '预开票', value: 20}}
+                customerInvoiceTypes: {'10': {text: '账单开票', value: 10}, '20': {text: '预开票', value: 20}},
+                chargeByNames: [],
+                agentList: [],
+                f2: (rule, value, cb) => {
+                    if(!/^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/.test(value)) {
+                        return cb('请输入正确的服务费收费（大于零且最多两位小数）')
+                    }
+                    return cb()
+                }
             }
+        },
+        mounted() {
+            get('/api/contract-web/agent-contract/agent-company-option?sign=true').then(data => {
+                this.agentList = data
+                // this.contractForm.agentCompanyId
+                this.contractModel.contractForm.contracts.forEach((e, i) => {
+                    this.companyChange(i)
+                })
+            })
         },
         methods: {
             formAdd () {
@@ -149,7 +189,17 @@
                     },
                     referIds: [],
                     referNames: [],
-                    check: ''
+                    check: '',
+                    agentClient: '',
+                    agentCompanyId: '',
+                    agentCompanyName: '',
+                    agentFeeContent: {
+                        discountRate: '',
+                        fixFee: '',
+                        secondType: 'real',
+                        serviceFeeRate: '',
+                        serviceFeeType: 'ratio'
+                    }
                 });
                 this.dialogVisible = false;
             },
@@ -177,6 +227,15 @@
                     serviceCompanyId: serviceCompanyId || serviceCompany.companyId
                 }).then(result => {
                     this.goodsList = result || []
+                })
+            },
+            companyChange(a) {
+                this.agentList.forEach(e => {
+                    if(e.companyId == this.contractModel.contractForm.contracts[a].agentCompanyId) {
+                        console.log(e)
+                        this.chargeByNames[a] = e.chargeByName
+                        this.contractModel.contractForm.contracts[a].agentCompanyName = e.companyName
+                    }
                 })
             }
         }

@@ -20,12 +20,12 @@
             </el-form-item>
             <el-form-item label="订单状态：" prop="state" v-if="stateShow">
                 <el-select v-model="form.state" size="small">
-                    <el-option v-for="e in status" :key="e" :value="e.value" :label="e.text"></el-option>
+                    <el-option v-for="e in status" :key="e.value" :value="e.value" :label="e.text"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="业务类型：" prop="channelType">
                 <el-select v-model="form.channelType" size="small">
-                    <el-option v-for="e in type" :key="e" :value="e.value" :label="e.text"></el-option>
+                    <el-option v-for="e in type" :key="e.value" :value="e.value" :label="e.text"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item>

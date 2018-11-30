@@ -136,6 +136,24 @@
             <el-col :span="4" style="text-align: right; margin-right: 20px;">合同起止时间：</el-col>
             <el-col :span="8">{{detail.startDate}} 至 {{detail.endDate}}</el-col>
         </el-row>
+        <el-row class="mb15" style="font-weight: normal;">
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">是否代理商客户：</el-col>
+            <el-col :span="8">{{detail.agentClient ? '是' : '否'}}</el-col>
+        </el-row>
+        <template v-if="detail.agentClient">
+          <el-row class="mb15" style="font-weight: normal;">
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">代理商名称：</el-col>
+            <el-col :span="8">{{detail.agentCompanyName}}</el-col>
+          </el-row>
+          <el-row class="mb15" style="font-weight: normal;">
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">代理商分润：</el-col>
+            <el-col :span="8">{{detail.agentFeeContent.serviceFeeRate}}%</el-col>
+          </el-row>
+          <el-row class="mb15" style="font-weight: normal;">
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">渠道经理：</el-col>
+            <el-col :span="8">{{detail.angentChargeByName}}</el-col>
+          </el-row>
+        </template>
         <h4 class="ml50 mt50">合同文件</h4>
         <div style="margin-left: 120px; margin-right: 120px;">
             <el-table :data="tableList" style="width: 100%;margin-top: 20px;">

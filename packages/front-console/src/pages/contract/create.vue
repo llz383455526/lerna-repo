@@ -437,6 +437,26 @@
                         @change="handleChange">
                 </el-date-picker>
             </el-form-item>
+            <el-form-item label="是否代理商客户" prop="agentClient">
+                <el-radio v-model="contractForm.agentClient" :label="true">是</el-radio>
+                <el-radio v-model="contractForm.agentClient" :label="false">否</el-radio>
+            </el-form-item>
+            <template v-if="contractForm.agentClient">
+                <el-form-item label="代理商名称" prop="agentCompanyId">
+                    <el-select v-model="contractForm.agentCompanyId" style="width:100%;" @change="companyChange" :disabled="agentDisable" filterable>
+                        <el-option v-for="e in agentList.filter(e => e.status == '10')" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="代理商分润比例" prop="agentFeeContent.serviceFeeRate">
+                    <div style="float: left; width: 70px; color: #606266;">实发金额 * </div>
+                    <el-input v-model="contractForm.agentFeeContent.serviceFeeRate" :disabled="agentDisable" style="width: calc(100% - 70px);">
+                        <template slot="append">% 每笔</template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="渠道经理" required>
+                    <el-input v-model="chargeByName" disabled></el-input>
+                </el-form-item>
+            </template>
             <h4 class="ml50 mt50">合同文件</h4>
             <el-upload
                 class="upload-demo ml50"
@@ -566,6 +586,12 @@
                     }
                 }
             };
+            var f2 = (rule, value, cb) => {
+                if(!this.float2.test(value)) {
+                    return cb('请输入正确的服务费收费（大于零且最多两位小数）')
+                }
+                return cb()
+            }
             return {
                 rules: {
                     customerName: [
@@ -606,6 +632,16 @@
                     ],
                     openInvoiceType: [
                         {required: true, message: '请输入开票类型', trigger: 'blur'}
+                    ],
+                    agentClient: [
+                        {required: true, message: '请选择', trigger: 'blur'}
+                    ],
+                    agentCompanyId: [
+                        {required: true, message: '请选择代理商', trigger: 'blur'}
+                    ],
+                    'agentFeeContent.serviceFeeRate': [
+                        {required: true, message: '请输入正确的服务费收费（大于零且最多两位小数）', trigger: 'blur'},
+                        {validator: f2, trigger: 'blur'}
                     ]
                 },
                 // weekVisible: false,
@@ -700,7 +736,18 @@
                     settleExp: '1',
                     // serviceFeeRate: '',
                     // shouldAmountRate: ''
-                    tplAttachType: ''
+                    tplAttachType: '',
+                    // -----------------------
+                    agentClient: '',
+                    agentCompanyId: '',
+                    agentCompanyName: '',
+                    agentFeeContent: {
+                        discountRate: '',
+                        fixFee: '',
+                        secondType: 'real',
+                        serviceFeeRate: '',
+                        serviceFeeType: 'ratio'
+                    }
                 },
                 columnIndex: 0,
                 columnIndex2: 0,
@@ -741,8 +788,21 @@
                 company: {},
                 serviceTypes: [],
                 invoiceTypeList: [],
-                float2: /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/
+                float2: /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/,
+                agentList: [],
+                chargeByName: '',
+                agentDisable: false
             }
+        },
+        watch: {
+          ['contractForm.agentClient'](e) {
+            if(!e) {
+              this.contractForm.agentCompanyId = ''
+              this.contractForm.agentCompanyName = ''
+              this.contractForm.agentFeeContent.serviceFeeRate = ''
+              this.chargeByName = ''
+            }
+          }
         },
         created() {
             this.uploadUrl = baseUrl + "/api/console-dlv/file/upload";
@@ -766,6 +826,10 @@
             })
             get('/api/sysmgr-web/commom/option?enumType=IndustryType').then(data => {
                 this.invoiceTypeList = data
+            })
+            get('/api/contract-web/agent-contract/agent-company-option').then(data => {
+                this.agentList = data
+                this.contractForm.agentCompanyId && this.companyChange()
             })
             // this.initColumn()
             // this.query()
@@ -1375,12 +1439,23 @@
                     if(this.contractForm.serviceFeeContent2 && !this.contractForm.serviceFeeContent2.containMonthAmount && !this.contractForm.serviceFeeContent.containMonthAmount) {
                         this.contractForm.serviceFeeContent.containMonthAmount = true
                     }
+                    if(!this.contractForm.agentFeeContent) {
+                        this.contractForm.agentFeeContent = {
+                            discountRate: '',
+                            fixFee: '',
+                            secondType: 'real',
+                            serviceFeeRate: '',
+                            serviceFeeType: 'ratio'
+                        }
+                    }
                     this.getOptionCustomerCompanies()
                     this.calcuServiceFeeReverse();
                     this.handdleChangeReverse();
                     // this.showType(this.contractForm.settleType);
                     this.$forceUpdate()
-                    console.log(this.contractForm)
+                    this.companyChange()
+                    this.agentList && this.companyChange()
+                    // console.log(this.contractForm)
                 })
             },
             queryAttachments(id) {
@@ -1435,6 +1510,17 @@
             setPass(a) {
                 console.log(a)
                 this.contractForm.serviceFeeContent.fixFee = (this.float2.test(a) && a <= 100) ? 0 : ''
+            },
+            companyChange() {
+                this.agentList.forEach(e => {
+                    if(e.companyId == this.contractForm.agentCompanyId) {
+                        if(!e.status) {
+                          this.agentDisable = true
+                        }
+                        this.chargeByName = e.chargeByName
+                        this.contractForm.agentCompanyName = e.companyName
+                    }
+                })
             }
         }
     }
