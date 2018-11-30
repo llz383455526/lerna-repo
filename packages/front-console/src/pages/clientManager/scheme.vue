@@ -8,7 +8,7 @@
                 </el-form-item>
                 <el-form-item label="适用行业" prop="industies">
                     <el-checkbox-group v-model="form.industies">
-                        <el-checkbox v-for="e in industiesList" :key="e.value" :label="e.value">{{e.text}}</el-checkbox>
+                        <el-checkbox v-for="e in industiesList" :key="e.code" :label="e.code">{{e.name}}</el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label="开票类目" prop="serviceTypes">
@@ -217,14 +217,15 @@ export default {
         setIndustie() {
             var industies = []
             this.form.industies.forEach(e => {
-                industies.push(e.value)
+                if(this.industiesList.filter(ev => ev.code == e.value).length) {
+                  industies.push(e.value)
+                }
             })
-            console.log(industies)
             this.form.industies = industies
         },
         getIndustiesList() {
-            post('/api/sysmgr-web/commom/options?enumTypes=IndustryType').then(data => {
-                this.industiesList = data.IndustryType
+            get(`/api/salemgt/taxLanding/tax/indestries?taxLandingId=${sessionStorage.getItem('taxLandingId')}`).then(data => {
+                this.industiesList = data.items
             })
             // get('/api/salemgt/common/goods/property?propertyId=100').then(data => {
             //     this.industiesList = data

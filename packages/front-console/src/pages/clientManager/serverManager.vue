@@ -166,9 +166,7 @@
                     <span>税优地业务方案管理</span>
                 </div>
                 <div class="text">
-                    <router-link to="scheme">
-                        <el-button type="primary" size="small">新增方案</el-button>
-                    </router-link>
+                    <el-button type="primary" size="small" @click="toScheme">新增方案</el-button>
                     <el-table v-if="schemeData.list" :data="schemeData.list">
                         <el-table-column label="方案名称" prop="name"></el-table-column>
                         <el-table-column label="适用行业">
@@ -202,9 +200,7 @@
                         </el-table-column>
                         <el-table-column label="操作">
                             <template slot-scope="scope">
-                                <router-link :to="`scheme?id=${scope.row.id}`">
-                                    <el-button type="text">修改</el-button>
-                                </router-link>
+                                <el-button type="text" @click="toScheme(scope.row.id)">修改</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -1125,6 +1121,10 @@ export default {
                 })
                 this.query()
             })
+        },
+        toScheme(id) {
+            sessionStorage.setItem('taxLandingId', this.msg.serviceCompanyInfo.taxLandingId)
+            this.$router.push(`scheme${isNaN(id) ? '' : `?id=${id}`}`)
         }
     }
 };

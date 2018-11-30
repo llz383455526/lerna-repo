@@ -50,7 +50,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="税优地" prop="taxLandingId" size="small">
-                        <el-select v-model="form.taxLandingId" class="form_input">
+                        <el-select v-model="form.taxLandingId" class="form_input" filterable>
                             <el-option v-for="e in list" :label="e.taxLandingName" :value="e.id" :key="e.id"></el-option>
                         </el-select>
                     </el-form-item>
