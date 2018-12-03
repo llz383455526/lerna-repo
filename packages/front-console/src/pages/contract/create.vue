@@ -9,10 +9,9 @@
             <el-form-item label="文件ID" class="hide">
                 <input v-model="contractForm.referIds">
             </el-form-item>
-            <el-form-item label="企业名称" prop="customerName" placeholder="请输入内容">
-                <el-select v-model="contractForm.customerName" filterable placeholder="请选择" @change="getInvoice" style="width:100%;" :disabled="$route.query.contractId ? true : false">
-                    <el-option v-for="item in customerCompaniesList" :key="item.companyId" :label="item.companyName"
-                               :value="item.companyName"></el-option>
+            <el-form-item label="企业名称" prop="customerId" placeholder="请输入内容"> <!-- @change="getInvoice" -->
+                <el-select v-model="contractForm.customerId" filterable placeholder="请选择" style="width:100%;" :disabled="$route.query.contractId ? true : false">
+                    <el-option v-for="item in customerCompaniesList" :key="item.companyId" :label="item.companyName" :value="item.companyId"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="服务商名称" prop="serviceCompanyIds" placeholder="请输入内容">
@@ -594,7 +593,7 @@
             }
             return {
                 rules: {
-                    customerName: [
+                    customerId: [
                         {required: true, message: '请输入企业名称', trigger: 'blur'}
                     ],
                     serviceCompanyName: [
@@ -703,6 +702,8 @@
                     {value: '每月31日', label: '每月31日'}
                 ],
                 contractForm: {
+                    customerName: '',
+                    customerId: '',
                     type: 'customer',
                     openInvoiceType: '',
                     branchs: [],
@@ -755,16 +756,16 @@
                 prevFixed: '',
                 prevRatio: '',
                 prevRatio_1: '',
-                invoiceForm: {
-                    id: '',
-                    openInvoiceType: '',
-                    name: '',
-                    taxIdcd: '',
-                    addr: '',
-                    phone: '',
-                    bankName: '',
-                    bankAccount: ''
-                },
+                // invoiceForm: {
+                //     id: '',
+                //     openInvoiceType: '',
+                //     name: '',
+                //     taxIdcd: '',
+                //     addr: '',
+                //     phone: '',
+                //     bankName: '',
+                //     bankAccount: ''
+                // },
                 deleteKey: '',
                 invoiceType: [],
                 invoiceType_0: [],
@@ -835,31 +836,31 @@
             // this.query()
         },
         methods: {
-            getInvoice() {
-                var id = ''
-                this.customerCompaniesList.forEach(e => {
-                    if(e.companyName == this.contractForm.customerName) {
-                        id = e.companyId
-                    }
-                })
-                get('/api/invoice-web/custom-company/detail', {
-                    id: id
-                }).then(data => {
-                    if(data) {
-                        for (var k in this.invoiceForm) {
-                            if(data[k]) {
-                                this.invoiceForm[k] = data[k]
-                            }
-                        }
-                    }
-                    else {
-                        for (var k in this.invoiceForm) {
-                            this.invoiceForm[k] = ''
-                        }
-                        this.invoiceForm.id = id
-                    }
-                })
-            },
+            // getInvoice() {
+            //     var id = ''
+            //     this.customerCompaniesList.forEach(e => {
+            //         if(e.companyName == this.contractForm.customerName) {
+            //             id = e.companyId
+            //         }
+            //     })
+            //     get('/api/invoice-web/custom-company/detail', {
+            //         id: id
+            //     }).then(data => {
+            //         if(data) {
+            //             for (var k in this.invoiceForm) {
+            //                 if(data[k]) {
+            //                     this.invoiceForm[k] = data[k]
+            //                 }
+            //             }
+            //         }
+            //         else {
+            //             for (var k in this.invoiceForm) {
+            //                 this.invoiceForm[k] = ''
+            //             }
+            //             this.invoiceForm.id = id
+            //         }
+            //     })
+            // },
             addServiceCompany() {
                 this.contractForm.serviceCompanyIds.push(null)
             },
@@ -1011,11 +1012,11 @@
                 }
                 let self = this;
                 _.foreach(this.customerCompaniesList, function (value) {
-                    if (value['companyName'] == self.contractForm.customerName) {
-                        self.contractForm.customerId = value['companyId'];
+                    if (value['companyId'] == self.contractForm.customerId) {
+                        self.contractForm.customerName = value['companyName'];
                         return false;
                     } else {
-                        self.contractForm.customerId = '';
+                        self.contractForm.customerName = '';
                     }
                 });
                 this.calcuCompanyId()
