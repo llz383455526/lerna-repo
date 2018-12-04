@@ -638,7 +638,7 @@ export default {
                 return e.userDetailType == 1 && e.signMode == '0'
             }).length
             if(isAuto) {
-                if(this.form.signModel == '1') {
+                if(this.form.signModel == '1' || this.form.accessType == '2') {
                     this.form.smsType = '2'
                 }
                 else {
@@ -654,6 +654,7 @@ export default {
             if(this.form.accessType == '2') {
                 this.form.signModel = '1'
             }
+            this.checkNote()
         }
     }
 }
