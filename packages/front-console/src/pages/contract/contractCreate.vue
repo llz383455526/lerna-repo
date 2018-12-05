@@ -400,7 +400,7 @@
 						{ required: true, message: '请填写客户联系人姓名', trigger: 'blur' }
 					],
 					customCollectorPhone: [
-						{ required: true, message: '请填写正确的电话号码', trigger: 'blur', validator: checkPhone }
+						{ required: true, message: '请填写正确的电话号码', trigger: 'blur', pattern: /(^\d+-?\d+$)/ }
 					],
 					customCollectorAddr: [
 						{ required: true, message: '请填写客户联系地址', trigger: 'blur' }
@@ -415,7 +415,7 @@
 						{ required: true, message: '请填写地址', trigger: 'blur' }
 					],
 					customPhone: [
-						{ required: true, message: '请填写正确的电话号码', trigger: 'blur', validator: checkPhone }
+						{ required: true, message: '请填写正确的电话号码', trigger: 'blur', pattern: /(^\d+-?\d+$)/ }
 					],
 					customBankName: [
 						{ required: true, message: '请填写开户银行', trigger: 'blur'}
@@ -436,7 +436,7 @@
 						{required: true, message: '销售联系人邮箱', trigger: 'blur'}
                     ],
                     contractTel: [
-                        {required: true, message: '销售联系人电话', trigger: 'blur', validator: checkPhone}
+                        {required: true, message: '销售联系人电话', trigger: 'blur', pattern: /(^\d+-?\d+$)/}
                     ],
                     contractAddr: [
 						{required: true, message: '销售联系人地址', trigger: 'blur'}
