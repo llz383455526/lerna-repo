@@ -26,7 +26,7 @@
                 </el-checkbox-group>
           </el-form-item>
 		  <el-form-item label="商户负责人" prop="chargeBy" size="small">
-              <el-select v-model="form.chargeBy" class="form_input" @change="getName">
+              <el-select v-model="form.chargeBy" class="form_input" @change="getName" filterable>
                   <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
               </el-select>
           </el-form-item>

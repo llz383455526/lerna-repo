@@ -305,6 +305,14 @@
 			</template>
       	</div>
         <div class="title">支付用户</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="addChannel">添加支付用户</el-button>
+        <el-form :model="form" class="mt20" :inline="true" size="small">
+          <el-form-item label="支付用户名称">
+            <el-input v-model="form.payeruserName" placeholder="请输入支付用户名称"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="query">查询</el-button>
+          </el-form-item>
+        </el-form>
         <el-table :data="payUsers">
             <el-table-column prop="payeruserName" label="支付用户名称"></el-table-column>
             <el-table-column prop="thirdpayUserId" label="子账户"></el-table-column>
@@ -602,7 +610,8 @@ export default {
   data() {
     return {
       form: {
-        channelId: "",
+        channelId: '',
+        payeruserName: '',
         pageNo: 1,
         pageSize: 10
       },
@@ -1595,5 +1604,8 @@ export default {
   margin-top: 30px;
   display: flex;
   justify-content: space-around;
+}
+.mt20 {
+  margin-top: 20px;
 }
 </style>

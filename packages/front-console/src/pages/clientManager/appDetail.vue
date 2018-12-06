@@ -209,7 +209,7 @@
             </div>
       </div>
       <el-dialog title="appid配置信息" :before-close="listInit" :visible.sync="ashow" width="940px">
-          <el-form label-width="180px" :model="aform" :rules="arule" ref="aform" size="small">
+          <el-form label-width="200px" :model="aform" :rules="arule" ref="aform" size="small">
               <el-form-item label="商户负责人：" prop="chargeBy">
                   <el-select v-model="aform.chargeBy" class="form_input" @change="getName">
                   <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
@@ -260,22 +260,22 @@
                   <template>{{data.appName}}</template>
               </el-form-item>
               <el-form-item label="服务商">
-                  <el-select class="f_input" v-model="serviceCompanyId" @change="clear">
+                  <el-select class="f_input" v-model="serviceCompanyId" @change="clear" filterable>
                       <el-option v-for="e in data.serviceCompanyList" :key="e" :value="e.serviceCompanyId" :label="e.serviceCompanyName"></el-option>
                   </el-select>
               </el-form-item>
               <el-form-item label="转包服务商" v-if="subServiceList.length">
-                  <el-select class="f_input" v-model="subServiceCompanyId" @change="getSubServiceCompanyName">
+                  <el-select class="f_input" v-model="subServiceCompanyId" @change="getSubServiceCompanyName" filterable>
                       <el-option v-for="e in subServiceList" :key="e" :value="e.subServiceCompanyId" :label="e.subServiceCompanyName"></el-option>
                   </el-select>
               </el-form-item>
               <el-form-item label="支付渠道">
-                  <el-select class="f_input" v-model="paymentThirdType" @change="getList">
+                  <el-select class="f_input" v-model="paymentThirdType" @change="getList" filterable>
                       <el-option v-for="e in types" :key="e" :value="e.value" :label="e.text"></el-option>
                   </el-select>
               </el-form-item>
               <el-form-item label="子账号名称">
-                  <el-select class="f_input" v-model="payeruserName" @change="pick">
+                  <el-select class="f_input" v-model="payeruserName" @change="pick" filterable>
                       <el-option v-for="e in others" :key="e" :value="e.payeruserName" :label="e.payeruserName"></el-option>
                   </el-select>
               </el-form-item>
@@ -358,33 +358,21 @@ export default {
       },
       arule: {
         chargeBy: [
-            {
-            required: true,
-            message: "请选择商户负责人",
-            trigger: "change"
-          }
+          { required: true, message: "请选择商户负责人", trigger: "blur" }
         ],
         notifyAppId: [
-          {
-            required: true,
-            message: "请输入应用ID",
-            trigger: "change"
-          }
+          { required: true, message: "请输入应用ID", trigger: "blur" }
         ],
         appRsaPublickKey: [
-          {
-            required: true,
-            message: "请输入Rsa公钥",
-            trigger: "change"
-          }
+          { required: true, message: "请输入Rsa公钥", trigger: "blur" }
         ],
-        allowIp: [],
+        // allowIp: [],
         notifyUrl: [
-          {
-            required: true,
-            message: "请输入异步通知接口",
-            trigger: "change"
-          }
+          { required: true, message: "请输入异步通知接口", trigger: "blur" }
+        ],
+        phone: [
+          { required: true, message: "手机号不能为空", trigger: "blur" },
+          { pattern: /^(1[3-9]{1}\d{9})$/, message: '手机号格式不正确', trigger: 'blur' }
         ]
       },
       baseUrl: baseUrl,
@@ -424,12 +412,7 @@ export default {
     this.appId = sessionStorage.getItem("appId");
     this.aform.appId = this.appId;
     this.query();
-
-    get("/api/console-dlv/option/get-by-type?type=ThirdPaymentType").then(
-      data => {
-        this.types = data;
-      }
-    );
+    this.getMsg();
     this.getPhone();
     this.createId();
     this.authCode = localStorage.getItem("authCode")
@@ -444,6 +427,13 @@ export default {
 	})
   },
   methods: {
+    getMsg() {
+      get("/api/console-dlv/option/get-by-type?type=ThirdPaymentType").then(
+        data => {
+          this.types = data;
+        }
+      );
+    },
     query() {
       post("/api/sysmgr-web/company-app/detail", {
         appId: this.appId
@@ -543,6 +533,7 @@ export default {
                   message: "操作成功"
                 });
                 this.query()
+                this.getMsg()
               })
               .catch(err => {
                 if (err.message == "无效的授权码！") {
