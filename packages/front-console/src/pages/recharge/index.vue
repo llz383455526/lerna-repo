@@ -37,7 +37,9 @@
                 <el-button size="small" @click="exportFile" v-if="!riskApprove">导出</el-button>
             </el-form-item>
         </el-form>
-        <el-button type="primary" @click="dialogCreateVisible=true" v-if="checkRight(permissions, 'balance-web:/recharge-order/comfirm') && !riskApprove">充值申请</el-button>
+        <el-button type="primary" @click="dialogCreateVisible=true;isService = false" v-if="checkRight(permissions, 'balance-web:/recharge-order/comfirm') && !riskApprove">充值申请</el-button>
+        <!-- v-if="checkRight(permissions, 'balance-web:/recharge-order/comfirm') && !riskApprove" -->
+        <el-button type="primary" @click="dialogCreateVisible=true;isService = true" >服务费充值申请</el-button>
         <el-table :data="rechargeApplyList.list" style="width: 100%;margin-top: 20px;">
                 <el-table-column prop="stateName" label="处理状态" width="100px">
                     <template slot-scope="scope">
@@ -66,16 +68,20 @@
                         <div>账号：{{scope.row.accountNo}}</div>
                     </template>
                 </el-table-column>
-                <el-table-column prop="channelBusinessTypeName" label="业务类型"></el-table-column>
-                <el-table-column label="充值渠道">
+                <el-table-column prop="channelBusinessTypeName" label="业务类型">
                     <template slot-scope="scope">
-                        {{scope.row.payUser.thirdPaymentTypeName}}
+                        {{scope.row.rechargeType != 2 ? scope.row.channelBusinessTypeName : '银行卡'}}
+                    </template>
+                </el-table-column>
+                <el-table-column label="充值渠道" align="center">
+                    <template slot-scope="scope">
+                        {{scope.row.payUser.thirdPaymentTypeName || "—"}}
                     </template>
                 </el-table-column>
                 <el-table-column label="充值明细" width="180px">
                     <template slot-scope="scope">
-                        <div>收款总金额：{{scope.row.amount + scope.row.serviceFee | formatMoney}}</div>
-                        <div>实发金额：{{scope.row.amount | formatMoney}}</div>
+                        <div>收款总金额：{{(scope.row.rechargeType != 2 ? scope.row.amount : 0) + scope.row.serviceFee | formatMoney}}</div>
+                        <div>实发金额：{{scope.row.rechargeType != 2 ? scope.row.amount : 0 | formatMoney}}</div>
                         <div>服务费：{{scope.row.serviceFee | formatMoney}}</div>
                     </template>
                 </el-table-column>
@@ -91,7 +97,7 @@
             v-on:handleSizeChange="sizeChange"
             v-on:handleCurrentChange="query">
         </ayg-pagination>
-        <el-dialog title="创建充值申请" @open="closeEditDialog" :before-close="closeEditDialog"  :visible.sync="dialogCreateVisible" width="900px">
+        <el-dialog :title="`创建${isService ? '服务费' : ''}充值申请`" @open="closeEditDialog" :before-close="closeEditDialog"  :visible.sync="dialogCreateVisible" width="900px">
             <el-form :model="dialogCreateForm" :rules="dialogCreateFormRules" ref="dialogCreateForm">
                 <div class="input-container">
                     <div class="label">客户公司：<span>*</span></div>
@@ -123,7 +129,7 @@
                          </el-form-item>
                      </div>
                 </div>
-                <div class="input-container">
+                <div class="input-container" v-if="!isService">
                     <div class="label">业务类型：<span>*</span></div>
                     <div class="input">
                         <el-form-item prop="channelBusinessType">
@@ -154,14 +160,14 @@
                     </div>
                 </template>
                 <div class="input-container">
-                    <div class="label">实发金额：<span>*</span></div>
+                    <div class="label">{{isService ? '服务费金额' : '实发金额'}}：<span>*</span></div>
                     <div class="input">
                         <el-form-item prop="amount">
                             <el-input :maxlength=15 v-model="dialogCreateForm.amount" placeholder=""></el-input>
                         </el-form-item>
                     </div>
                 </div>
-                <div class="input-container">
+                <div class="input-container" v-if="!isService">
                     <div class="label">服务费金额：<span>*</span></div>
                     <div class="input">
                         <el-form-item>
@@ -173,10 +179,10 @@
                     <div class="label">充值金额：<span>*</span></div>
                     <div class="input">
                         <el-form-item>
-                            <el-input disabled :value="(dialogCreateForm.amount - 0 + serviceFee).toFixed(2)"></el-input>
+                            <el-input disabled :value="(dialogCreateForm.amount - 0 + (isService ? 0 : serviceFee)).toFixed(2)"></el-input>
                         </el-form-item>
                     </div>
-                    <div v-if="prePayContent">
+                    <div v-if="prePayContent && !isService">
                         合计充值金额 = 
                         <template v-if="prePayContent.secondType == 'real'">
                             实发金额 + 实发金额 * {{prePayContent.serviceFeeRate}}%
@@ -330,11 +336,11 @@
                 <div class="det">账户名：{{detail.accountName}}</div>
             </template>
             <div class="det">账号：{{detail.accountNo}}</div>
-            <div class="det" v-if="detail.payUser">业务渠道：{{detail.payUser.thirdPaymentTypeName}}</div>
-            <template v-if="!detail.subServiceCompanyId">
+            <div class="det" v-if="detail.payUser && detail.rechargeType != 2">业务渠道：{{detail.payUser.thirdPaymentTypeName}}</div>
+            <template v-if="!detail.subServiceCompanyId && detail.rechargeType != 2">
                 <div class="det">选择渠道帐号：
                     <el-select size="small" v-model="balanceAccountId" @change="getSuggest" style="width: 500px" :disabled="detail.state != 20 ? true : false">
-                        <el-option v-for="e in channlList" :key="e" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}`" :value="e.balanceAccountId"></el-option>
+                        <el-option v-for="e in channlList" :key="e.balanceAccountId" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}`" :value="e.balanceAccountId"></el-option>
                     </el-select>
                 </div>
                 <div class="det" v-if="suggest">帐号今日可充建议：{{suggest.allowAvailBalance | formatMoney}}元&#x3000;帐号当前余额：{{suggest.currentAvailBalance | formatMoney}}元&#x3000;
@@ -423,7 +429,7 @@
                 </template>
                 <div class="det">选择渠道帐号：
                     <el-select size="small" v-model="balanceAccountId" @change="getSuggest" style="width: 500px" :disabled="detail.state != 20 ? true : false">
-                        <el-option v-for="e in channlList" :key="e" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}`" :value="e.balanceAccountId"></el-option>
+                        <el-option v-for="e in channlList" :key="e.balanceAccountId" :label="`${e.channelAlias}/${e.channelLoginAcctNo}/${e.channelMerCustId}`" :value="e.balanceAccountId"></el-option>
                     </el-select>
                 </div>
                 <div class="det" v-if="suggest">帐号今日可充建议：{{suggest.allowAvailBalance | formatMoney}}元&#x3000;帐号当前余额：{{suggest.currentAvailBalance | formatMoney}}元&#x3000;
@@ -618,7 +624,8 @@ export default {
       proNum: 0,
       frame: '',
       riskApprove: '',
-      listen: ''
+      listen: '',
+      isService: false
     };
   },
   watch: {
@@ -632,7 +639,7 @@ export default {
     'dialogCreateForm.amount': function(a) {
         clearTimeout(this.calc)
         this.calc = setTimeout(() => {
-            this.getServiceFee()
+            !this.isService && this.getServiceFee()
         }, 500)
     }
   },
@@ -805,7 +812,13 @@ export default {
             this.calcServiceFee = data.calcServiceFee
             this.prePayContent = JSON.parse(data.prePayContent)
             this.isRecharge = false
-            this.getServiceFee()
+            if(!this.isService) {
+              this.getServiceFee()
+            }
+            else {
+              this.dialogCreateForm.channelBusinessType == 'bank'
+              this.getRechargeMsg()
+            }
         })
     },
     getRechargeMsg() {
@@ -815,7 +828,7 @@ export default {
             channelType: this.dialogCreateForm.channelBusinessType
         }).then(data => {
             this.rechargeMsg = data
-            !this.rechargeMsg && this.getServiceFee()
+            !this.rechargeMsg && !this.isService && this.getServiceFee()
             this.isRecharge = true
         })
     },
@@ -1098,7 +1111,8 @@ export default {
       })
       this.$refs["dialogCreateForm"].validate(valid => {
         if (valid) {
-          post("/api/balance-web/recharge-order/comfirm", this.dialogCreateForm).then(data => {
+            console.log(this.isService)
+          post(`/api/balance-web/recharge-order/${this.isService ? 'serviceFeeConfirm' : 'comfirm'}`, this.dialogCreateForm).then(data => {
             // showNotify('success','操作成功！')
             this.$refs["dialogCreateForm"].resetFields();
             this.orderInfo = data;
@@ -1106,6 +1120,7 @@ export default {
             this.attachmentId = ''
             this.calcServiceFee = false
             this.dialogCreateVisible = false;
+            this.isService = false
             // this.dialogConfirmVisible = true;
             this.query()
           });

@@ -35,14 +35,28 @@
                     <h2>{{account.balanceAmount | formatMoney}}</h2>
                 </div> -->
                 <el-form :inline="true" :model="clientForm" ref="clientForm">
+                    <!-- <el-form-item label="账户类型" prop="balanceType">
+                        <el-select size="small" v-model="clientForm.balanceType">
+                            <el-option :value="1" label="实发账户余额"></el-option>
+                            <el-option :value="3" label="服务费账户余额"></el-option>
+                        </el-select>
+                    </el-form-item> -->
                     <el-form-item label="企业" prop="companyId">
                         <el-select size="small" filterable v-model="clientForm.companyId">
+                            <el-option label="全部" value=""></el-option>
                             <el-option v-for="e in companys" :value="e.id" :label="e.name" :key="e.id"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="商户" prop="appId">
                         <el-select size="small" filterable v-model="clientForm.appId">
+                            <el-option label="全部" value=""></el-option>
                             <el-option v-for="e in apps" :value="e.value" :label="e.text" :key="e.value"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="服务商" prop="serviceCompanyId">
+                        <el-select size="small" filterable v-model="clientForm.serviceCompanyId">
+                            <el-option label="全部" value=""></el-option>
+                            <el-option v-for="(item, key) in option.serveCompanyList" :key="key" :value="item.id" :label="item.name"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item>
@@ -67,6 +81,7 @@
                             prop='serviceCompanyName'
                             label='服务商'>
                     </el-table-column>
+                    <el-table-column prop="balanceTypeName" label="账户类型"></el-table-column>
                     <el-table-column
                             align="left"
                             prop="bankAvailBalance"
@@ -97,6 +112,11 @@
                             label='总余额（元）'>
                         <template slot-scope="scope">
                             <span>{{scope.row.totalAvailBalance | formatMoney}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="serviceFeeAvailBalance" label="服务费账户余额（元）">
+                        <template slot-scope="scope">
+                            <span>{{scope.row.serviceFeeAvailBalance | formatMoney}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -319,6 +339,7 @@ import { showConfirm } from "../../plugin/utils-message";
 import { showTopErrorToast } from "../../plugin/utils-toast";
 import { post, get } from "../../store/api";
 import { setTimeout } from "timers";
+import optionModel from '../../model/option/optionModel.js'
 
 export default {
   data() {
@@ -336,6 +357,8 @@ export default {
     //   aData: "",
       load: true,
       clientForm: {
+        serviceCompanyId: '',
+        balanceType: '',
         appId: '',
         companyId: '',
         page: 1,
@@ -362,7 +385,8 @@ export default {
           page: 1,
           pageSize: 10
       },
-      assignData: {}
+      assignData: {},
+      option: new optionModel()
     };
   },
   computed: {
@@ -407,6 +431,7 @@ export default {
     this.clientBalance()
     this.serviceBalance()
     this.assignBalance()
+    this.option.getServeCompanyList();
     get('/api/sysmgr-web/commom/company', {
         companyIdentity: 'custom'
     }).then(data => {

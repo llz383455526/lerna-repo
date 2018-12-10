@@ -2,45 +2,30 @@
     <div class="bg-white p15">
         <div class="mb30">服务费账单</div>
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
-            <!-- <el-form-item label="商户名称" size="small">
-                <el-autocomplete
-                        class="inline-input"
-                        v-model="appName"
-                        :fetch-suggestions="querySearch1"
-                        placeholder="请输入内容"
-                        style="width:100%;">
-                </el-autocomplete>
-            </el-form-item> -->
-            <el-form-item size="small">
-                <el-radio-group v-model="formSearch.billType" @change="search">
-                    <el-radio label="month">月账单</el-radio>
-                </el-radio-group>
+            <el-form-item label="结算方式" size="small" prop="settleType">
+              <el-select v-model="formSearch.settleType">
+                <el-option value="month" label="月结"></el-option>
+                <el-option value="day" label="日结"></el-option>
+              </el-select>
             </el-form-item>
-            <el-form-item size="small" v-if="this.formSearch.billType === 'month'">
-                <el-date-picker
-                        v-model="valueMonth"
-                        type="month"
-                        placeholder="选择月"
-                        value-format="yyyy-MM-dd">
-                </el-date-picker>
-            </el-form-item>
-            <el-form-item size="small">
-                <el-radio-group v-model="formSearch.billType" @change="search">
-                    <el-radio label="day">日账单</el-radio>
-                </el-radio-group>
-            </el-form-item>
-            <el-form-item size="small" v-if="this.formSearch.billType === 'day'">
-                <el-date-picker
-                        v-model="valueDate"
-                        type="daterange"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd">
-                </el-date-picker>
+            <el-form-item label="商户" size="small" prop="appId">
+                <el-select filterable v-model="formSearch.appId">
+                    <el-option v-for="e in apps" :value="e.value" :label="e.text" :key="e.value"></el-option>
+                </el-select>
             </el-form-item>
             <el-form-item label="服务商名称" size="small" prop="serviceCompanyId">
-                <el-select v-model="formSearch.serviceCompanyId" placeholder="请选择">
+                <el-select v-model="formSearch.serviceCompanyId" placeholder="请选择" filterable>
                     <el-option v-for="item in serviceCompanies" :label="item.companyName" :value="item.companyId" :key="item.companyId"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="账单状态" size="small" prop="reconciled">
+                <el-select v-model="formSearch.reconciled" placeholder="请选择">
+                    <el-option v-for="item in reconcileds" :label="item.text" :value="item.value" :key="item.value"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="付款状态" size="small" prop="payStatus">
+                <el-select v-model="formSearch.payStatus" placeholder="请选择">
+                    <el-option v-for="item in payStatusList" :label="item.text" :value="item.value" :key="item.value"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item style="margin-top: -4px">
@@ -48,34 +33,43 @@
                 <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
             </el-form-item>
         </el-form>
+        <div>待结算服务费金额：{{fee.notPaidAmount | formatMoney}}</div>
         <el-table :data="tableData.list">
-            <!-- <el-table-column prop="appName" label="商户名称"></el-table-column> -->
-            <el-table-column prop="settleDate" label="入账时间">
-                <template slot-scope="scope">
-                    <span v-if="scope.row.billType === 'month'">{{scope.row.settleDate | formatTime('yyyy-MM')}}</span>
-                    <span v-if="scope.row.billType === 'day'">{{scope.row.settleDate | formatTime('yyyy-MM-dd')}}</span>
-                </template>
-            </el-table-column>
+            <el-table-column prop="startDate" label="账单开始时间" width="120px"></el-table-column>
+            <el-table-column prop="endDate" label="账单结束时间" width="120px"></el-table-column>
+            <el-table-column prop="companyName" label="企业名称"></el-table-column>
+            <el-table-column prop="appName" label="商户名称"></el-table-column>
             <el-table-column prop="serviceCompanyName" label="服务商名称"></el-table-column>
+            <el-table-column prop="count" label="成功发放笔数" width="120px"></el-table-column>
+            <el-table-column prop="amount" label="成功发放金额" width="120px">
+              <template slot-scope="scope">
+                {{scope.row.amount | formatMoney}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="serviceFee" label="应收服务费金额" width="120px">
+              <template slot-scope="scope">
+                {{scope.row.serviceFee | formatMoney}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="reconciled" label="账单状态">
+              <template slot-scope="scope">
+                {{transformText(reconcileds, scope.row.reconciled)}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="payStatus" label="付款状态">
+              <template slot-scope="scope">
+                {{transformText(payStatusList, scope.row.payStatus)}}
+              </template>
+            </el-table-column>
             <el-table-column prop="settleTypeName" label="结算方式"></el-table-column>
-            <el-table-column label="计费标准" prop="serviceFeeName">
-                <!-- <template slot-scope="scope">
-                    <span>{{scope.row.serviceFeeType == 'ratio' ? '发放金额 *' + scope.row.serviceFeeRate + '%' : scope.row.serviceFeeRate + '元/笔'}} </span>
-                </template> -->
-            </el-table-column>
-            <el-table-column label="计费依据">
-                <template slot-scope="scope">
-                    <div>发放成功金额 {{scope.row.amount}}</div>
-                    <div>发放成功笔数 {{scope.row.count}}笔</div>
-                </template>
-            </el-table-column>
-            <el-table-column prop="serviceFee" label="服务费金额"></el-table-column>
+            <el-table-column prop="nextClearDate" label="系统结算"></el-table-column>
+            <el-table-column prop="settlePeriodDate" label="结算期限"></el-table-column>
+            <el-table-column prop="updateByName" label="操作人"></el-table-column>
+            <el-table-column prop="updateAt" label="操作时间"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" size="medium" @click="handleDownload(scope.row)" v-if="scope.row.reconciled != '0'">
-                        账单下载
-                    </el-button>
-                    <div v-else>未出帐</div>
+                    <a class="download" v-if="scope.row.reconciled" :href="`/api/recon/settled/service-free-order-download-by-id?id=${scope.row.id}`" target="_blank">账单下载</a>
+                    <el-button v-if="scope.row.reconciled && scope.row.payStatus == '10'" class="download" type="text" @click="refund(scope.row.id)">立即还款</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -86,6 +80,21 @@
             v-on:handleCurrentChange="handleCurrentChange"
             :currentPage="currentPage">
         </ayg-pagination>
+        <el-dialog title="服务费账单结算" :visible.sync="show" width="550px">
+          <div class="dialog-content">
+                当前服务费账户余额: <span>{{refundData.accountBalanceAmount | formatMoney}}</span> <span v-if="parseFloat(refundData.accountBalanceAmount) < parseFloat(refundData.notPaidAmount) && refundData.notPaidAmount != 0" id="warn_text">服务费账户余额不足</span>
+          </div>
+          <div class="dialog-content">
+                本期待结算服务费金额: <span>{{refundData.notPaidAmount | formatMoney}}</span>
+          </div>
+          <div class="dialog-content">
+                账单起始时间：{{refundData.startDate | formatTime('yyyy-MM-dd')}} 至 {{refundData.endDate | formatTime('yyyy-MM-dd')}}
+          </div>
+          <span slot="footer">
+            <el-button size="small" @click="show = false">关闭</el-button>
+            <el-button v-if="parseFloat(refundData.accountBalanceAmount) >= parseFloat(refundData.notPaidAmount) && refundData.notPaidAmount != 0" size="small" type="primary" @click="pay">立即付款</el-button>
+          </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -101,9 +110,11 @@
                 formSearch: {
                     appId: '',
                     serviceCompanyId: '',
-                    billType: 'day',
-                    startAt: '',
-                    endAt: '',
+                    settleType: '',
+                    reconciled: '',
+                    payStatus: '',
+                    // startAt: '',
+                    // endAt: '',
                 },
                 restaurants1: [],
                 showDatePick: 'day',
@@ -112,7 +123,14 @@
                 appName: '',
                 pageSize: 10,
                 tableData: [],
-                serviceCompanies: []
+                serviceCompanies: [],
+                apps: [],
+                reconcileds: [],
+                payStatusList: [],
+                show: false,
+                refundData: {},
+                id: '',
+                fee: {}
             }
         },
         methods: {
@@ -141,10 +159,12 @@
             },
             resetForm(formName) {
                 this.$refs[formName].resetFields();
-                this.formSearch.billType = 'month';
-                this.valueDate = '';
-                this.valueMonth = '';
-                this.appName = '';
+                // this.formSearch.settleType = '';
+                // this.valueDate = '';
+                // this.valueMonth = '';
+                // this.appName = '';
+                // this.formSearch.reconciled = ''
+                // this.formSearch.payStatus = ''
             },
             search() {
                 this.currentPage = 1;
@@ -156,44 +176,47 @@
             requestAction(pageInfo) {
                 let url = '/api/recon/settled/service-free-order-list';
                 let self = this;
-                _.foreach(this.allAppList, function (value) {
-                    if (value['text'] == self.appName) {
-                        self.formSearch.appId = value['value'];
-                        return false;
-                    } else {
-                        self.formSearch.appId = '';
-                    }
-                });
-                let startAt = '';
-                let endAt = '';
-                if (this.formSearch.billType === 'month') {
-                    startAt = this.valueMonth;
-                    endAt = this.valueMonth;
-                }
-                if (this.formSearch.billType === 'day') {
-                    if(this.valueDate && this.valueDate.length) {
-                        startAt = this.valueDate[0];
-                        endAt = this.valueDate[1];
-                    }
-                }
+                // _.foreach(this.allAppList, function (value) {
+                //     if (value['text'] == self.appName) {
+                //         self.formSearch.appId = value['value'];
+                //         return false;
+                //     } else {
+                //         self.formSearch.appId = '';
+                //     }
+                // });
+                // let startAt = '';
+                // let endAt = '';
+                // if (this.formSearch.settleType === 'month') {
+                //     startAt = this.valueMonth;
+                //     endAt = this.valueMonth;
+                // }
+                // if (this.formSearch.settleType === 'day') {
+                //     if(this.valueDate && this.valueDate.length) {
+                //         startAt = this.valueDate[0];
+                //         endAt = this.valueDate[1];
+                //     }
+                // }
                 let param = {
-                    startAt: startAt,
-                    endAt: endAt,
                     appId: this.formSearch.appId,
-                    billType: this.formSearch.billType,
+                    settleType: this.formSearch.settleType,
                     serviceCompanyId: this.formSearch.serviceCompanyId,
+                    reconciled: this.formSearch.reconciled,
+                    payStatus: this.formSearch.payStatus,
                     page: pageInfo.page,
                     pageSize: pageInfo.pageSize,
                 };
                 post(url, param).then(data => {
                     this.tableData = data;
                 })
+                get('/api/recon/settled/sf-account-balance-info', param).then(data => {
+                  this.fee = data
+                })
             },
             handleDownload(a) {
                 var settledTime = formatTime(a.settleDate, 'yyyy-MM-dd');
                 window.location.href = baseUrl + '/api/recon/settled/service-free-order-download'
-                    + '?appId=' + a.appId + '&billType=' + a.billType
-                    + '&settledTime=' + settledTime + (this.formSearch.billType == 'month' ? '&settledOrderServiceFeeNpttMonthId=' + a.id : '&settledOrderServiceFeeNpttId=' + a.id)
+                    + '?appId=' + a.appId + '&settleType=' + a.settleType
+                    + '&settledTime=' + settledTime + (this.formSearch.settleType == 'month' ? '&settledOrderServiceFeeNpttMonthId=' + a.id : '&settledOrderServiceFeeNpttId=' + a.id)
             },
             handleSizeChange(value) {
                 this.pageSize = value;
@@ -216,6 +239,36 @@
                     .then(result => {
                     	this.serviceCompanies = result
                     })
+            },
+            refund(id) {
+              this.id = id
+              get('/api/recon/settled/sf-order-balance-info', {
+                id: id
+              }).then(data => {
+                this.show = true
+                this.refundData = data
+                console.log(data)
+              })
+            },
+            pay() {
+              post('/api/recon/settled/sf-immediate-pay', {
+                id: this.id
+              }).then(data => {
+                this.show = false
+                this.$message({
+                  type: 'success',
+                  message: '还款成功！'
+                })
+                this.requestAction({
+                    page: 1,
+                    pageSize: this.pageSize,
+                });
+              })
+            },
+            transformText(a, b) {
+              var arr = a.filter(e => e.value == b)
+              console.log(arr)
+              return arr.length ? arr[0].text : ''
             }
         },
         created() {
@@ -225,10 +278,43 @@
             });
             this.getServiceCompany()
             this.getAllApp();
+            get('/api/sysmgr-web/commom/app-list').then(data => {
+                this.apps = data
+            })
+            get('/api/recon/option/get-reconcile-status').then(data => {
+              this.reconcileds = data
+            })
+            get('/api/recon/option/get-sf-order-pay-status').then(data => {
+              this.payStatusList = data
+            })
         }
     }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.dialog-content {
+    font-size: 14px;
+    color: #999999;
+    margin-bottom: 12px;
 
+   span {
+        color: #2A2A2A;
+        margin-left: 8px;
+    }
+
+   a {
+        font-size: 14px;
+        color: #108EE9;
+        margin-left: 15px;
+    }
+}
+.download {
+    color: #108EE9;
+    font-size: 12px;
+    text-decoration: unset;
+}
+#warn_text {
+  color: red;
+  margin-left: 20px;
+}
 </style>

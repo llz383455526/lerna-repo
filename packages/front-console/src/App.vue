@@ -74,6 +74,12 @@ html, body {
 .el-select-dropdown {
     width: 300px;
 }
+    .wrap {
+        margin-top: 15px;background-color: #fff;padding: 15px;
+    }
+    .title {
+        margin: 0px 30px 30px;
+    }
 </style>
 
 

@@ -4,16 +4,32 @@
         <el-form :model="form" :inline="true" ref="form">
             <el-form-item label="企业" prop="companyId">
                 <el-select size="small" filterable v-model="form.companyId">
+                    <el-option label="全部" value=""></el-option>
                     <el-option v-for="e in companys" :value="e.id" :label="e.name" :key="e.id"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="商户" prop="appId">
                 <el-select size="small" filterable v-model="form.appId">
+                    <el-option label="全部" value=""></el-option>
                     <el-option v-for="e in apps" :value="e.value" :label="e.text" :key="e.value"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="服务商" prop="serviceCompanyId">
+                <el-select size="small" filterable v-model="form.serviceCompanyId">
+                    <el-option label="全部" value=""></el-option>
+                    <el-option v-for="(item, key) in option.serveCompanyList" :key="key" :value="item.id" :label="item.name"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="账户类型" prop="balanceType">
+                <el-select size="small" filterable v-model="form.balanceType">
+                    <el-option label="全部" value=""></el-option>
+                    <el-option :value="1" label="实发账户余额"></el-option>
+                    <el-option :value="3" label="服务费账户余额"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="操作" prop="bizTradeName">
                 <el-select size="small" filterable v-model="form.bizTradeName">
+                    <el-option label="全部" value=""></el-option>
                     <el-option v-for="e in handles" :value="e.value" :label="e.text" :key="e.value"></el-option>
                 </el-select>
                 <!-- <el-input size="small" v-model="form.bizTradeName"></el-input> -->
@@ -53,6 +69,7 @@
                     {{scope.row.currentAvailBalance | formatMoney}}
                 </template>
             </el-table-column>
+            <el-table-column label="账户类型" prop="balanceTypeName"></el-table-column>
             <el-table-column label="操作" prop="bizTradeNameName"></el-table-column>
             <el-table-column label="完成时间" prop="tradeAtStr"></el-table-column>
         </el-table>
@@ -66,11 +83,13 @@
 </template>
 <script>
 import { post, get } from "../../store/api";
+import optionModel from '../../model/option/optionModel.js'
 export default {
   data() {
     return {
       form: {
         appId: "",
+        balanceType: '',
         bizTradeName: "",
         companyId: "",
         createAtBegin: "",
@@ -83,7 +102,8 @@ export default {
       data: {},
       companys: [],
       apps: [],
-      handles: []
+      handles: [],
+      option: new optionModel()
     };
   },
   mounted() {
@@ -97,6 +117,7 @@ export default {
           this.handles = data
       })
       this.query()
+      this.option.getServeCompanyList()
   },
   methods: {
       query(a) {

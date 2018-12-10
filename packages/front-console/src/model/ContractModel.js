@@ -1,4 +1,4 @@
-import BaseModel from './BaseModel'
+import BaseModel from './base/BaseModel'
 import { get } from '../store/api'
 import _ from 'lodash'
 /**

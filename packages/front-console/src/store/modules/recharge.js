@@ -63,7 +63,6 @@ const store = {
             }
             post('/api/sysmgr-web/commom/options?'+str)
                 .then(result => {
-                    console.log(result)
                     commit('setOptionTypes', result);
                 })
         },
