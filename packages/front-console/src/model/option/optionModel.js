@@ -40,7 +40,7 @@ class optionModel extends BaseModel {
 			companyId: companyId,
 			channelType: 'pingan',
 			pageNo: 1,
-			pageSize: 100
+			pageSize: 100000
 		}).then(res => {
 			this.primaryAccountList = res.data
 		})
@@ -49,7 +49,7 @@ class optionModel extends BaseModel {
 		post('/api/paymentmgt/front/channel/payuser/qrylist', {
 			channelId: channelId,
 			pageNo: 1,
-			pageSize: 100
+			pageSize: 100000
 		}).then(res => {
 			this.bypassAccountList = res.data
 		})

@@ -67,17 +67,17 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="主账户账号" prop="mainAccountNo">
-                <el-select v-model="createForm.mainAccountNo" class="form-width" @change="changeChannel">
+                <el-select filterable v-model="createForm.mainAccountNo" class="form-width" @change="changeChannel">
                     <el-option v-for="(item, key) in option.primaryAccountList" :key="key" :label="item.channelAlias" :value="item.merchId"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="转出子账户" prop="fromPaymentUserId">
-                <el-select v-model="createForm.fromPaymentUserId" class="form-width" @change="changeFrom">
+                <el-select filterable v-model="createForm.fromPaymentUserId" class="form-width" @change="changeFrom">
                     <el-option v-for="(item, key) in option.bypassAccountList" :key="key" :label="item.payeruserName" :value="item.userId"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="转入子账户" prop="toPaymentUserId">
-                <el-select v-model="createForm.toPaymentUserId" class="form-width" @change="changeTo">
+                <el-select filterable v-model="createForm.toPaymentUserId" class="form-width" @change="changeTo">
                     <el-option v-for="(item, key) in option.bypassAccountList" :key="key" :label="item.payeruserName" :value="item.userId"></el-option>
                 </el-select>
             </el-form-item>
