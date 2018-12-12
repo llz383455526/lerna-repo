@@ -97,9 +97,9 @@
                                        @change="getSubjectDetail">
                                 <el-option
                                         v-for="item in customSubjectList"
-                                        :key="item.id"
-                                        :label="item.name"
-                                        :value="item.id">
+                                        :key="item.value"
+                                        :label="item.text"
+                                        :value="item.value">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -424,17 +424,20 @@
                 // this.formCategory.taxRate = '';
                 // this.formCategory.purpose = '';
 
-                let url = '/api/invoice-web/custom-invoice-subject/qry';
-                let param = {
-                    name: '',
-                    orderBy: '',
-                    page: 0,
-                    pageSize: 0,
-                    status: 1
-                };
-                let self = this;
-                post(url, param).then(res => {
-                    self.customSubjectList = res.list;
+                // let url = '/api/invoice-web/custom-invoice-subject/qry';
+                // let param = {
+                //     name: '',
+                //     orderBy: '',
+                //     page: 0,
+                //     pageSize: 0,
+                //     status: 1
+                // };
+                // let self = this;
+                get('/api/contract-web/commom/companyInvoiceOption', {
+                  serviceCompanyId: this.formData.serviceCompanyId,
+                  companyId: this.formData.customCompanyId
+                }).then(res => {
+                    this.customSubjectList = res;
                 })
             },
             getCompaniesDetail(val) {
@@ -452,6 +455,7 @@
                     console.log(self.formBuy)
                     self.getHistoryDebt(val, pageInfo);
                     self.getHistoryInfo(val);
+                    this.getCustomSubject()
                 })
             },
             getHistoryDebt (customCompanyId, pageInfo) {
@@ -485,7 +489,7 @@
             getSubjectDetail(val) {
                 let self = this;
                 _.forEach(self.customSubjectList, function (item) {
-                    if (item.id === val) {
+                    if (item.value === val) {
                         self.formCategory.taxRate = item.taxRate;
                         self.$refs['formCategory'].validateField('taxRate');
                     }
@@ -665,7 +669,7 @@
             this.getServiceDetail(this.formData.serviceCompanyId);
 
             // 获取发票类目下拉列表
-            this.getCustomSubject();
+            // this.getCustomSubject();
         }
     }
 </script>
