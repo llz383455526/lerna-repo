@@ -35,8 +35,12 @@
             <el-col :span="8">{{detail.prePayType == 1 ? `是（${detail.prePayContent.secondType == 'real' ? '实发金额' : '应发金额'} * ${detail.prePayContent.serviceFeeRate}%）` : '否'}}</el-col>
         </el-row>
         <el-row class="mb15" style="font-weight: normal;">
-            <el-col :span="4" style="text-align: right; margin-right: 20px;">开票类型：</el-col>
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">发票类型：</el-col>
             <el-col :span="8">{{detail.invoiceTypeName}}</el-col>
+        </el-row>
+        <el-row class="mb15" style="font-weight: normal;">
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">开票类型：</el-col>
+            <el-col :span="8">{{detail.openInvoiceType == 10 ? '账单开票' : '预开票'}}</el-col>
         </el-row>
         <el-row class="mb15" style="font-weight: normal;" v-if="!isExamine">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">服务费收费比例/金额：</el-col>
