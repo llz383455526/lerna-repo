@@ -87,7 +87,7 @@
         <div class="title">发票申请列表</div>
         <el-button type="primary" size="small" @click="dialogClientVisible = true;">单张申请</el-button>
         <router-link to="batchApply">
-            <el-button type="primary" size="small" @click="dialogClientVisible = true;">批量申请</el-button>
+            <!--<el-button type="primary" size="small" @click="dialogClientVisible = true;">批量申请</el-button>-->
         </router-link>
         <el-button size="small" style="margin-left: 240px" @click="isWait">待审批：{{wait}}</el-button>
         <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
@@ -138,27 +138,26 @@
                         v-on:handleCurrentChange="handleCurrentChange" :currentPage="formSearch.page">
         </ayg-pagination>
 
-        <el-dialog title="选择发票类型和开票公司" :visible.sync="dialogClientVisible" width="35%">
+        <el-dialog title="选择落地公司和客户公司" :visible.sync="dialogClientVisible" width="35%">
             <el-form :rules="rulesClient" :model="formClient" ref="formClient">
                 <div class="input-container">
-                    <div class="label dialog-label">发票类型<span>*</span>
+                    <div class="label dialog-label">客户公司<span>*</span>
                     </div>
                     <div class="input">
-                        <el-form-item prop="invoiceType">
-                            <el-radio-group v-model="formClient.invoiceType">
-                                <el-radio v-for="item in InvoiceType" :key="item.value" :label="item.value">
-                                    {{item.text}}
-                                </el-radio>
-                            </el-radio-group>
+                        <el-form-item prop="serviceCompanyId">
+                            <el-select v-model="formClient.serviceCompanyId" placeholder="请选择客户公司">
+                                <el-option v-for="item in companyList" :key="item.value" :label="item.text"
+                                           :value="item.value"></el-option>
+                            </el-select>
                         </el-form-item>
                     </div>
                 </div>
                 <div class="input-container">
-                    <div class="label dialog-label">开票公司<span>*</span>
+                    <div class="label dialog-label">落地公司<span>*</span>
                     </div>
                     <div class="input">
                         <el-form-item prop="serviceCompanyId">
-                            <el-select v-model="formClient.serviceCompanyId" placeholder="请选择开票公司">
+                            <el-select v-model="formClient.serviceCompanyId" placeholder="请选择落地公司">
                                 <el-option v-for="item in companyList" :key="item.value" :label="item.text"
                                            :value="item.value"></el-option>
                             </el-select>
@@ -626,7 +625,7 @@
                     type: 'warning'
                 }).then(() => {
                     post('/api/invoice-web/invoice/cancel-invoice-order', {
-                        orderId: this.formInvoice.orderNo 
+                        orderId: this.formInvoice.orderNo
                     }).then(() => {
                         // this.$message({
                         //     type: 'success',

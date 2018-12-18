@@ -680,6 +680,10 @@ export default [
                             {
                                 path: 'create',
                                 component: r => require.ensure([], () => r(require('../pages/billingManager/create.vue')), 'create')
+                            },
+                            {
+                              path: 'monitoring',
+                              component: r => require.ensure([], () => r(require('../pages/billingManager/monitoring.vue')), 'monitoring')
                             }
                         ]
                     },

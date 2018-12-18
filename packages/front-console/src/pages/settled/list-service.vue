@@ -28,6 +28,13 @@
                     <el-option v-for="item in payStatusList" :label="item.text" :value="item.value" :key="item.value"></el-option>
                 </el-select>
             </el-form-item>
+          <el-form-item label="开票状态" size="small" prop="payStatus">
+            <el-select v-model="formSearch.payStatus" placeholder="请选择">
+              <el-option label="待开票" value="待开票"></el-option>
+              <el-option label="开票中" value="开票中"></el-option>
+              <el-option label="已开票" value="已开票"></el-option>
+            </el-select>
+          </el-form-item>
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="search" size="small">查询</el-button>
                 <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
@@ -56,6 +63,11 @@
                 {{transformText(reconcileds, scope.row.reconciled)}}
               </template>
             </el-table-column>
+          <el-table-column prop="reconciled" label="开票状态">
+            <template slot-scope="scope">
+              已开票
+            </template>
+          </el-table-column>
             <el-table-column prop="payStatus" label="付款状态">
               <template slot-scope="scope">
                 {{transformText(payStatusList, scope.row.payStatus)}}
@@ -73,7 +85,7 @@
                 </template>
             </el-table-column>
         </el-table>
-        <ayg-pagination 
+        <ayg-pagination
             v-if="tableData.total"
             :total="tableData.total"
             v-on:handleSizeChange="handleSizeChange"
