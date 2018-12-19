@@ -45,6 +45,9 @@ let rechargeIndex = r => require.ensure([], () => r(require('../pages/recharge/i
 let balanceAdjust = r => require.ensure([], () => r(require('../pages/recharge/balanceAdjust/list.vue')), 'balanceAdjust');
 let clearing = r => require.ensure([], () => r(require('../pages/recharge/clearing/list.vue')), 'clearing');
 let invoiceList = r => require.ensure([], () => r(require('../pages/invoice/list.vue')), 'invoiceList');
+let invoiceBill = r => require.ensure([], () => r(require('../pages/invoice/billInvoice/index.vue')), 'invoiceBill');
+let invoicePre = r => require.ensure([], () => r(require('../pages/invoice/preInvoice/index.vue')), 'invoicePre');
+
 let invoiceCreate = r => require.ensure([], () => r(require('../pages/invoice/create.vue')), 'invoiceCreate');
 let ticketIssued = r => require.ensure([], () => r(require('../pages/invoice/ticketIssued.vue')), 'ticketIssued');
 let oweTicketManager = r => require.ensure([], () => r(require('../pages/invoice/oweTicketManager.vue')), 'oweTicketManager');
@@ -694,6 +697,20 @@ export default [
                             {
                                 path: 'list',
                                 component: invoiceList,
+                                meta: {
+                                    keepAlive: false, //此组件不需要被缓存
+                                }
+                            },
+                            {
+                                path: 'bill',
+                                component: invoiceBill,
+                                meta: {
+                                    keepAlive: false, //此组件不需要被缓存
+                                }
+                            },
+                            {
+                                path: 'pre',
+                                component: invoicePre,
                                 meta: {
                                     keepAlive: false, //此组件不需要被缓存
                                 }

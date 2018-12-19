@@ -138,36 +138,30 @@
                         v-on:handleCurrentChange="handleCurrentChange" :currentPage="formSearch.page">
         </ayg-pagination>
 
-        <el-dialog title="选择落地公司和客户公司" :visible.sync="dialogClientVisible" width="35%">
+        <el-dialog title="选择落地公司和客户公司" :visible.sync="dialogClientVisible" width="500px" label-width="80px">
             <el-form :rules="rulesClient" :model="formClient" ref="formClient">
-                <div class="input-container">
-                    <div class="label dialog-label">客户公司<span>*</span>
-                    </div>
-                    <div class="input">
-                        <el-form-item prop="serviceCompanyId">
-                            <el-select v-model="formClient.serviceCompanyId" placeholder="请选择客户公司">
-                                <el-option v-for="item in companyList" :key="item.value" :label="item.text"
-                                           :value="item.value"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </div>
-                </div>
-                <div class="input-container">
-                    <div class="label dialog-label">落地公司<span>*</span>
-                    </div>
-                    <div class="input">
-                        <el-form-item prop="serviceCompanyId">
-                            <el-select v-model="formClient.serviceCompanyId" placeholder="请选择落地公司">
-                                <el-option v-for="item in companyList" :key="item.value" :label="item.text"
-                                           :value="item.value"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </div>
-                </div>
+                <el-form-item label="开票类型">
+                    <el-radio-group v-model="formClient.serviceCompanyId">
+                        <el-radio label="账单开票"></el-radio>
+                        <el-radio label="预开票"></el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="客户公司" prop="serviceCompanyId">
+                    <el-select style="width: 370px" v-model="formClient.serviceCompanyId" placeholder="请选择客户公司">
+                        <el-option v-for="item in companyList" :key="item.value" :label="item.text"
+                                   :value="item.value"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="落地公司" prop="serviceCompanyId">
+                    <el-select style="width: 370px" v-model="formClient.serviceCompanyId" placeholder="请选择落地公司">
+                        <el-option v-for="item in companyList" :key="item.value" :label="item.text"
+                                   :value="item.value"></el-option>
+                    </el-select>
+                </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogClientVisible=false;">取 消</el-button>
-                <el-button type="primary" @click="showClientForm('formClient')">确 定</el-button>
+                <el-button type="primary" @click="kaiPiaoPopOkClick">确 定</el-button>
             </div>
         </el-dialog>
 
@@ -420,6 +414,14 @@
             }
         },
         methods: {
+            // 开票确定按钮点击
+            kaiPiaoPopOkClick() {
+                if (this.formClient.serviceCompanyId === '预开票') {
+                    this.$router.push('/main/invoice/pre')
+                } else {
+                    this.$router.push('/main/invoice/bill')
+                }
+            },
             getWait() {
                 get('/api/invoice-web/invoice/applying-invoice-num').then(data => {
                     this.wait = data
