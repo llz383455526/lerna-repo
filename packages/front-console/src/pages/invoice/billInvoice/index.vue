@@ -9,18 +9,16 @@
     <el-form ref="form" :rules="rules" :model="form" label-width="150px" v-if="step === 1">
       <el-form-item label="发票类型" prop="invoiceType">
         <el-radio-group v-model="rules.invoiceType">
-          <el-radio label="增值税普通发票"></el-radio>
-          <el-radio label="增值税专用发票"></el-radio>
+          <el-radio v-for="(v) in invoiceTypeList" :label="v.text"></el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="发票类目" prop="invoiceLeiMu">
         <el-select v-model="form.invoiceLeiMu" placeholder="请选择活动区域">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
+          <el-option v-for="v in involiceLeiMuList" :label="v.name" :value="v.id"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="税率">
-        <span>6%</span>
+        <span>{{ form.taxRate }}%</span>
       </el-form-item>
       <el-form-item label="请选择账单">
         <el-radio-group v-model="rules.zhangdan">
@@ -171,6 +169,7 @@
 </template>
 
 <script>
+  import {post, get} from '../../../store/api';
   export default {
     name: "step1",
     data() {
@@ -182,7 +181,9 @@
           invoiceLeiMu: null,
           zhangdan: '日账单',
           content: null,
-          beizhu: null
+          beizhu: null,
+          // 税率
+          taxRate: 0
         },
         rules: {
           invoiceType: [
@@ -204,6 +205,19 @@
           name: '王小虎',
           address: '上海市普陀区金沙江路 1518 弄'
         }],
+        // 发票类型列表
+        invoiceTypeList: [],
+        // 发票类目列表
+        involiceLeiMuList: []
+      }
+    },
+    watch: {
+      'form.invoiceLeiMu'(newVal) {
+        this.involiceLeiMuList.forEach((item) => {
+          if (item.id === newVal) {
+            this.form.taxRate = item.taxRate
+          }
+        })
       }
     },
     methods: {
@@ -227,9 +241,32 @@
         source = String(source).split(".");
         source[0] = source[0].replace(new RegExp('(\\d)(?=(\\d{'+length+'})+$)','ig'),"$1,");
         return source.join(".");
+      },
+      // 获取发票类型列表
+      getInvoiceTypeList() {
+        get('/api/invoice-web/commom/option?enumType=InvoiceType').then(function(data){
+          this.invoiceTypeList = data
+          this.rules.invoiceType = this.invoiceTypeList[0].text
+        }.bind(this))
+      },
+      // 获取发票类目
+      getInvoiceLeiMu() {
+        let url = '/api/invoice-web/custom-invoice-subject/qry';
+        let param = {
+          name: '',
+          orderBy: '',
+          page: 0,
+          pageSize: 0,
+          status: 1
+        };
+        post(url, param).then(data => {
+          this.involiceLeiMuList = data.list
+        })
       }
     },
     mounted() {
+      this.getInvoiceTypeList()
+      this.getInvoiceLeiMu()
     }
   }
 </script>
