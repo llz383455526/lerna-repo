@@ -51,7 +51,7 @@
             </el-form-item>
             <el-form-item label="对接方式" prop="accessType">
                 <el-select v-model="form.accessType" size="small" class="form_input_short">
-                    <el-option v-for="e in type" :key="e" :label="e.text" :value="e.value"></el-option>
+                    <el-option v-for="e in type" :key="e.value" :label="e.text" :value="e.value"></el-option>
                 </el-select>
                 <!-- <el-input v-model="form.accessType" size="small"></el-input> -->
             </el-form-item>

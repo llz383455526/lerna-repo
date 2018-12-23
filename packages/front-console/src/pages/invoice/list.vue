@@ -85,7 +85,7 @@
         </el-form>
 
         <div class="title">发票申请列表</div>
-        <el-button type="primary" size="small" @click="dialogClientVisible = true;">单张申请</el-button>
+        <el-button type="primary" size="small" @click="danZhangShenQingClick">单张申请</el-button>
         <router-link to="batchApply">
             <!--<el-button type="primary" size="small" @click="dialogClientVisible = true;">批量申请</el-button>-->
         </router-link>
@@ -138,29 +138,23 @@
                         v-on:handleCurrentChange="handleCurrentChange" :currentPage="formSearch.page">
         </ayg-pagination>
 
-        <el-dialog title="选择落地公司和客户公司" :visible.sync="dialogClientVisible" width="500px" label-width="80px">
-            <el-form :rules="rulesClient" :model="formClient" ref="formClient">
-                <el-form-item label="开票类型">
-                    <el-radio-group v-model="formClient.serviceCompanyId">
-                        <el-radio label="账单开票"></el-radio>
-                        <el-radio label="预开票"></el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="客户公司" prop="serviceCompanyId">
-                    <el-select style="width: 370px" v-model="formClient.serviceCompanyId" placeholder="请选择客户公司">
-                        <el-option v-for="item in companyList" :key="item.value" :label="item.text"
+        <el-dialog title="选择落地公司和客户公司" :visible.sync="danZhangKaiPiaoPopIsShow" width="500px" label-width="80px">
+            <el-form :rules="danZhangKiPiaoFormRules" :model="danZhangKiPiaoForm" ref="danZhangKiPiaoForm">
+                <el-form-item label="客户公司" prop="keHuId">
+                    <el-select style="width: 370px" @change="keHuGongSiSrlChange" v-model="danZhangKiPiaoForm.keHuId" placeholder="请选择客户公司">
+                        <el-option v-for="item in keHuDataArr" :key="item.value" :label="item.text"
                                    :value="item.value"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="落地公司" prop="serviceCompanyId">
-                    <el-select style="width: 370px" v-model="formClient.serviceCompanyId" placeholder="请选择落地公司">
-                        <el-option v-for="item in companyList" :key="item.value" :label="item.text"
-                                   :value="item.value"></el-option>
+                <el-form-item label="落地公司" prop="luoDi">
+                    <el-select style="width: 370px" v-model="danZhangKiPiaoForm.luoDi" placeholder="请选择落地公司">
+                        <el-option v-for="item in luoDiDataArr" :key="item.companyId" :label="item.companyName"
+                                   :value="item"></el-option>
                     </el-select>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogClientVisible=false;">取 消</el-button>
+                <el-button @click="danZhangKaiPiaoPopIsShow=false;">取 消</el-button>
                 <el-button type="primary" @click="kaiPiaoPopOkClick">确 定</el-button>
             </div>
         </el-dialog>
@@ -392,7 +386,35 @@
                 showDown: false,
                 attachmentId: 1,
                 prevList: [],
-                previewIndex: 0
+                previewIndex: 0,
+                // 单张开票弹窗
+                danZhangKaiPiaoPopIsShow: false,
+                // 单张开票弹窗数据
+                danZhangKiPiaoForm: {
+                    keHuId: null,
+                    luoDi : null
+                },
+                // 客户公司数据数据
+                keHuDataArr: [],
+                // 落地公司数组数据
+                luoDiDataArr: [],
+                // 单张申请弹窗校验
+                danZhangKiPiaoFormRules: {
+                    keHuId: [
+                        {
+                            required: true,
+                            message: "请选择客户公司",
+                            trigger: "change"
+                        }
+                    ],
+                    luoDi: [
+                        {
+                            required: true,
+                            message: "请选择落地公司",
+                            trigger: "change"
+                        }
+                    ]
+                }
             }
         },
         computed: {
@@ -414,14 +436,43 @@
             }
         },
         methods: {
+            // 单张申请按钮点击
+            danZhangShenQingClick() {
+              this.danZhangKaiPiaoPopIsShow = true
+                this.getKeHuDataArr()
+            },
             // 开票确定按钮点击
             kaiPiaoPopOkClick() {
-                if (this.formClient.serviceCompanyId === '预开票') {
-                    this.$router.push('/main/invoice/pre')
-                } else {
-                    this.$router.push('/main/invoice/bill')
-                }
+                this.$refs['danZhangKiPiaoForm'].validate((valid) => {
+                    if (valid) {
+                        console.log(this.danZhangKiPiaoForm)
+                        const luoDi = this.danZhangKiPiaoForm.luoDi
+                        const p = `keHuId=${this.danZhangKiPiaoForm.keHuId}&luoDiId=${luoDi.companyId}&serviceIds=${JSON.stringify(luoDi.serviceIds)}&invoiceTypes=${JSON.stringify(luoDi.invoiceTypes)}`
+                        if (this.danZhangKiPiaoForm.luoDi.openInvoiceType === 10) {
+                            this.$router.push(`/main/invoice/pre?${p}`)
+                        } else {
+                            this.$router.push(`/main/invoice/bill?${p}`)
+                        }
+                    } else {
+                        return false;
+                    }
+                });
             },
+            // 获取客户公司数据
+            getKeHuDataArr() {
+                get('/api/invoice-web/invoice/custom-company-options').then(data => {
+                    this.keHuDataArr = data
+                })
+            },
+            // 客户公司选择改变的时候调用
+            keHuGongSiSrlChange(value) {
+                this.luoDiDataArr = []
+                this.danZhangKiPiaoForm.luoDi = null
+                get(`/api/contract-web/contract/get-customer-invoice-info?customCompanyId=${value}`).then(data => {
+                    this.luoDiDataArr = data
+                })
+            },
+            // 弹窗数据校验
             getWait() {
                 get('/api/invoice-web/invoice/applying-invoice-num').then(data => {
                     this.wait = data
