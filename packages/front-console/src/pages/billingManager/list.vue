@@ -6,9 +6,9 @@
         <el-input v-model="formSearch.companyName"></el-input>
       </el-form-item>
       <el-form-item label="状态" size="small" prop="companyName">
-        <el-select v-model="formSearch.companyName" placeholder="请选择状态">
-          <el-option label="有效" value="shanghai"></el-option>
-          <el-option label="无效" value="beijing"></el-option>
+        <el-select v-model="formSearch.status" placeholder="请选择状态">
+          <el-option label="有效" value="1"></el-option>
+          <el-option label="无效" value="0"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item style="margin-top: -4px">
@@ -29,7 +29,7 @@
       </el-table-column>
       <el-table-column prop="name" label="状态" width="70">
         <template slot-scope="scope">
-          {{ '启用' }}
+          {{ scope.row.status === '1' ? '有效' : '无效' }}
         </template>
       </el-table-column>
       <el-table-column prop="name" label="企业名称" width="220"></el-table-column>
@@ -198,6 +198,7 @@
         options: [],
         formSearch: {
           companyName: '',
+          status: '1'
         },
         dateValue: '',
         //增加票量
@@ -283,6 +284,7 @@
           companyName: this.formSearch.companyName,
           page: pageInfo.page,
           pageSize: pageInfo.pageSize,
+          status: this.formSearch.status
         };
         post('/api/invoice-web/service-company/qry', param).then(data => {
           data.list.forEach(item => {

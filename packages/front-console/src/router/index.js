@@ -45,8 +45,8 @@ let rechargeIndex = r => require.ensure([], () => r(require('../pages/recharge/i
 let balanceAdjust = r => require.ensure([], () => r(require('../pages/recharge/balanceAdjust/list.vue')), 'balanceAdjust');
 let clearing = r => require.ensure([], () => r(require('../pages/recharge/clearing/list.vue')), 'clearing');
 let invoiceList = r => require.ensure([], () => r(require('../pages/invoice/list.vue')), 'invoiceList');
-let invoiceBill = r => require.ensure([], () => r(require('../pages/invoice/billInvoice/index.vue')), 'invoiceBill');
-let invoicePre = r => require.ensure([], () => r(require('../pages/invoice/preInvoice/index.vue')), 'invoicePre');
+let invoiceStep1 = r => require.ensure([], () => r(require('../pages/invoice/invoice/step1.vue')), 'invoiceStep1');
+let invoiceStep2 = r => require.ensure([], () => r(require('../pages/invoice/invoice/step2.vue')), 'invoiceStep2');
 
 let invoiceCreate = r => require.ensure([], () => r(require('../pages/invoice/create.vue')), 'invoiceCreate');
 let ticketIssued = r => require.ensure([], () => r(require('../pages/invoice/ticketIssued.vue')), 'ticketIssued');
@@ -702,15 +702,15 @@ export default [
                                 }
                             },
                             {
-                                path: 'bill',
-                                component: invoiceBill,
+                                path: 'invoice-step1',
+                                component: invoiceStep1,
                                 meta: {
                                     keepAlive: false, //此组件不需要被缓存
                                 }
                             },
                             {
-                                path: 'pre',
-                                component: invoicePre,
+                                path: 'invoice-step2',
+                                component: invoiceStep2,
                                 meta: {
                                     keepAlive: false, //此组件不需要被缓存
                                 }
