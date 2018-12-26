@@ -23,7 +23,8 @@
         <template slot-scope="scope">
           <el-button @click="handleEdit(scope.row.id)" type="text" size="medium" style="padding:0;">修改
           </el-button>
-          <el-button @click="enabledBtnClick(scope.row)" type="text" size="medium" style="padding:0;margin-left: 0">启用
+          <el-button @click="enabledBtnClick(scope.row)" type="text" size="medium" style="padding:0;margin-left: 0">
+            {{ scope.row.status === '1' ? '禁用' : '启用' }}
           </el-button>
         </template>
       </el-table-column>
@@ -241,15 +242,23 @@
     },
     methods: {
       // 启用禁用按钮点击
-      enabledBtnClick() {
-        this.$confirm('是否确认启用/禁用？', '', {
+      enabledBtnClick(item) {
+        this.$confirm(`是否确认${item.status === '1' ? '禁用' : '启用'}？`, '', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-
+          post('/api/invoice-web/service-company/change-status', {
+            serviceCompanyId: item.id,
+            status: item.status === '1' ? '0' : '1'
+          }).then(data => {
+            showNotify('success', '修改成功')
+            this.requestAction({
+              page: this.$route.query.page || 1,
+              pageSize: this.pageSize,
+            });
+          })
         }).catch(() => {
-
         });
       },
       resetForm(formName) {

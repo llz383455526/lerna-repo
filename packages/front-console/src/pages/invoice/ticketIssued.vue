@@ -186,9 +186,13 @@
         <el-table-column prop="amount" label="开票金额"></el-table-column>
         <el-table-column prop="serviceCompanyName" label="开票公司"></el-table-column>
         <el-table-column prop="paperStatusName" label="状态"></el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <span slot="footer">
-          <el-button @click="preview">线下已开票，修改状态</el-button>
         	<el-button @click="preview" type="primary">预览</el-button>
         <!-- make -->
             <el-button @click="needSure" type="primary">开票</el-button>
@@ -221,10 +225,14 @@
         <el-table-column prop="amount" label="开票金额"></el-table-column>
         <el-table-column prop="serviceCompanyName" label="开票公司"></el-table-column>
         <el-table-column prop="paperStatusName" label="状态"></el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <span slot="footer">
             <!--<el-button @click="oshow = false" type="primary">确定</el-button>-->
-          <el-button @click="preview">线下已开票，修改状态</el-button>
         </span>
     </el-dialog>
     <el-dialog title="开票确认" :visible.sync="sureShow" width="35%">
@@ -332,16 +340,16 @@
           </span>
     </el-dialog>
     <el-dialog title="修改开票状态" :visible.sync="xiuGaiKaiPiaoZhuangTaiPop" width="35%">
-      <el-form :model="xiuGaiKaiPiaoZhuangTaiForm" :rules="xiuGaiKaiPiaoZhuangTaiRules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="发票代码" prop="name">
-          <el-input v-model="xiuGaiKaiPiaoZhuangTaiForm.name"></el-input>
+      <el-form :model="xiuGaiKaiPiaoZhuangTaiForm" :rules="xiuGaiKaiPiaoZhuangTaiRules" ref="xiuGaiKaiPiaoZhuangTaiForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="发票代码" prop="invoiceCode">
+          <el-input v-model="xiuGaiKaiPiaoZhuangTaiForm.invoiceCode"></el-input>
         </el-form-item>
-        <el-form-item label="发票号码" prop="name">
-          <el-input v-model="xiuGaiKaiPiaoZhuangTaiForm.name"></el-input>
+        <el-form-item label="发票号码" prop="invoiceNum">
+          <el-input v-model="xiuGaiKaiPiaoZhuangTaiForm.invoiceNum"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')">取消</el-button>
-          <el-button @click="resetForm('ruleForm')">已开票</el-button>
+          <el-button @click="xiuGaiKaiPiaoZhuangTaiPop = false">取消</el-button>
+          <el-button type="primary" @click="xiuGaiKaiPiaoZhuangTaiOkBtnClick">已开票</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -374,12 +382,17 @@
           pageSize: 10
         },
         // 修改开票状态
-        xiuGaiKaiPiaoZhuangTaiPop: true,
+        xiuGaiKaiPiaoZhuangTaiPop: false,
         xiuGaiKaiPiaoZhuangTaiForm: {
-          name: ''
+          id: '',
+          invoiceCode: '',
+          invoiceNum: ''
         },
         xiuGaiKaiPiaoZhuangTaiRules: {
-          name: [
+          invoiceCode: [
+            { required: true, message: '请输入', trigger: 'blur' },
+          ],
+          invoiceNum: [
             { required: true, message: '请输入', trigger: 'blur' },
           ]
         },
@@ -491,6 +504,21 @@
       //  }.bind(this))
     },
     methods: {
+      // 修改开票状态
+      changeInvoiceStatus(item) {
+        this.xiuGaiKaiPiaoZhuangTaiPop = true
+        this.xiuGaiKaiPiaoZhuangTaiForm.id = item.id
+      },
+      // 膝盖开票状态确定按钮点击
+      xiuGaiKaiPiaoZhuangTaiOkBtnClick() {
+        post('/api/invoice-web/invoice/paper-invoice-update', this.xiuGaiKaiPiaoZhuangTaiForm).then((data) => {
+          this.$message({
+            type: 'success',
+            message: '修改成功'
+          })
+          this.xiuGaiKaiPiaoZhuangTaiPop = false
+        }).catch(() => {})
+      },
       query(a) {
         this.form.page = 1
         if (a && !isNaN(a)) {
