@@ -143,15 +143,14 @@
       </el-table>
       <el-upload
         v-else
-        class="upload-demo"
         drag
         ref="popUpload"
-        accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        accept=".xls, .xlsx"
         action="/api/invoice-web/invoice-monitor/upload-sales-forecast"
         :on-success="fileUpSuccess"
         :on-error="upFileErr"
-        :auto-upload="false"
-        multiple>
+        :multiple="false"
+        :auto-upload="false">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <div class="el-upload__tip" slot="tip">请上传小于5M的xls或xlsx格式文件</div>
@@ -422,9 +421,11 @@
       },
       handleSizeChange(num) {
         this.pageData.pageSize = num
+        this.searchBtnClick()
       },
       handleCurrentChange(num) {
         this.pageData.page = num
+        this.searchBtnClick()
       },
       // 导出按钮点击
       daoChuClick() {
