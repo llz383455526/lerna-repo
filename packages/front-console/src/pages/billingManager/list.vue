@@ -341,9 +341,7 @@
         });
       },
 
-
       addInvoice(formName) {
-        let self = this;
         this.$refs[formName].validate(valid => {
           if (valid) {
             let param = {
@@ -415,24 +413,6 @@
           + '&page=1'
           + '&pageSize=1'
           + '&status=' + this.formSelect.selectStatus;
-      },
-      handleCancel(id) {
-        this.$confirm('您确认要作废当前票量吗？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          let param = {
-            id: id,
-          };
-          get('/api/invoice-web/service-company/cancel', param).then(data => {
-            showNotify('success', data);
-            this.requestInvoiceAction({
-              page: this.currentInvoicePage,
-              pageSize: this.pageInvoiceSize,
-            });
-          })
-        })
       },
       closeInvoiceDialog() {
         this.formSelect.selectStatus = '20';

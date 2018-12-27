@@ -121,7 +121,28 @@
         <el-button size="mini" @click="upFileDownMoBanBtnClick">下载模板</el-button>
         *上传销售预测表格
       </p>
+      <el-table
+        v-if="inputData.length > 0"
+        :data="inputData"
+        style="width: 100%">
+        <el-table-column
+          prop="filename"
+          label="文件名称">
+        </el-table-column>
+        <el-table-column
+          prop="createTime"
+          label="上传时间">
+        </el-table-column>
+        <el-table-column
+          label="操作">
+          <template slot-scope="scope">
+            <el-button @click="downloadFileBtnClick(scope.row)" type="text" size="small">下载文件</el-button>
+            <el-button @click="removeFileBtnClick(scope.row)" type="text" size="small">重新上传</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
       <el-upload
+        v-else
         class="upload-demo"
         drag
         ref="popUpload"
@@ -135,25 +156,7 @@
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <div class="el-upload__tip" slot="tip">请上传小于5M的xls或xlsx格式文件</div>
       </el-upload>
-      <el-table
-        :data="upFileList"
-        style="width: 100%">
-        <el-table-column
-          prop="date"
-          label="文件名称">
-        </el-table-column>
-        <el-table-column
-          prop="name"
-          label="上传时间">
-        </el-table-column>
-        <el-table-column
-          label="操作">
-          <template slot-scope="scope">
-            <el-button @click="downloadFileBtnClick(scope.row)" type="text" size="small">下载文件</el-button>
-            <el-button @click="removeFileBtnClick(scope.row)" type="text" size="small">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+
       <span slot="footer" class="dialog-footer">
         <el-button @click="upFilePopIsShow = false">取 消</el-button>
         <el-button type="primary" @click="upFilePopOkBtnClick">确 定</el-button>
@@ -249,6 +252,7 @@
 <script>
   import {post, get} from '../../store/api';
   import {showNotify} from '../../plugin/utils-notify';
+  import { DateFormat } from 'yb-tool'
   const phoneReg = /^[1-9]\d*$/;
   const validatenumber = (rule, value, callback) => {
     if (value == '') {
@@ -319,41 +323,43 @@
             }
           ]
         },
-        upFileList: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }],
         // 录入数据
-        inputData: null
+        inputData: [],
+        DateFormat: DateFormat
       }
     },
     methods: {
+      handleCancel(id) {
+        this.$confirm('您确认要作废当前票量吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let param = {
+            id: id,
+          };
+          get('/api/invoice-web/service-company/cancel', param).then(data => {
+            showNotify('success', data);
+            this.requestInvoiceAction();
+          })
+        })
+      },
       // 删除文件按钮点击
       removeFileBtnClick() {
-
+        this.inputData = []
       },
       // 下载文件按钮点击
-      downloadFileBtnClick() {
-
+      downloadFileBtnClick(item) {
+        window.open(`/api/sysmgr-web/file/download?downloadCode=${item.downloadCode}`)
       },
       // 文件上传成功调用
       fileUpSuccess(res) {
         if (res.code !== 200) {
           showNotify('error', res.msg);
           this.$refs.popUpload.clearFiles();
+        } else {
+          showNotify('success', '上传成功');
+          this.upFilePopIsShow = false
         }
       },
       // 文件上传失败
@@ -407,9 +413,9 @@
             };
             post('/api/invoice-web/service-company/add-num', param).then(data => {
               showNotify('success', data);
-
               this.$refs['formAdd'].resetFields()
               this.addPiaoPopIsShow = false;
+              this.searchBtnClick()
             })
           }
         })
@@ -450,19 +456,29 @@
           "year": `${year}`
         }).then(data => {
           this.upFilePopIsShow = true
-          this.inputData = data
+          if (data) {
+            data.createTime = DateFormat(data.createTime)
+            this.inputData = [data]
+          }
         })
       },
       // 添加票量按钮点击
       addPiaoClick(item) {
         this.addPiaoPopIsShow = true
-        this.formAdd.id = item.id
+        this.formAdd.id = item.serviceCompanyId
       },
       // 领取记录按钮点击
       lingQuJiLuBtnClick(item) {
         this.lingQuJiLuPopIsShow = true
-        this.tableInvoice.id = item.id
+        this.tableInvoice.id = item.serviceCompanyId
         this.requestInvoiceAction()
+      },
+      handleExcel() {
+        const url = '/api/invoice-web/service-company/export-add-num?serviceCompanyId=' + this.tableInvoice.id
+          + '&page=1'
+          + '&pageSize=1'
+          + '&status=' + this.formSelect.selectStatus;
+        window.open(url)
       },
     },
     mounted() {
