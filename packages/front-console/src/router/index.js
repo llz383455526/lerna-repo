@@ -22,6 +22,7 @@ let index = r => require.ensure([], () => r(require('../pages/public/index.vue')
 let creditBill = r => require.ensure([], () => r(require('../pages/accountManager/companyCredit.vue')), 'creditBill');
 
 let orderManager = r => require.ensure([], () => r(require('../pages/orderManager/orderManager.vue')), 'orderManager');
+let orderManagerShuntTool = r => require.ensure([], () => r(require('../pages/orderManager/shuntTool.vue')), 'orderManagerShuntTool');
 let statistics = r => require.ensure([], () => r(require('../pages/orderManager/statistics.vue')), 'statistics');
 let defrayment = r => require.ensure([], () => r(require('../pages/orderManager/defrayment.vue')), 'defrayment');
 let submitOrder = r => require.ensure([], () => r(require('../pages/orderManager/submitOrder.vue')), 'submitOrder');
@@ -40,6 +41,7 @@ let uploadObject = r => require.ensure([], () => r(require('../pages/eContract/u
 let checkObject = r => require.ensure([], () => r(require('../pages/eContract/checkObject.vue')), 'checkObject');
 let signSuccess = r => require.ensure([], () => r(require('../pages/eContract/signSuccess.vue')), 'signSuccess');
 let batchRecord = r => require.ensure([], () => r(require('../pages/eContract/batchRecord.vue')), 'batchRecord');
+let offlineManager = r => require.ensure([], () => r(require('../pages/eContract/offlineManager.vue')), 'offlineManager');
 
 let rechargeIndex = r => require.ensure([], () => r(require('../pages/recharge/index.vue')), 'rechargeIndex');
 let balanceAdjust = r => require.ensure([], () => r(require('../pages/recharge/balanceAdjust/list.vue')), 'balanceAdjust');
@@ -286,6 +288,13 @@ export default [
                             {
                                 path: 'orderManager',
                                 component: orderManager,
+                                meta: {
+                                    keepAlive: true
+                                }
+                            },
+                            {
+                                path: 'shuntTool',
+                                component: orderManagerShuntTool,
                                 meta: {
                                     keepAlive: true
                                 }
@@ -615,6 +624,13 @@ export default [
                             {
                                 path: 'batchRecord',
                                 component: batchRecord,
+                                meta: {
+                                    keepAlive: false
+                                }
+                            },
+                            {
+                                path: 'offlineManager',
+                                component: offlineManager,
                                 meta: {
                                     keepAlive: false
                                 }

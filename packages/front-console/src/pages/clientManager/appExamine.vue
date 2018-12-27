@@ -54,17 +54,22 @@
     	        	</el-col>
                 </el-row>
     	        	<el-row :gutter="20">
-                    <el-col :span="10">
-    	        		<el-col :span="5" class="right">负责人</el-col><el-col :span="10">{{msg.chargeByName}}</el-col>
-    	        	</el-col>
+                  <el-col :span="10">
+    	        		  <el-col :span="5" class="right">负责人</el-col><el-col :span="10">{{msg.chargeByName}}</el-col>
+    	        	  </el-col>
                 </el-row>
                 <el-row :gutter="20">
+                  <el-col :span="10">
+                    <el-col :span="5" class="right">关联销售</el-col>
                     <el-col :span="10">
-    	        		<el-col :span="5" class="right">关联销售</el-col>
-                        <el-col :span="10">
-                            <span v-for="e in msg.salesList" :key="e.id" class="mr8">{{e.name}}</span>
-                        </el-col>
-    	        	</el-col>
+                        <span v-for="e in msg.salesList" :key="e.id" class="mr8">{{e.name}}</span>
+                    </el-col>
+    	        	  </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                  <el-col :span="10">
+    	        		  <el-col :span="5" class="right">客户来源</el-col><el-col :span="10">{{msg.originalName}}</el-col>
+    	        	  </el-col>
                 </el-row>
     	    </div>
             <el-table class="table" :data="tableData" border="">
@@ -185,112 +190,6 @@
                 <el-button @click="coshow = false" size="small">关闭</el-button>
             </span>
         </el-dialog>
-        <!-- <el-dialog title="添加" :visible.sync="show">
-            <el-form :model="queryForm" size="small" :inline="true">
-                <el-form-item label="姓名/电话：">
-                    <el-input v-model="queryForm.accountInfo" class="form_input200"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button @click="queryForm.accountInfo = ''">清除</el-button>
-                    <el-button type="primary" @click="cquery">查询</el-button>
-                </el-form-item>
-            </el-form>
-            <el-table :data="result.list">
-                <el-table-column label="姓名" prop="name"></el-table-column>
-                <el-table-column label="电话" prop="mobilephone"></el-table-column>
-                <el-table-column label="操作">
-                    <template slot-scope="scope">
-                        <el-button type="text" size="mini" v-if="isHas(scope.row)" @click="addSale(scope.row)">添加</el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <div class="page" v-show="result.total / queryForm.pageSize > 1">
-                <el-pagination
-                    background
-                    layout="prev, pager, next"
-                    :page-size="queryForm.pageSize"
-                    :total="result.total"
-                    @current-change="cquery"
-                    :currentPage="queryForm.page">
-                </el-pagination>
-            </div>
-            <span slot="footer">
-                <el-button size="small" type="primary" @click="show = false">关闭</el-button>
-            </span>
-        </el-dialog> -->
-        <!-- <el-dialog title="添加应用" :visible.sync="eshow" width="70%">
-            <el-form label-width="120px" :rules="rules" :model="aform">
-                <el-form-item label="商户名称" size="small">
-                    {{fullName}}
-                </el-form-item>
-                <el-form-item label="服务商名称" prop="serviceCompanyId" size="small">
-                    <el-select v-model="aform.serviceCompanyId" class="f_input" filterable>
-                        <el-option v-for="item in company" :value="item.companyId" :label="item.companyName"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="应用类型" prop="isFromOutApp" size="small">
-                    <el-select v-model="aform.isFromOutApp" class="f_input" filterable @change="isOut">
-                        <el-option value="1" label="外部"></el-option>
-                        <el-option value="0" label="内部"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="appId" prop="appId" size="small">
-                    <el-input v-model="aform.appId" class="f_input"></el-input>
-                </el-form-item>
-                <el-form-item label="接入应用" prop="appName" size="small">
-                    <el-input v-model="aform.appName" class="f_input"></el-input>
-                </el-form-item>
-            </el-form>
-            <span class="form_footer" slot="footer">
-                <el-button @click="sure" type="primary" size="small">保存</el-button>
-                <el-button @click="eshow = false" size="small">关闭</el-button>
-            </span>
-        </el-dialog>
-        <el-dialog title="开通状态" :visible.sync="sshow" width="50%">
-            <el-form label-width="120px" size="small">
-                <div class="center">确定 {{curr.isEnable ? '关闭' : '开启'}} {{curr.appName}}？</div>
-            </el-form>
-            <span class="form_footer" slot="footer">
-                <el-button @click="sureSet" type="primary" size="small">确定</el-button>
-                <el-button @click="sshow = false" size="small">取消</el-button>
-            </span>
-        </el-dialog> -->
-        <!-- <el-dialog title="获取验证码" :visible.sync="cshow" width="70%">
-            <span class="tip">为了保障您的账号安全，请完成一下身份验证。</span>
-            <el-form label-width="150px">
-                <el-form-item label="手机号码：">
-                    {{phone}}
-                </el-form-item>
-                <el-form-item >
-                    <img :src="`${baseUrl}/api/sysmgr-web/verify-codes/gen-captcha?req_id=${req_id}`">
-                    <el-button type="text" style="margin-left: 30px;" @click="createId">刷新</el-button>
-                </el-form-item>
-                <el-form-item label="请输入图形中字符：">
-                    <el-input v-model="chars" style="width: 300px;"></el-input>
-                </el-form-item>
-                <el-form-item label="短信验证码：">
-                    <el-input v-model="phoneCode" style="width: 300px;"></el-input><el-button type="text" style="margin-left: 30px;" @click="getCode">获取验证码</el-button>
-                </el-form-item>
-            </el-form>
-            <span class="form_footer" slot="footer">
-                <el-button @click="submit" type="primary">提交</el-button>
-                <el-button @click="cshow = false" type="warning">关闭</el-button>
-            </span>
-        </el-dialog> -->
-        <!-- <el-dialog title="上线审核" :visible.sync="reviewDialog" width="40%">
-            <el-form :model="reviewForm" ref="reviewFormValidate" :rules="reviewRules" label-width="100px">
-                <el-form-item label="是否上线：" prop="approve">
-                    <el-switch v-model="reviewForm.approve"></el-switch>
-                </el-form-item>
-                <el-form-item label="备　　注：" prop="memo">
-                    <el-input type="textarea" v-model="reviewForm.memo" style="width:80%"></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="reviewDialog = false">取 消</el-button>
-                <el-button type="primary" @click="review('reviewFormValidate')">确 定</el-button>
-            </div>
-        </el-dialog> -->
     </div>
 </template>
 <script>

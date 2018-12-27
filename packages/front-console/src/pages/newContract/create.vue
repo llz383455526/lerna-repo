@@ -149,11 +149,13 @@ export default {
       this.contractModel.changeServiceFeeList();
       // let url = this.editType === 'edit' ? '/api/opencrm/workflow/save_data' : '/api/opencrm/workflow/create';
       let url = '/api/opencrm/workflow/save_draft'
+      console.log(this.contractModel)
       let _form = {
         datas: this.contractModel.contractForm,
         instanceId: this.contractModel.contractId,
         workflowType: this.contractModel.workflowType
       };
+      console.log(_form)
       // 上传之前处理checkbox
       this.changeCheckbox();
       // 上传之前把客服企业信息填到相关商户那里

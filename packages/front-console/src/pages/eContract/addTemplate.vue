@@ -110,12 +110,9 @@
                     <span v-else>发起签约时导入</span>
                 </el-form-item>
                 <el-form-item label="签署方式" :prop="`partys[${i}].signMode`" :rules="{required: true, message: '请选择签署方式', trigger: 'blur'}">
-                    <el-radio v-model="item.signMode" v-for="e in signModes" v-if="!(e.value == 2 && item.userType == 1)" :key="e.value" :label="e.value" @change="checkNote">{{e.text}}</el-radio>
-                    <!-- <el-radio v-model="item.signMode" label="0">自动签约</el-radio>
-                    <el-radio v-model="item.signMode" label="1">手动签约</el-radio>
-                    <el-radio v-model="item.signMode" label="2" v-if="item.userType == 2">批量手动签约</el-radio> -->
+                    <el-radio v-model="item.signMode" v-for="e in signModes" v-if="!(e.value == 2 && item.userType == 1)" :key="e.value" :label="e.value" @change="isOffline(i)">{{e.text}}</el-radio>
                 </el-form-item>
-                <template v-for="(e, j) in item.params">
+                <template v-for="(e, j) in item.params" v-if="item.signMode != 3">
                     <el-form-item :label="item.userType == 2 ? '公司盖章坐标' : '手写签名坐标'" :prop="`partys[${i}].params[${j}]`" :rules="[
                     {validator: checkPostion, trigger: 'blur'}]">
                         <el-input v-model="e.varPages" class="form_short" size="small">
@@ -139,7 +136,7 @@
                 <el-radio v-model="form.accessType" label="2" >API对接</el-radio> -->
             </el-form-item>
             <el-form-item label="实名认证方式" prop="signModel">
-                <el-radio v-model="form.signModel" v-for="e in signModels" :key="e.value" :label="e.value" @change="checkNote" :disabled="form.accessType == '2'">{{e.text}}</el-radio>
+                <el-radio v-model="form.signModel" v-for="e in signModels" :key="e.value" :label="e.value" @change="checkNote" :disabled="form.accessType == '2' || isDisable_0">{{e.text}}</el-radio>
             </el-form-item>
             <el-form-item label="返回链接" prop="linkType" v-if="form.signModel && form.signModel == 1">
                 <el-radio v-model="form.linkType" label="1">证照上传页面</el-radio>
@@ -239,7 +236,7 @@ export default {
                 fpages: '',
                 accessType: '1',
                 smsType: '1',
-	            signSmsType: '1',
+	              signSmsType: '1',
                 linkType: '1',
                 passportType: '1',
                 signModel: '2'
@@ -326,6 +323,7 @@ export default {
                 }
             ],
             isDisable: false,
+            isDisable_0: false,
             signModes: [
                 {
                     text: '自动签约',
@@ -338,6 +336,10 @@ export default {
                 {
                     text: '批量手动签约',
                     value: '2'
+                },
+                {
+                  text: '线下签约',
+                  value: '3'
                 }
             ],
             accessTypes: [
@@ -492,6 +494,28 @@ export default {
             }
             this.setDefaultPosition()
         },
+        isOffline(i) {
+          var party = this.form.partys[i]
+          if(party.signMode == 3) {
+            if(party.userType == 2) {
+              party.params[0].varPages = this.form.fpages || '3'
+              party.params[0].varX = '88.44'
+              party.params[0].varY = '305.86'
+            }
+            else {
+              party.params[0].varPages = this.form.fpages || '3'
+              party.params[0].varX = '362.01'
+              party.params[0].varY = '303.2'
+            }
+          }
+          else {
+            party.params[0].varPages = ''
+            party.params[0].varX = ''
+            party.params[0].varY = ''
+          }
+          this.$forceUpdate()
+          this.checkNote()
+        },
         addParams(i) {
             var a = {
                 varCode: '20000',
@@ -612,6 +636,14 @@ export default {
         setDefaultPosition() {
             if(this.defaultPosition) {
                 this.form.partys.forEach((e, i) => {
+                    if(e.signMode == 3) {
+                      e.params.forEach(ev => {
+                        if(ev.varPages && ev.varPages > this.form.fpages) {
+                          ev.varPages = this.form.fpages
+                        }
+                      })
+                      return
+                    }
                     e.params.forEach(ev => {
                         ev.varPages = this.defaultPosition.pageSize
                         if(this.form.partycount == 2) {
@@ -648,6 +680,14 @@ export default {
             }
             else {
                 this.isDisable = false
+            }
+            console.log(this.form.partys[this.form.partys.length - 1].signMode == 3)
+            if(this.form.partys[this.form.partys.length - 1].signMode == 3) {
+              this.isDisable_0 = true
+              this.form.signModel = '1'
+            }
+            else {
+              this.isDisable_0 = false
             }
         },
         accessTypeChange() {

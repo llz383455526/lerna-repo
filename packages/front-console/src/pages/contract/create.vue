@@ -10,7 +10,7 @@
                 <input v-model="contractForm.referIds">
             </el-form-item>
             <el-form-item label="企业名称" prop="customerId" placeholder="请输入内容"> <!-- @change="getInvoice" -->
-                <el-select v-model="contractForm.customerId" filterable placeholder="请选择" style="width:100%;" :disabled="$route.query.contractId ? true : false">
+                <el-select v-model="contractForm.customerId" filterable placeholder="请选择" style="width:100%;" :disabled="$route.query.contractId ? true : false" @change="getOriginal">
                     <el-option v-for="item in customerCompaniesList" :key="item.companyId" :label="item.companyName" :value="item.companyId"></el-option>
                 </el-select>
             </el-form-item>
@@ -82,49 +82,6 @@
                     </el-col>
                 </el-row>
             </el-form-item>
-            <!-- <el-form-item label="结算日期" v-if="weekVisible" prop="settleExp">
-                <el-select v-model="contractForm.settleExp" placeholder="请选择" style="width:100%;">
-                    <el-option label="每周一" value="每周一"></el-option>
-                    <el-option label="每周二" value="每周二"></el-option>
-                    <el-option label="每周三" value="每周三"></el-option>
-                    <el-option label="每周四" value="每周四"></el-option>
-                    <el-option label="每周五" value="每周五"></el-option>
-                    <el-option label="每周六" value="每周六"></el-option>
-                    <el-option label="每周日" value="每周日"></el-option>
-                </el-select>
-            </el-form-item> -->
-            <!-- <el-form-item label="结算日期" v-if="monthVisible" prop="settleExp">
-                <el-row class="mb15">
-                    <el-col :span="4">
-                        <el-radio-group v-model="radio" @change="showSelectExpSelect">
-                            <el-radio label="固定日"></el-radio>
-                        </el-radio-group>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-select v-model="settleExpDay" placeholder="请选择" style="width: 100%;" :disabled="showSelectExpDay">
-                            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                        </el-select>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="4">
-                        <el-radio-group v-model="radio" @change="showSelectExpSelect">
-                            <el-radio label="范围日"></el-radio>
-                        </el-radio-group>
-                    </el-col>
-                    <el-col :span="8">
-                        <el-select v-model="settleExpStart" placeholder="请选择" style="width: 100%;" :disabled="showSelectExpStart">
-                            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                        </el-select>
-                    </el-col>
-                    <el-col class="line" :span="2">-</el-col>
-                    <el-col :span="8">
-                        <el-select v-model="settleExpEnd" placeholder="请选择" style="width: 100%;" :disabled="showSelectExpStart">
-                            <el-option v-if="item.value > settleExpStart" v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                        </el-select>
-                    </el-col>
-                </el-row>
-            </el-form-item> -->
             <el-form-item label="发票类型" prop="invoiceType" required>
                 <el-select v-model="contractForm.invoiceType" placeholder="请选择" style="width:100%;">
                     <el-option v-for="e in invoiceType_0" :label="e.text" :value="e.value" :key="e.value"></el-option>
@@ -436,10 +393,13 @@
                         @change="handleChange">
                 </el-date-picker>
             </el-form-item>
-            <el-form-item label="是否代理商客户" prop="agentClient">
+            <el-form-item label="客户来源">
+              <el-radio v-for="e in originals" v-model="original" :key="e.value" :label="e.value" disabled>{{e.text}}</el-radio>
+            </el-form-item>
+            <!-- <el-form-item label="是否代理商客户" prop="agentClient">
                 <el-radio v-model="contractForm.agentClient" :label="true">是</el-radio>
                 <el-radio v-model="contractForm.agentClient" :label="false">否</el-radio>
-            </el-form-item>
+            </el-form-item> -->
             <template v-if="contractForm.agentClient">
                 <el-form-item label="代理商名称" prop="agentCompanyId">
                     <el-select v-model="contractForm.agentCompanyId" style="width:100%;" @change="companyChange" :disabled="agentDisable" filterable>
@@ -632,9 +592,9 @@
                     openInvoiceType: [
                         {required: true, message: '请输入开票类型', trigger: 'blur'}
                     ],
-                    agentClient: [
-                        {required: true, message: '请选择', trigger: 'blur'}
-                    ],
+                    // agentClient: [
+                    //     {required: true, message: '请选择', trigger: 'blur'}
+                    // ],
                     agentCompanyId: [
                         {required: true, message: '请选择代理商', trigger: 'blur'}
                     ],
@@ -792,19 +752,21 @@
                 float2: /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/,
                 agentList: [],
                 chargeByName: '',
-                agentDisable: false
+                agentDisable: false,
+                originals: [],
+                original: ''
             }
         },
-        watch: {
-          ['contractForm.agentClient'](e) {
-            if(!e) {
-              this.contractForm.agentCompanyId = ''
-              this.contractForm.agentCompanyName = ''
-              this.contractForm.agentFeeContent.serviceFeeRate = ''
-              this.chargeByName = ''
-            }
-          }
-        },
+        // watch: {
+        //   ['contractForm.agentClient'](e) {
+        //     if(!e) {
+        //       this.contractForm.agentCompanyId = ''
+        //       this.contractForm.agentCompanyName = ''
+        //       this.contractForm.agentFeeContent.serviceFeeRate = ''
+        //       this.chargeByName = ''
+        //     }
+        //   }
+        // },
         created() {
             this.uploadUrl = baseUrl + "/api/console-dlv/file/upload";
             this.getOptionServiceCompanies();
@@ -822,7 +784,7 @@
             get('/api/contract-web/commom/option?enumType=InvoiceType').then(data => {
                 this.invoiceType_0 = data
             })
-	        get('/api/contract-web/service-mgr/get-service-type-options', {}).then(result => {
+	          get('/api/contract-web/service-mgr/get-service-type-options', {}).then(result => {
                 this.serviceTypes = result
             })
             get('/api/sysmgr-web/commom/option?enumType=IndustryType').then(data => {
@@ -832,35 +794,23 @@
                 this.agentList = data
                 this.contractForm.agentCompanyId && this.companyChange()
             })
-            // this.initColumn()
-            // this.query()
+            get('/api/sysmgr-web/commom/option?enumType=CustomOriginal').then(data => {
+              this.originals = data
+            })
         },
         methods: {
-            // getInvoice() {
-            //     var id = ''
-            //     this.customerCompaniesList.forEach(e => {
-            //         if(e.companyName == this.contractForm.customerName) {
-            //             id = e.companyId
-            //         }
-            //     })
-            //     get('/api/invoice-web/custom-company/detail', {
-            //         id: id
-            //     }).then(data => {
-            //         if(data) {
-            //             for (var k in this.invoiceForm) {
-            //                 if(data[k]) {
-            //                     this.invoiceForm[k] = data[k]
-            //                 }
-            //             }
-            //         }
-            //         else {
-            //             for (var k in this.invoiceForm) {
-            //                 this.invoiceForm[k] = ''
-            //             }
-            //             this.invoiceForm.id = id
-            //         }
-            //     })
-            // },
+            getOriginal() {
+              let arr = this.customerCompaniesList.filter(e => e.companyId == this.contractForm.customerId)
+              if(arr && arr.length) {
+                this.original = arr[0].original
+                if(this.original == 20) {
+                  this.contractForm.agentClient = true
+                }
+                else {
+                  this.contractForm.agentClient = false
+                }
+              }
+            },
             addServiceCompany() {
                 this.contractForm.serviceCompanyIds.push(null)
             },
@@ -1308,7 +1258,7 @@
                             "value": value['companyName']
                         });
                     });
-                    // this.getInvoice()
+                    this.getOriginal()
                 })
             },
             getOptionServiceCompanies() {
@@ -1458,6 +1408,7 @@
                     this.$forceUpdate()
                     this.companyChange()
                     this.agentList && this.companyChange()
+                    this.getOriginal()
                     // console.log(this.contractForm)
                 })
             },

@@ -11,8 +11,8 @@
                     <el-submenu index="0">
                         <template slot="title">{{userInformation.name}}</template>
                         <!--<el-menu-item index="0-1" style="min-width: 100px">账户中心</el-menu-item>-->
-                        <el-menu-item index="0-2" style="min-width: 100px">修改密码</el-menu-item>
-                        <el-menu-item index="0-3" style="min-width: 100px">退出登录</el-menu-item>
+                        <el-menu-item index="modify-pass" style="min-width: 100px">修改密码</el-menu-item>
+                        <el-menu-item index="logout" style="min-width: 100px">退出登录</el-menu-item>
                     </el-submenu>
                 </el-menu>
                 <div style="float:right;width: 28px;margin-top: 15px; margin-left: 35px;margin-right: 15px;">
@@ -174,9 +174,9 @@ export default {
 
     handleSelect(key, keyPath) {
       console.log(keyPath)
-      if (keyPath[0] == "0" && key != "0-1") {
+      if (key == "modify-pass" || key == "logout") {
         this.activeIndex = "#";
-        if (key == "0-2") {
+        if (key == "modify-pass") {
           console.log("修改密码");
           this.dialogClientVisible = true;
         } else {

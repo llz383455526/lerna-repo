@@ -4,7 +4,7 @@
         <div class="tip">
             <div class="el-icon-success">发起签约成功，系统将会自动发起签约通知操作，请在签约管理页面留意签约情况。</div>
             <div>如果您有任何疑问或紧急事项，请及时联系爱员工产品或技术同事，联系电话：020-37127695。</div>
-            <router-link :to="`index?templateName=${templateName}`" tag="a">
+            <router-link :to="`${routerName}?templateName=${templateName}`" tag="a">
                 <el-button>查看签约记录</el-button>
             </router-link>
         </div>
@@ -14,12 +14,16 @@
 export default {
     data() {
         return {
-            msg: {},
+          msg: {},
+          routerName: 'index',
 	        templateName: ''
         }
     },
     mounted() {
-        // this.msg = JSON.parse(sessionStorage.getItem('sign'))
+        this.msg = JSON.parse(sessionStorage.getItem('sign'))
+        if(this.msg.partys[this.msg.partys.length - 1].signMode == 3) {
+          this.routerName = 'offlineManager'
+        }
         this.templateName = this.$route.query.name
     }
 }

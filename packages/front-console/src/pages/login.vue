@@ -21,7 +21,6 @@
                     </el-form-item>
                 </el-form>
             </div>
-
         </div>
         <div class="footer">
             如有任何问题，请拨打咨询热线：020-37127667
@@ -91,9 +90,7 @@
                     password: this.loginForm.password,
                     sourceType: 'console-admin'
                 });
-
             },
-
         }
     }
 </script>

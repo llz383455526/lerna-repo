@@ -13,12 +13,15 @@
         <el-input v-model="contractModel.contractForm.contractAddr" style="width:450px;"></el-input>
     </el-form-item>
     <hr>
-    <el-form-item label="是否代理商客户" prop="agentClient">
+    <el-form-item label="客户来源" prop="original">
+      <el-radio v-for="e in originals" v-model="contractModel.contractForm.original" :key="e.value" :label="e.value" @change="getOriginalName">{{e.text}}</el-radio>
+    </el-form-item>
+    <!-- <el-form-item label="是否代理商客户" prop="agentClient">
         <el-radio-group v-model="contractModel.contractForm.agentClient" style="width:900px;">
             <el-radio :label="false">否</el-radio>
             <el-radio :label="true">是</el-radio>
         </el-radio-group>
-    </el-form-item>
+    </el-form-item> -->
     <el-form-item label="代理商名称" prop="agentCompanyId" v-if="contractModel.contractForm.agentClient">
         <el-select v-model="contractModel.contractForm.agentCompanyId" style="width:900px;" @change="companyChange">
             <el-option v-for="e in contractModel.agentList" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
@@ -36,19 +39,14 @@ export default {
     props: ['contractModel'],
     data() {
         return {
-            // agentList: []
+          originals: []
         }
     },
     mounted() {
-        // get('/api/contract-web/agent-contract/agent-company-option?sign=true').then(data => {
-        //     this.agentList = data
-
-            // this.contractForm.agentCompanyId
-            // this.contractModel.contractForm.contracts.forEach((e, i) => {
-            //     this.companyChange(i)
-            // })
-
-        // })
+      get('/api/sysmgr-web/commom/option?enumType=CustomOriginal').then(data => {
+        this.originals = data
+        this.getOriginalName()
+      })
     },
     methods: {
         companyChange(companyId) {
@@ -57,6 +55,18 @@ export default {
             //     return element.companyId === companyId;
             // });
             // this.contractModel.chargeByName = obj.chargeByName;
+        },
+        getOriginalName() {
+          var arr = this.originals.filter(e => e.value == this.contractModel.contractForm.original)
+          if(arr && arr.length) {
+            this.contractModel.contractForm.originalName = arr[0].text
+            if(this.contractModel.contractForm.original == 20) {
+              this.contractModel.contractForm.agentClient = true
+            }
+            else {
+              this.contractModel.contractForm.agentClient = false
+            }
+          }
         }
     }
 }

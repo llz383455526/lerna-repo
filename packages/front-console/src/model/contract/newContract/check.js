@@ -110,6 +110,10 @@ class Check extends BaseModel {
             ],
             invoiceType: [
                 { required: true, message: '请选择发票类型', trigger: 'change' }
+            ],
+            // --------------------------------------------------------------- 2.5.3
+            original: [
+              { required: true, message: "请选择客户来源", trigger: "change" }
             ]
         };
     }

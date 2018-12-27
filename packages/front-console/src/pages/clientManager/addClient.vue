@@ -41,6 +41,9 @@
                   value-format="yyyy-MM-dd">
               </el-date-picker>
             </el-form-item>
+            <el-form-item label="客户来源" prop="original">
+              <el-radio v-for="e in originals" v-model="form.original" :key="e.value" :label="e.value" @change="getOriginalName">{{e.text}}</el-radio>
+            </el-form-item>
             <el-form-item label="关联销售" prop="salesList">
                 <el-button type="primary" @click="show = true">添加</el-button>
                 <el-table :data="form.salesList" class="form_input">
@@ -169,6 +172,13 @@ export default {
               message: "请输入注册日期",
               trigger: "change"
             }
+          ],
+          original: [
+            {
+              required: true,
+              message: "请选择客户来源",
+              trigger: "change"
+            }
           ]
         },
         types: [
@@ -179,16 +189,24 @@ export default {
         ],
         charges: [],
         show: false,
-        result: {}
+        result: {},
+        originals: []
       };
     },
     mounted() {
       this.getPeople();
       this.query();
+      get('/api/sysmgr-web/commom/option?enumType=CustomOriginal').then(data => {
+        this.originals = data
+      })
     },
     methods: {
         back() {
             this.$router.back()
+        },
+        getOriginalName() {
+          var arr = this.originals.filter(e => e.value == this.form.original)
+          arr.length && (this.form.originalName = arr[0].text)
         },
         getPeople() {
             this.form.chargeBy = ''

@@ -68,7 +68,8 @@
             <div class="col-xs-6">销售联系电话：{{ contractForm.contractTel }}</div>
             <div class="col-xs-6">销售联系邮箱：{{ contractForm.contractEmail }}</div>
             <div class="col-xs-6">合同联系人地址：{{ contractForm.contractAddr }}</div>
-            <div class="col-xs-6">是否代理商客户：{{ contractForm.agentClient ? '是' : '否' }}</div>
+            <!-- <div class="col-xs-6">是否代理商客户：{{ contractForm.agentClient ? '是' : '否' }}</div> -->
+            <div class="col-xs-6">客户来源：{{ contractForm.originalName }}</div>
           </div>
           <div
             class="row"
@@ -281,14 +282,22 @@ export default {
   created () {
     let id = this.$route.query.id;
     this.contractModel.contractId = id;
-    this.contractModel.getContractDetail(id, () => {
-      this.contractForm = this.contractModel.contractForm
 
-      this.contractForm.showSubjectInfo = this.contractForm.showSubjectInfo === '1' ? true : false;
-      this.contractForm.contracts.forEach(item => {
-        item.showServiceCompanyInfo = item.showServiceCompanyInfo === '1' ? true : false;
-      })
-    });
+    let first = new Promise((res, rej) => {
+      this.contractModel.getContractDetail(id, () => {
+        this.contractForm = this.contractModel.contractForm
+
+        this.contractForm.showSubjectInfo = this.contractForm.showSubjectInfo === '1' ? true : false;
+        this.contractForm.contracts.forEach(item => {
+          item.showServiceCompanyInfo = item.showServiceCompanyInfo === '1' ? true : false;
+        })
+        res()
+      });
+    })
+    Promise.all([first, this.contractModel.getAgentList()]).then(() => {
+      this.contractModel.getChargeByName();
+    })
+    
     this.editType = this.$route.query.editType || 'new';
     this.contractModel.editType = this.$route.query.editType || 'new';
   },

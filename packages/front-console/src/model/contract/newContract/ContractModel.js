@@ -168,8 +168,11 @@ class ContractModel extends BaseModel {
   }
   // 获取代理商列表
   getAgentList () {
-    get('/api/contract-web/agent-contract/agent-company-option?sign=true').then(data => {
-      this.agentList = data
+    return new Promise((res, rej) => {
+      get('/api/contract-web/agent-contract/agent-company-option?sign=true').then(data => {
+        this.agentList = data
+        res()
+      })
     })
   }
   // 获取已选择服务类型数组
@@ -206,6 +209,7 @@ class ContractModel extends BaseModel {
   }
   // 获取渠道经理
   getChargeByName (companyId) {
+    companyId = companyId || this.contractForm.agentCompanyId
     if (!companyId || !this.agentList.length) return;
     let obj = this.agentList.find(element => {
       return element.companyId === companyId;
@@ -235,7 +239,6 @@ class ContractModel extends BaseModel {
       this.getContractDate();
       this.getFiles();
       // this.changeCheckbox();
-      this.getChargeByName(result.datas.agentCompanyId);
       if (typeof callback === 'function') callback();
     })
   }
