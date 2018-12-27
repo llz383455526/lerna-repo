@@ -150,6 +150,7 @@
         :on-success="fileUpSuccess"
         :on-error="upFileErr"
         :multiple="false"
+        :on-change="fileChange"
         :auto-upload="false">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -359,6 +360,11 @@
         } else {
           showNotify('success', '上传成功');
           this.upFilePopIsShow = false
+        }
+      },
+      fileChange(file, fileList) {
+        if (fileList.length > 1) {
+          fileList.shift()
         }
       },
       // 文件上传失败
