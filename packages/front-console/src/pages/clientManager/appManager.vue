@@ -134,23 +134,27 @@
             </ayg-pagination>
         </div>
         <el-button class="back" type="primary" size="small" @click="$router.back()">返回</el-button>
-        <el-dialog title="修改信息" :visible.sync="coshow" width="70%">
-            <el-form label-width="120px" :rules="crules" :model="cform" ref="cform">
-                <el-form-item label="企业名称" prop="fullName" size="small">
+        <el-dialog title="修改信息" :visible.sync="coshow" :before-close="clear" width="70%">
+            <el-form label-width="140px" :rules="crules" :model="cform" ref="cform" size="small">
+                <el-form-item label="企业名称" prop="fullName">
                     <el-input v-model="cform.fullName" class="f_input"></el-input>
                 </el-form-item>
-                <el-form-item label="企业简称" prop="name" size="small">
+                <el-form-item label="企业简称" prop="name">
                     <el-input v-model="cform.name" class="f_input"></el-input>
                 </el-form-item>
-                <el-form-item label="企业负责人" prop="chargeBy" size="small">
-                    <el-select v-model="cform.chargeBy" class="f_input" @change="getName">
-                        <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
-                    </el-select>
+                <el-form-item label="企业负责人电话" prop="chargeMobile">
+                  <el-input class="f_input" v-model="cform.chargeMobile" @change="getSelect"></el-input>
                 </el-form-item>
-                <el-form-item label="企业地址" prop="areaName" size="small">
+                <el-form-item label="企业负责人姓名" prop="chargeByName">
+                  <el-input class="f_input" v-model="cform.chargeByName" :disabled="cform.chargeBy ? true : false"></el-input>
+                </el-form-item>
+                <el-form-item label="企业负责人邮箱" prop="email">
+                  <el-input class="f_input" v-model="cform.email" :disabled="cform.chargeBy ? true : false"></el-input>
+                </el-form-item>
+                <el-form-item label="企业地址" prop="areaName">
                     <el-input v-model="cform.areaName" class="f_input"></el-input>
                 </el-form-item>
-                <el-form-item label="注册日期" prop="registerDate" size="small">
+                <el-form-item label="注册日期" prop="registerDate">
                     <el-date-picker
                         class="f_input"
                         v-model="cform.registerDate"
@@ -173,7 +177,7 @@
             </el-form>
             <span class="form_footer" slot="footer">
                 <el-button @click="upDate" type="primary" size="small">保存</el-button>
-                <el-button @click="coshow = false" size="small">关闭</el-button>
+                <el-button @click="close" size="small">关闭</el-button>
             </span>
         </el-dialog>
         <el-dialog title="添加" :visible.sync="show">
@@ -331,10 +335,25 @@ export default {
               trigger: "change"
             }
           ],
-          chargeBy: [
+          chargeMobile: [
             {
               required: true,
-              message: "请选择负责人",
+              message: "请填写手机号码",
+              trigger: "change"
+            },
+            {pattern: /^(1\d{10})$/, message: '请正确输入手机号码', trigger: 'blur'}
+          ],
+          chargeByName: [
+            {
+              required: true,
+              message: "请填写姓名",
+              trigger: "change"
+            }
+          ],
+          email: [
+            {
+              required: true,
+              message: "请填写邮箱",
               trigger: "change"
             }
           ],
@@ -464,8 +483,41 @@ export default {
       this.createId();
       this.cquery();
       this.authCode = localStorage.getItem("authCode");
+      this.crules.chargeByName = ''
+      this.crules.email = ''
     },
     methods: {
+      getSelect() {
+        if(/^(1\d{10})$/.test(this.cform.chargeMobile)) {
+          get('/api/sysmgr-web/user/get-user-by-mobile', {
+            mobile: this.cform.chargeMobile
+          }, true).then(data => {
+            this.cform.chargeBy = data.id || ''
+            this.cform.chargeByName = data.name || ''
+            this.cform.email = data.email || ''
+            if(this.cform.chargeBy) {
+              this.crules.chargeByName = ''
+              this.crules.email = ''
+            }
+            else {
+              this.crules.chargeByName = [{ required: true, message: "请填写姓名", trigger: "change" }]
+              this.crules.email = [{ required: true, message: "请填写邮箱", trigger: "change" }]
+            }
+            this.$nextTick(() => {
+              this.$refs.cform.clearValidate(['chargeByName', 'email'])
+            })
+          })
+        }
+      },
+      clear(next) {
+        console.log('clear')
+        this.$refs.cform.clearValidate()
+        typeof next == 'function' && next()
+      },
+      close() {
+        this.coshow = false
+        this.clear()
+      },
       cquery(a) {
           if(isNaN(a)) {
               a = 1
@@ -533,7 +585,9 @@ export default {
               legalPerson: this.msg.legalPerson,
               areaName: this.msg.areaName,
               registerDate: this.msg.registerDate,
-              salesList: this.msg.salesList || []
+              salesList: this.msg.salesList || [],
+              email: this.msg.chargeEmail,
+              chargeMobile: this.msg.chargeMobile
           }
       },
       upDate() {

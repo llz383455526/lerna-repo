@@ -40,7 +40,8 @@ export default {
   width: 100%;
 }
 </style>
-<style>
+<style lang="scss">
+@import './sass/style.scss';
 *{
   box-sizing: border-box;
 }

@@ -298,11 +298,12 @@ export default {
         // },
         arrIndex: {
             type: Number
-        }
+        },
         // checkAttr: {
         //     type: String,
         //     required: true
-        // }
+        // },
+        initCheck: false
     },
     data() {
         return {
@@ -326,6 +327,7 @@ export default {
             this.contractForm = a
             this.inputRate = this.contractForm.serviceFeeContent.settledRate
             this.columnIndex = this.contractForm.serviceFeeContent.stepwiseList.length
+            this.contractForm.serviceFeeContent.serviceFeeType = this.contractForm.serviceFeeContent.serviceFeeType || 'standard'
             if(this.contractForm.serviceFeeContent2) {
                 this.columnIndex2 = this.contractForm.serviceFeeContent2.stepwiseList.length
             }
@@ -345,7 +347,7 @@ export default {
                     this.showInputRatio = 3
                 }
             }
-            !this.contractForm.serviceFeeContent.monthIncomeAmount && (this.contractForm.serviceFeeContent.monthIncomeAmount = 1)
+            !this.contractForm.serviceFeeContent.monthIncomeAmount && (this.contractForm.serviceFeeContent.monthIncomeAmount = 2.8)
             if(this.contractForm.serviceFeeContent.serviceFeeType != 'standard') {
                 this.checkTable()
             }
@@ -354,6 +356,20 @@ export default {
                     this.check = 0
                 }
             }
+
+            if (this.initCheck) {
+                // 初始化的时候触发事件 不然原始有值的时候验证无法通过
+                var contractForm = JSON.parse(JSON.stringify(this.contractForm))
+                this.$emit('result', {
+                    serviceFeeContent: contractForm.serviceFeeContent,
+                    serviceFeeContent2: contractForm.serviceFeeContent2,
+                    arrIndex: this.arrIndex,
+                    check: this.check
+                });
+            }
+            
+            
+            
             setTimeout(() => {
                 this.$parent.clearValidate()
             }, 100)
@@ -401,11 +417,13 @@ export default {
                 this.initColumn(2)
                 this.contractForm.serviceFeeContent.stepwiseList[0].endAmount = 2.8
                 this.contractForm.serviceFeeContent.stepwiseList[1].startAmount = 2.8
+                this.contractForm.serviceFeeContent.monthIncomeAmount = 2.8
             }
             if (this.contractForm.serviceFeeContent.serviceFeeType == 'step_0') {
                 this.check = 0;
                 this.showInputRatio = a;
                 this.initColumn()
+                this.contractForm.serviceFeeContent.monthIncomeAmount = 2.8
             }
             if (this.contractForm.serviceFeeContent.serviceFeeType == 'step_1') {
                 this.check = 0;
@@ -538,10 +556,7 @@ export default {
             else {
                 this.contractForm.serviceFeeContent.containMonthAmount = !this.contractForm.serviceFeeContent2.containMonthAmount
             }
-        },
-        // checkInputRate() {
-        //     this.check = (this.float2.test(this.inputRate) && this.inputRate <= 100) ? 0 : ''
-        // }
+        }
     }
 }
 </script>

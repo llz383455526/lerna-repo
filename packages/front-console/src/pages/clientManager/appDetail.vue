@@ -42,7 +42,7 @@
             </el-col>
             <el-col :span="10">
                 <el-col :span="8" class="right">负责人电话</el-col>
-                <el-col :span="10">{{data.phone}}</el-col>
+                <el-col :span="10">{{data.chargeMobile}}</el-col>
             </el-col>
         </el-row>
         <el-row :gutter="20">
@@ -210,10 +210,19 @@
       </div>
       <el-dialog title="appid配置信息" :before-close="listInit" :visible.sync="ashow" width="940px">
           <el-form label-width="200px" :model="aform" :rules="arule" ref="aform" size="small">
-              <el-form-item label="商户负责人：" prop="chargeBy">
-                  <el-select v-model="aform.chargeBy" class="form_input" @change="getName">
+              <!-- <el-form-item label="商户负责人：" prop="chargeBy">
+                <el-select v-model="aform.chargeBy" class="form_input" @change="getName">
                   <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
-              </el-select>
+                </el-select>
+              </el-form-item> -->
+              <el-form-item label="商户负责人电话" prop="mobilePhone">
+                <el-input class="form_input" v-model="aform.mobilePhone" @change="getSelect"></el-input>
+              </el-form-item>
+              <el-form-item label="商户负责人姓名" prop="chargeByName">
+                <el-input class="form_input" v-model="aform.chargeByName" :disabled="aform.chargeBy ? true : false"></el-input>
+              </el-form-item>
+              <el-form-item label="商户负责人邮箱" prop="chargeEmail">
+                <el-input class="form_input" v-model="aform.chargeEmail" :disabled="aform.chargeBy ? true : false"></el-input>
               </el-form-item>
               <template v-if="data.isFromOutApp">
                 <el-form-item label="异步通知appId：" prop="notifyAppId">
@@ -251,7 +260,7 @@
           </el-form>
           <span class="form_footer" slot="footer">
               <el-button @click="update" type="primary">保存</el-button>
-              <el-button @click="ashow = false">关闭</el-button>
+              <el-button @click="close">关闭</el-button>
           </span>
       </el-dialog>
       <el-dialog title="添加支付渠道" :visible.sync="addShow" @open="clearForm" width="70%">
@@ -261,22 +270,22 @@
               </el-form-item>
               <el-form-item label="服务商">
                   <el-select class="f_input" v-model="serviceCompanyId" @change="clear" filterable>
-                      <el-option v-for="e in data.serviceCompanyList" :key="e" :value="e.serviceCompanyId" :label="e.serviceCompanyName"></el-option>
+                      <el-option v-for="e in data.serviceCompanyList" :key="e.serviceCompanyId" :value="e.serviceCompanyId" :label="e.serviceCompanyName"></el-option>
                   </el-select>
               </el-form-item>
               <el-form-item label="转包服务商" v-if="subServiceList.length">
                   <el-select class="f_input" v-model="subServiceCompanyId" @change="getSubServiceCompanyName" filterable>
-                      <el-option v-for="e in subServiceList" :key="e" :value="e.subServiceCompanyId" :label="e.subServiceCompanyName"></el-option>
+                      <el-option v-for="e in subServiceList" :key="e.subServiceCompanyId" :value="e.subServiceCompanyId" :label="e.subServiceCompanyName"></el-option>
                   </el-select>
               </el-form-item>
               <el-form-item label="支付渠道">
                   <el-select class="f_input" v-model="paymentThirdType" @change="getList" filterable>
-                      <el-option v-for="e in types" :key="e" :value="e.value" :label="e.text"></el-option>
+                      <el-option v-for="e in types" :key="e.value" :value="e.value" :label="e.text"></el-option>
                   </el-select>
               </el-form-item>
               <el-form-item label="子账号名称">
                   <el-select class="f_input" v-model="payeruserName" @change="pick" filterable>
-                      <el-option v-for="e in others" :key="e" :value="e.payeruserName" :label="e.payeruserName"></el-option>
+                      <el-option v-for="e in others" :key="e.payeruserName" :value="e.payeruserName" :label="e.payeruserName"></el-option>
                   </el-select>
               </el-form-item>
               <el-form-item v-show="result" label="支付账户" style="color: red;">
@@ -354,11 +363,39 @@ export default {
         notifyUrl: "",
         phone: "",
         authCode: "",
+        mobilePhone: '',
+        chargeEmail: '',
         serviceCompanyList: {}
       },
       arule: {
-        chargeBy: [
-          { required: true, message: "请选择商户负责人", trigger: "blur" }
+        // chargeBy: [
+        //     {
+        //     required: true,
+        //     message: "请选择商户负责人",
+        //     trigger: "change"
+        //   }
+        // ],
+        mobilePhone: [
+          {
+            required: true,
+            message: "请填写手机号码",
+            trigger: "change"
+          },
+          {pattern: /^(1\d{10})$/, message: '请正确输入手机号码', trigger: 'blur'}
+        ],
+        chargeByName: [
+          {
+            required: true,
+            message: "请填写姓名",
+            trigger: "change"
+          }
+        ],
+        chargeEmail: [
+          {
+            required: true,
+            message: "请填写邮箱",
+            trigger: "change"
+          }
         ],
         notifyAppId: [
           { required: true, message: "请输入应用ID", trigger: "blur" }
@@ -423,8 +460,10 @@ export default {
       this.appinfo = data;
     });
     get('/api/sysmgr-web/commom/company?companyIdentity=service').then(data => {
-		this.assignCompany = data
-	})
+      this.assignCompany = data
+    })
+    this.arule.chargeByName = ''
+    this.arule.chargeEmail = ''
   },
   methods: {
     getMsg() {
@@ -440,9 +479,13 @@ export default {
       }).then(data => {
         this.data = data;
         !this.data.payUsers && (this.data.payUsers = []);
+        for(let k in this.aform) {
+          if(data[k]) {
+            this.aform[k] = data[k]
+          }
+        }
         this.listInit()
-        this.aform.chargeBy = data.chargeBy
-        this.aform.chargeByName = data.chargeByName
+        this.aform.mobilePhone = data.chargeMobile
       });
     },
     listInit(next) {
@@ -454,6 +497,10 @@ export default {
             next()
         }
         this.getService()
+    },
+    close() {
+      this.ashow = false
+      this.$refs.aform.clearValidate()
     },
     getService() {
         get(`/api/sysmgr-web/commom/contract-service-company-options?customCompanyId=${this.data.companyId}`).then(data => {
@@ -472,6 +519,28 @@ export default {
                 })
             })
         })
+    },
+    getSelect() {
+      if(/^(1\d{10})$/.test(this.aform.mobilePhone)) {
+        get('/api/sysmgr-web/user/get-user-by-mobile', {
+          mobile: this.aform.mobilePhone
+        }, true).then(data => {
+          this.aform.chargeBy = data.id || ''
+          this.aform.chargeByName = data.name || ''
+          this.aform.chargeEmail = data.email || ''
+          if(this.aform.chargeBy) {
+            this.arule.chargeByName = ''
+            this.arule.chargeEmail = ''
+          }
+          else {
+            this.arule.chargeByName = [{ required: true, message: "请填写姓名", trigger: "change" }]
+            this.arule.chargeEmail = [{ required: true, message: "请填写邮箱", trigger: "change" }]
+          }
+          this.$nextTick(() => {
+            this.$refs.aform.clearValidate(['chargeByName', 'chargeEmail'])
+          })
+        })
+      }
     },
     getName() {
       this.charges.forEach(e => {
@@ -508,6 +577,7 @@ export default {
       this.$forceUpdate()
     },
     update() {
+      console.log(this.aform)
       this.$refs["aform"].validate(valid => {
         if (valid) {
           if (this.authCode) {

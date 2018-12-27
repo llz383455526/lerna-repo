@@ -1,237 +1,283 @@
 <template>
-    <div class="contract-container bg-white p15">
-        <el-form label-width="200px" class="contractForm detail-form">
-            <h4 class="ml50">合同选项</h4>
-            <el-form-item label="合同模板">
-                <div class="form-item">{{contractModel.contractForm}}</div>
-            </el-form-item>
-            <!--<el-form-item label="合同类型">-->
-                <!--<div class="form-item">新客户合同</div>-->
-            <!--</el-form-item>-->
-
-            <!--<h4 class="ml50">合同内容</h4>-->
-            <!--<el-form-item label="企业名称">-->
-                <!--<div class="form-item">{{contractForm.customerName}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="企业地址">-->
-                <!--<div class="form-item">{{contractForm.areaName}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="合同类型">-->
-                <!--<div class="form-item">-->
-                    <!--<span v-for="item in contractForm.serviceTypeList" style="margin-right: 10px">{{item.serviceName}}</span>-->
-                <!--</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="服务商名称">-->
-                <!--<div class="form-item">{{contractForm.serviceCompanyName}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="业务方案">-->
-                <!--<div class="form-item">{{contractForm.goodsName}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="支付方式">-->
-                <!--<div class="form-item">-->
-                    <!--<span v-for="item in contractForm.channelType" style="margin-right: 10px">{{payMode[item].label}}</span>-->
-                <!--</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="结算方式">-->
-                <!--<div class="form-item">{{settleTypeName}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="服务费是否预收">-->
-                <!--<div class="form-item">是</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="服务费预收比例">-->
-                <!--{{`${contractForm.prePayContent.secondType === 'real' ? '实发金额' : '应发金额'} * ${contractForm.prePayContent.serviceFeeRate}%`}}-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="发票类型">-->
-                <!--<div class="form-item">{{invoiceTypeName}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="开票方式">-->
-                <!--<div class="item-form">{{contractForm.openInvoiceType ? customerInvoiceTypes[contractForm.openInvoiceType.toString()].text : ''}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="服务费收取比例">-->
-                <!--<div class="item-form">-->
-                    <!--<template v-if="contractForm.serviceFeeContent.serviceFeeType == 'dummy'">-->
-                        <!--{{contractForm.standardRate}}%-->
-                    <!--</template>-->
-                    <!--<template v-else-if="contractForm.serviceFeeContent.serviceFeeType == 'fixed'">-->
-                        <!--{{'固定金额，每笔' + contractForm.serviceFeeContent.fixFee + '元'}}-->
-                    <!--</template>-->
-                    <!--<template v-else-if="contractForm.serviceFeeContent.serviceFeeType == 'ratio'">-->
-                        <!--{{`${contractForm.serviceFeeContent.secondType == 'real' ? '标准报价' : '应发金额'} * ${contractForm.serviceFeeContent.serviceFeeRate}%`}}-->
-                    <!--</template>-->
-                    <!--<template v-else-if="contractForm.serviceFeeContent.serviceFeeType == 'step' && contractForm.serviceFeeContent.secondType == '0'">-->
-                        <!--{{`分2.8万 - 无流水阶梯报价：`}}-->
-                        <!--<div v-for="(e, i) in contractForm.serviceFeeContent.stepwiseList">-->
-                            <!--<div class="indent">-->
-                            <!--<span class="inline">-->
-                                <!--<template v-if="!e.startAmount && !i">-->
-                                    <!--{{`小于${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}-->
-                                <!--</template>-->
-                                <!--<template v-else-if="e.startAmount && e.endAmount">-->
-                                    <!--{{`${e.startAmount}万${e.equalsStart ? '（含）' : ''}~${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}-->
-                                <!--</template>-->
-                                <!--<template v-else-if="!e.endAmount">-->
-                                    <!--{{`大于${e.startAmount}万${e.equalsStart ? '（含）' : ''}`}}-->
-                                <!--</template>-->
-                            <!--</span>-->
-                                <!--{{`实发金额*${e.percent}%`}}-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</template>-->
-                    <!--<template v-else-if="contractForm.serviceFeeContent.serviceFeeType == 'step' && contractForm.serviceFeeContent.secondType == '1'">-->
-                        <!--{{`不分2.8万 - 按流水总额阶梯报价：`}}-->
-                        <!--<div v-for="(e, i) in contractForm.serviceFeeContent.stepwiseList">-->
-                            <!--<div class="indent">-->
-                            <!--<span class="inline">-->
-                                <!--<template v-if="!e.startAmount && !i">-->
-                                    <!--{{`小于${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}-->
-                                <!--</template>-->
-                                <!--<template v-else-if="e.startAmount && e.endAmount">-->
-                                    <!--{{`${e.startAmount}万${e.equalsStart ? '（含）' : ''}~${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}-->
-                                <!--</template>-->
-                                <!--<template v-else-if="!e.endAmount">-->
-                                    <!--{{`大于${e.startAmount}万${e.equalsStart ? '（含）' : ''}`}}-->
-                                <!--</template>-->
-                            <!--</span>-->
-                                <!--{{`实发金额*${e.percent}%`}}-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</template>-->
-                    <!--<template v-else-if="contractForm.serviceFeeContent.serviceFeeType == 'step' && contractForm.serviceFeeContent.secondType == '2'">-->
-                        <!--{{`分2.8万 - 按流水分阶梯报价：`}}-->
-                        <!--<div class="indent">-->
-                            <!--{{`（1）月收入小于${contractForm.serviceFeeContent.monthIncomeAmount}万（含）：`}}-->
-                            <!--<div v-for="(e, i) in contractForm.serviceFeeContent.stepwiseList">-->
-                                <!--<div class="indent">-->
-                                <!--<span class="inline">-->
-                                    <!--<template v-if="!e.startAmount && !i">-->
-                                        <!--{{`小于${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}-->
-                                    <!--</template>-->
-                                    <!--<template v-else-if="e.startAmount && e.endAmount">-->
-                                        <!--{{`${e.startAmount}万${e.equalsStart ? '（含）' : ''}~${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}-->
-                                    <!--</template>-->
-                                    <!--<template v-else-if="!e.endAmount">-->
-                                        <!--{{`大于${e.startAmount}万${e.equalsStart ? '（含）' : ''}`}}-->
-                                    <!--</template>-->
-                                <!--</span>-->
-                                    <!--{{`实发金额*${e.percent}%`}}-->
-                                <!--</div>-->
-                            <!--</div>-->
-                            <!--{{`（2） 月收入大于${contractForm.serviceFeeContent2.monthIncomeAmount}万：`}}-->
-                            <!--<div v-for="(e, i) in contractForm.serviceFeeContent2.stepwiseList">-->
-                                <!--<div class="indent">-->
-                                <!--<span class="inline">-->
-                                    <!--<template v-if="!e.startAmount && !i">-->
-                                        <!--{{`小于${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}-->
-                                    <!--</template>-->
-                                    <!--<template v-else-if="e.startAmount && e.endAmount">-->
-                                        <!--{{`${e.startAmount}万${e.equalsStart ? '（含）' : ''}~${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}-->
-                                    <!--</template>-->
-                                    <!--<template v-else-if="!e.endAmount">-->
-                                        <!--{{`大于${e.startAmount}万${e.equalsStart ? '（含）' : ''}`}}-->
-                                    <!--</template>-->
-                                <!--</span>-->
-                                    <!--{{`实发金额*${e.percent}%`}}-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</template>-->
-                <!--</div>-->
-            <!--</el-form-item>-->
-
-            <!--<h4 class="ml50">合同联系人信息</h4>-->
-            <!--<el-form-item label="合同联系人姓名">-->
-                <!--<div class="form-item">{{contractForm.contractPerson}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="合同联系人手机">-->
-                <!--<div class="form-item">{{contractForm.contractTel}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="合同联系人邮箱">-->
-                <!--<div class="form-item">{{contractForm.contractEmail}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="合同联系人地址">-->
-                <!--<div class="form-item">{{contractForm.contractAddr}}</div>-->
-            <!--</el-form-item>-->
-
-            <!--<h4 class="ml50">客户联系人及账号信息</h4>-->
-            <!--<el-form-item label="法定代表人姓名">-->
-                <!--<div class="form-item">{{contractForm.customLegalPerson}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="企业负责人姓名">-->
-                <!--<div class="form-item">{{contractForm.customCollector}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="企业负责人手机">-->
-                <!--<div class="form-item">{{contractForm.customCollectorPhone}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="企业负责人邮箱1">-->
-                <!--<div class="form-item">{{contractForm.customMail1}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="企业负责人邮箱2">-->
-                <!--<div class="form-item">{{contractForm.customMail2}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="企业负责人联系地址">-->
-                <!--<div class="form-item">{{contractForm.customCollectorAddr}}</div>-->
-            <!--</el-form-item>-->
-
-            <!--<h4 class="ml50">相关商户信息</h4>-->
-            <!--<el-form-item label="商户信息">-->
-                <!--<el-table-->
-                        <!--:data="contractForm.companyApps">-->
-                    <!--<el-table-column prop="appName" label="商户名称"></el-table-column>-->
-                    <!--<el-table-column prop="chargeByName" label="商户负责人姓名"></el-table-column>-->
-                    <!--<el-table-column prop="chargeByPhone" label="商户负责人手机"></el-table-column>-->
-                    <!--<el-table-column prop="chargeByMail" label="商户负责人邮箱"></el-table-column>-->
-                <!--</el-table>-->
-            <!--</el-form-item>-->
-
-            <!--<h4 class="ml50">客户（公司）开票信息</h4>-->
-            <!--<el-form-item label="公司名称">-->
-                <!--<div class="form-item">{{contractForm.invoiceCompanyName}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="纳税人识别号">-->
-                <!--<div class="form-item">{{contractForm.customTaxIdcd}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="地址">-->
-                <!--<div class="form-item">{{contractForm.customAddr}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="电话">-->
-                <!--<div class="form-item">{{contractForm.customPhone}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="开户银行">-->
-                <!--<div class="form-item">{{contractForm.customBankName}}</div>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="银行账号">-->
-                <!--<div class="form-item">{{contractForm.customBankAccount}}</div>-->
-            <!--</el-form-item>-->
-
-            <!--<el-form-item style="margin-top: 20px;">-->
-                <!--<el-button v-if="processingLimited" type="primary" @click="handleContract('agree')">审核通过</el-button>-->
-                <!--<el-button v-if="processingLimited" type="primary" @click="handleContract('reject')">审核不通过</el-button>-->
-                <!--<el-button v-if="contractForm.contractDownLoadId" type="primary" @click="downloadPDF(contractForm.contractDownLoadId)">下载合同PDF版本</el-button>-->
-                <!--<el-button v-if="editType === 'workflow'" @click="backToList('/main/taxDIscount/home')">返回</el-button>-->
-                <!--<el-button v-if="editType === 'watch'" @click="backToList('list')">返回</el-button>-->
-            <!--</el-form-item>-->
-        </el-form>
+  <div>
+    <div class="widget-box bg-white">
+      <div class="widget-header">
+        <h4 class="widget-title">合同附件管理</h4>
+      </div>
+      <div class="widget-body">
+        <div
+          class="widget-main"
+          style="font-size: 16px;line-height: 30px;"
+        >
+          <div
+            class="row"
+            style="margin-bottom: 15px;"
+          >
+            <div class="col-xs-2"><span class="text-danger">*</span>请选择合同附件处理方式</div>
+            <div class="col-xs-10">
+              <el-radio
+                v-model="contractForm.approveType"
+                label="standard"
+              >不需要修改合同附件</el-radio>
+              <el-radio
+                v-model="contractForm.approveType"
+                label="partial"
+              >需要合同补充协议</el-radio>
+              <el-radio
+                v-model="contractForm.approveType"
+                label="customer"
+              >需要独立合同附件</el-radio>
+            </div>
+          </div>
+          <hr>
+          <div
+            v-if="contractForm.approveType === 'partial'"
+            v-for="(formItem, key) in contractForm.contracts"
+            :key="key"
+          >
+            <div
+              class="row"
+              style="margin-bottom: 15px;"
+            >
+              <div class="col-xs-4">
+                <div style="padding:20px;">
+                  <el-upload
+                    class="form_input"
+                    :action="`/api/econtract/template/parsefile`"
+                    :auto-upload="false"
+                    :on-change="upload"
+                    :on-remove="remove"
+                    :on-preview="handlePreview"
+                    :multiple="false"
+                    :show-file-list="false"
+                  >
+                    <span style="margin-right:10px;">{{ formItem.serviceCompanyName }}</span>
+                    <el-button
+                      size="small"
+                      type="primary"
+                      @click="index = key"
+                    >上传附件</el-button>
+                  </el-upload>
+                </div>
+              </div>
+              <div class="col-xs-8">
+                <el-table :data="formItem.partialAttachments">
+                  <el-table-column label="附件类型">
+                    <template slot-scope="scope">
+                      {{scope.row.targetType == 'customerContact' ? '系统附件' : '补充附件'}}
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="文件名称"
+                    prop="displayname"
+                  ></el-table-column>
+                  <el-table-column label="操作">
+                    <template slot-scope="scope">
+                      <el-button
+                        type="text"
+                        size="medium"
+                        style="padding:0;"
+                        @click="handleDownload(scope.row.downloadCode)"
+                      >下载</el-button>
+                      <el-button
+                        type="text"
+                        size="medium"
+                        style="padding:0;"
+                        v-if="scope.row.targetType == 'contractUserAttach'"
+                        @click="handleRemove(scope.row, key)"
+                      >删除</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </div>
+            <hr v-if="key+1 != contractForm.contracts.length">
+          </div>
+          <div
+            v-if="contractForm.approveType === 'customer'"
+            v-for="(formItem, key) in contractForm.contracts"
+            :key="key"
+          >
+            <div
+              class="row"
+              style="margin-bottom: 15px;"
+            >
+              <div class="col-xs-4">
+                <div style="padding:20px;">
+                  <el-upload
+                    class="form_input"
+                    :action="`/api/econtract/template/parsefile`"
+                    :auto-upload="false"
+                    :on-change="upload"
+                    :on-remove="remove"
+                    :on-preview="handlePreview"
+                    :multiple="false"
+                    :show-file-list="false"
+                  >
+                    <span style="margin-right:10px;">{{ formItem.serviceCompanyName }}</span>
+                    <el-button
+                      size="small"
+                      type="primary"
+                      @click="index = key"
+                    >上传附件</el-button>
+                  </el-upload>
+                </div>
+              </div>
+              <div class="col-xs-8">
+                <el-table :data="formItem.customerAttachments">
+                  <el-table-column label="附件类型">
+                    <template slot-scope="scope">
+                      {{scope.row.targetType == 'customerContact' ? '系统附件' : '补充附件'}}
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="文件名称"
+                    prop="displayname"
+                  ></el-table-column>
+                  <el-table-column label="操作">
+                    <template slot-scope="scope">
+                      <el-button
+                        type="text"
+                        size="medium"
+                        style="padding:0;"
+                        @click="handleDownload(scope.row.downloadCode)"
+                      >下载</el-button>
+                      <el-button
+                        type="text"
+                        size="medium"
+                        style="padding:0;"
+                        v-if="scope.row.targetType == 'contractUserAttach'"
+                        @click="handleRemove(scope.row, key)"
+                      >删除</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </div>
+            <hr v-if="key+1 != contractForm.contracts.length">
+          </div>
+        </div>
+      </div>
     </div>
+    <div style="margin:20px 0;">
+      <el-button
+        size="small"
+        type="primary"
+        @click="submit"
+      >确认</el-button>
+      <el-button
+        size="small"
+        @click="backToList('list')"
+      >返回</el-button>
+    </div>
+  </div>
 </template>
 
 <script>
-    import ContractModel from '../../model/ContractModel'
-    export default {
-        name: "detail",
-        data () {
-            return {
-                contractModel: new ContractModel()
-            }
-        },
-        created () {
-            let id = this.$route.query.id;
-            this.contractModel.getContractDetail(id)
-        }
+import ContractModel from '../../model/contract/newContract/ContractModel'
+import _ from 'lodash'
+import { baseUrl } from '../../config/address.js';
+import { post, importPost } from "../../store/api";
+export default {
+  name: "detail",
+  data () {
+    return {
+      contractModel: new ContractModel(),
+      contractForm: '',
+      index: ''
     }
+  },
+  created () {
+    let id = this.$route.query.id;
+    this.contractModel.contractId = id;
+    this.contractModel.getContractDetail(id, () => {
+      this.contractForm = this.contractModel.contractForm
+    })
+  },
+  methods: {
+    backToList (path) {
+      this.$router.replace({
+        path: path
+      })
+    },
+    handleDownload (downloadCode) {
+      window.location.href = baseUrl + '/api/contract-web/file/download' +
+        '?downloadCode=' + downloadCode;
+    },
+    handleRemove (row, key) {
+      if (this.contractForm.approveType == 'partial') {
+        this.contractModel.contractForm.contracts[key].partialAttachments = this.contractModel.contractForm.contracts[key].partialAttachments.filter(function (val) {
+          return val.refId != row.refId
+        })
+      }
+      if (this.contractForm.approveType == 'customer') {
+        this.contractModel.contractForm.contracts[key].customerAttachments = this.contractModel.contractForm.contracts[key].customerAttachments.filter(function (val) {
+          return val.refId != row.refId
+        })
+      }
+    },
+    upload (file) {
+      let formData = new FormData();
+      formData.append('targetType', 'vci_attach');
+      formData.append('fileName', file.name);
+      formData.append('file', file.raw);
+      importPost('/api/contract-web/file/upload', formData, true).then(data => {
+        if (this.contractForm.approveType == 'partial') {
+          this.contractModel.contractForm.contracts[this.index].partialAttachments.push({
+            refId: data.referId,
+            downloadCode: data.downloadCode,
+            displayname: data.fileName,
+            targetType: 'contractUserAttach',
+            targetTypeName: '自定义附件'
+          });
+        }
+        if (this.contractForm.approveType == 'customer') {
+          this.contractModel.contractForm.contracts[this.index].customerAttachments.push({
+            refId: data.referId,
+            downloadCode: data.downloadCode,
+            displayname: data.fileName,
+            targetType: 'contractUserAttach',
+            targetTypeName: '自定义附件'
+          });
+        }
+        this.$message({
+          type: 'success',
+          message: '上传成功！'
+        })
+      })
+    },
+    submit () {
+      if (this.contractForm.approveType == 'standard') {
+        this.contractModel.workflowType = 'create_sale_contract';
+        this.submitContract()
+      }
+      if (this.contractForm.approveType == 'partial' || this.contractForm.approveType == 'customer') {
+        this.contractModel.workflowType = 'create_ns_sale_contract';
+        this.submitContract();
+      }
+    },
+    submitContract () {
+      let url = '/api/opencrm/workflow/save_submit';
+      let param = {
+        datas: this.contractModel.contractForm,
+        instanceId: this.contractModel.contractId,
+        workflowType: this.contractModel.workflowType
+      };
+      post(url, param).then(result => {
+        this.$alert('您的合同表单已提交，谢谢！', '', {
+          confirmButtonText: '确定',
+          callback: action => {
+            this.backToList('list')
+          }
+        });
+      })
+    }
+  }
+}
 </script>
 
 <style scoped>
-    .contract-container {
-        margin-bottom: 30px;
-    }
+h4.block {
+  margin: 10px 0 16px;
+}
 </style>

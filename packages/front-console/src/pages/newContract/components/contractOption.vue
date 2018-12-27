@@ -1,10 +1,10 @@
 <template>
     <div>
-        <h4 class="ml50">合同选项</h4>
-        <el-form-item label="合同模板" v-if="contractModel.workflowType === 'create_sale_contract'"
+        <h3 class="green">请选择合同选项</h3>
+        <el-form-item label="选择合同模板"
                       prop="contractTplId"
                       :rules="{ required: true, message: '请选择合同模板', trigger: 'change' }">
-            <el-select v-model="contractModel.contractForm.contractTplId" placeholder="请选择" style="width:100%;">
+            <el-select v-model="contractModel.contractForm.contractTplId" placeholder="请选择" style="width:450px;">
                 <el-option v-for="(item, key) in contractModel.contractTplList"
                            :key="key"
                            :label="item.text"
@@ -12,8 +12,8 @@
                 </el-option>
             </el-select>
         </el-form-item>
-        <el-form-item label="合同类型" prop="contractType">
-            <el-select v-model="contractModel.contractForm.contractType" placeholder="请选择" style="width:100%;">
+        <el-form-item label="选择客户行业类型" prop="contractType">
+            <el-select v-model="contractModel.contractForm.contractType" placeholder="请选择" style="width:450px;">
                 <el-option v-for="(item, key) in contractModel.businessTypeList"
                            :key="key"
                            :label="item.text"
@@ -21,27 +21,27 @@
                 </el-option>
             </el-select>
         </el-form-item>
-        <el-form-item label="客户从事行业" prop="customIndustry">
-            <el-input v-model="contractModel.contractForm.customIndustry"></el-input>
-        </el-form-item>
-        <el-form-item label="服务类型" prop="serviceType">
-            <template slot="label">
-                <i class="el-icon-question" title="请参考《服务内容确认书》"></i>服务类型
-            </template>
-            <el-checkbox-group v-model="contractModel.serviceTypeList" @change="setSettleType">
-                <el-checkbox v-for="(item, key) in contractModel.serviceTypes"
-                             :key="key" :label="item.serviceId">{{item.serviceName}}
-                </el-checkbox>
-            </el-checkbox-group>
+        <el-form-item label="客户从事" prop="customIndustry">
+            <el-input v-model="contractModel.contractForm.customIndustry" style="width:450px;"></el-input>
         </el-form-item>
         <el-form-item label="合同期限" prop="contractStartDate">
-            <el-date-picker type="daterange"
+            <el-date-picker type="daterange" style="width:450px;"
                             v-model="contractModel.contractDate"
                             start-placeholder="开始日期"
                             end-placeholder="结束日期"
                             value-format="yyyy-MM-dd"
                             @change="autoFill">
             </el-date-picker>
+        </el-form-item>
+        <el-form-item label="服务类型" prop="serviceType">
+            <template slot="label">
+                <i class="el-icon-question" title="请参考《服务内容确认书》"></i>服务类型
+            </template>
+            <el-checkbox-group v-model="contractModel.serviceTypeList" @change="setSettleType" style="width:1100px;">
+                <el-checkbox v-for="(item, key) in contractModel.serviceTypes"
+                             :key="key" :label="item.serviceId">{{item.serviceName}}
+                </el-checkbox>
+            </el-checkbox-group>
         </el-form-item>
     </div>
 </template>
@@ -66,6 +66,10 @@
                 });
                 this.contractModel.contractForm.serviceType = arr;
                 this.$emit('setSettleType');
+                if (!this.contractModel.hasInsurance()) {
+                    this.contractModel.contractForm.vciBuyType = '';
+                    this.contractModel.contractForm.vciPlanName = '';
+                }
             }
         }
     }

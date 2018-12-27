@@ -1,73 +1,95 @@
 <template>
-    <div class="r_main">
-        <el-breadcrumb>
-          <el-breadcrumb-item>
-              添加新商户
-          </el-breadcrumb-item>
-      </el-breadcrumb>
-      <div class="tool">
-        <el-button size="small" @click="back">取消</el-button>
-        <el-button size="small" type="primary" @click="sure">保存</el-button>
-      </div>
-      <el-form :model="form" :rules="rule" label-width="200px" ref="form">
-          <el-form-item label="商户名称" prop="appName" size="small">
-              <el-input class="form_input" v-model="form.appName"></el-input>
-          </el-form-item>
-          <el-form-item label="appId" prop="appId" size="small">
-              <el-input class="form_input" v-model="form.appId"></el-input>
-          </el-form-item>
-          <el-form-item label="商户类型" prop="isFromOutApp">
-			  <el-radio v-model="form.isFromOutApp" label="1">API对接</el-radio>
-  			  <el-radio v-model="form.isFromOutApp" label="0" @change="form.serviceCodes = [];">SAAS系统</el-radio>
-          </el-form-item>
-          <el-form-item label="服务类型" prop="serviceCodes" size="small" v-show="form.isFromOutApp == 1">
-                <el-checkbox-group v-model="form.serviceCodes">
-                  <el-checkbox :label="item.value" :key="item.value" v-for="item in serverConfig">{{item.text}}</el-checkbox>
-                </el-checkbox-group>
-          </el-form-item>
-		  <el-form-item label="商户负责人" prop="chargeBy" size="small">
-              <el-select v-model="form.chargeBy" class="form_input" @change="getName" filterable>
-                  <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
-              </el-select>
-          </el-form-item>
-          <el-form-item label="选择服务商" prop="serviceCompanyList" size="small">
-              <el-checkbox-group v-model="form.serviceCompanyList">
-                  <el-checkbox v-for="(item, i) in company" :label="item" :key="item.value" class="block">
-						<span class="mr10">{{item.text}}</span>
-                        <el-select v-model="assign[i].subcontractType" v-if="form.serviceCompanyList.indexOf(item) > -1">
-							<el-option label="非转包" :value="0"></el-option>
-                            <el-option label="业务转包" :value="1"></el-option>
-                        </el-select>
-                        <el-select v-model="assign[i].subServiceList[0].subServiceCompanyId" v-if="form.serviceCompanyList.indexOf(item) > -1 && assign[i].subcontractType" @change="getassignCompanyName(i)">
-                            <el-option v-for="e in filterAssignCompany(item.value)" :key="e.id" :label="e.name" :value="e.id"></el-option>
-                        </el-select>
-				  </el-checkbox>
-              </el-checkbox-group>
-          </el-form-item>
-      </el-form>
-      <el-dialog title="获取验证码" :visible.sync="cshow" width="70%">
-          <span class="tip">为了保障您的账号安全，请完成一下身份验证。</span>
-          <el-form label-width="150px">
-              <el-form-item label="手机号码：">
-                  {{phone}}
-              </el-form-item>
-              <el-form-item >
-                  <img :src="`${baseUrl}/api/sysmgr-web/verify-codes/gen-captcha?req_id=${req_id}`">
-                  <el-button type="text" style="margin-left: 30px;" @click="createId">刷新</el-button>
-              </el-form-item>
-              <el-form-item label="请输入图形中字符：">
-                  <el-input v-model="chars" style="width: 300px;"></el-input>
-              </el-form-item>
-              <el-form-item label="短信验证码：">
-                  <el-input v-model="phoneCode" style="width: 300px;"></el-input><el-button type="text" style="margin-left: 30px;" @click="getCode">获取验证码</el-button>
-              </el-form-item>
-          </el-form>
-          <span class="form_footer" slot="footer">
-              <el-button @click="submit" type="primary">提交</el-button>
-              <el-button @click="cshow = false" type="warning">关闭</el-button>
-          </span>
-      </el-dialog>
+  <div class="r_main">
+    <el-breadcrumb>
+      <el-breadcrumb-item>添加新商户</el-breadcrumb-item>
+    </el-breadcrumb>
+    <div class="tool">
+      <el-button size="small" @click="back">取消</el-button>
+      <el-button size="small" type="primary" @click="sure">保存</el-button>
     </div>
+    <el-form :model="form" :rules="rule" label-width="200px" ref="form">
+      <el-form-item label="商户名称" prop="appName" size="small">
+        <el-input class="form_input" v-model="form.appName"></el-input>
+      </el-form-item>
+      <el-form-item label="appId" prop="appId" size="small">
+        <el-input class="form_input" v-model="form.appId"></el-input>
+      </el-form-item>
+      <el-form-item label="商户类型" prop="isFromOutApp">
+        <el-radio v-model="form.isFromOutApp" label="1">API对接</el-radio>
+        <el-radio v-model="form.isFromOutApp" label="0" @change="form.serviceCodes = [];">SAAS系统</el-radio>
+      </el-form-item>
+      <el-form-item label="服务类型" prop="serviceCodes" size="small" v-show="form.isFromOutApp == 1">
+        <el-checkbox-group v-model="form.serviceCodes">
+          <el-checkbox
+            :label="item.value"
+            :key="item.value"
+            v-for="item in serverConfig"
+          >{{item.text}}</el-checkbox>
+        </el-checkbox-group>
+      </el-form-item>
+      <el-form-item label="商户负责人电话" prop="mobilePhone">
+        <el-input class="form_input" v-model="form.mobilePhone" @change="getSelect"></el-input>
+      </el-form-item>
+      <el-form-item label="商户负责人姓名" prop="chargeByName">
+        <el-input class="form_input" v-model="form.chargeByName" :disabled="form.chargeBy ? true : false"></el-input>
+      </el-form-item>
+      <el-form-item label="商户负责人邮箱" prop="chargeEmail">
+        <el-input class="form_input" v-model="form.chargeEmail" :disabled="form.chargeBy ? true : false"></el-input>
+      </el-form-item>
+      <!-- <el-form-item label="商户负责人" prop="chargeBy" size="small">
+        <el-select v-model="form.chargeBy" class="form_input" @change="getName">
+          <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
+        </el-select>
+      </el-form-item> -->
+      <el-form-item label="选择服务商" prop="serviceCompanyList" size="small">
+        <el-checkbox-group v-model="form.serviceCompanyList">
+          <el-checkbox v-for="(item, i) in company" :label="item" :key="item.value" class="block">
+            <span class="mr10">{{item.text}}</span>
+            <el-select
+              v-model="assign[i].subcontractType"
+              v-if="form.serviceCompanyList.indexOf(item) > -1"
+            >
+              <el-option label="非转包" :value="0"></el-option>
+              <el-option label="业务转包" :value="1"></el-option>
+            </el-select>
+            <el-select
+              v-model="assign[i].subServiceList[0].subServiceCompanyId"
+              v-if="form.serviceCompanyList.indexOf(item) > -1 && assign[i].subcontractType"
+              @change="getassignCompanyName(i)"
+            >
+              <el-option
+                v-for="e in filterAssignCompany(item.value)"
+                :key="e.id"
+                :label="e.name"
+                :value="e.id"
+              ></el-option>
+            </el-select>
+          </el-checkbox>
+        </el-checkbox-group>
+      </el-form-item>
+    </el-form>
+    <el-dialog title="获取验证码" :visible.sync="cshow" width="70%">
+      <span class="tip">为了保障您的账号安全，请完成一下身份验证。</span>
+      <el-form label-width="150px">
+        <el-form-item label="手机号码：">{{phone}}</el-form-item>
+        <el-form-item>
+          <img :src="`${baseUrl}/api/sysmgr-web/verify-codes/gen-captcha?req_id=${req_id}`">
+          <el-button type="text" style="margin-left: 30px;" @click="createId">刷新</el-button>
+        </el-form-item>
+        <el-form-item label="请输入图形中字符：">
+          <el-input v-model="chars" style="width: 300px;"></el-input>
+        </el-form-item>
+        <el-form-item label="短信验证码：">
+          <el-input v-model="phoneCode" style="width: 300px;"></el-input>
+          <el-button type="text" style="margin-left: 30px;" @click="getCode">获取验证码</el-button>
+        </el-form-item>
+      </el-form>
+      <span class="form_footer" slot="footer">
+        <el-button @click="submit" type="primary">提交</el-button>
+        <el-button @click="cshow = false" type="warning">关闭</el-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
 <script>
 import { get, post, postWithErrorCallback } from "../../store/api";
@@ -75,11 +97,11 @@ import { baseUrl } from "../../config/address.js";
 export default {
   data() {
     var validateService = (rule, value, callback) => {
-        if(value == '' && this.form.isFromOutApp == 1){
-            callback(new Error('至少勾选一个选项'))
-        }else{
-            callback()
-        }
+      if (value == "" && this.form.isFromOutApp == 1) {
+        callback(new Error("至少勾选一个选项"));
+      } else {
+        callback();
+      }
     };
     return {
       form: {
@@ -91,6 +113,8 @@ export default {
         authCode: "",
         chargeBy: "",
         chargeByName: "",
+        chargeEmail: "",
+        mobilePhone: "",
         serviceCodes: []
       },
       rule: {
@@ -115,16 +139,38 @@ export default {
             trigger: "change"
           }
         ],
-        serviceCodes:[
-        {
-          validator: validateService,
-          trigger: "blur"
-        }
+        serviceCodes: [
+          {
+            validator: validateService,
+            trigger: "blur"
+          }
         ],
-        chargeBy: [
+        // chargeBy: [
+        //   {
+        //     required: true,
+        //     message: "请选择负责人",
+        //     trigger: "change"
+        //   }
+        // ],
+        mobilePhone: [
           {
             required: true,
-            message: "请选择负责人",
+            message: "请填写手机号码",
+            trigger: "change"
+          },
+          {pattern: /^(1\d{10})$/, message: '请正确输入手机号码', trigger: 'blur'}
+        ],
+        chargeByName: [
+          {
+            required: true,
+            message: "请填写姓名",
+            trigger: "change"
+          }
+        ],
+        chargeEmail: [
+          {
+            required: true,
+            message: "请填写邮箱",
             trigger: "change"
           }
         ],
@@ -158,9 +204,9 @@ export default {
       msg: "",
       baseUrl,
       charges: [],
-	  serverConfig: [],
-	  assign: [],
-	  assignCompany: []
+      serverConfig: [],
+      assign: [],
+      assignCompany: []
     };
   },
   mounted() {
@@ -172,33 +218,39 @@ export default {
     // get("/api/console-dlv/option/get-option-service-companies").then(data => {
     //   this.company = data;
     // });
-    get(`/api/sysmgr-web/commom/contract-service-company-options?customCompanyId=${this.form.companyId}`).then(data => {
-		this.company = data;
-		this.company.forEach(e => {
-			this.assign.push({
-				serviceCompanyId: e.value,
-				subcontractType: 0,
-				subServiceList: [{
-					isDefault: 1,
-					subServiceCompanyId: '',
-					subServiceCompanyName: ''
-				}]
-			})
-		})
-		console.log(this.assign)
-    })
+    get(
+      `/api/sysmgr-web/commom/contract-service-company-options?customCompanyId=${
+        this.form.companyId
+      }`
+    ).then(data => {
+      this.company = data;
+      this.company.forEach(e => {
+        this.assign.push({
+          serviceCompanyId: e.value,
+          subcontractType: 0,
+          subServiceList: [
+            {
+              isDefault: 1,
+              subServiceCompanyId: "",
+              subServiceCompanyName: ""
+            }
+          ]
+        });
+      });
+      console.log(this.assign);
+    });
     get(
       `/api/sysmgr-web/user/get-platform-users?platformType=console-company`
     ).then(data => {
       this.charges = data;
     });
-    this.authCode = localStorage.getItem('authCode')
+    this.authCode = localStorage.getItem("authCode");
     get("/api/sysmgr-web/commom/service-config").then(data => {
-        this.serverConfig = data;
-    })
-	get('/api/sysmgr-web/commom/company?companyIdentity=service').then(data => {
-		this.assignCompany = data
-	})
+      this.serverConfig = data;
+    });
+    get("/api/sysmgr-web/commom/company?companyIdentity=service").then(data => {
+      this.assignCompany = data;
+    });
   },
   methods: {
     back() {
@@ -210,36 +262,59 @@ export default {
           this.form.chargeByName = e.name;
         }
       });
-	},
-	filterAssignCompany(a) {
-		return this.assignCompany.filter(e => {
-			return a != e.id
-		})
-	},
-	getassignCompanyName(a) {
-		this.assignCompany.forEach(e => {
-			if(e.id == this.assign[a].subServiceList[0].subServiceCompanyId) {
-				this.assign[a].subServiceList[0].subServiceCompanyName = e.name
-			}
-		})
-	},
+    },
+    getSelect() {
+      if(/^(1\d{10})$/.test(this.form.mobilePhone)) {
+        get('/api/sysmgr-web/user/get-user-by-mobile', {
+          mobile: this.form.mobilePhone
+        }, true).then(data => {
+          this.form.chargeBy = data.id || ''
+          this.form.chargeByName = data.name || ''
+          this.form.chargeEmail = data.email || ''
+          if(this.form.chargeBy) {
+            this.rule.chargeByName = ''
+            this.rule.chargeEmail = ''
+          }
+          else {
+            this.rule.chargeByName = [{ required: true, message: "请填写姓名", trigger: "change" }]
+            this.rule.chargeEmail = [{ required: true, message: "请填写邮箱", trigger: "change" }]
+          }
+          this.$nextTick(() => {
+            this.$refs.form.clearValidate(['chargeByName', 'chargeEmail'])
+          })
+        })
+      }
+    },
+    filterAssignCompany(a) {
+      return this.assignCompany.filter(e => {
+        return a != e.id;
+      });
+    },
+    getassignCompanyName(a) {
+      this.assignCompany.forEach(e => {
+        if (e.id == this.assign[a].subServiceList[0].subServiceCompanyId) {
+          this.assign[a].subServiceList[0].subServiceCompanyName = e.name;
+        }
+      });
+    },
     sure(e) {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.authCode) {
             this.form.authCode = this.authCode;
-			var arr = [], oldArr = this.form.serviceCompanyList
+            var arr = [],
+              oldArr = this.form.serviceCompanyList;
             this.form.serviceCompanyList.forEach((e, i) => {
-                arr[i] = {}
-                arr[i].serviceCompanyId = e.value
-				arr[i].serviceCompanyName = e.text
-				this.assign.forEach(e => {
-					if(e.serviceCompanyId == arr[i].serviceCompanyId) {
-						Object.assign(arr[i], e)
-					}
-				})
-            })
-            this.form.serviceCompanyList = arr
+              arr[i] = {};
+              arr[i].serviceCompanyId = e.value;
+              arr[i].serviceCompanyName = e.text;
+              this.assign.forEach(e => {
+                if (e.serviceCompanyId == arr[i].serviceCompanyId) {
+                  Object.assign(arr[i], e);
+                }
+              });
+            });
+            this.form.serviceCompanyList = arr;
             postWithErrorCallback(
               "/api/sysmgr-web/company-app/add-app",
               this.form
@@ -256,9 +331,10 @@ export default {
                 if (err.message == "无效的授权码！") {
                   this.getAccredit(this.sure);
                 }
-              }).finally(() => {
-                  this.form.serviceCompanyList = oldArr
               })
+              .finally(() => {
+                this.form.serviceCompanyList = oldArr;
+              });
           } else {
             this.getAccredit(this.sure);
           }
@@ -370,10 +446,10 @@ export default {
   margin: 20px 0;
 }
 .block {
-    display: block;
-    margin-bottom: 10px;
+  display: block;
+  margin-bottom: 10px;
 }
 .mr10 {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 </style>

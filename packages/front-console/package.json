@@ -15,6 +15,7 @@
     "test": "gulp & node build/build.js"
   },
   "dependencies": {
+    "@riophae/vue-treeselect": "^0.0.37",
     "area-data": "^5.0.6",
     "babel-polyfill": "^6.26.0",
     "chart.js": "^2.7.2",

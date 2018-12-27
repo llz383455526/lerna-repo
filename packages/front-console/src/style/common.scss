@@ -678,7 +678,9 @@ button{
     margin-right: 4px;
 }
 
-
+.el-tree-node>.el-tree-node__children {
+  overflow: unset;
+}
 
 
 

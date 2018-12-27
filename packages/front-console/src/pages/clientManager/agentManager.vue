@@ -10,33 +10,6 @@
                 <el-form-item label="代理商名称" prop="fullName">
                     <el-input v-model="form.fullName" class="in_input"></el-input>
                 </el-form-item>
-                <!-- <el-form-item label="省" prop="provinceCode">
-                    <el-select v-model="form.provinceCode" class="in_input" @change="resetCity">
-                        <el-option v-for="e in format(86)" :key="e.value" :value="e.value" :label="e.text"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="市" prop="cityCode">
-                    <el-select v-model="form.cityCode" class="in_input">
-                        <el-option v-for="e in format(form.provinceCode)" :key="e.value" :value="e.value" :label="e.text"></el-option>
-                    </el-select>
-                </el-form-item> -->
-                <!-- <el-form-item label="是否已产生业务流水" label-width="150px">
-                    <el-select v-model="form.water" class="in_input">
-                        <el-option value="1" label="是"></el-option>
-                        <el-option value="2" label="否"></el-option>
-                    </el-select>
-                </el-form-item> -->
-                <!-- <el-form-item label="代理期限">
-                    <el-date-picker
-                        v-model="form.time"
-                        class="in_input2"
-                        type="daterange"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd"
-                        >
-                    </el-date-picker>
-                </el-form-item> -->
                 <el-form-item>
                     <el-button type="primary" @click="query">查询</el-button>
                     <el-button @click="$refs['form'].resetFields()">清除</el-button>
@@ -54,7 +27,6 @@
                         {{scope.row.province}} {{scope.row.city}}
                     </template>
                 </el-table-column>
-                <!-- <el-table-column label="是否已产生业务流水"></el-table-column> -->
                 <el-table-column label="客户数量" prop="customerCount"></el-table-column>
                 <el-table-column label="代理期限" prop="periodTime" width="200px"></el-table-column>
                 <el-table-column label="更新人" prop="updateByName"></el-table-column>

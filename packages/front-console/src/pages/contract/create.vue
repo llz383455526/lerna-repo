@@ -1185,11 +1185,13 @@
                     this.initColumn(2)
                     this.contractForm.serviceFeeContent.stepwiseList[0].endAmount = 2.8
                     this.contractForm.serviceFeeContent.stepwiseList[1].startAmount = 2.8
+                    this.contractForm.serviceFeeContent.monthIncomeAmount = 2.8
                 }
                 if (this.contractForm.serviceFeeContent.serviceFeeType == 'step_0') {
                     this.contractForm.serviceFeeContent.fixFee = 0;
                     this.showInputRatio = a;
                     this.initColumn()
+                    this.contractForm.serviceFeeContent.monthIncomeAmount = 2.8
                 }
                 if (this.contractForm.serviceFeeContent.serviceFeeType == 'step_1') {
                     this.contractForm.serviceFeeContent.fixFee = 0;
@@ -1436,7 +1438,7 @@
                     }
                     this.contractForm.prePayContent.fixFee = this.contractForm.prePayContent.fixFee || 0
                     this.contractForm.serviceFeeContent.fixFee = this.contractForm.serviceFeeContent.fixFee || 0
-                    this.contractForm.serviceFeeContent.monthIncomeAmount = this.contractForm.serviceFeeContent.monthIncomeAmount || '1'
+                    this.contractForm.serviceFeeContent.monthIncomeAmount = this.contractForm.serviceFeeContent.monthIncomeAmount || '2.8'
                     if(this.contractForm.serviceFeeContent2 && !this.contractForm.serviceFeeContent2.containMonthAmount && !this.contractForm.serviceFeeContent.containMonthAmount) {
                         this.contractForm.serviceFeeContent.containMonthAmount = true
                     }

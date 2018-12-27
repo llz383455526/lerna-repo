@@ -44,7 +44,8 @@
         </el-row>
         <el-row class="mb15" style="font-weight: normal;" v-if="!isExamine">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">服务费收费比例/金额：</el-col>
-            <el-col :span="8" v-if="detail.serviceFeeContent && detail.serviceFeeContent.serviceFeeType">
+            <show-service :detail="detail"></show-service>
+            <!-- <el-col :span="8" v-if="detail.serviceFeeContent && detail.serviceFeeContent.serviceFeeType">
                 <template v-if="detail.serviceFeeContent.serviceFeeType == 'standard'">
                     {{detail.serviceFeeContent.serviceFeeRate}}
                 </template>
@@ -134,7 +135,7 @@
                         </div>
                     </div>
                 </template>
-            </el-col>
+            </el-col> -->
         </el-row>
         <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">合同起止时间：</el-col>
@@ -188,7 +189,11 @@
 <script>
     import {post, get} from '../../store/api';
     import {baseUrl} from '../../config/address';
+    import showService from '../../pageComponent/showService'
     export default {
+        components: {
+          showService
+        },
         data() {
             return {
                 tableList: [],

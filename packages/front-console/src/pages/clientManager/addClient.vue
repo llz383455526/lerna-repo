@@ -16,15 +16,14 @@
             <el-form-item label="企业简称" prop="name">
                 <el-input class="form_input" v-model="form.name"></el-input>
             </el-form-item>
-            <!-- <el-form-item label="企业类型" prop="companyType" size="small">
-                <el-select v-model="form.companyType" class="form_input" @change="getPeople">
-                    <el-option v-for="e in types" :label="e.text" :value="e.value" :key="e.value"></el-option>
-                </el-select>
-            </el-form-item> -->
-            <el-form-item label="企业负责人" prop="chargeBy">
-                <el-select v-model="form.chargeBy" class="form_input" @change="getName" filterable>
-                    <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
-                </el-select>
+            <el-form-item label="企业负责人电话" prop="chargeMobile">
+              <el-input class="form_input" v-model="form.chargeMobile" @input="getSelect"></el-input>
+            </el-form-item>
+            <el-form-item label="企业负责人姓名" prop="chargeByName">
+              <el-input class="form_input" v-model="form.chargeByName" :disabled="form.chargeBy ? true : false"></el-input>
+            </el-form-item>
+            <el-form-item label="企业负责人邮箱" prop="email">
+              <el-input class="form_input" v-model="form.email" :disabled="form.chargeBy ? true : false"></el-input>
             </el-form-item>
             <el-form-item label="税优地" prop="taxLandingId" v-if="form.companyType == 'provider'">
                 <el-select v-model="form.taxLandingId" class="form_input">
@@ -101,6 +100,8 @@ export default {
           companyType: "company",
           chargeBy: '',
           chargeByName: '',
+          chargeMobile: '',
+          email: '',
           legalPerson: "",
           areaName: "",
           registerDate: "",
@@ -133,10 +134,25 @@ export default {
               trigger: "change"
             }
           ],*/
-          chargeBy: [
+          chargeMobile: [
             {
               required: true,
-              message: "请选择负责人",
+              message: "请填写手机号码",
+              trigger: "change"
+            },
+            {pattern: /^(1\d{10})$/, message: '请正确输入手机号码', trigger: 'blur'}
+          ],
+          chargeByName: [
+            {
+              required: true,
+              message: "请填写姓名",
+              trigger: "change"
+            }
+          ],
+          email: [
+            {
+              required: true,
+              message: "请填写邮箱",
               trigger: "change"
             }
           ],
@@ -189,6 +205,28 @@ export default {
                 }
             })
         },
+        getSelect() {
+          if(/^(1\d{10})$/.test(this.form.chargeMobile)) {
+            get('/api/sysmgr-web/user/get-user-by-mobile', {
+              mobile: this.form.chargeMobile
+            }, true).then(data => {
+              this.form.chargeBy = data.id || ''
+              this.form.chargeByName = data.name || ''
+              this.form.email = data.email || ''
+              if(this.form.chargeBy) {
+                this.rule.chargeByName = ''
+                this.rule.email = ''
+              }
+              else {
+                this.rule.chargeByName = [{ required: true, message: "请填写姓名", trigger: "change" }]
+                this.rule.email = [{ required: true, message: "请填写邮箱", trigger: "change" }]
+              }
+              this.$nextTick(() => {
+                this.$refs.form.clearValidate(['chargeByName', 'email'])
+              })
+            })
+          }
+        },
         query(a) {
             if(isNaN(a)) {
                 a = 1
@@ -213,29 +251,29 @@ export default {
             this.form.salesList.splice(a, 1)
         },
         submit() {
-            this.$refs['form'].validate((valid) => {
-                if(valid) {
-                    var form = JSON.parse(JSON.stringify(this.form))
-                    if(form.salesList) {
-                        var salesList = []
-                        form.salesList.forEach(e => {
-                            salesList.push({
-                                id: e.id,
-                                name: e.name,
-                                mobilephone: e.mobilephone
-                            })
-                        })
-                        form.salesList = salesList
-                    }
-                    post('/api/sysmgr-web/company/add-company', form).then(() => {
-                        this.$message({
-                            type: 'success',
-                            message: '添加成功！'
-                        })
-                        this.back()
-                    })
-                }
-            })
+          this.$refs['form'].validate((valid) => {
+            if(valid) {
+              var form = JSON.parse(JSON.stringify(this.form))
+              if(form.salesList) {
+                  var salesList = []
+                  form.salesList.forEach(e => {
+                      salesList.push({
+                          id: e.id,
+                          name: e.name,
+                          mobilephone: e.mobilephone
+                      })
+                  })
+                  form.salesList = salesList
+              }
+              post('/api/sysmgr-web/company/add-company', form).then(() => {
+                  this.$message({
+                      type: 'success',
+                      message: '添加成功！'
+                  })
+                  this.back()
+              })
+            }
+          })
         }
     }
 };

@@ -3,7 +3,6 @@
     <div :class="`main-container ${isHandle ? 'mb100' : ''}`">
         <div style="margin: 0 40px 20px 0; display: inline-block;">电子签约记录</div>
         <el-button size="small" type="primary" @click="$router.back()">返回</el-button>
-        <!-- <el-button type="small" type="primary" @click="$router.back()">返回</el-button> -->
         <el-tabs v-model="activeTab" @tab-click="handleTabClick" v-if="!isHandle">
             <el-tab-pane label="全部" name="first"></el-tab-pane>
             <el-tab-pane label="签约完成" name="second"></el-tab-pane>
@@ -83,41 +82,34 @@
         <el-button type="primary" size="small" @click="handle(2)">{{isHandle && ableType == 2 ? '取消批量取消' : '批量取消' }}</el-button>
         <div class="table-container">
             <el-table :data="tableList.data" v-loading="isReady" @selection-change="getRow" ref="table">
-                <el-table-column type="selection" :selectable="isAble" v-if="isHandle"></el-table-column>
-				<el-table-column prop="createTimeDesc" label="签约时间">
+                <el-table-column type="selection" :selectable="isAble" v-if="isHandle" fixed></el-table-column>
+                <el-table-column label="操作" align="center" fixed>
+                    <template slot-scope="scope">
+						            <el-button class="ml0" v-if="scope.row.orderState === 'SIGNING' || scope.row.orderState === 'AUTHING'" type="text" size="small" @click="cancleOrder(scope.row)">取消签约</el-button>
+						            <el-button class="ml0" v-if="isRe.indexOf(scope.row.orderState) > -1" type="text" size="small" @click="reCall(scope.row)">
+                            重发通知
+						            </el-button>
+                        <a v-if="scope.row.downloadUrl" target="_blank" :href="`${baseUrl}/api/econtract/contract/download?orderId=${scope.row.orderId}`">
+							              <el-button class="ml0" type="text" size="small">合同下载</el-button>
+						            </a>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="orderStateDesc" label="订单状态" fixed></el-table-column>
+				        <el-table-column prop="createTimeDesc" label="签约时间" fixed>
                     <template slot-scope="scope">
                         <span>{{scope.row.createTimeDesc | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
                     </template>
                 </el-table-column>
-				<el-table-column prop="orderId" label="签约订单号"></el-table-column>
-                <el-table-column prop="extrSystemName" label="商户名称"></el-table-column>
-				<el-table-column prop="templateName" label="合同模板名称"></el-table-column>
-				<el-table-column prop="serverName" label="签约服务商"></el-table-column>
+				        <el-table-column prop="orderId" label="签约订单号" fixed></el-table-column>
+                <el-table-column prop="extrOrderId" label="客户订单号" fixed></el-table-column>
+                <el-table-column prop="extrSystemName" label="商户名称" fixed></el-table-column>
+				        <el-table-column prop="templateName" label="合同模板名称" fixed></el-table-column>
+				        <el-table-column prop="serverName" label="签约服务商" fixed></el-table-column>
                 <el-table-column prop="personalName" label="姓名"></el-table-column>
                 <el-table-column prop="personalIdentity" label="证件号"></el-table-column>
-                 <el-table-column prop="personalMobile" label="手机号"></el-table-column>
+                <el-table-column prop="personalMobile" label="手机号"></el-table-column>
                 <el-table-column prop="signStateDesc" label="签约状态"></el-table-column>
                 <el-table-column prop="certStateDesc" label="身份证认证状态"></el-table-column>
-                <el-table-column prop="orderStateDesc" label="订单状态">
-					<!-- <template slot-scope="scope">
-						<template v-if="wait.indexOf(scope.row.orderState) > -1">待签约</template>
-						<template v-else-if="fail.indexOf(scope.row.orderState) > -1">签约失败</template>
-						<template v-else>{{scope.row.orderStateDesc}}</template>
-					</template> -->
-				</el-table-column>
-
-                <el-table-column label="操作" align="center">
-                    <template slot-scope="scope">
-						<el-button class="ml0" v-if="scope.row.orderState === 'SIGNING' || scope.row.orderState === 'AUTHING'" type="text" size="small" @click="cancleOrder(scope.row)">取消签约</el-button>
-						<el-button class="ml0" v-if="isRe.indexOf(scope.row.orderState) > -1" type="text" size="small" @click="reCall(scope.row)">
-                            重发通知
-							<!-- {{scope.row.orderState == 'REJECTED' ? '重发通知': scope.row.orderState == 'SIGNING' ? '重发通知' : '重试'}} -->
-						</el-button>
-                        <a v-if="scope.row.downloadUrl" target="_blank" :href="`${baseUrl}/api/econtract/contract/download?orderId=${scope.row.orderId}`">
-							<el-button class="ml0" type="text" size="small">合同下载</el-button>
-						</a>
-                    </template>
-                </el-table-column>
             </el-table>
         </div>
 

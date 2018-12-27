@@ -88,6 +88,7 @@ let scheme = r => require.ensure([], () => r(require('../pages/clientManager/sch
 let agentManager = r => require.ensure([], () => r(require('../pages/clientManager/agentManager')), 'agentManager')
 let addAgent = r => require.ensure([], () => r(require('../pages/clientManager/addAgent')), 'addAgent')
 let agentDetail = r => require.ensure([], () => r(require('../pages/clientManager/agentDetail')), 'agentDetail')
+let sectionAndStaff = r => require.ensure([], () => r(require('../pages/clientManager/sectionAndStaff')), 'sectionAndStaff')
 
 let advertisingList = r => require.ensure([], () => r(require('../pages/management/advertisingList')), 'advertisingList')
 let advertisingCreate = r => require.ensure([], () => r(require('../pages/management/advertisingCreate')), 'advertisingCreate')
@@ -142,6 +143,7 @@ const flowSigning = () => import('../pages/eContract/flowSigning') //签约流�
 const newContractCreate = () => import('../pages/newContract/create')
 const newContractList = () => import('../pages/newContract/list')
 const newContractDetail = () => import('../pages/newContract/detail')
+const newContractPreview = () => import('../pages/newContract/preview')
 
 
 export default [
@@ -425,6 +427,12 @@ export default [
                         }, {
                             path: 'detail',
                             component: newContractDetail,
+                            meta: {
+                                keepAlive: false
+                            }
+                        }, {
+                            path: 'preview',
+                            component: newContractPreview,
                             meta: {
                                 keepAlive: false
                             }
@@ -845,6 +853,10 @@ export default [
                                 meta: {
                                     keepAlive: false
                                 }
+                            },
+                            {
+                              path: 'sectionAndStaff',
+                              component: sectionAndStaff
                             }
                         ]
                     },
