@@ -1,17 +1,4 @@
 <template>
-<<<<<<< HEAD
-
-</template>
-
-<script>
-  export default {
-    name: "shuntTool"
-  }
-</script>
-
-<style scoped>
-
-=======
   <div>
     <div class="content">
       <div class="mtitle">选择发放渠道</div>
@@ -440,5 +427,4 @@
   .balance > span {
     color: red;
   }
->>>>>>> master
 </style>
