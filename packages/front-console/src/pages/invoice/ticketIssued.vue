@@ -185,10 +185,10 @@
         <el-table-column prop="subjectName" label="开票类目"></el-table-column>
         <el-table-column prop="amount" label="开票金额"></el-table-column>
         <el-table-column prop="serviceCompanyName" label="开票公司"></el-table-column>
-        <el-table-column prop="paperStatusName" label="状态"></el-table-column>
+        <el-table-column prop="statusMsg" label="状态"></el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <el-button size="mini" @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
+            <el-button v-if="scope.row.status === 'fail' || scope.row.status === 'dealing'" size="mini" @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -204,7 +204,7 @@
         <span>申请时间： {{invoiceData.createTime | formatTime}}</span>
       </div>
       <div class="half">
-        <span>开票名称： {{invoiceData.customCompanyName}}</span>
+        <span>开票名称： {{invoiceData.customCompanyName}}</span>:
         <span>纳税人识别号： {{invoiceData.customTaxIdcd}}</span>
       </div>
       <div class="half">
@@ -224,10 +224,10 @@
         <el-table-column prop="subjectName" label="开票类目"></el-table-column>
         <el-table-column prop="amount" label="开票金额"></el-table-column>
         <el-table-column prop="serviceCompanyName" label="开票公司"></el-table-column>
-        <el-table-column prop="paperStatusName" label="状态"></el-table-column>
+        <el-table-column prop="statusMsg" label="状态"></el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <el-button size="mini" @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
+            <el-button v-if="scope.row.status === 'fail' || scope.row.status === 'dealing'" size="mini" @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -616,7 +616,7 @@
           this.sureShow = false
           this.$message({
             type: 'success',
-            message: '开票成功！'
+            message: '提交成功！'
           })
           this.query(this.form.page)
         }.bind(this))
