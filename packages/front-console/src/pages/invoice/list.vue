@@ -43,15 +43,13 @@
             <el-form-item label="申请状态" size="small">
                 <el-select v-model="formSearch.status" placeholder="请选择" style="width:100%;">
                     <el-option label="全部" value=""></el-option>
-                    <el-option v-for="item in InvoiceState" :key="item.value" :label="item.text"
-                               :value="item.value"></el-option>
+                    <el-option v-for="item in InvoiceState" :key="item.value" :label="item.text" :value="item.value"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="发票类型" size="small">
                 <el-select v-model="formSearch.invoiceType" placeholder="请选择" style="width:100%;">
                     <el-option label="全部" value=""></el-option>
-                    <el-option v-for="item in InvoiceType" :key="item.value" :label="item.text"
-                               :value="item.value"></el-option>
+                    <el-option v-for="item in InvoiceType" :key="item.value" :label="item.text" :value="item.value"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="申请日期" size="small">
@@ -350,6 +348,9 @@
                 this.isCan = this.checkRight(this.permissions, 'invoice-web:/invoice/invoice-approve-submit')
             }
             this.getWait()
+            get('/api/invoice-web/invoice/invoice-proposer-list').then(data => {
+              this.proposerList = data
+            })
         },
         watch: {
             permissions() {

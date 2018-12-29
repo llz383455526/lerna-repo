@@ -137,7 +137,7 @@ class ContractModel extends BaseModel {
   }
   // 获取服务商名称列表
   getOptionServiceCompanies () {
-    get('/api/salemgt/common/service-company/list').then(result => {
+    get('/api/salemgt/common/service-company/list?businessed=true').then(result => {
       this.serviceCompaniesList = result
     })
   }

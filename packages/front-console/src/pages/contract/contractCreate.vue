@@ -741,7 +741,7 @@
                 })
             },
             getCompanyList() {
-                get('/api/salemgt/common/service-company/list').then(data => {
+                get('/api/salemgt/common/service-company/list?businessed=true').then(data => {
                     this.serviceList = data
                 })
             },

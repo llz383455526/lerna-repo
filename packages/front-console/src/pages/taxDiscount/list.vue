@@ -54,7 +54,7 @@
             <span>{{scope.row.enableStatus ? '已生效' : '未生效'}}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="180">
+        <el-table-column label="操作" width="240">
           <template slot-scope="scope">
             <el-tag @click.native="editBtnClick(scope.row, '2')" style="cursor: pointer"
                     v-if="scope.row.lockStatus" type="success">详情
@@ -72,6 +72,9 @@
             <el-tag @click.native="removeClick(scope.row)" style="cursor: pointer" v-if="!scope.row.lockStatus"
                     type="danger">删除
             </el-tag>
+            <router-link :to="`attachmentList?id=${scope.row.id}`">
+              <el-tag style="cursor: pointer" type="success">脱敏附件</el-tag>
+            </router-link>
           </template>
         </el-table-column>
 

@@ -91,8 +91,8 @@
                         </el-row>
                         <el-row :gutter="20">
                             <el-col :span="10">
-                                <el-col :span="8" class="right">银行账号</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.bankAccount}}</el-col>
+                                <el-col :span="10" class="right">是否有业务（用于合同）</el-col>
+                                <el-col :span="10">{{msg.serviceCompanyInfo.businessedName}}</el-col>
                             </el-col>
                         </el-row>
                     </div>

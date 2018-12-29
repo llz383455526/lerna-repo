@@ -11,7 +11,7 @@
             <el-input v-model="formSearch.createBy"></el-input>
         </el-form-item>
 
-        <el-form-item label="服务商名称" size="small" prop="serviceCompanyName">
+        <!-- <el-form-item label="服务商名称" size="small" prop="serviceCompanyName">
             <el-input v-model="formSearch.serviceCompanyName"></el-input>
         </el-form-item>
 
@@ -25,10 +25,9 @@
 
         <el-form-item label="申请状态" size="small" prop="status">
             <el-select v-model="formSearch.status" placeholder="请选择" style="width:100%;">
-                <el-option label="全部" value=""></el-option>
                 <el-option v-for="item in statusList" :key="item.value" :label="item.text" :value="item.value"></el-option>
             </el-select>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item style="margin-top: -4px">
             <el-button type="primary" @click="search" size="small">查询</el-button>
@@ -36,7 +35,7 @@
         </el-form-item>
     </el-form>
 
-    <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_sale_contract'}})">创建合同</el-button>
+    <!-- <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_sale_contract'}})">创建合同</el-button> -->
     <!-- <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_ns_sale_contract'}})">新客户非标准合同</el-button> -->
     
     <div class="table-container">
@@ -147,7 +146,7 @@ export default {
                 example: formSearch,
             }
 
-            post('/api/opencrm/workflow/list', options)
+            post('/api/opencrm/workflow/complated_list', options)
                 .then(result => {
                     this.tableList = result
                 })

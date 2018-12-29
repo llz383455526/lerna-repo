@@ -42,6 +42,7 @@ let checkObject = r => require.ensure([], () => r(require('../pages/eContract/ch
 let signSuccess = r => require.ensure([], () => r(require('../pages/eContract/signSuccess.vue')), 'signSuccess');
 let batchRecord = r => require.ensure([], () => r(require('../pages/eContract/batchRecord.vue')), 'batchRecord');
 let offlineManager = r => require.ensure([], () => r(require('../pages/eContract/offlineManager.vue')), 'offlineManager');
+let userManager = r => require.ensure([], () => r(require('../pages/eContract/userManager.vue')), 'userManager');
 
 let rechargeIndex = r => require.ensure([], () => r(require('../pages/recharge/index.vue')), 'rechargeIndex');
 let balanceAdjust = r => require.ensure([], () => r(require('../pages/recharge/balanceAdjust/list.vue')), 'balanceAdjust');
@@ -124,6 +125,7 @@ const taxDiscountStep3 = r => require.ensure([], () => r(require('../pages/taxDi
 const taxDiscountStep4 = r => require.ensure([], () => r(require('../pages/taxDiscount/step/4')), 'taxDiscountStep4')
 const taxDiscountStep5 = r => require.ensure([], () => r(require('../pages/taxDiscount/step/5')), 'taxDiscountStep5')
 let taxDiscountSetting = r => require.ensure([], () => r(require('../pages/taxDiscount/userSetting')), 'taxDiscountSetting')
+let attachmentList = r => require.ensure([], () => r(require('../pages/taxDiscount/attachmentList')), 'attachmentList')
 
 
 let landingCompanyList = r => require.ensure([], () => r(require('../pages/landingCompany/list')), 'landingCompanyList')
@@ -146,916 +148,933 @@ const newContractCreate = () => import('../pages/newContract/create')
 const newContractList = () => import('../pages/newContract/list')
 const newContractDetail = () => import('../pages/newContract/detail')
 const newContractPreview = () => import('../pages/newContract/preview')
+const newContractListComplated = () => import('../pages/newContract/list_complated')
 
 
-export default [
-    {
-        path: '/',
-        component: App,
-        redirect: '/main',
-        children: [
-            {
-                path: '/main',
-                component: main,
-                // redirect: '/main/backlog',
-                // redirect: '/main/individual/individualIndex',
-                children: [
-                    {
-                        path: 'accountManager',
-                        component: index,
-                        children: [
-                            {
-                                path: 'payOrder',
-                                component: payOrder,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'offlineSalaryUpload',
-                                component: offlineSalaryUpload,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'offlineSalaryImport',
-                                component: offlineSalaryImport,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'offlineSalaryManager',
-                                component: offlineSalaryManager,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'index',
-                                component: accountIndex,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'payOrderReject',
-                                component: payOrderReject,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'amountManager',
-                                component: amountManager,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'companyCreditRecord',
-                                component: companyCreditRecord,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'creditBill',
-                                component: creditBill,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'fundDetail',
-                                component: fundDetail,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'payManager',
-                                component: payManager,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'regulation',
-                                component: regulation,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'clientDetail',
-                                component: clientDetail,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'serviceDetail',
-                                component: serviceDetail,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'assignDetail',
-                                component: assignDetail,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            }
-                        ]
-                    }, {
-                        path: 'amountManager',
-                        component: index,
-                        children: [{
-                            path: 'index',
-                            component: amountManager
-                        }]
-                    }, {
-                        path: 'paymentIssue',
-                        component: index,
-                        children: []
-                    }, {
-                        path: 'orderManager',
-                        component: index,
-                        children: [
-                            {
-                                path: 'orderManager',
-                                component: orderManager,
-                                meta: {
-                                    keepAlive: true
-                                }
-                            },
-                            {
-                                path: 'shuntTool',
-                                component: orderManagerShuntTool,
-                                meta: {
-                                    keepAlive: true
-                                }
-                            },
-                            {
-                                path: 'statistics',
-                                component: statistics
-                            },
-                            {
-                                path: 'defrayment',
-                                component: defrayment,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'submitOrder',
-                                component: submitOrder,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'postalService',
-                                component: postalService,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'orderComplete',
-                                component: orderComplete,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'cancleOrder',
-                                component: cancleOrder,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            }
-                        ]
-                    }, {
-                        path: 'contract',
-                        component: index,
-                        children: [
-                            {
-                                path: 'list',
-                                component: r => require.ensure([], () => r(require('../pages/contract/list.vue')), 'list')
-                            },
-                            {
-                                path: 'create',
-                                component: r => require.ensure([], () => r(require('../pages/contract/create.vue')), 'create'),
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'preview',
-                                component: r => require.ensure([], () => r(require('../pages/contract/preview.vue')), 'preview'),
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'templateList',
-                                component: templateList,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'templateCreate',
-                                component: templateCreate,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'contractList',
-                                component: contractList,
-                                meta: {
-                                    keepAlive: true
-                                }
-                            },
-                            {
-                                path: 'contractCreate',
-                                component: contractCreate,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'contractPreview',
-                                component: contractPreview,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'serviceInvoiceManager',
-                                component: serviceInvoiceManager,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'agentContractList',
-                                component: agentContractList,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'agentContractCreate',
-                                component: agentContractCreate,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            }
-                        ]
-                    }, {
-                        path: 'newContract',
-                        component: index,
-                        children: [{
-                            path: 'create',
-                            component: newContractCreate,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'list',
-                            component: newContractList,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'detail',
-                            component: newContractDetail,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'preview',
-                            component: newContractPreview,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }]
-                    }, {
-                        path: 'management',
-                        component: index,
-                        children: [{
-                            path: 'advertisingList',
-                            component: advertisingList,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'advertisingCreate',
-                            component: advertisingCreate,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'messageList',
-                            component: messageList,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'messageCreate',
-                            component: messageCreate,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'documentList',
-                            component: documentList,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'documentDetail',
-                            component: documentDetail,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'documentCreate',
-                            component: documentCreate,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'roleList',
-                            component: roleList,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'roleCreate',
-                            component: roleCreate,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'accountList',
-                            component: accountList,
-                            meta: {
-                                keepAlive: true
-                            }
-                        }, {
-                            path: 'accountCreate',
-                            component: accountCreate,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'accountDetail',
-                            component: accountDetail,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }]
-                    }, {
-                        path: 'bigAmount',
-                        component: index,
-                        children: [
-                            {
-                                path: 'list',
-                                component: r => require.ensure([], () => r(require('../pages/bigAmount/list.vue')), 'list')
-                            }
-                        ]
-                    }, {
-                        path: 'settled',
-                        component: index,
-                        children: [
-                            {
-                                path: 'list-flow',
-                                component: r => require.ensure([], () => r(require('../pages/settled/list-flow.vue')), 'list-flow')
-                            },
-                            {
-                                path: 'list-service',
-                                component: r => require.ensure([], () => r(require('../pages/settled/list-service.vue')), 'list-service')
-                            },
-                            {
-                                path: 'list-abnormity',
-                                component: r => require.ensure([], () => r(require('../pages/settled/list-abnormity.vue')), 'list-abnormity')
-                            }
-                        ]
-                    }, {
-                        path: 'eContract',
-                        component: index,
-                        children: [
-                            {
-                                path: 'index',
-                                component: eContractIndex,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'contractManager',
-                                component: contractManager,
-                                meta: {
-                                    keepAlive: true
-                                }
-                            },
-                            {
-                                path: 'addTemplate',
-                                component: addTemplate,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'addTemplateGroup',
-                                component: addTemplateGroup,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'objectManager',
-                                component: objectManager,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'addObject',
-                                component: addObject,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'signManager',
-                                component: signManager,
-                                meta: {
-                                    keepAlive: true
-                                }
-                            },
-                            {
-                                path: 'uploadObject',
-                                component: uploadObject,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            }, {
-                                path: 'checkObject',
-                                component: checkObject,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'signSuccess',
-                                component: signSuccess,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'batchRecord',
-                                component: batchRecord,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'offlineManager',
-                                component: offlineManager,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'start/:id',
-                                component: flowSigning,
-                                hidden: true,
-                                name: 'flowSigning',
-                                meta: { title: '签约流程', keepAlive: false }
-                            },
-                        ]
-                    }, {
-                        path: 'recharge',
-                        component: index,
-                        children: [
-                            {
-                                path: 'applyList',
-                                component: rechargeIndex,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'balanceAdjust',
-                                component: balanceAdjust,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'clearing',
-                                component: clearing,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        path: 'infoManager',
-                        component: index,
-                        children: [
-                            {
-                                path: 'infoManager',
-                                component: infoManager
-                            },
-                            {
-                                path: 'addCustomer',
-                                component: addCustomer
-                            },
-                            {
-                                path: 'whiteList',
-                                component: whiteList
-                            },
-                            {
-                                path: 'categoryManager',
-                                component: categoryManager
-                            },
-                            {
-                                path: 'addCategory',
-                                component: addCategory
-                            }
-                        ]
-                    },
-                    {
-                        path: 'billingManager',
-                        component: index,
-                        children: [
-                            {
-                                path: 'list',
-                                component: r => require.ensure([], () => r(require('../pages/billingManager/list.vue')), 'list')
-                            },
-                            {
-                                path: 'create',
-                                component: r => require.ensure([], () => r(require('../pages/billingManager/create.vue')), 'create')
-                            },
-                            {
-                              path: 'monitoring',
-                              component: r => require.ensure([], () => r(require('../pages/billingManager/monitoring.vue')), 'monitoring')
-                            }
-                        ]
-                    },
-                    {
-                        path: 'invoice',
-                        component: index,
-                        children: [
-                            {
-                                path: 'list',
-                                component: invoiceList,
-                                meta: {
-                                    keepAlive: false, //此组件不需要被缓存
-                                }
-                            },
-                            {
-                                path: 'invoice-step1',
-                                component: invoiceStep1,
-                                meta: {
-                                    keepAlive: false, //此组件不需要被缓存
-                                }
-                            },
-                            {
-                                path: 'invoice-step2',
-                                component: invoiceStep2,
-                                meta: {
-                                    keepAlive: false, //此组件不需要被缓存
-                                }
-                            },
-                            {
-                                path: 'create',
-                                component: invoiceCreate,
-                                meta: {
-                                    keepAlive: false, //此组件不需要被缓存
-                                }
-                            },
-                            {
-                                path: 'ticketIssued',
-                                component: ticketIssued
-                            },
-                            {
-                                path: 'oweTicketManager',
-                                component: oweTicketManager
-                            },
-                            {
-                                path: 'batchApply',
-                                component: batchApply,
-                                meta: {
-                                    keepAlive: false, //此组件不需要被缓存
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        path: 'reconTools',
-                        component: index,
-                        children: [
-                            { path: 'list', component: reconTools },
-                            {
-                                path: 'reconDetail', component: reconDetail, meta: {
-                                    keepAlive: false, //此组件不需要被缓存
-                                }
-                            },
-                            {
-                                path: 'reconDetailError', component: reconDetailError, meta: {
-                                    keepAlive: false, //此组件不需要被缓存
-                                }
-                            },
-                        ]
-                    },
-                    {
-                        path: 'clientManager',
-                        component: index,
-                        children: [
-                            {
-                                path: 'clientManager',
-                                component: clientManager
-                            },
-                            {
-                                path: 'appManager',
-                                component: appManager
-                            },
-                            {
-                                path: 'appExamine',
-                                component: appExamine
-                            },
-                            {
-                                path: 'appDetail',
-                                component: appDetail,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'addClient',
-                                component: addClient,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'addApp',
-                                component: addApp,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'serverManager',
-                                component: serverManager
-                            },
-                            {
-                                path: 'addServer',
-                                component: addServer,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'serverDetail',
-                                component: serverDetail,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'report',
-                                component: report,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'scheme',
-                                component: scheme,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'agentManager',
-                                component: agentManager,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'addAgent',
-                                component: addAgent,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'agentDetail',
-                                component: agentDetail,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                              path: 'sectionAndStaff',
-                              component: sectionAndStaff
-                            }
-                        ]
-                    },
-                    {
-                        path: 'reconciliationCenter',
-                        component: index,
-                        children: [
-                            {
-                                path: 'invoiceList',
-                                component: invoiceListNew
-                            },
-                            {
-                                path: 'invoiceDetail',
-                                component: invoiceDetail
-                            },
-                            {
-                                path: 'contractList',
-                                component: contractListNew
-                            },
-                            {
-                                path: 'contractDetail',
-                                component: contractDetail
-                            },
-                            {
-                                path: 'rechargeList',
-                                component: rechargeList
-                            },
-                            {
-                                path: 'rechargeDetail',
-                                component: rechargeIndexNew
-                            },
-                            {
-                                path: 'payOrder',
-                                component: payOrderNew
-                            },
-                            {
-                                path: 'billList',
-                                component: billList
-                            }
-                        ]
-                    },
-                    {
-                        path: 'individual',
-                        component: index,
-                        children: [
-                            {
-                                path: 'individualIndex',
-                                component: individualIndex,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            }
-                        ]
-                    }, {
-                        path: 'taxDiscount',
-                        component: index,
-                        children: [{
-                            path: 'home',
-                            component: taxDiscountHome,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'list',
-                            component: taxDiscountList,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'detail',
-                            component: taxDiscountDetail,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'setting',
-                            component: taxDiscountSetting,
-                            meta: {
-                                keepAlive: false
-                            }
-                        },
-                            {
-                                path: 'landingCompany',
-                                component: index,
-                                children: [{
-                                    path: 'list',
-                                    component: landingCompanyList,
-                                    meta: {
-                                        keepAlive: false
-                                    }
-                                }, {
-                                    path: 'create',
-                                    component: landingCompanyCreate,
-                                    meta: {
-                                        keepAlive: false
-                                    }
-                                }]
-                            },
-                            {
-                                path: 'add',
-                                component: taxDiscountAdd,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'step1',
-                                component: taxDiscountStep1,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'step2',
-                                component: taxDiscountStep2,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'step3',
-                                component: taxDiscountStep3,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'step4',
-                                component: taxDiscountStep4,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'step5',
-                                component: taxDiscountStep5,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            },
-                            {
-                                path: 'setting',
-                                component: taxDiscountSetting,
-                                meta: {
-                                    keepAlive: false
-                                }
-                            }]
-                    },
-                    {
-                        path: 'landingCompany',
-                        component: index,
-                        children: [{
-                            path: 'list',
-                            component: landingCompanyList,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }, {
-                            path: 'create',
-                            component: landingCompanyCreate,
-                            meta: {
-                                keepAlive: false
-                            }
-                        }]
-                    }
-                ],
+export default [{
+  path: '/',
+  component: App,
+  redirect: '/main',
+  children: [{
+      path: '/main',
+      component: main,
+      children: [{
+          path: 'accountManager',
+          component: index,
+          children: [{
+              path: 'payOrder',
+              component: payOrder,
+              meta: {
+                keepAlive: false
+              }
             },
             {
-                path: '/login',
-                component: login
+              path: 'offlineSalaryUpload',
+              component: offlineSalaryUpload,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'offlineSalaryImport',
+              component: offlineSalaryImport,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'offlineSalaryManager',
+              component: offlineSalaryManager,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'index',
+              component: accountIndex,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'payOrderReject',
+              component: payOrderReject,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'amountManager',
+              component: amountManager,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'companyCreditRecord',
+              component: companyCreditRecord,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'creditBill',
+              component: creditBill,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'fundDetail',
+              component: fundDetail,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'payManager',
+              component: payManager,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'regulation',
+              component: regulation,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'clientDetail',
+              component: clientDetail,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'serviceDetail',
+              component: serviceDetail,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'assignDetail',
+              component: assignDetail,
+              meta: {
+                keepAlive: false
+              }
             }
-        ]
+          ]
+        }, {
+          path: 'amountManager',
+          component: index,
+          children: [{
+            path: 'index',
+            component: amountManager
+          }]
+        },
+        {
+          path: 'paymentIssue',
+          component: index,
+          children: []
+        },
+        {
+          path: 'orderManager',
+          component: index,
+          children: [{
+              path: 'orderManager',
+              component: orderManager,
+              meta: {
+                keepAlive: true
+              }
+            },
+            {
+              path: 'shuntTool',
+              component: orderManagerShuntTool,
+              meta: {
+                keepAlive: true
+              }
+            },
+            {
+              path: 'statistics',
+              component: statistics
+            },
+            {
+              path: 'defrayment',
+              component: defrayment,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'submitOrder',
+              component: submitOrder,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'postalService',
+              component: postalService,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'orderComplete',
+              component: orderComplete,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'cancleOrder',
+              component: cancleOrder,
+              meta: {
+                keepAlive: false
+              }
+            }
+          ]
+        }, {
+          path: 'contract',
+          component: index,
+          children: [{
+              path: 'list',
+              component: r => require.ensure([], () => r(require('../pages/contract/list.vue')), 'list')
+            },
+            {
+              path: 'create',
+              component: r => require.ensure([], () => r(require('../pages/contract/create.vue')), 'create'),
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'preview',
+              component: r => require.ensure([], () => r(require('../pages/contract/preview.vue')), 'preview'),
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'templateList',
+              component: templateList,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'templateCreate',
+              component: templateCreate,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'contractList',
+              component: contractList,
+              meta: {
+                keepAlive: true
+              }
+            },
+            {
+              path: 'contractCreate',
+              component: contractCreate,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'contractPreview',
+              component: contractPreview,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'serviceInvoiceManager',
+              component: serviceInvoiceManager,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'agentContractList',
+              component: agentContractList,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'agentContractCreate',
+              component: agentContractCreate,
+              meta: {
+                keepAlive: false
+              }
+            }
+          ]
+        }, {
+          path: 'newContract',
+          component: index,
+          children: [{
+              path: 'create',
+              component: newContractCreate,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'list',
+              component: newContractList,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'detail',
+              component: newContractDetail,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'preview',
+              component: newContractPreview,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'list_complated',
+              component: newContractListComplated,
+              meta: {
+                keepAlive: false
+              }
+            }
+          ]
+        },
+        {
+          path: 'management',
+          component: index,
+          children: [{
+              path: 'advertisingList',
+              component: advertisingList,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'advertisingCreate',
+              component: advertisingCreate,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'messageList',
+              component: messageList,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'messageCreate',
+              component: messageCreate,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'documentList',
+              component: documentList,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'documentDetail',
+              component: documentDetail,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'documentCreate',
+              component: documentCreate,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'roleList',
+              component: roleList,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'roleCreate',
+              component: roleCreate,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'accountList',
+              component: accountList,
+              meta: {
+                keepAlive: true
+              }
+            },
+            {
+              path: 'accountCreate',
+              component: accountCreate,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'accountDetail',
+              component: accountDetail,
+              meta: {
+                keepAlive: false
+              }
+            }
+          ]
+        },
+        {
+          path: 'bigAmount',
+          component: index,
+          children: [{
+            path: 'list',
+            component: r => require.ensure([], () => r(require('../pages/bigAmount/list.vue')), 'list')
+          }]
+        },
+        {
+          path: 'settled',
+          component: index,
+          children: [{
+              path: 'list-flow',
+              component: r => require.ensure([], () => r(require('../pages/settled/list-flow.vue')), 'list-flow')
+            },
+            {
+              path: 'list-service',
+              component: r => require.ensure([], () => r(require('../pages/settled/list-service.vue')), 'list-service')
+            },
+            {
+              path: 'list-abnormity',
+              component: r => require.ensure([], () => r(require('../pages/settled/list-abnormity.vue')), 'list-abnormity')
+            }
+          ]
+        },
+        {
+          path: 'eContract',
+          component: index,
+          children: [{
+              path: 'index',
+              component: eContractIndex,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'contractManager',
+              component: contractManager,
+              meta: {
+                keepAlive: true
+              }
+            },
+            {
+              path: 'addTemplate',
+              component: addTemplate,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'addTemplateGroup',
+              component: addTemplateGroup,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'objectManager',
+              component: objectManager,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'addObject',
+              component: addObject,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'signManager',
+              component: signManager,
+              meta: {
+                keepAlive: true
+              }
+            },
+            {
+              path: 'uploadObject',
+              component: uploadObject,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'checkObject',
+              component: checkObject,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'signSuccess',
+              component: signSuccess,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'batchRecord',
+              component: batchRecord,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'offlineManager',
+              component: offlineManager,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'userManager',
+              component: userManager,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'start/:id',
+              component: flowSigning,
+              hidden: true,
+              name: 'flowSigning',
+              meta: {
+                title: '签约流程',
+                keepAlive: false
+              }
+            },
+          ]
+        },
+        {
+          path: 'recharge',
+          component: index,
+          children: [{
+              path: 'applyList',
+              component: rechargeIndex,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'balanceAdjust',
+              component: balanceAdjust,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'clearing',
+              component: clearing,
+              meta: {
+                keepAlive: false
+              }
+            }
+          ]
+        },
+        {
+          path: 'infoManager',
+          component: index,
+          children: [{
+              path: 'infoManager',
+              component: infoManager
+            },
+            {
+              path: 'addCustomer',
+              component: addCustomer
+            },
+            {
+              path: 'whiteList',
+              component: whiteList
+            },
+            {
+              path: 'categoryManager',
+              component: categoryManager
+            },
+            {
+              path: 'addCategory',
+              component: addCategory
+            }
+          ]
+        },
+        {
+          path: 'billingManager',
+          component: index,
+          children: [{
+              path: 'list',
+              component: r => require.ensure([], () => r(require('../pages/billingManager/list.vue')), 'list')
+            },
+            {
+              path: 'create',
+              component: r => require.ensure([], () => r(require('../pages/billingManager/create.vue')), 'create')
+            },
+            {
+                path: 'monitoring',
+                component: r => require.ensure([], () => r(require('../pages/billingManager/monitoring.vue')), 'monitoring')
+              }
+          ]
+        },
+        {
+          path: 'invoice',
+          component: index,
+          children: [{
+              path: 'list',
+              component: invoiceList,
+              meta: {
+                keepAlive: false, //此组件不需要被缓存
+              }
+            },
+            {
+              path: 'create',
+              component: invoiceCreate,
+              meta: {
+                keepAlive: false, //此组件不需要被缓存
+              }
+            },
+            {
+              path: 'ticketIssued',
+              component: ticketIssued
+            },
+            {
+              path: 'oweTicketManager',
+              component: oweTicketManager
+            },
+            {
+              path: 'batchApply',
+              component: batchApply,
+              meta: {
+                keepAlive: false, //此组件不需要被缓存
+              }
+            }
+          ]
+        },
+        {
+          path: 'reconTools',
+          component: index,
+          children: [{
+              path: 'list',
+              component: reconTools
+            },
+            {
+              path: 'reconDetail',
+              component: reconDetail,
+              meta: {
+                keepAlive: false, //此组件不需要被缓存
+              }
+            },
+            {
+              path: 'reconDetailError',
+              component: reconDetailError,
+              meta: {
+                keepAlive: false, //此组件不需要被缓存
+              }
+            },
+          ]
+        },
+        {
+          path: 'clientManager',
+          component: index,
+          children: [{
+              path: 'clientManager',
+              component: clientManager
+            },
+            {
+              path: 'appManager',
+              component: appManager
+            },
+            {
+              path: 'appExamine',
+              component: appExamine
+            },
+            {
+              path: 'appDetail',
+              component: appDetail,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'addClient',
+              component: addClient,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'addApp',
+              component: addApp,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'serverManager',
+              component: serverManager
+            },
+            {
+              path: 'addServer',
+              component: addServer,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'serverDetail',
+              component: serverDetail,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'report',
+              component: report,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'scheme',
+              component: scheme,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'agentManager',
+              component: agentManager,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'addAgent',
+              component: addAgent,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'agentDetail',
+              component: agentDetail,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'sectionAndStaff',
+              component: sectionAndStaff
+            }
+          ]
+        },
+        {
+          path: 'reconciliationCenter',
+          component: index,
+          children: [{
+              path: 'invoiceList',
+              component: invoiceListNew
+            },
+            {
+              path: 'invoiceDetail',
+              component: invoiceDetail
+            },
+            {
+              path: 'contractList',
+              component: contractListNew
+            },
+            {
+              path: 'contractDetail',
+              component: contractDetail
+            },
+            {
+              path: 'rechargeList',
+              component: rechargeList
+            },
+            {
+              path: 'rechargeDetail',
+              component: rechargeIndexNew
+            },
+            {
+              path: 'payOrder',
+              component: payOrderNew
+            },
+            {
+              path: 'billList',
+              component: billList
+            }
+          ]
+        },
+        {
+          path: 'individual',
+          component: index,
+          children: [{
+            path: 'individualIndex',
+            component: individualIndex,
+            meta: {
+              keepAlive: false
+            }
+          }]
+        },
+        {
+          path: 'taxDiscount',
+          component: index,
+          children: [{
+              path: 'home',
+              component: taxDiscountHome,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'list',
+              component: taxDiscountList,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'detail',
+              component: taxDiscountDetail,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'setting',
+              component: taxDiscountSetting,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'landingCompany',
+              component: index,
+              children: [{
+                  path: 'list',
+                  component: landingCompanyList,
+                  meta: {
+                    keepAlive: false
+                  }
+                },
+                {
+                  path: 'create',
+                  component: landingCompanyCreate,
+                  meta: {
+                    keepAlive: false
+                  }
+                }
+              ]
+            },
+            {
+              path: 'add',
+              component: taxDiscountAdd,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'step1',
+              component: taxDiscountStep1,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'step2',
+              component: taxDiscountStep2,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'step3',
+              component: taxDiscountStep3,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'step4',
+              component: taxDiscountStep4,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'step5',
+              component: taxDiscountStep5,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'setting',
+              component: taxDiscountSetting,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'attachmentList',
+              component: attachmentList,
+              meta: {
+                keepAlive: false
+              }
+            }
+          ]
+        },
+        {
+          path: 'landingCompany',
+          component: index,
+          children: [{
+              path: 'list',
+              component: landingCompanyList,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'create',
+              component: landingCompanyCreate,
+              meta: {
+                keepAlive: false
+              }
+            }
+          ]
+        }
+      ],
+    },
+    {
+      path: '/login',
+      component: login
     }
-]
-
-
-
-
-
-
-
-
-
-
-
-
+  ]
+}]

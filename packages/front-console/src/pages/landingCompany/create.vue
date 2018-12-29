@@ -21,18 +21,12 @@
                         <el-select v-model="form.direct" placeholder="请选择" class="form_input">
                             <el-option v-for="item in directStatus" :label="item.text" :value="item.value" :key="item.value"></el-option>
                         </el-select>
-                        <!-- <el-select v-model="form.direct" class="form_input">
-                        
-                            <el-option value="true" label="是"></el-option>
-                            <el-option value="false" label="否"></el-option>
-                        </el-select> -->
                     </el-form-item>
-                    <!-- <el-form-item label="注册状态" prop="registered" size="small">
-                        <el-select v-model="form.registered" class="form_input">
-                            <el-option value="false" label="未注册"></el-option>
-                            <el-option value="true" label="已注册"></el-option>
+                    <el-form-item label="是否有业务（用于合同）" prop="businessed" size="small">
+                        <el-select v-model="form.businessed" placeholder="请选择" class="form_input">
+                            <el-option v-for="item in directStatus" :label="item.text" :value="item.value" :key="item.value"></el-option>
                         </el-select>
-                    </el-form-item> -->
+                    </el-form-item>
                     <el-form-item label="注册状态" prop="registered" size="small">
                         <el-select v-model="form.registered" placeholder="请选择" class="form_input">
                             <el-option v-for="item in registeredStatus" :label="item.text" :value="item.value" :key="item.value"></el-option>
@@ -116,6 +110,7 @@ export default {
                 name: "",
                 shortName: "",
                 direct: "",
+                businessed: '',
                 registered: '',
                 supportInvoiceType: ['PP','ZP'],
                 masterUid: "",
@@ -150,6 +145,11 @@ export default {
                 direct: [{
                     required: true,
                     message: "请选择是否直营",
+                    trigger: "change"
+                }],
+                businessed: [{
+                    required: true,
+                    message: "请选择是否有业务",
                     trigger: "change"
                 }],
                 registered: [{

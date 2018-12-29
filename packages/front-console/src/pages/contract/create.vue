@@ -551,6 +551,12 @@
                 }
                 return cb()
             }
+            let f2_0 = (rule, value, cb) => {
+                if(!this.float2_0.test(value)) {
+                    return cb('请输入正确的服务费收费（大于零且最多两位小数）')
+                }
+                return cb()
+            }
             return {
                 rules: {
                     customerId: [
@@ -599,8 +605,8 @@
                         {required: true, message: '请选择代理商', trigger: 'blur'}
                     ],
                     'agentFeeContent.serviceFeeRate': [
-                        {required: true, message: '请输入正确的服务费收费（大于零且最多两位小数）', trigger: 'blur'},
-                        {validator: f2, trigger: 'blur'}
+                        {required: true, message: '请输入正确的服务费收费（大于或等于零且最多两位小数）', trigger: 'blur'},
+                        {validator: f2_0, trigger: 'blur'}
                     ]
                 },
                 // weekVisible: false,
@@ -750,6 +756,7 @@
                 serviceTypes: [],
                 invoiceTypeList: [],
                 float2: /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/,
+                float2_0: /^(([0-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/,
                 agentList: [],
                 chargeByName: '',
                 agentDisable: false,

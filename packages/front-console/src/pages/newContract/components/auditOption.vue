@@ -1,5 +1,5 @@
 <template>
-<div v-if="contractModel.status != 'init'">
+<div>
     <div class="widget-box bg-white" style="margin-top:20px;">
         <div class="widget-header">
             <h4 class="widget-title">审核意见</h4>
@@ -18,7 +18,7 @@
             </div>
         </div>
     </div>
-    <div class="mt20 mb20">
+    <div class="mt20 mb20" v-if="contractModel.status != 'init'">
         <el-button size="small" type="primary" v-if="contractModel.actions[0] === 'agree'" @click="handleContract('agree')">审批通过</el-button>
         <el-button size="small" type="danger" v-if="contractModel.actions[1] === 'reject'" @click="handleContract('reject')">审批不通过</el-button>
         <el-button size="small" @click="backToList('list')">返回</el-button>

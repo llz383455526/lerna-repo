@@ -14,6 +14,21 @@
     <el-form-item label="是否免征" v-if="isShowFree">
       <el-switch v-model="form.isFree"></el-switch>
     </el-form-item>
+    <template v-if="form.isFree">
+      <br>
+      <el-form-item class="one-input" prop="inputData2" label=" ">
+        <el-input type="number" placeholder="请输入内容" v-model.number="form.inputData2">
+          <template slot="append">%</template>
+          <template slot="prepend">奖励分成</template>
+        </el-input>
+      </el-form-item>
+      <el-form-item prop="inputData3">
+        <el-input type="number" placeholder="请输入内容" v-model.number="form.inputData3">
+          <template slot="append">%</template>
+          <template slot="prepend">奖励分成比例</template>
+        </el-input>
+      </el-form-item>
+    </template>
   </el-form>
 </template>
 
@@ -52,6 +67,10 @@
       }
     },
     data() {
+      let checkInputValidator = (rule, value, callback) => {
+        const str = this.checkInput(this.form.inputData0)
+        callback(str ? new Error(str) : undefined)
+      }
       return {
         form: {
           inputData0: 0,
@@ -59,14 +78,8 @@
           isFree: false
         },
         rules: {
-          inputData0: [{ required: true, trigger: 'blur', validator: (rule, value, callback) => {
-              const str = this.checkInput(this.form.inputData0)
-              callback(str ? new Error(str) : undefined)
-            } }],
-          inputData1: [{ required: true, trigger: 'blur', validator: (rule, value, callback) => {
-              const str = this.checkInput(this.form.inputData1)
-              callback(str ? new Error(str) : undefined)
-            } }],
+          inputData0: [{ required: true, trigger: 'blur', validator:  checkInputValidator}],
+          inputData1: [{ required: true, trigger: 'blur', validator: checkInputValidator }],
         },
       }
     },
@@ -91,7 +104,9 @@
               const data = {
                 "discountRate": Number(discountRate),
                 "taxCode": this.taxCode,
-                "taxRate": Number(taxRate)
+                "taxRate": Number(taxRate),
+                "rewardRatio": this.form.inputData2,
+                "rewardSharingRatio": this.form.inputData3
               }
               if (this.isShowFree) {
                 data.isExemption = this.form.isFree ? 1 : 0
@@ -107,6 +122,8 @@
       setData(item) {
         this.form.inputData0 = item.taxRate
         this.form.inputData1 = item.discountRate
+        this.form.inputData2 = item.rewardRatio
+        this.form.inputData3 = item.rewardSharingRatio
         this.form.isFree = item.isExemption === 1
       }
     }
@@ -124,5 +141,8 @@
   .top-intercal {
     margin-top: 10px;
   }
+}
+.w140 {
+  width: 140px;
 }
 </style>
