@@ -159,7 +159,7 @@
             <el-button @click="ashow = false" type="primary">关闭</el-button>
         </span>
     </el-dialog>
-    <el-dialog title="未开发票" :visible.sync="nshow" width="70%">
+    <el-dialog title="未开发票" :visible.sync="nshow" width="1000px">
       <div class="half">
         <span>申请编号： {{invoiceData.orderNo}}</span>
         <span>申请时间： {{invoiceData.createTime | formatTime}}</span>
@@ -186,9 +186,9 @@
         <el-table-column prop="amount" label="开票金额"></el-table-column>
         <el-table-column prop="serviceCompanyName" label="开票公司"></el-table-column>
         <el-table-column prop="paperStatusName" label="状态"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <el-button @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
+            <el-button size="mini" @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -198,7 +198,7 @@
             <el-button @click="needSure" type="primary">开票</el-button>
         </span>
     </el-dialog>
-    <el-dialog title="申请中" :visible.sync="oshow" width="70%">
+    <el-dialog title="申请中" :visible.sync="oshow" width="1000px">
       <div class="half">
         <span>申请编号： {{invoiceData.orderNo}}</span>
         <span>申请时间： {{invoiceData.createTime | formatTime}}</span>
@@ -225,9 +225,9 @@
         <el-table-column prop="amount" label="开票金额"></el-table-column>
         <el-table-column prop="serviceCompanyName" label="开票公司"></el-table-column>
         <el-table-column prop="paperStatusName" label="状态"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <el-button @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
+            <el-button size="mini" @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
           </template>
         </el-table-column>
       </el-table>
