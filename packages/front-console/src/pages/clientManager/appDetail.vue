@@ -18,7 +18,18 @@
         <el-row :gutter="20">
             <el-col :span="10">
                 <el-col :span="8" class="right">商户名称</el-col>
-                <el-col :span="10">{{data.appName}}</el-col>
+                <el-col :span="16">
+                  {{data.appName}}
+                  <el-switch
+                    class="ml20"
+                    v-if="data.isEnable == 1 && data.isOld == 1"
+                    v-model="toggle"
+                    :disabled="toggle"
+                    active-text="参数同步"
+                    inactive-text="旧App"
+                    @change="messageSync">
+                  </el-switch>
+                </el-col>
             </el-col>
             <el-col :span="10">
                 <el-col :span="8" class="right">Company ID</el-col>
@@ -127,7 +138,11 @@
                 <el-row :gutter="20">
                     <el-col :span="10">
                         <el-col :span="8" class="right">开通服务</el-col>
-                        <el-col :span="16"><el-checkbox v-for="e in appinfo.services" :key="e" :label="e" :checked="true" disabled></el-checkbox></el-col>
+                        <el-col :span="16">
+                          <el-checkbox-group v-model="services">
+                            <el-checkbox v-for="e in serviceList" :key="e.value" :label="e.value" @change="setService(e.value)">{{e.text}}</el-checkbox>
+                          </el-checkbox-group>
+                        </el-col>
                     </el-col>
                 </el-row>
                 <el-row :gutter="20">
@@ -285,7 +300,7 @@
               </el-form-item>
               <el-form-item label="子账号名称">
                   <el-select class="f_input" v-model="payeruserName" @change="pick" filterable>
-                      <el-option v-for="e in others" :key="e.payeruserName" :value="e.payeruserName" :label="e.payeruserName"></el-option>
+                      <el-option v-for="(e, i) in others" :key="i" :value="e.payeruserName" :label="e.payeruserName"></el-option>
                   </el-select>
               </el-form-item>
               <el-form-item v-show="result" label="支付账户" style="color: red;">
@@ -442,7 +457,10 @@ export default {
       assignCompany: [],
       subServiceCompanyId: "",
       subServiceCompanyName: "",
-      subServiceList: []
+      subServiceList: [],
+      services: [],
+      serviceList: [],
+      toggle: false
     };
   },
   mounted() {
@@ -458,14 +476,28 @@ export default {
     });
     get("/api/openapi/developer/appinfo/" + this.appId).then(data => {
       this.appinfo = data;
+      this.getServiceList()
     });
     get('/api/sysmgr-web/commom/company?companyIdentity=service').then(data => {
       this.assignCompany = data
+    })
+    get('/api/sysmgr-web/commom/service-config').then(data => {
+      this.serviceList = data
+      this.getServiceList()
     })
     this.arule.chargeByName = ''
     this.arule.chargeEmail = ''
   },
   methods: {
+    getServiceList() {
+      this.serviceList.length && this.appinfo.services && this.appinfo.services.forEach(e => {
+        this.serviceList.forEach(ev => {
+          if(e == ev.text) {
+            this.services.push(ev.value)
+          }
+        })
+      })
+    },
     getMsg() {
       get("/api/console-dlv/option/get-by-type?type=ThirdPaymentType").then(
         data => {
@@ -808,32 +840,50 @@ export default {
         }
     },
     setDefault(a) {
-        if(a) {
-            this.curr = a
-        }
-        if (this.authCode) {
-            postWithErrorCallback('/api/sysmgr-web/company-app/set-default-payment-user', {
-                appId: this.appId,
-                authCode: this.authCode,
-                paymentThirdType: this.curr.thirdPaymentType,
-                paymentUserId: this.curr.payUserId,
-                serviceCompanyId: this.curr.serviceCompanyId,
-                subServiceCompanyId: this.curr.subServiceCompanyId
-            }).then(data => {
-                this.$message({
-                  type: "success",
-                  message: "设置成功"
-                });
-                this.query()
-            }).catch(err => {
-                if (err.message == "无效的授权码！") {
-                  this.getAccredit(this.setDefault);
-                }
-            })
-        }
-        else {
-          this.getAccredit(this.setDefault);
-        }
+      if(a) {
+          this.curr = a
+      }
+      if (this.authCode) {
+          postWithErrorCallback('/api/sysmgr-web/company-app/set-default-payment-user', {
+              appId: this.appId,
+              authCode: this.authCode,
+              paymentThirdType: this.curr.thirdPaymentType,
+              paymentUserId: this.curr.payUserId,
+              serviceCompanyId: this.curr.serviceCompanyId,
+              subServiceCompanyId: this.curr.subServiceCompanyId
+          }).then(data => {
+              this.$message({
+                type: "success",
+                message: "设置成功"
+              });
+              this.query()
+          }).catch(err => {
+              if (err.message == "无效的授权码！") {
+                this.getAccredit(this.setDefault);
+              }
+          })
+      }
+      else {
+        this.getAccredit(this.setDefault);
+      }
+    },
+    setService(a) {
+      post('/api/sysmgr-web/company-app/update-service-checked-status', {
+        appId: this.data.appId,
+        appName: this.data.appName,
+        serviceCode: a,
+        isChecked: this.services.indexOf(a) > -1 ? 1 : 0
+      })
+    },
+    messageSync() {
+      post('/api/sysmgr-web/company-app/disabled-old', {
+        appId: this.data.appId
+      }).then(data => {
+        this.$message({
+          type: 'success',
+          message: '切换成功'
+        })
+      })
     }
   }
 };
@@ -919,5 +969,8 @@ export default {
 }
 .mr10 {
     margin-right: 10px;
+}
+.ml20 {
+  margin-left: 20px;
 }
 </style>
