@@ -383,7 +383,7 @@
         const month = this.searchDate.getMonth() + 1
         const year = this.searchDate.getFullYear()
         post('/api/invoice-web/invoice-monitor/list', {
-          "month": `${month}`,
+          "month": `${month < 10 ? '0' : ''}${month}`,
           "page": this.pageData.page,
           "pageSize": this.pageData.pageSize,
           "year": `${year}`
