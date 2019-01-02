@@ -517,6 +517,8 @@
             message: '修改成功'
           })
           this.xiuGaiKaiPiaoZhuangTaiPop = false
+          this.nshow = false
+          this.query()
         }).catch(() => {})
       },
       query(a) {
@@ -604,7 +606,7 @@
           })
         }
       },
-      make(a) {
+      make() {
         if (this.invoiceData.items.length != this.mform.invoiceIds.length && !this.mform.memo) {
           this.$message({
             type: 'warning',
