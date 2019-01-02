@@ -52,7 +52,7 @@
         prop="address"
         align="center"
         header-align="center"
-        label="预计开票最小值（由到款金额推算）">
+        label="预计待开票数（由到款金额推算）">
         <div class="table-cell-item" slot-scope="scope">
           <span>专票：{{ scope.row.waitZpNum }}</span>
           <span>普票：{{ scope.row.waitPpNum }}</span>
