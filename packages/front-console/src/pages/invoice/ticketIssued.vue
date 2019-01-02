@@ -342,10 +342,10 @@
     <el-dialog title="修改开票状态" :visible.sync="xiuGaiKaiPiaoZhuangTaiPop" width="35%">
       <el-form :model="xiuGaiKaiPiaoZhuangTaiForm" :rules="xiuGaiKaiPiaoZhuangTaiRules" ref="xiuGaiKaiPiaoZhuangTaiForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="发票代码" prop="invoiceCode">
-          <el-input v-model="xiuGaiKaiPiaoZhuangTaiForm.invoiceCode"></el-input>
+          <el-input placeholder="发票代码一般在发票左上方" v-model="xiuGaiKaiPiaoZhuangTaiForm.invoiceCode"></el-input>
         </el-form-item>
         <el-form-item label="发票号码" prop="invoiceNum">
-          <el-input v-model="xiuGaiKaiPiaoZhuangTaiForm.invoiceNum"></el-input>
+          <el-input placeholder="发票号码一般在发票右上方"  v-model="xiuGaiKaiPiaoZhuangTaiForm.invoiceNum"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button @click="xiuGaiKaiPiaoZhuangTaiPop = false">取消</el-button>
