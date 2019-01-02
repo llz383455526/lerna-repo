@@ -111,7 +111,7 @@
         :total="pageData.total">
       </el-pagination>
     </div>
-    <p style="color: #aaa">注：“待开票数（由实际流水推算）”仅对先款后票的客户流水进行推算</p>
+    <p style="color: #aaa">注：预计待开票数（由到款金额推算）仅对先款后票的客户流水进行推算</p>
     <el-dialog
       title="本地上传"
       :visible.sync="upFilePopIsShow"
