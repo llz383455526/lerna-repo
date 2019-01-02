@@ -216,7 +216,7 @@
       <el-table :data="tableInvoice.list" style="width: 100%;text-align:left;">
         <el-table-column prop="invoiceType" label="发票类型">
           <template slot-scope="scope">
-            <div class="bill common" v-if="scope.row.invoiceType.indexOf('普票') > -1">普票</div>
+            <div class="bill common" v-if="scope.row.invoiceType === 'PP'">普票</div>
             <div class="bill special" v-else>专票</div>
           </template>
         </el-table-column>
@@ -296,7 +296,7 @@
         tableInvoice: {
           total: 0,
           pageNum: 1,
-          pageSize: 5,
+          pageSize: 10,
           list: [],
           companyName: '',
           id: ''
@@ -374,9 +374,11 @@
       },
       handleInvoiceSizeChange(size) {
         this.tableInvoice.pageSize = size
+        this.requestInvoiceAction()
       },
       handleInvoiceCurrentChange(num) {
         this.tableInvoice.pageNum = num
+        this.requestInvoiceAction()
       },
       // 查找按钮点击
       searchBtnClick() {
