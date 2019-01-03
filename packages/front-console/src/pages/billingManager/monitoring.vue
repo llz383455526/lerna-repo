@@ -126,7 +126,7 @@
           :data="inputData"
           style="width: 100%">
           <el-table-column
-            prop="filename"
+            prop="displayname"
             label="文件名称">
           </el-table-column>
           <el-table-column
