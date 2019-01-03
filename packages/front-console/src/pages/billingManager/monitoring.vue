@@ -121,26 +121,28 @@
         <el-button size="mini" @click="upFileDownMoBanBtnClick">下载模板</el-button>
         *上传销售预测表格
       </p>
-      <el-table
-        v-if="inputData.length > 0"
-        :data="inputData"
-        style="width: 100%">
-        <el-table-column
-          prop="filename"
-          label="文件名称">
-        </el-table-column>
-        <el-table-column
-          prop="createTime"
-          label="上传时间">
-        </el-table-column>
-        <el-table-column
-          label="操作">
-          <template slot-scope="scope">
-            <el-button @click="downloadFileBtnClick(scope.row)" type="text" size="small">下载文件</el-button>
-            <el-button @click="removeFileBtnClick(scope.row)" type="text" size="small">重新上传</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <component v-if="inputData.length > 0">
+        <el-table
+          :data="inputData"
+          style="width: 100%">
+          <el-table-column
+            prop="filename"
+            label="文件名称">
+          </el-table-column>
+          <el-table-column
+            prop="createTime"
+            label="上传时间">
+          </el-table-column>
+          <el-table-column
+            label="操作">
+            <template slot-scope="scope">
+              <el-button @click="downloadFileBtnClick(scope.row)" type="text" size="small">下载文件</el-button>
+              <el-button @click="removeFileBtnClick(scope.row)" type="text" size="small">重新上传</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <p>注：重新上传会覆盖原文件的数据，请下载原文件，并在原文件的基础上修改数据</p>
+      </component>
       <el-upload
         v-else
         drag
