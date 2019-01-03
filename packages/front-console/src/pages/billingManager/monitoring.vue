@@ -10,7 +10,7 @@
         </el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="searchBtnClick">查询</el-button>
+        <el-button type="primary" @click="searchBtnClick(true)">查询</el-button>
       </el-form-item>
     </el-form>
     <div>
@@ -103,7 +103,7 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="pageData.page"
+        :current-page.sync="pageData.page"
         :page-sizes="[10, 20]"
         :page-size="pageData.pageSize"
         style="float: right"
@@ -384,9 +384,12 @@
         this.requestInvoiceAction()
       },
       // 查找按钮点击
-      searchBtnClick() {
+      searchBtnClick(reload = false) {
         const month = this.searchDate.getMonth() + 1
         const year = this.searchDate.getFullYear()
+        if (reload) {
+          this.pageData.page = 1
+        }
         post('/api/invoice-web/invoice-monitor/list', {
           "month": `${month < 10 ? '0' : ''}${month}`,
           "page": this.pageData.page,
@@ -432,7 +435,7 @@
       },
       handleSizeChange(num) {
         this.pageData.pageSize = num
-        this.searchBtnClick()
+        this.searchBtnClick(true)
       },
       handleCurrentChange(num) {
         this.pageData.page = num
