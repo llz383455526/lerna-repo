@@ -449,7 +449,8 @@
       daoChuClick() {
         const month = this.searchDate.getMonth() + 1
         const year = this.searchDate.getFullYear()
-        window.open(`/api/invoice-web/invoice-monitor/export-list?year=${year}&month=${month}&page=${this.pageData.page}&pageSize=${this.pageData.pageSize}`)
+        const monthStr = `${month < 10 ? '0' : ''}${month}`
+        window.open(`/api/invoice-web/invoice-monitor/export-list?year=${year}&month=${monthStr}&page=${this.pageData.page}&pageSize=${this.pageData.pageSize}`)
       },
       // 上传文件按钮点击
       upFilBtnClick() {
