@@ -361,6 +361,7 @@
           this.$refs.popUpload.clearFiles();
         } else {
           showNotify('success', '上传成功');
+          this.searchBtnClick()
           this.upFilePopIsShow = false
         }
       },
