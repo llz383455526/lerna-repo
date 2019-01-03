@@ -121,7 +121,7 @@
         <el-button size="mini" @click="upFileDownMoBanBtnClick">下载模板</el-button>
         *上传销售预测表格
       </p>
-      <component v-if="inputData.length > 0">
+      <div v-if="inputData.length > 0">
         <el-table
           :data="inputData"
           style="width: 100%">
@@ -142,7 +142,7 @@
           </el-table-column>
         </el-table>
         <p>注：重新上传会覆盖原文件的数据，请下载原文件，并在原文件的基础上修改数据</p>
-      </component>
+      </div>
       <el-upload
         v-else
         drag
@@ -161,7 +161,7 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="upFilePopIsShow = false">取 消</el-button>
-        <el-button type="primary" @click="upFilePopOkBtnClick">确 定</el-button>
+        <el-button type="primary" :loading="upLoading" @click="upFilePopOkBtnClick">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog title="添加票量" :visible.sync="addPiaoPopIsShow" width="40%">
@@ -327,7 +327,9 @@
         },
         // 录入数据
         inputData: [],
-        DateFormat: DateFormat
+        DateFormat: DateFormat,
+        // 上传中的状态
+        upLoading: false
       }
     },
     methods: {
@@ -356,6 +358,7 @@
       },
       // 文件上传成功调用
       fileUpSuccess(res) {
+        this.upLoading = false
         if (res.code !== 200) {
           showNotify('error', res.msg);
           this.$refs.popUpload.clearFiles();
@@ -372,6 +375,7 @@
       },
       // 文件上传失败
       upFileErr() {
+        this.upLoading = false
         showNotify('error', '文件上传失败');
         this.$refs.popUpload.clearFiles();
       },
@@ -455,6 +459,7 @@
       // 上传文件确定按钮点击
       upFilePopOkBtnClick() {
         this.$refs.popUpload.submit();
+        this.upLoading = true
       },
       // 弹窗下载模板按钮点击
       upFileDownMoBanBtnClick() {
