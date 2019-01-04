@@ -48,16 +48,16 @@
           <span>普票：{{ scope.row.salesForecastPpNum }}</span>
         </div>
       </el-table-column>
-      <el-table-column
-        prop="address"
-        align="center"
-        header-align="center"
-        label="预计待开票数（由到款金额推算）">
-        <div class="table-cell-item" slot-scope="scope">
-          <span>专票：{{ scope.row.waitZpNum }}</span>
-          <span>普票：{{ scope.row.waitPpNum }}</span>
-        </div>
-      </el-table-column>
+      <!--<el-table-column-->
+        <!--prop="address"-->
+        <!--align="center"-->
+        <!--header-align="center"-->
+        <!--label="预计待开票数（由到款金额推算）">-->
+        <!--<div class="table-cell-item" slot-scope="scope">-->
+          <!--<span>专票：{{ scope.row.waitZpNum }}</span>-->
+          <!--<span>普票：{{ scope.row.waitPpNum }}</span>-->
+        <!--</div>-->
+      <!--</el-table-column>-->
       <el-table-column
         prop="address"
         align="center"
