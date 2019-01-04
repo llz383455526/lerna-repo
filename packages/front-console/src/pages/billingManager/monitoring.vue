@@ -151,6 +151,7 @@
         action="/api/invoice-web/invoice-monitor/upload-sales-forecast"
         :on-success="fileUpSuccess"
         :on-error="upFileErr"
+        :data="{fileName: fileName}"
         :multiple="false"
         :on-change="fileChange"
         :auto-upload="false">
@@ -329,7 +330,9 @@
         inputData: [],
         DateFormat: DateFormat,
         // 上传中的状态
-        upLoading: false
+        upLoading: false,
+        // 上传的文件名
+        fileName: ''
       }
     },
     methods: {
@@ -372,6 +375,7 @@
         if (fileList.length > 1) {
           fileList.shift()
         }
+        this.fileName = file.name
       },
       // 文件上传失败
       upFileErr() {
