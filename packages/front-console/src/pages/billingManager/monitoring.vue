@@ -78,16 +78,16 @@
           <span>普票：{{ scope.row.surplusPpNum }}</span>
         </div>
       </el-table-column>
-      <el-table-column
-        prop="address"
-        align="center"
-        header-align="center"
-        label="预计待领票数">
-        <div class="table-cell-item" slot-scope="scope">
-          <span>专票：{{ scope.row.forecastWaitZpNum > 0 ? scope.row.forecastWaitZpNum : '--' }}</span>
-          <span>普票：{{ scope.row.forecastWaitPpNum > 0 ? scope.row.forecastWaitPpNum : '--' }}</span>
-        </div>
-      </el-table-column>
+      <!--<el-table-column-->
+        <!--prop="address"-->
+        <!--align="center"-->
+        <!--header-align="center"-->
+        <!--label="预计待领票数">-->
+        <!--<div class="table-cell-item" slot-scope="scope">-->
+          <!--<span>专票：{{ scope.row.forecastWaitZpNum > 0 ? scope.row.forecastWaitZpNum : '&#45;&#45;' }}</span>-->
+          <!--<span>普票：{{ scope.row.forecastWaitPpNum > 0 ? scope.row.forecastWaitPpNum : '&#45;&#45;' }}</span>-->
+        <!--</div>-->
+      <!--</el-table-column>-->
       <el-table-column
         prop="address"
         align="center"
