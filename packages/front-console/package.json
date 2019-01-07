@@ -88,6 +88,22 @@
     "webpack-hot-middleware": "^2.22.2",
     "webpack-merge": "^4.1.3"
   },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/strongly-recommended",
+      "eslint:recommended"
+    ],
+    "rules": {
+      "no-console": "off"
+    },
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
   "engines": {
     "node": ">= 4.0.0",
     "npm": ">= 3.0.0"

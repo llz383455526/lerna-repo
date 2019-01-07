@@ -23,3 +23,7 @@ http://192.168.1.94:8082/view/test94.aiyuangong.com/
 admin 94Jks#Adm
 
 console-admin 123456
+
+>## 代码风格统一
+
+在 package.js 中 eslintConfig 配置
