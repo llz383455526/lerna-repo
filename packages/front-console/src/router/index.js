@@ -337,7 +337,22 @@ export default [{
               }
             }
           ]
-        }, {
+        },
+        {
+          path: 'performance',
+          component: index,
+          children: [
+            {
+              path: 'enterprise',
+              component: r => require.ensure([], () => r(require('../pages/performance/enterprise/index.vue')), 'enterprise')
+            },
+            {
+              path: 'personal',
+              component: r => require.ensure([], () => r(require('../pages/performance/personal/index.vue')), 'enterprise')
+            }
+          ]
+        },
+        {
           path: 'contract',
           component: index,
           children: [{
