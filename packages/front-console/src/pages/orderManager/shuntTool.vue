@@ -14,6 +14,17 @@
               <el-option v-for="v in shangHuGongSiArr" :value="v.value" :label="v.text" :key="v.value"></el-option>
             </el-select>
           </el-form-item>
+          <br>
+          <el-form-item  label="服务公司" prop="serviceCompanys">
+            <el-select style="width: 469px;" size="small" v-model="applyForm.serviceCompanys" multiple placeholder="请选择">
+              <el-option
+                v-for="item in serviceCompanys"
+                :key="`${item.companyId}`"
+                :label="item.name"
+                :value="JSON.stringify(item)">
+              </el-option>
+            </el-select>
+          </el-form-item>
         </el-form>
       </div>
       <div class="mtitle">上传薪酬明细表</div>
@@ -73,7 +84,7 @@
             style="float: right;"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :current-page="currentPage4"
+            :current-page="analyticalData.pageNumber"
             :page-sizes="[5, 10]"
             :page-size="5"
             layout="total, sizes, prev, pager, next, jumper"
@@ -82,7 +93,6 @@
         </template>
       </div>
       <div class="footer">
-        <el-button @click="cancel" size="small">返回</el-button>
         <el-button v-if="analyticalData.list.length > 0 && !downloadCode" type="primary" :loading="isZuiYouHuaLoading" @click="zuiYouHuaClick" size="small">最优化拆分</el-button>
         <el-button v-if="upSuccess && analyticalData.list.length === 0" type="primary" @click="okBtnClick" size="small">确定</el-button>
         <el-button type="primary" v-if="downloadCode" @click="downloadBtnClick" size="small">下载</el-button>
@@ -97,7 +107,8 @@
       return {
         applyForm: {
           keHuId: null,
-          shangHuId: null
+          shangHuId: null,
+          serviceCompanys: []
         },
         rules: {
           keHuId: [
@@ -111,6 +122,13 @@
             {
               required: true,
               message: '请选择商户公司',
+              trigger: 'blur'
+            }
+          ],
+          serviceCompanys: [
+            {
+              required: true,
+              message: '请选择服务公司',
               trigger: 'blur'
             }
           ]
@@ -136,14 +154,23 @@
         },
         downloadCode: null,
         // 是否正在最优化拆分
-        isZuiYouHuaLoading: false
+        isZuiYouHuaLoading: false,
+        // 服务公司数组
+        serviceCompanys: []
       }
     },
     created(){
       this.getKeHuGongSiList()
-      // this.getTemplate()
+      this.getServiceCompanys()
     },
     methods: {
+      // 获取服务公司列表
+      getServiceCompanys() {
+        Ajax.get('/api/salemgt/common/service-company/list', {
+        }).then(data => {
+          this.serviceCompanys = data
+        })
+      },
       // 获取客户公司列表
       getKeHuGongSiList() {
         Ajax.get('/api/console-dlv/option/get-option-customer-companies', {
@@ -174,7 +201,8 @@
       },
       downloadMoBanBtnClick() {
         this.checkFaFangQuDao().then(() => {
-          window.open(`/api/console-dlv/company/salary-split/download-salary-order-item-template?appId=${this.applyForm.keHuId}`)
+          const url = `/api/console-dlv/company/salary-split/download-salary-order-item-template?appId=${this.applyForm.shangHuId}`
+          window.open(url)
         }).catch(() => {})
       },
       upload(a) {
@@ -183,11 +211,18 @@
           this.progress = 0
           // 清除列表数据
           this.clearListData()
+          const serviceCompanys = this.applyForm.serviceCompanys.map((itemStr) => {
+            const item = JSON.parse(itemStr)
+            return {
+              id: item.companyId,
+              name: item.name
+            }
+          })
           const formData = new FormData()
           formData.append('targetType', 'dlv_salary_split_import')
           formData.append('fileName', a.name)
           formData.append('file', a.raw)
-          formData.append('targetExt', JSON.stringify({ appId: this.applyForm.shangHuId }))
+          formData.append('targetExt', JSON.stringify({ appId: this.applyForm.shangHuId, serviceCompanys: serviceCompanys }))
           Ajax.importPost('/api/sysmgr-web/file/upload-ext', formData, true).then(data => {
             console.log('data = ', data)
             this.upLoadData = data
@@ -236,9 +271,6 @@
       okBtnClick() {
         this.getTemplate()
       },
-      cancel(){
-        this.$router.back()
-      },
       // 分页大小改变的时候调用
       handleSizeChange(count) {
         this.analyticalData.pageSize = count
@@ -285,8 +317,7 @@
       // 获取拆分进度
       getCaiFenProgress() {
         this.timer = setInterval(() => {
-          Ajax.get(`/api/console-dlv/company/salary-split/get-file-info?importTaskId=${this.upLoadData.referId}`).then((data) => {
-            console.log('data = ', data)
+          Ajax.get(`/api/console-dlv/company/salary-split/get-file-info?importTaskId=${this.upLoadData.referId}`, {}, true).then((data) => {
             if (data.isComplete) {
               this.isZuiYouHuaLoading = false
               this.downloadCode = data.downloadCode

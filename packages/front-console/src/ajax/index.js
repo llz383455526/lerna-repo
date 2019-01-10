@@ -1,9 +1,9 @@
 import { post, get, importPost, getButNoErrorToast, postWithErrorCallback } from "../store/api"
 
 class Ajax {
-	static get (url, param = {}) {
+	static get (url, param = {}, loading = false) {
 		return new Promise((resolve, reject) => {
-			get(url, param).then((data) => {
+			get(url, param, loading).then((data) => {
 				resolve(data)
 			}).catch((err) => {
 				reject(err)
