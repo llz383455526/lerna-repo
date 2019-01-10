@@ -71,6 +71,7 @@
             </el-table-column>
             <el-table-column label="账户类型" prop="balanceTypeName"></el-table-column>
             <el-table-column label="操作" prop="bizTradeNameName"></el-table-column>
+            <el-table-column label="备注" prop="memo"></el-table-column>
             <el-table-column label="完成时间" prop="tradeAtStr"></el-table-column>
         </el-table>
         <ayg-pagination

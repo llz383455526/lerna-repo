@@ -223,6 +223,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class="input-container" v-if="isService">
+                        <div class="label">服务费所属月份：<span>*</span></div>
+                        <div class="input">
+                            <el-form-item prop="yearMonth">
+                                <el-date-picker
+                                  v-model="dialogCreateForm.yearMonth"
+                                  type="month"
+                                  placeholder="选择月"
+                                  value-format="yyyyMM">
+                                </el-date-picker>
+                                <!-- <el-input :maxlength=50 v-model="dialogCreateForm.purpose" placeholder=""></el-input> -->
+                            </el-form-item>
+                        </div>
+                    </div>
                     <div class="input-container">
                         <div class="label">备注：<span>*</span></div>
                         <div class="input">
@@ -310,7 +324,7 @@
                 <el-button type="primary" @click="submitConfirmOrder">确 定</el-button>
             </div>
         </el-dialog>
-        <el-dialog :title="detail.state == 20 ? '待制单' : detail.state == 21 ? '待审核' : '查看'"  :visible.sync="show" width="960px">
+        <el-dialog :title="detail.state == 20 ? '待制单' : detail.state == 21 ? '待审核' : '查看'"  :visible.sync="show" @close="needQuery && query()" width="960px">
             <div class="title">客户充值凭证</div>
             <div class="det">企业名称：{{detail.companyName}}</div>
             <div class="det">商户名称：{{detail.appName}}</div>
@@ -333,9 +347,17 @@
             <template v-if="showDetail">
                 <div class="det">所属银行：{{detail.depositBank}}</div>
                 <div class="det">开户行：{{detail.depositBank}}</div>
-                <div class="det">账户名：{{detail.accountName}}</div>
+                <div class="det">账户名：{{detail.accountName}} </div>
             </template>
-            <div class="det">账号：{{detail.accountNo}}</div>
+            <div class="det">账号：
+              <template v-if="!isToggle">
+                {{detail.accountNo}}
+              </template>
+              <el-select size="small" v-else v-model="toggleAccount" @change="cutAccount" filterable>
+                <el-option v-for="e in acccountList" :value="e.balanceAccountId" :key="e.balanceAccountId" :label="`${e.payUserName}/${e.payUserNo}`"></el-option>
+              </el-select>
+              <el-button class="ml20" v-if="detail.isAutoRecharge && detail.payUser.thirdPaymentType == 'pingan' && detail.state == 21" type="primary" size="mini" @click="isToggle = true">切换入账账号</el-button>
+            </div>
             <div class="det" v-if="detail.payUser && detail.rechargeType != 2">业务渠道：{{detail.payUser.thirdPaymentTypeName}}</div>
             <template v-if="!detail.subServiceCompanyId && detail.rechargeType != 2">
                 <div class="det">选择渠道帐号：
@@ -437,7 +459,7 @@
                 </div>
             </template>
             <div slot="footer" class="dialog-footer">
-                <el-button size="small" @click="show = false">取消</el-button>
+                <el-button size="small" @click="show = false;">取消</el-button>
                 <template v-if="detail.state == 20 && checkRight(permissions, 'balance-web:/recharge-order/failOnRechargeDocumentMake')">
                     <el-button size="small" type="primary" @click="ensure(40, 1)">未到账</el-button>
                 </template>
@@ -502,7 +524,8 @@ export default {
         attachmentIds: [],
         smsOpen: true,
         subServiceCompanyId: '',
-        subUploadId: ''
+        subUploadId: '',
+        yearMonth: ''
       },
       dialogCreateFormRules: {
         companyId: [
@@ -548,6 +571,13 @@ export default {
           },
           {
             validator: checkMoney
+          }
+        ],
+        yearMonth: [
+          {
+            required: true,
+            message: "请选择月份",
+            trigger: "blur"
           }
         ],
         attachmentIds: [
@@ -625,7 +655,11 @@ export default {
       frame: '',
       riskApprove: '',
       listen: '',
-      isService: false
+      isService: false,
+      isToggle: false,
+      acccountList: [],
+      toggleAccount: '',
+      needQuery: false
     };
   },
   watch: {
@@ -671,11 +705,35 @@ export default {
     // }
     // this.query()
     this.listenSearch()
+    
   },
   beforeDestroy() {
       cancelAnimationFrame(this.listen)
   },
   methods: {
+    getSwitch() {
+      get('/api/balance-web/recharge-order/query-switch-balance-account', {
+        serviceCompanyId: this.detail.serviceCompanyId,
+        paymentThirdType: this.detail.payUser.thirdPaymentType
+      }).then(data => {
+        this.acccountList = data
+      })
+    },
+    cutAccount() {
+      post('/api/balance-web/recharge-order/switch-balance-account', {
+        id: this.detail.id,
+        channelBalanceAccountId: this.toggleAccount,
+        doSave: 1
+      }).then(data => {
+        for(let k in data) {
+          if(k in this.detail) {
+            this.detail[k] = data[k]
+          }
+        }
+        this.needQuery = true
+        this.getChannlList()
+      })
+    },
     listenSearch() {
         this.listen = requestAnimationFrame(this.listenSearch)
         if(this.riskApprove != this.$route.query.riskApprove) {
@@ -725,6 +783,9 @@ export default {
         this.memo = ''
         this.uploadUrl = ''
         this.subUploadId = ''
+        this.isToggle = false
+        this.toggleAccount = ''
+        this.needQuery = false
         get('/api/balance-web/recharge-order/query-detail', {
             orderNo: a.orderNo
         }).then(data => {
@@ -739,6 +800,7 @@ export default {
             this.getChannlList()
             this.getSubCompany()
             this.getSubMsg()
+            this.getSwitch()
         })
     },
     getChannlList() {
@@ -977,6 +1039,7 @@ export default {
             payUserId: this.payUserId,
             memo: this.memo
         }).then(data => {
+            this.needQuery = false
             this.show = false;
             this.query(this.formSearch.page)
         })
@@ -1013,6 +1076,7 @@ export default {
             subUploadId: this.subUploadId
         }).then(
           data => {
+            this.needQuery = false
             this.attachmentId = ''
             this.imageUrl = ''
             this.subUploadId = ''
@@ -1044,7 +1108,6 @@ export default {
       this.$refs["formSearch"].resetFields();
       this.dateValue = [];
       this.setTime()
-      console.log(this.formSearch)
     },
     handleSizeChange(value) {
       this.pageSize = value;
@@ -1111,7 +1174,6 @@ export default {
       })
       this.$refs["dialogCreateForm"].validate(valid => {
         if (valid) {
-            console.log(this.isService)
           post(`/api/balance-web/recharge-order/${this.isService ? 'serviceFeeConfirm' : 'comfirm'}`, this.dialogCreateForm).then(data => {
             // showNotify('success','操作成功！')
             this.$refs["dialogCreateForm"].resetFields();
@@ -1331,6 +1393,9 @@ export default {
 .mr20 {
     margin-right: 20px;
     cursor: pointer;
+}
+.ml20 {
+  margin-left: 20px;
 }
 .fr {
     float: right;
