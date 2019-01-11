@@ -50,7 +50,7 @@
                             <el-button @click="toPath(scope.row.id, '0')" type="text" size="medium" style="padding:0;">查看</el-button>
                             <el-button @click="toPath(scope.row.id, '1')" type="text" size="medium" style="padding:0;">编辑</el-button>
                         </template>
-                        <el-button v-if="scope.row.statusName === '有效'" @click="createContract(scope.row.id)" type="text" size="medium" style="padding:0;">生成合同</el-button>
+                        <el-button v-if="scope.row.statusName === '有效' && scope.row.contractType !== 'CHANNEL'" @click="createContract(scope.row.id)" type="text" size="medium" style="padding:0;">生成合同</el-button>
                     </template>
                 </el-table-column>
             </el-table>

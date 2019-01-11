@@ -17,7 +17,7 @@ export default {
   watch: {
     principalMenu(menu) {
       if(menu && menu.length && this.$route.fullPath == '/main'){
-        console.log(menu[0].children[0].action)
+        // console.log(menu[0].children[0].action)
         this.$router.push(menu[0].children[0].action)
       }
     }

@@ -9,12 +9,12 @@
     <el-form ref="form" :rules="rules" :model="form" label-width="170px">
       <el-form-item label="发票类型" prop="invoiceType">
         <el-radio-group @change="zhangDanDateChange" v-model="form.invoiceType">
-          <el-radio v-for="(v, k) in invoiceTypes" :label="v.text"></el-radio>
+          <el-radio v-for="(v, k) in invoiceTypes" :key="k" :label="v.text"></el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="发票类目" prop="invoiceLeiMu">
         <el-select v-model="form.invoiceLeiMu" placeholder="请选择发票类目">
-          <el-option v-for="v in involiceLeiMuList" :label="v.text" :value="v"></el-option>
+          <el-option v-for="(v, i) in involiceLeiMuList" :key="i" :label="v.text" :value="v"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="税率">

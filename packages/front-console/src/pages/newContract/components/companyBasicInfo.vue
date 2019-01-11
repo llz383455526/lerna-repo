@@ -20,7 +20,7 @@
             <el-input v-model="contractModel.contractForm.customCollector" style="width:450px;"></el-input>
         </el-form-item>
         <el-form-item label="负责人手机" prop="customCollectorPhone">
-            <el-input v-model="contractModel.contractForm.customCollectorPhone" style="width:450px;"></el-input>
+            <el-input v-model="contractModel.contractForm.customCollectorPhone" style="width:450px;" maxlength="11"></el-input>
         </el-form-item>
         <el-form-item label="负责人邮箱" prop="customMail1">
             <el-input v-model="contractModel.contractForm.customMail1" style="width:450px;"></el-input>

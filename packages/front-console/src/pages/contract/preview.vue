@@ -45,124 +45,43 @@
         <el-row class="mb15" style="font-weight: normal;" v-if="!isExamine">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">服务费收费比例/金额：</el-col>
             <show-service :detail="detail"></show-service>
-            <!-- <el-col :span="8" v-if="detail.serviceFeeContent && detail.serviceFeeContent.serviceFeeType">
-                <template v-if="detail.serviceFeeContent.serviceFeeType == 'standard'">
-                    {{detail.serviceFeeContent.serviceFeeRate}}
-                </template>
-                <template v-if="detail.serviceFeeContent.serviceFeeType == 'dummy'">
-                    {{'无'}}
-                </template>
-                <template v-else-if="detail.serviceFeeContent.serviceFeeType == 'fixed'">
-                    {{'固定金额，每笔' + detail.serviceFeeContent.fixFee + '元'}}
-                </template>
-                <template v-else-if="detail.serviceFeeContent.serviceFeeType == 'ratio'">
-                    {{`${detail.serviceFeeContent.secondType == 'real' ? '实发金额' : '应发金额'} * ${detail.serviceFeeContent.serviceFeeRate}%`}}
-                </template>
-                <template v-else-if="detail.serviceFeeContent.serviceFeeType == 'step' && detail.serviceFeeContent.secondType == '0'">
-                    {{`分${detail.serviceFeeContent.monthIncomeAmount}万 - 无流水阶梯报价：`}}
-                    <div v-for="(e, i) in detail.serviceFeeContent.stepwiseList">
-                        <div class="indent">
-                            <span class="inline">
-                                <template v-if="!e.startAmount && !i">
-                                    {{`小于${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}
-                                </template>
-                                <template v-else-if="e.startAmount && e.endAmount">
-                                    {{`${e.startAmount}万${e.equalsStart ? '（含）' : ''}~${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}
-                                </template>
-                                <template v-else-if="!e.endAmount">
-                                    {{`大于${e.startAmount}万${e.equalsStart ? '（含）' : ''}`}}
-                                </template>
-                            </span>
-                            {{`实发金额*${e.percent}%`}}
-                        </div>
-                    </div>
-                </template>
-                <template v-else-if="detail.serviceFeeContent.serviceFeeType == 'step' && detail.serviceFeeContent.secondType == '1'">
-                    {{`不分2.8万 - 按流水总额阶梯报价：`}}
-                    <div v-for="(e, i) in detail.serviceFeeContent.stepwiseList">
-                        <div class="indent">
-                            <span class="inline">
-                                <template v-if="!e.startAmount && !i">
-                                    {{`小于${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}
-                                </template>
-                                <template v-else-if="e.startAmount && e.endAmount">
-                                    {{`${e.startAmount}万${e.equalsStart ? '（含）' : ''}~${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}
-                                </template>
-                                <template v-else-if="!e.endAmount">
-                                    {{`大于${e.startAmount}万${e.equalsStart ? '（含）' : ''}`}}
-                                </template>
-                            </span>
-                            {{`实发金额*${e.percent}%`}}
-                        </div>
-                    </div>
-                </template>
-                <template v-else-if="detail.serviceFeeContent.serviceFeeType == 'step' && detail.serviceFeeContent.secondType == '2'">
-                    {{`分${detail.serviceFeeContent.monthIncomeAmount}万 - 按流水分阶梯报价：`}}
-                    <div class="indent">
-                        {{`（1）月收入小于${detail.serviceFeeContent.monthIncomeAmount}万（含）：`}}
-                        <div v-for="(e, i) in detail.serviceFeeContent.stepwiseList">
-                            <div class="indent">
-                                <span class="inline">
-                                    <template v-if="!e.startAmount && !i">
-                                        {{`小于${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}
-                                    </template>
-                                    <template v-else-if="e.startAmount && e.endAmount">
-                                        {{`${e.startAmount}万${e.equalsStart ? '（含）' : ''}~${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}
-                                    </template>
-                                    <template v-else-if="!e.endAmount">
-                                        {{`大于${e.startAmount}万${e.equalsStart ? '（含）' : ''}`}}
-                                    </template>
-                                </span>
-                                {{`实发金额*${e.percent}%`}}
-                            </div>
-                        </div>
-                        {{`（2） 月收入大于${detail.serviceFeeContent2.monthIncomeAmount}万：`}}
-                        <div v-for="(e, i) in detail.serviceFeeContent2.stepwiseList">
-                            <div class="indent">
-                                <span class="inline">
-                                    <template v-if="!e.startAmount && !i">
-                                        {{`小于${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}
-                                    </template>
-                                    <template v-else-if="e.startAmount && e.endAmount">
-                                        {{`${e.startAmount}万${e.equalsStart ? '（含）' : ''}~${e.endAmount}万${e.equalsEnd ? '（含）' : ''}`}}
-                                    </template>
-                                    <template v-else-if="!e.endAmount">
-                                        {{`大于${e.startAmount}万${e.equalsStart ? '（含）' : ''}`}}
-                                    </template>
-                                </span>
-                                {{`实发金额*${e.percent}%`}}
-                            </div>
-                        </div>
-                    </div>
-                </template>
-            </el-col> -->
         </el-row>
         <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">合同起止时间：</el-col>
             <el-col :span="8">{{detail.startDate}} 至 {{detail.endDate}}</el-col>
         </el-row>
         <el-row class="mb15" style="font-weight: normal;">
-            <el-col :span="4" style="text-align: right; margin-right: 20px;">客户来源：</el-col>
-            <el-col :span="8">{{detail.originalName}}</el-col>
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">客户类型：</el-col>
+            <el-col :span="8">{{detail.originalTypeName}}</el-col>
         </el-row>
         <!-- <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">是否代理商客户：</el-col>
             <el-col :span="8">{{detail.agentClient ? '是' : '否'}}</el-col>
         </el-row> -->
-        <template v-if="detail.original == 20">
+        <template v-if="detail.originalType == 20">
           <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">代理商名称：</el-col>
             <el-col :span="8">{{detail.agentCompanyName}}</el-col>
           </el-row>
-          <el-row class="mb15" style="font-weight: normal;">
+          <!-- <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">代理商分润：</el-col>
             <el-col :span="8">{{detail.agentFeeContent.serviceFeeRate}}%</el-col>
-          </el-row>
+          </el-row> -->
           <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">渠道经理：</el-col>
             <el-col :span="8">{{detail.angentChargeByName}}</el-col>
           </el-row>
+          <el-row class="mb15" style="font-weight: normal;">
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">代理结算费率：</el-col>
+            <el-col :span="16">
+              <show-close-service :detail="detail"></show-close-service>
+            </el-col>
+          </el-row>
         </template>
+        <el-row class="mb15" style="font-weight: normal;">
+          <el-col :span="4" style="text-align: right; margin-right: 20px;">客户归属：</el-col>
+          <el-col :span="8">{{detail.originalName}}</el-col>
+        </el-row>
         <h4 class="ml50 mt50">合同文件</h4>
         <div style="margin-left: 120px; margin-right: 120px;">
             <el-table :data="tableList" style="width: 100%;margin-top: 20px;">
@@ -194,9 +113,11 @@
     import {post, get} from '../../store/api';
     import {baseUrl} from '../../config/address';
     import showService from '../../pageComponent/showService'
+    import showCloseService from '../../pageComponent/showCloseService'
     export default {
         components: {
-          showService
+          showService,
+          showCloseService
         },
         data() {
             return {

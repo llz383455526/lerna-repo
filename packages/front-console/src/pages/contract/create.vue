@@ -9,8 +9,8 @@
             <el-form-item label="文件ID" class="hide">
                 <input v-model="contractForm.referIds">
             </el-form-item>
-            <el-form-item label="企业名称" prop="customerId" placeholder="请输入内容"> <!-- @change="getInvoice" -->
-                <el-select v-model="contractForm.customerId" filterable placeholder="请选择" style="width:100%;" :disabled="$route.query.contractId ? true : false" @change="getOriginal">
+            <el-form-item label="企业名称" prop="customerId" placeholder="请输入内容">
+                <el-select v-model="contractForm.customerId" filterable placeholder="请选择" style="width:100%;" :disabled="$route.query.contractId ? true : false" @change="getConfig">
                     <el-option v-for="item in customerCompaniesList" :key="item.companyId" :label="item.companyName" :value="item.companyId"></el-option>
                 </el-select>
             </el-form-item>
@@ -393,29 +393,35 @@
                         @change="handleChange">
                 </el-date-picker>
             </el-form-item>
-            <el-form-item label="客户来源">
-              <el-radio v-for="e in originals" v-model="original" :key="e.value" :label="e.value" disabled>{{e.text}}</el-radio>
+            <el-form-item label="客户类型" prop="originalType">
+                <el-radio v-for="e in originalTypeList" v-model="contractForm.originalType" :key="e.value" :label="e.value" @change="getOriginalTypeName" disabled>{{e.text}}</el-radio>
             </el-form-item>
-            <!-- <el-form-item label="是否代理商客户" prop="agentClient">
-                <el-radio v-model="contractForm.agentClient" :label="true">是</el-radio>
-                <el-radio v-model="contractForm.agentClient" :label="false">否</el-radio>
-            </el-form-item> -->
-            <template v-if="contractForm.agentClient">
+            <template v-if="contractForm.originalType == 20">
                 <el-form-item label="代理商名称" prop="agentCompanyId">
-                    <el-select v-model="contractForm.agentCompanyId" style="width:100%;" @change="companyChange" :disabled="agentDisable" filterable>
+                    <el-select v-model="contractForm.agentCompanyId" style="width:100%;" @change="companyChange(true)" :disabled="agentDisable" filterable>
                         <el-option v-for="e in agentList.filter(e => e.status == '10')" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="代理商分润比例" prop="agentFeeContent.serviceFeeRate">
+                <!-- <el-form-item label="代理商分润比例" prop="agentFeeContent.serviceFeeRate">
                     <div style="float: left; width: 70px; color: #606266;">实发金额 * </div>
                     <el-input v-model="contractForm.agentFeeContent.serviceFeeRate" :disabled="agentDisable" style="width: calc(100% - 70px);">
                         <template slot="append">% 每笔</template>
                     </el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="渠道经理" required>
                     <el-input v-model="chargeByName" disabled></el-input>
                 </el-form-item>
+                <el-form-item label="报价规则" prop="quoteRule">
+                  <el-radio v-for="e in ruleList" :key="e.value" v-model="contractForm.quoteRule" :label="e.value">{{e.text}}</el-radio>
+                  <i class="el-icon-question ml10" title="结算规则：按高于结算费率的部分结算   返佣规则：按返佣费率直接返佣"></i>
+                </el-form-item>
+                <el-form-item label="结算费率" prop="check">
+                  <contract-close-item @result="result" :form="contractForm" :initCheck="true" ref="contract"></contract-close-item>
+                </el-form-item>
             </template>
+            <el-form-item label="客户归属" prop="original">
+              <el-radio v-for="e in originals" v-model="contractForm.original" :key="e.value" :label="e.value" disabled>{{e.text}}</el-radio>
+            </el-form-item>
             <h4 class="ml50 mt50">合同文件</h4>
             <el-upload
                 class="upload-demo ml50"
@@ -510,9 +516,11 @@
     import {showNotify} from '../../plugin/utils-notify';
     import fileUploader from '../../component/fileUploader'
     import { checkPhone } from '../../plugin/utils-element-validator'
+    import contractCloseItem from '../../pageComponent/contractCloseItem'
     export default {
         components: {
-            fileUploader
+            fileUploader,
+            contractCloseItem
         },
         data() {
             var validatorSettleExp = (rule, value, callback) => {
@@ -574,6 +582,9 @@
                     cotractType: [
                         {required: true, message: '请选择合同类型', trigger: 'blur'}
                     ],
+                    serviceTypeList: [
+                        {required: true, message: '请选择服务类型', trigger: 'blur'}
+                    ],
                     settleType: [
                         {required: true, message: '请选择结算方式', trigger: 'blur'}
                     ],
@@ -601,12 +612,24 @@
                     // agentClient: [
                     //     {required: true, message: '请选择', trigger: 'blur'}
                     // ],
+                    originalType: [
+                      {required: true, message: '请选择客户类型', trigger: 'blur'}
+                    ],
                     agentCompanyId: [
                         {required: true, message: '请选择代理商', trigger: 'blur'}
                     ],
                     'agentFeeContent.serviceFeeRate': [
                         {required: true, message: '请输入正确的服务费收费（大于或等于零且最多两位小数）', trigger: 'blur'},
                         {validator: f2_0, trigger: 'blur'}
+                    ],
+                    quoteRule: [
+                      { required: true, message: "请选择报价规则", trigger: "blur" }
+                    ],
+                    original: [
+                      {required: true, message: '请选择客户归属', trigger: 'blur'}
+                    ],
+                    check: [
+                      { required: true, message: "请输入正确的结算费率（大于零且最多两位小数）", trigger: "blur" }
                     ]
                 },
                 // weekVisible: false,
@@ -696,7 +719,6 @@
                     serviceFeeContent2: {
                         containMonthAmount: false,
                         monthIncomeAmount: '',
-
                         stepwiseList: []
                     },
                     // serviceFee: '',
@@ -714,7 +736,49 @@
                         secondType: 'real',
                         serviceFeeRate: '',
                         serviceFeeType: 'ratio'
-                    }
+                    },
+                    quoteRule: '',
+                    quoteFeeContent: {
+                      containIncomeAmount: '',
+                      incomeAmount: '',
+                      quoteFeeRate: '',
+                      quoteFeeType: '',
+                      serviceCompanyRateList: [
+                        {
+                          feeRateContent: {
+                            containIncomeAmount: '',
+                            incomeAmount: '',
+                            quoteFeeRate: '',
+                            quoteFeeType: '',
+                            // stepwiseList: [  //目前用不到
+                            //   {
+                            //     endAmount: '',
+                            //     equalsEnd: '',
+                            //     equalsStart: '',
+                            //     percent: '',
+                            //     sequence: '',
+                            //     startAmount: ''
+                            //   }
+                            // ]
+                          },
+                          serviceCompanyId: '',
+                          serviceCompanyName: ''
+                        }
+                      ],
+                      stepwiseList: [
+                        {
+                          endAmount: '',
+                          equalsEnd: '',
+                          equalsStart: '',
+                          percent: '',
+                          sequence: '',
+                          startAmount: ''
+                        }
+                      ]
+                    },
+                    original: '',
+                    originalType: '',
+                    originalTypeName: ''
                 },
                 columnIndex: 0,
                 columnIndex2: 0,
@@ -761,7 +825,17 @@
                 chargeByName: '',
                 agentDisable: false,
                 originals: [],
-                original: ''
+                ruleList: [
+                  {
+                    text: '结算规则',
+                    value: 'settle'
+                  },
+                  {
+                    text: '返佣规则',
+                    value: 'rakeback'
+                  }
+                ],
+                originalTypeList: []
             }
         },
         // watch: {
@@ -799,24 +873,31 @@
             })
             get('/api/contract-web/agent-contract/agent-company-option').then(data => {
                 this.agentList = data
-                this.contractForm.agentCompanyId && this.companyChange()
+                this.contractForm.agentCompanyId && this.companyChange(false)
             })
             get('/api/sysmgr-web/commom/option?enumType=CustomOriginal').then(data => {
               this.originals = data
             })
+            get('/api/sysmgr-web/commom/option?enumType=OriginalType').then(data => {
+                this.originalTypeList = data
+            })
         },
         methods: {
-            getOriginal() {
-              let arr = this.customerCompaniesList.filter(e => e.companyId == this.contractForm.customerId)
-              if(arr && arr.length) {
-                this.original = arr[0].original
-                if(this.original == 20) {
-                  this.contractForm.agentClient = true
+            getConfig() {
+                this.customerCompaniesList.forEach(e => {
+                    if(e.companyId == this.contractForm.customerId) {
+                        console.log(e)
+                        this.contractForm.original = e.original
+                        this.contractForm.originalType = e.originalType
+                    }
+                })
+            },
+            getOriginalTypeName() {
+              this.originalTypeList.forEach(e => {
+                if(this.contractForm.originalType == e.value) {
+                  this.contractForm.originalTypeName = e.text
                 }
-                else {
-                  this.contractForm.agentClient = false
-                }
-              }
+              })
             },
             addServiceCompany() {
                 this.contractForm.serviceCompanyIds.push(null)
@@ -959,6 +1040,11 @@
                         page: this.$route.query.page
                     }
                 });
+            },
+            result(a) {
+              console.log(a)
+              this.contractForm.check = a.check
+              this.contractForm.quoteFeeContent = a.quoteFeeContent
             },
             submitForm(formName) {
                 let url;
@@ -1265,7 +1351,7 @@
                             "value": value['companyName']
                         });
                     });
-                    this.getOriginal()
+                    this.getConfig()
                 })
             },
             getOptionServiceCompanies() {
@@ -1413,9 +1499,8 @@
                     this.handdleChangeReverse();
                     // this.showType(this.contractForm.settleType);
                     this.$forceUpdate()
-                    this.companyChange()
-                    this.agentList && this.companyChange()
-                    this.getOriginal()
+                    this.agentList && this.companyChange(false)
+                    this.getConfig()
                     // console.log(this.contractForm)
                 })
             },
@@ -1472,7 +1557,7 @@
                 console.log(a)
                 this.contractForm.serviceFeeContent.fixFee = (this.float2.test(a) && a <= 100) ? 0 : ''
             },
-            companyChange() {
+            companyChange(isSel) {
                 this.agentList.forEach(e => {
                     if(e.companyId == this.contractForm.agentCompanyId) {
                         if(!e.status) {
@@ -1480,6 +1565,12 @@
                         }
                         this.chargeByName = e.chargeByName
                         this.contractForm.agentCompanyName = e.companyName
+                        if(isSel) {
+                            console.log(e)
+                            this.contractForm.quoteRule = e.quoteRule
+                            this.contractForm.quoteFeeContent = e.quoteFeeContent
+                            this.$refs.contract.init(this.contractForm)
+                        }
                     }
                 })
             }
@@ -1585,5 +1676,10 @@
     }
     .ml20 {
         margin-left: 20px;
+    }
+    .el-icon-question {
+        margin-right: 5px;
+        color: #f56c6c;
+        cursor: pointer;
     }
 </style>

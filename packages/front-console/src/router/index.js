@@ -62,7 +62,6 @@ let whiteList = r => require.ensure([], () => r(require('../pages/infoManager/wh
 let categoryManager = r => require.ensure([], () => r(require('../pages/categoryManager/categoryManager.vue')), 'categoryManager');
 let addCategory = r => require.ensure([], () => r(require('../pages/categoryManager/addCategory.vue')), 'addCategory');
 
-
 let reconTools = r => require.ensure([], () => r(require('../pages/reconTools/reconTools.vue')), 'reconTools');
 let reconDetail = r => require.ensure([], () => r(require('../pages/reconTools/reconDetail.vue')), 'reconDetail');
 let reconDetailError = r => require.ensure([], () => r(require('../pages/reconTools/reconDetailError.vue')), 'reconDetailError');
@@ -92,6 +91,9 @@ let agentManager = r => require.ensure([], () => r(require('../pages/clientManag
 let addAgent = r => require.ensure([], () => r(require('../pages/clientManager/addAgent')), 'addAgent')
 let agentDetail = r => require.ensure([], () => r(require('../pages/clientManager/agentDetail')), 'agentDetail')
 let sectionAndStaff = r => require.ensure([], () => r(require('../pages/clientManager/sectionAndStaff')), 'sectionAndStaff')
+let agentCompactList = r => require.ensure([], () => r(require('../pages/clientManager/agentCompactList')), 'agentCompactList')
+let agentCompactCreate = r => require.ensure([], () => r(require('../pages/clientManager/agentCompactCreate')), 'agentCompactCreate')
+let agentCompactLook = r => require.ensure([], () => r(require('../pages/clientManager/agentCompactLook')), 'agentCompactLook')
 
 let advertisingList = r => require.ensure([], () => r(require('../pages/management/advertisingList')), 'advertisingList')
 let advertisingCreate = r => require.ensure([], () => r(require('../pages/management/advertisingCreate')), 'advertisingCreate')
@@ -906,7 +908,31 @@ export default [{
             },
             {
               path: 'sectionAndStaff',
-              component: sectionAndStaff
+              component: sectionAndStaff,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'agentCompactList',
+              component: agentCompactList,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'agentCompactCreate',
+              component: agentCompactCreate,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'agentCompactLook',
+              component: agentCompactLook,
+              meta: {
+                keepAlive: false
+              }
             }
           ]
         },

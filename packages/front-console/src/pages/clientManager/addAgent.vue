@@ -8,7 +8,7 @@
         <div class="title">
             基础信息
         </div>
-        <el-form :model="form" :rules="rules" class="form" label-width="120px" size="small" ref="form">
+        <el-form :model="form" :rules="rules" class="form" label-width="150px" size="small" ref="form">
             <el-form-item label="代理商名称" prop="fullName">
                 <el-input class="form_input" v-model="form.fullName"></el-input>
             </el-form-item>
@@ -19,24 +19,39 @@
                 <el-select class="form_input" v-model="form.chargeBy" filterable>
                     <el-option v-for="e in chargeByList" :key="e.id" :label="e.name" :value="e.id"></el-option>
                 </el-select>
-                <!-- <el-input class="form_input" v-model="form.chargeBy"></el-input> -->
             </el-form-item>
-            <el-form-item label="选择地区" prop="provinceCode">
-                <!-- :disabled="dataDisabled" -->
-                <!-- <area-select
-                    type="all"
-                    class="postion-sel"
-                    :class="{'zi-yuan-loction-check': !form.ziYuanLoctionCheck}"
-                    v-model="form.provinceCode"
-                    :level="2"
-                    :isLinkage="true"
-                    :data="pcaa"/> -->
-                <el-select v-model="form.provinceCode" class="in_input" @change="provinceChange">
-                    <el-option v-for="e in format(86)" :key="e.value" :value="e.value" :label="e.text"></el-option>
-                </el-select>
-                <el-select v-model="form.cityCode" class="in_input" @change="cityChange">
-                    <el-option v-for="e in format(form.provinceCode)" :key="e.value" :value="e.value" :label="e.text"></el-option>
-                </el-select>
+            <!-- <el-form-item label="地区" prop="areaName">
+                <el-input class="form_input" v-model="form.areaName"></el-input>
+            </el-form-item> -->
+            <el-form-item label="代理商联系人" prop="contactName">
+                <el-input class="form_input" v-model="form.contactName"></el-input>
+            </el-form-item>
+            <el-form-item label="代理商联系人电话" prop="contactPhone">
+                <el-input class="form_input" v-model="form.contactPhone"></el-input>
+            </el-form-item>
+            <el-form-item label="代理商联系人地址" prop="contactAddr">
+                <el-input class="form_input" v-model="form.contactAddr"></el-input>
+            </el-form-item>
+            <div class="title">
+              付款信息
+            </div>
+            <el-form-item label="机构代码" prop="agency">
+                <el-input class="form_input" placeholder="请输入机构代码" v-model="form.agency"></el-input>
+            </el-form-item>
+            <el-form-item label="单位地址" prop="address">
+                <el-input class="form_input" placeholder="请输入代理商单位地址" v-model="form.address"></el-input>
+            </el-form-item>
+            <el-form-item label="代理商电话" prop="telephone">
+                <el-input class="form_input" placeholder="请输入代理商公司电话" v-model="form.telephone"></el-input>
+            </el-form-item>
+            <el-form-item label="开户名称" prop="accountName">
+                <el-input class="form_input" placeholder="请输入代理商开户名称" v-model="form.accountName"></el-input>
+            </el-form-item>
+            <el-form-item label="开户银行" prop="depositBank">
+                <el-input class="form_input" placeholder="请输入代理商开户银行" v-model="form.depositBank"></el-input>
+            </el-form-item>
+            <el-form-item label="银行账号" prop="accountNo">
+                <el-input class="form_input" placeholder="请输入代理商银行账号" v-model="form.accountNo"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button @click="$router.back()">取消</el-button>
@@ -54,14 +69,18 @@ export default {
             form: {
                 fullName: '',
                 name: '',
-                provinceCode: [],
-                province: '',
-                cityCode: '',
-                city: '',
-                areaCode: '',
-                areaName: '',
+                // areaName: '',
+                contactName: '',
+                contactPhone: '',
+                contactAddr: '',
                 chargeBy: '',
-                chargeByName: ''
+                chargeByName: '',
+                agency: '',
+                address: '',
+                telephone: '',
+                accountName: '',
+                depositBank: '',
+                accountNo: ''
             },
             rules: {
                 fullName: [
@@ -70,11 +89,36 @@ export default {
                 name: [
                     { required: true, message: "请填写简称", trigger: "blur" }
                 ],
+                contactName: [
+                  { required: true, message: "请填写代理商联系人", trigger: "blur" }
+                ],
+                contactPhone: [
+                  { required: true, message: "请填写代理商联系人电话", trigger: "blur" }
+                ],
+                contactAddr: [
+                  { required: true, message: "请填写代理商联系人地址", trigger: "blur" }
+                ],
                 chargeBy: [
                     { required: true, message: "请选择渠道经理", trigger: "blur" }
                 ],
-                provinceCode: [
-                    { required: true, message: "请选择地区", trigger: "blur" }
+                agency: [
+                  { required: true, message: "请填写机构代码", trigger: "blur" }
+                ],
+                address: [
+                  { required: true, message: "请填写单位地址", trigger: "blur" }
+                ],
+                telephone: [
+                  { required: true, message: "请填写代理商电话", trigger: "blur" },
+                  { pattern: /^[\d\-]+$/, message: '请正确输入电话号码'}
+                ],
+                accountName: [
+                  { required: true, message: "请填写开户名称", trigger: "blur" }
+                ],
+                depositBank: [
+                  { required: true, message: "请填写开户银行", trigger: "blur" }
+                ],
+                accountNo: [
+                  { required: true, message: "请填写银行账号", trigger: "blur" }
                 ]
             },
             pcaa,
@@ -83,16 +127,29 @@ export default {
         }
     },
     mounted() {
-        this.data = JSON.parse(sessionStorage.getItem('agent'))
-        sessionStorage.removeItem('agent')
-        if(this.data) {
-            for(let k in this.data) {
-                if(k in this.form) {
-                    this.form[k] = this.data[k]
-                }
+        this.$route.query.companyId && get('/api/contract-web/agent-company/detail', {
+          companyId: this.$route.query.companyId
+        }).then(data => {
+          this.data = data
+          this.data.id = this.$route.query.companyId
+          for(let k in this.data) {
+            if(k in this.form) {
+                this.form[k] = this.data[k]
             }
-        }
-        get('/api/sysmgr-web/user/get-platform-users?platformType=console-admin').then(data => {
+          }
+        })
+        // this.data = JSON.parse(sessionStorage.getItem('agent'))
+        // sessionStorage.removeItem('agent')
+        // if(this.data) {
+        //   console.log('contactPhone' in this.data)
+        //     for(let k in this.data) {
+        //       console.log(`${k}: ${k in this.form}`)
+        //         if(k in this.form) {
+        //             this.form[k] = this.data[k]
+        //         }
+        //     }
+        // }
+        get('/api/sysmgr-web/user/get-group-users?relationKey=ChannelUserRelation').then(data => {
             this.chargeByList = data
         })
     },
@@ -127,16 +184,6 @@ export default {
         submit() {
             this.$refs['form'].validate(v => {
                 if(v) {
-                    this.format(86).forEach(e => {
-                        if(e.value == this.form.provinceCode) {
-                            this.form.province = e.text
-                        }
-                    })
-                    this.format(this.form.provinceCode).forEach(e => {
-                        if(e.value == this.form.cityCode) {
-                            this.form.city = e.text
-                        }
-                    })
                     this.chargeByList.forEach(e => {
                         if(e.id == this.form.chargeBy) {
                             this.form.chargeByName = e.name

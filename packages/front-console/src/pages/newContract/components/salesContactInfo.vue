@@ -13,19 +13,18 @@
         <el-input v-model="contractModel.contractForm.contractAddr" style="width:450px;"></el-input>
     </el-form-item>
     <hr>
-    <el-form-item label="客户来源" prop="original">
-      <el-radio v-for="e in originals" v-model="contractModel.contractForm.original" :key="e.value" :label="e.value" @change="getOriginalName">{{e.text}}</el-radio>
-    </el-form-item>
-    <!-- <el-form-item label="是否代理商客户" prop="agentClient">
-        <el-radio-group v-model="contractModel.contractForm.agentClient" style="width:900px;">
-            <el-radio :label="false">否</el-radio>
-            <el-radio :label="true">是</el-radio>
-        </el-radio-group>
-    </el-form-item> -->
-    <el-form-item label="代理商名称" prop="agentCompanyId" v-if="contractModel.contractForm.agentClient">
-        <el-select v-model="contractModel.contractForm.agentCompanyId" style="width:900px;" @change="companyChange">
+    <el-form-item label="客户类型" prop="originalType">
+      <el-radio v-for="e in originalTypeList" v-model="contractModel.contractForm.originalType" :key="e.value" :label="e.value" @change="getOriginalTypeName">{{e.text}}</el-radio>
+    </el-form-item><br>
+    <template v-if="contractModel.contractForm.originalType == 20">
+      <el-form-item label="代理商名称" prop="agentCompanyId">
+        <el-select v-model="contractModel.contractForm.agentCompanyId" style="width:900px;" filterable @change="companyChange">
             <el-option v-for="e in contractModel.agentList" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
         </el-select>
+      </el-form-item><br>
+    </template>
+    <el-form-item label="客户归属" prop="original">
+      <el-radio v-for="e in originals" v-model="contractModel.contractForm.original" :key="e.value" :label="e.value" @change="getOriginalName">{{e.text}}</el-radio>
     </el-form-item>
 </div>
 </template>
@@ -39,7 +38,8 @@ export default {
     props: ['contractModel'],
     data() {
         return {
-          originals: []
+          originals: [],
+          originalTypeList: []
         }
     },
     mounted() {
@@ -47,14 +47,22 @@ export default {
         this.originals = data
         this.getOriginalName()
       })
+      get('/api/sysmgr-web/commom/option?enumType=OriginalType').then(data => {
+          this.originalTypeList = data
+      })
+      this.contractModel.contractForm.agentCompanyId && this.companyChange(this.contractModel.contractForm.agentCompanyId)
     },
     methods: {
+        getOriginalTypeName() {
+          this.originalTypeList.forEach(e => {
+            if(this.contractModel.contractForm.originalType == e.value) {
+              this.contractModel.contractForm.originalTypeName = e.text
+            }
+          })
+        },
         companyChange(companyId) {
             this.contractModel.getChargeByName(companyId);
-            // let obj = this.agentList.find(element => {
-            //     return element.companyId === companyId;
-            // });
-            // this.contractModel.chargeByName = obj.chargeByName;
+            sessionStorage.setItem('companyChange', '1')
         },
         getOriginalName() {
           var arr = this.originals.filter(e => e.value == this.contractModel.contractForm.original)

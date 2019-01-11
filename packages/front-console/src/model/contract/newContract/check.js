@@ -82,10 +82,10 @@ class Check extends BaseModel {
                 { required: true, message: '请输入负责人手机', trigger: 'blur' },
                 { validator: isMobile, trigger: 'blur' }
             ],
-            customMail1: [
-                { required: true, message: '请输入负责人邮箱', trigger: 'blur' },
-                { validator: isEmail, trigger: 'blur' }
-            ],
+            // customMail1: [
+            //     { required: true, message: '请输入负责人邮箱', trigger: 'blur' },
+            //     { validator: isEmail, trigger: 'blur' }
+            // ],
             customCollectorAddr: [
                 { required: true, message: '请输入负责人地址', trigger: 'blur' }
             ],
@@ -113,7 +113,10 @@ class Check extends BaseModel {
             ],
             // --------------------------------------------------------------- 2.5.3
             original: [
-              { required: true, message: "请选择客户来源", trigger: "change" }
+              { required: true, message: "请选择客户归属", trigger: "change" }
+            ],
+            originalType: [
+              { required: true, message: "请选择客户类型", trigger: "change" }
             ]
         };
     }

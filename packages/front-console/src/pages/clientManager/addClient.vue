@@ -41,7 +41,10 @@
                   value-format="yyyy-MM-dd">
               </el-date-picker>
             </el-form-item>
-            <el-form-item label="客户来源" prop="original">
+            <el-form-item label="客户类型" prop="originalType">
+              <el-radio v-for="e in originalTypeList" v-model="form.originalType" :key="e.value" :label="e.value" @change="getOriginalTypeName">{{e.text}}</el-radio>
+            </el-form-item>
+            <el-form-item label="客户归属" prop="original">
               <el-radio v-for="e in originals" v-model="form.original" :key="e.value" :label="e.value" @change="getOriginalName">{{e.text}}</el-radio>
             </el-form-item>
             <el-form-item label="关联销售" prop="salesList">
@@ -108,7 +111,9 @@ export default {
           legalPerson: "",
           areaName: "",
           registerDate: "",
-          salesList: []
+          salesList: [],
+          originalType: '',
+          originalTypeName: ''
         },
         queryForm: {
           accountInfo: '',
@@ -173,10 +178,17 @@ export default {
               trigger: "change"
             }
           ],
+          originalType: [
+            {
+              required: true,
+              message: "请选择客户类型",
+              trigger: "change"
+            }
+          ],
           original: [
             {
               required: true,
-              message: "请选择客户来源",
+              message: "请选择客户归属",
               trigger: "change"
             }
           ]
@@ -190,7 +202,8 @@ export default {
         charges: [],
         show: false,
         result: {},
-        originals: []
+        originals: [],
+        originalTypeList: []
       };
     },
     mounted() {
@@ -199,8 +212,18 @@ export default {
       get('/api/sysmgr-web/commom/option?enumType=CustomOriginal').then(data => {
         this.originals = data
       })
+      get('/api/sysmgr-web/commom/option?enumType=OriginalType').then(data => {
+          this.originalTypeList = data
+      })
     },
     methods: {
+        getOriginalTypeName() {
+          this.originalTypeList.forEach(e => {
+            if(this.form.originalType == e.value) {
+              this.form.originalTypeName = e.text
+            }
+          })
+        },
         back() {
             this.$router.back()
         },
@@ -212,7 +235,6 @@ export default {
             this.form.chargeBy = ''
             this.form.chargeByName = ''
             get(`/api/sysmgr-web/user/get-platform-users?platformType=console-company`).then(data => {
-                console.log(data)
                 this.charges = data
             })
         },
@@ -265,7 +287,6 @@ export default {
             return !arr.length
         },
         deleteSale(a) {
-            console.log(a)
             this.form.salesList.splice(a, 1)
         },
         submit() {

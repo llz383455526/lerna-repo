@@ -298,7 +298,7 @@ export default {
         "/api/console-dlv/company/salary-online-order/query-salary-order",
         this.form
       ).then(data => {
-        console.log(data);
+        // console.log(data);
         this.list = data.list;
         this.total = data.total;
       });

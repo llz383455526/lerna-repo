@@ -26,6 +26,7 @@ import offlineSalaryManager from './modules/offlineSalaryManager'
 
 import taxDiscount from './modules/taxDiscount'
 
+import status from './modules/status/index'
 
 Vue.use(Vuex);
 
@@ -57,7 +58,8 @@ export default new Vuex.Store({
 		offlineSalaryUpload,
 		offlineSalaryImport,
 		offlineSalaryManager,
-	    taxDiscount
+        taxDiscount,
+        status
     }
 })
 

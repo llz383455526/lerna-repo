@@ -22,12 +22,13 @@
             <el-table :data="data.list">
                 <el-table-column label="代理商名称" prop="fullName"></el-table-column>
                 <el-table-column label="渠道经理" prop="chargeByName"></el-table-column>
-                <el-table-column label="地区">
+                <!-- <el-table-column label="地区">
                     <template slot-scope="scope">
                         {{scope.row.province}} {{scope.row.city}}
                     </template>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column label="客户数量" prop="customerCount"></el-table-column>
+                <el-table-column label="代理推广费率" prop="quoteFeeName"></el-table-column>
                 <el-table-column label="代理期限" prop="periodTime" width="200px"></el-table-column>
                 <el-table-column label="更新人" prop="updateByName"></el-table-column>
                 <el-table-column label="更新时间" prop="updateTime"></el-table-column>
@@ -107,8 +108,8 @@ export default {
             this.query()
         },
         edit(a) {
-            sessionStorage.setItem('agent', JSON.stringify(a))
-            this.$router.push('addAgent')
+            // sessionStorage.setItem('agent', JSON.stringify(a))
+            this.$router.push(`addAgent?companyId=${a.id}`)
         },
         download() {
             var str = ''

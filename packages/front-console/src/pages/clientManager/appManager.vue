@@ -82,7 +82,13 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="10">
-            <el-col :span="5" class="right">客户来源</el-col>
+            <el-col :span="5" class="right">客户类型</el-col>
+            <el-col :span="10">{{msg.originalTypeName}}</el-col>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="10">
+            <el-col :span="5" class="right">客户归属</el-col>
             <el-col :span="10">{{msg.originalName}}</el-col>
           </el-col>
         </el-row>
@@ -180,7 +186,17 @@
             value-format="yyyy-MM-dd"
           ></el-date-picker>
         </el-form-item>
-        <el-form-item label="客户来源" prop="original">
+        <el-form-item label="客户类型" prop="originalType">
+          <el-radio
+            v-for="e in originalTypeList"
+            v-model="cform.originalType"
+            :key="e.value"
+            :label="e.value"
+            @change="getOriginalTypeName">
+            {{e.text}}
+          </el-radio>
+        </el-form-item>
+        <el-form-item label="客户归属" prop="original">
           <el-radio
             v-for="e in originals"
             v-model="cform.original"
@@ -414,10 +430,17 @@ export default {
             trigger: "change"
           }
         ],
+        originalType: [
+          {
+            required: true,
+            message: "请选择客户类型",
+            trigger: "change"
+          }
+        ],
         original: [
           {
             required: true,
-            message: "请选择客户来源",
+            message: "请选择客户归属",
             trigger: "change"
           }
         ]
@@ -517,7 +540,8 @@ export default {
         pageNo: 1
       },
       msgData: {},
-      originals: []
+      originals: [],
+      originalTypeList: []
     };
   },
   activated() {
@@ -539,8 +563,18 @@ export default {
     get("/api/sysmgr-web/commom/option?enumType=CustomOriginal").then(data => {
       this.originals = data;
     });
+    get('/api/sysmgr-web/commom/option?enumType=OriginalType').then(data => {
+        this.originalTypeList = data
+    })
   },
   methods: {
+    getOriginalTypeName() {
+      this.originalTypeList.forEach(e => {
+        if(this.cform.originalType == e.value) {
+          this.cform.originalTypeName = e.text
+        }
+      })
+    },
     getOriginalName() {
       var arr = this.originals.filter(e => e.value == this.cform.original);
       arr.length && (this.cform.originalName = arr[0].text);
@@ -655,7 +689,9 @@ export default {
         salesList: this.msg.salesList || [],
         email: this.msg.chargeEmail,
         chargeMobile: this.msg.chargeMobile,
-        original: this.msg.original
+        original: this.msg.original,
+        originalType: this.msg.originalType,
+        originalTypeName: this.msg.originalTypeName
       };
     },
     upDate() {

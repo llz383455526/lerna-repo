@@ -270,7 +270,8 @@ export default {
     props: {
         contractForm: {
             type: Object,
-            default: {
+            default(){
+              return {
                 serviceFeeContent: {
                     discountRate: '',
                     secondType: '',
@@ -286,6 +287,7 @@ export default {
                     monthIncomeAmount: '',
                     stepwiseList: []
                 }
+              }
             }
         },
         labelWidth: {
@@ -324,6 +326,7 @@ export default {
     },
     methods: {
         init(a) {
+            console.log('init')
             this.contractForm = a
             this.inputRate = this.contractForm.serviceFeeContent.settledRate
             this.columnIndex = this.contractForm.serviceFeeContent.stepwiseList.length
@@ -359,16 +362,8 @@ export default {
 
             if (this.initCheck) {
                 // 初始化的时候触发事件 不然原始有值的时候验证无法通过
-                var contractForm = JSON.parse(JSON.stringify(this.contractForm))
-                this.$emit('result', {
-                    serviceFeeContent: contractForm.serviceFeeContent,
-                    serviceFeeContent2: contractForm.serviceFeeContent2,
-                    arrIndex: this.arrIndex,
-                    check: this.check
-                });
+                this.transferObj()
             }
-            
-            
             
             setTimeout(() => {
                 this.$parent.clearValidate()

@@ -65,7 +65,7 @@
         background:#67C23A;
         border-radius:5px;
         -moz-border-radius:7px;
-    },
+    }
     .disable{
         color: #fff;
         text-align:center;

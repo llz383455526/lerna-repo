@@ -4,7 +4,7 @@
         <el-form-item label="选择合同模板"
                       prop="contractTplId"
                       :rules="{ required: true, message: '请选择合同模板', trigger: 'change' }">
-            <el-select v-model="contractModel.contractForm.contractTplId" placeholder="请选择" style="width:450px;">
+            <el-select v-model="contractModel.contractForm.contractTplId" filterable placeholder="请选择" style="width:450px;">
                 <el-option v-for="(item, key) in contractModel.contractTplList"
                            :key="key"
                            :label="item.text"

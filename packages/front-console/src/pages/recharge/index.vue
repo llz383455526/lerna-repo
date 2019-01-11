@@ -800,7 +800,9 @@ export default {
             this.getChannlList()
             this.getSubCompany()
             this.getSubMsg()
-            this.getSwitch()
+            if(this.detail.isAutoRecharge && this.detail.payUser.thirdPaymentType == 'pingan' && this.detail.state == 21) {
+                this.getSwitch()
+            }
         })
     },
     getChannlList() {

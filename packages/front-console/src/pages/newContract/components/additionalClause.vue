@@ -41,9 +41,11 @@
                   style="color:red;" class="ml10">(请上传清单)</span>
         </div>
     </el-form-item>
-    <el-form-item v-show="contractModel.contractForm.payAndInvoiceSame === '0'" label="甲方下属公司类型" :rules="{required: true, message: '请选择甲方下属公司类型', trigger: 'blur'}">
+    <el-form-item v-if="contractModel.contractForm.payAndInvoiceSame === '0'" label="甲方下属公司类型" prop="customCompanyUnderType" :rules="{required: true, message: '请选择甲方下属公司类型', trigger: 'change'}">
         <div style="width:900px;">
-            <el-radio v-model="contractModel.contractForm.customCompanyUnderType" v-for="(e, key) in contractModel.customCompanyUnderTypeList" :key="key" :label="e.value">{{e.text}}</el-radio>
+            <el-radio-group v-model="contractModel.contractForm.customCompanyUnderType">
+                <el-radio v-for="(e, key) in contractModel.customCompanyUnderTypeList" :key="key" :label="e.value">{{e.text}}</el-radio>
+            </el-radio-group>
         </div>
     </el-form-item>
     <el-form-item v-show="contractModel.contractForm.payAndInvoiceSame === '0'" label="上传甲方下属公司清单">

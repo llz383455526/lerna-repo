@@ -2,12 +2,12 @@
     <div class="r_main">
         <el-breadcrumb>
             <el-breadcrumb-item>
-                代理商合同管理
+                代理商合同生成
             </el-breadcrumb-item>
         </el-breadcrumb>
         <el-form :model="form" class="form" :inline="true" size="small" ref="form">
-            <el-form-item label="代理商名称" prop="companyName">
-                <el-input class="form_input" v-model="form.companyName"></el-input>
+            <el-form-item label="代理商名称" prop="agentName">
+                <el-input class="form_input" v-model="form.agentName"></el-input>
             </el-form-item>
             <el-form-item label="状态" prop="status">
                 <el-select class="form_input" v-model="form.status">
@@ -19,28 +19,28 @@
                 <el-button @click="$refs['form'].resetFields()">清除</el-button>
             </el-form-item>
         </el-form>
-        <router-link to="agentContractCreate">
-            <el-button size="small">新增</el-button>
+        <router-link to="agentCompactCreate">
+            <el-button size="small">创建代理商合同</el-button>
         </router-link>
         <el-table class="table" :data="data.list">
-            <el-table-column label="合同编号" prop="contractNo"></el-table-column>
-            <el-table-column label="代理商名称" prop="companyName"></el-table-column>
-            <el-table-column label="代理期限" width="200px">
+            <el-table-column label="合同编号" prop="generateId"></el-table-column>
+            <el-table-column label="代理商名称" prop="agentName"></el-table-column>
+            <el-table-column label="代理期限" align="center">
                 <template slot-scope="scope">
                     {{scope.row.agentStart | formatTime('yyyy-MM-dd')}} 至 {{scope.row.agentEnd | formatTime('yyyy-MM-dd')}}
                 </template>
             </el-table-column>
-            <el-table-column label="代理推广费率" prop="quoteFeeName"></el-table-column>
-            <el-table-column label="渠道经理" prop="chargeByName"></el-table-column>
+            <el-table-column label="操作人" prop="updateByName"></el-table-column>
+            <el-table-column label="更新时间" prop="updateAt"></el-table-column>
             <el-table-column label="状态" prop="statusName"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <router-link :to="`agentContractCreate?id=${scope.row.id}&isLook=1`">
-                        <el-button type="text">查看</el-button>
-                    </router-link>
-                    <router-link  v-if="scope.row.status != 20" :to="`agentContractCreate?id=${scope.row.id}`">
-                        <el-button type="text">编辑</el-button>
-                    </router-link>
+                  <router-link  v-if="scope.row.status != 30" :to="`agentCompactCreate?generateId=${scope.row.generateId}`">
+                    <el-button type="text">编辑</el-button>
+                  </router-link>
+                  <router-link  v-if="scope.row.status != 10" :to="`agentCompactLook?generateId=${scope.row.generateId}`">
+                    <el-button type="text">查看</el-button>
+                  </router-link>
                 </template>
             </el-table-column>
         </el-table>
@@ -60,7 +60,7 @@ export default {
     data() {
         return {
             form: {
-                companyName: '',
+                agentName: '',
                 status: '',
                 pageSize: 10,
                 page: 1
@@ -70,12 +70,11 @@ export default {
         }
     },
     mounted() {
-        get('/api/contract-web/commom/option?enumType=AgentContractStatus').then(data => {
+        get('/api/contract-web/commom/option?enumType=AgentGenStatus').then(data => {
             console.log(data)
             this.statusList = data
-            this.form.status = this.statusList[0].value
-            this.query()
         })
+        this.query()
     },
     methods: {
         query(a) {
@@ -83,7 +82,7 @@ export default {
                 a = 1
             }
             this.form.page = a
-            post('/api/contract-web/agent-contract/list', this.form).then(data => {
+            post('/api/contract-web/agent-contract-generate/list', this.form).then(data => {
                 this.data = data
             })
         },

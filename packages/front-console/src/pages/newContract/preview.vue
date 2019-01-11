@@ -39,7 +39,8 @@
                         <div class="col-xs-6">销售联系电话：{{ contractForm.contractTel }}</div>
                         <div class="col-xs-6">销售联系邮箱：{{ contractForm.contractEmail }}</div>
                         <div class="col-xs-6">合同联系人地址：{{ contractForm.contractAddr }}</div>
-                        <div class="col-xs-6">客户来源：{{ contractForm.originalName }}</div>
+                        <div class="col-xs-6">客户类型：{{ contractForm.originalTypeName }}</div>
+                        <div class="col-xs-6">客户归属：{{ contractForm.originalName }}</div>
                     </div>
                     <div class="row" style="margin-bottom: 15px;">
                         <div class="col-xs-12">
@@ -86,11 +87,10 @@
                                 <show-service :detail="{serviceFeeContent:formItem.serviceFeeContent,serviceFeeContent2:formItem.serviceFeeContent2}">
                                 </show-service>
                             </div>
-                            <template v-if="contractForm.agentClient">
-                                <div class="col-xs-12">代理商名称：{{ getText(contractForm.agentCompanyId,
-                                    contractModel.agentList, 'companyId', 'companyName') }}</div>
-                                <div class="col-xs-12">渠道经理：{{ contractModel.chargeByName }}</div>
-                                <div class="col-xs-12">代理商分润比例：{{ formItem.agentFeeContent.serviceFeeRate }}%</div>
+                            <template v-if="contractForm.originalType == 20">
+                              <div class="col-xs-12">代理商名称：{{ getText(contractForm.agentCompanyId, contractModel.agentList, 'companyId', 'companyName') }}</div>
+                              <div class="col-xs-12">渠道经理：{{ contractModel.chargeByName }}</div>
+                              <div class="col-xs-12">代理结算费率：<show-close-service :detail="formItem"></show-close-service> </div>
                             </template>
                             <hr v-if="key+1 != contractForm.contracts.length">
                         </div>
@@ -131,6 +131,7 @@
                                 <div>系统合同附件：</div>
                                 <div v-for="(el, index) in formItem.attachments" :key="index">
                                     <div v-if="el.targetTypeName!='自定义附件'">{{ el.targetTypeName }}：{{ el.displayname }}
+                                        <a href="javascript:;" @click="handlePrevFile(el.downloadCode)" style="margin-left:10px;">预览</a>
                                         <a href="javascript:;" @click="handleDownload(el.downloadCode)" style="margin-left:10px;">下载</a>
                                     </div>
                                 </div>
@@ -140,6 +141,7 @@
                                 <div v-for="(el, index) in contractForm.approveType === 'partial' ? formItem.partialAttachments : formItem.customerAttachments"
                                     :key="index">
                                     <div v-if="el.targetTypeName=='自定义附件'">{{ el.displayname }}
+                                        <a href="javascript:;" @click="handlePrevFile(el.downloadCode)" style="margin-left:10px;">预览</a>
                                         <a href="javascript:;" @click="handleDownload(el.downloadCode)" style="margin-left:10px;">下载</a>
                                     </div>
                                 </div>
@@ -166,22 +168,23 @@ import { baseUrl } from '../../config/address.js';
 import { showConfirm } from "../../plugin/utils-message";
 import auditOption from './components/auditOption.vue' // 审核意见
 import showService from '../../pageComponent/showService.vue'
+import showCloseService from '../../pageComponent/showCloseService'
 export default {
-    name: "detail",
-    components: {
-        auditOption,
-        showService
-    },
-    data() {
-        return {
-            contractModel: new ContractModel(),
-            contractForm: ''
-        }
-    },
-    created() {
-        let id = this.$route.query.id;
-        this.contractModel.contractId = id;
-
+  name: "detail",
+  components: {
+    auditOption,
+    showService,
+    showCloseService
+  },
+  data () {
+    return {
+      contractModel: new ContractModel(),
+      contractForm: ''
+    }
+  },
+  created () {
+    let id = this.$route.query.id;
+    this.contractModel.contractId = id;
         let first = new Promise((res, rej) => {
             this.contractModel.getContractDetail(id, () => {
                 this.contractForm = this.contractModel.contractForm
@@ -246,6 +249,10 @@ export default {
             this.$router.replace({
                 path: path
             })
+        },
+        handlePrevFile(downloadCode) {
+            window.open(baseUrl + '/api/contract-web/file/pdf-scan' +
+                '?downloadCode=' + downloadCode);
         },
         handleDownload(downloadCode) {
             window.location.href = baseUrl + '/api/contract-web/file/download' +

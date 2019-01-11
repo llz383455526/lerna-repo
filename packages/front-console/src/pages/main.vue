@@ -173,14 +173,14 @@ export default {
     },
 
     handleSelect(key, keyPath) {
-      console.log(keyPath)
+      // console.log(keyPath)
       if (key == "modify-pass" || key == "logout") {
         this.activeIndex = "#";
         if (key == "modify-pass") {
           console.log("修改密码");
           this.dialogClientVisible = true;
         } else {
-          console.log("退出登录");
+          // console.log("退出登录");
           this.logout();
         }
       } else {
@@ -204,7 +204,7 @@ export default {
                     children[j].orderSeq
                   )
                 ) {
-                  console.log(children)
+                  // console.log(children)
                   this.$router.push(children[j]["action"]);
                   // console.log(this.principalMenu[i]['title'] + '---' + children[j]['title']);
                   break;
