@@ -2,7 +2,7 @@
   <div class="main">
     <div class="mb20">线下签约记录</div>
     <el-form :model="form" :inline="true" ref="form" size="small">
-      <el-form-item label="生成时间">
+      <el-form-item label="签约时间">
         <el-date-picker
           v-model="range"
           type="daterange"
@@ -49,7 +49,7 @@
     </el-form>
     <div class="table-container">
       <el-table :data="data.data" ref="table">
-        <el-table-column label="生成时间">
+        <el-table-column label="签约时间">
           <template slot-scope="scope">
             <span>{{scope.row.createTimeDesc | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
           </template>
@@ -65,7 +65,7 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <a target="_blank" :href="`${baseUrl}/api/econtract/contract/download?orderId=${scope.row.orderId}`">
-              <el-button class="ml0" type="text" size="small">下载{{scope.row.orderState == 'CLOSED' ? '已签' : '待签'}}合同</el-button>
+              <el-button class="ml0" type="text" size="small">下载{{scope.row.orderState == 'CLOSED' ? '纸质' : '纸质'}}合同</el-button>
             </a>
             <el-button type="text" @click="show = true; currId = scope.row.orderId">{{scope.row.orderState == 'CLOSED' ? '重新' : ''}}上传合同</el-button>
           </template>
