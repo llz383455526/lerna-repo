@@ -302,9 +302,10 @@ export default {
         k in data && (this.form[k] = data[k])
       }
       this.form.tplId = this.form.tplId.toString()
-      this.form.quoteFeeContent.serviceCompanyRateList.length && this.form.quoteFeeContent.serviceCompanyRateList.forEach(e => {
-        e.serviceCompanyId = e.serviceCompanyId
-      })
+      if(!this.form.quoteFeeContent.serviceCompanyRateList || !this.form.quoteFeeContent.serviceCompanyRateList.length) {
+          this.form.quoteFeeContent.serviceCompanyRateList = []
+          this.addCompany()
+      }
       this.setDeadline()
       this.$refs['contract'].init(this.form)
       data.status == 20 && (this.isEdit = true);

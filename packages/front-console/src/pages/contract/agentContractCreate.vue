@@ -212,9 +212,10 @@ export default {
                   stepwiseList: []
                 }
             }
-            this.form.quoteFeeContent.serviceCompanyRateList.length && this.form.quoteFeeContent.serviceCompanyRateList.forEach(e => {
-                e.serviceCompanyId = e.serviceCompanyId
-            })
+            if(!this.form.quoteFeeContent.serviceCompanyRateList || !this.form.quoteFeeContent.serviceCompanyRateList.length) {
+                this.form.quoteFeeContent.serviceCompanyRateList = []
+                this.addCompany()
+            }
             this.form.agentStart = [this.form.agentStart, this.form.agentEnd];
             this.chargeByName = data.chargeByName;
             this.$refs['contract'].init(this.form)
