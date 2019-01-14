@@ -183,22 +183,43 @@ export default {
   },
   methods: {
     getDetail() {
-      get("/api/contract-web/agent-contract/detail", {
-        contractId: this.id
-      }).then(data => {
-        for (let k in data) {
-          if (k in this.form) {
-            this.form[k] = data[k];
-          }
-        }
-        this.form.quoteFeeContent.serviceCompanyRateList.length && this.form.quoteFeeContent.serviceCompanyRateList.forEach(e => {
-          e.serviceCompanyId = e.serviceCompanyId
-        })
-        this.form.agentStart = [this.form.agentStart, this.form.agentEnd];
-        this.chargeByName = data.chargeByName;
-        this.$refs['contract'].init(this.form)
-        data.status == 20 && (this.isLook = true);
-      });
+        get("/api/contract-web/agent-contract/detail", {
+            contractId: this.id
+        }).then(data => {
+            for (let k in data) {
+                if (k in this.form) {
+                    this.form[k] = data[k];
+                }
+            }
+            if(!this.form.quoteFeeContent) {
+                this.form.quoteFeeContent = {
+                  containIncomeAmount: '',
+                  incomeAmount: '',
+                  quoteFeeRate: '',
+                  quoteFeeType: '',
+                  serviceCompanyRateList: [
+                    {
+                      feeRateContent: {
+                        containIncomeAmount: '',
+                        incomeAmount: '',
+                        quoteFeeRate: '',
+                        quoteFeeType: ''
+                      },
+                      serviceCompanyId: '',
+                      serviceCompanyName: ''
+                    }
+                  ],
+                  stepwiseList: []
+                }
+            }
+            this.form.quoteFeeContent.serviceCompanyRateList.length && this.form.quoteFeeContent.serviceCompanyRateList.forEach(e => {
+                e.serviceCompanyId = e.serviceCompanyId
+            })
+            this.form.agentStart = [this.form.agentStart, this.form.agentEnd];
+            this.chargeByName = data.chargeByName;
+            this.$refs['contract'].init(this.form)
+            data.status == 20 && (this.isLook = true);
+        });
     },
     companyChange() {
       this.agentList.forEach(e => {
