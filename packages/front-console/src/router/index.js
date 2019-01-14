@@ -421,7 +421,7 @@ export default [{
               path: 'agentContractList',
               component: agentContractList,
               meta: {
-                keepAlive: false
+                keepAlive: true
               }
             },
             {

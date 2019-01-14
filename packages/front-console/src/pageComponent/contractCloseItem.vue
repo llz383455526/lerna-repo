@@ -203,7 +203,7 @@ export default {
             showInputRatio: 0,
             columnIndex: 0,
             columnIndex2: 0,
-            float2: /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/,
+            float2: /^(([0-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/,
             check: '',
             ladder_amount: ''
         }
