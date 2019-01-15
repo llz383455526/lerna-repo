@@ -15,7 +15,7 @@
                     <el-col :span="16" style="word-wrap: break-word;">{{detail.fullName}}</el-col>
                 </el-col>
 				<el-col :span="12">
-                    <el-col :span="8" class="right">机构代码</el-col>
+                    <el-col :span="8" class="right">税号</el-col>
                     <el-col :span="16" style="word-wrap: break-word;">{{detail.chargeBy}}</el-col>
                 </el-col>
             </el-row>

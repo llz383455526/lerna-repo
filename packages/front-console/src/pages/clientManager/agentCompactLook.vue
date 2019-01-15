@@ -27,7 +27,7 @@
       <el-col :span="8">{{data.agentName}}</el-col>
     </el-row>
     <el-row class="mb15" style="font-weight: normal;">
-      <el-col :span="4" style="text-align: right; margin-right: 20px;">机构代码：</el-col>
+      <el-col :span="4" style="text-align: right; margin-right: 20px;">税号：</el-col>
       <el-col :span="8">{{data.agency}}</el-col>
     </el-row>
     <el-row class="mb15" style="font-weight: normal;">

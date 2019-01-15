@@ -35,8 +35,8 @@
             <div class="title">
               付款信息
             </div>
-            <el-form-item label="机构代码" prop="agency">
-                <el-input class="form_input" placeholder="请输入机构代码" v-model="form.agency"></el-input>
+            <el-form-item label="税号" prop="agency">
+                <el-input class="form_input" placeholder="税号" v-model="form.agency"></el-input>
             </el-form-item>
             <el-form-item label="单位地址" prop="address">
                 <el-input class="form_input" placeholder="请输入代理商单位地址" v-model="form.address"></el-input>
@@ -102,7 +102,7 @@ export default {
                     { required: true, message: "请选择渠道经理", trigger: "blur" }
                 ],
                 agency: [
-                  { required: true, message: "请填写机构代码", trigger: "blur" }
+                  { required: true, message: "请填写税号", trigger: "blur" }
                 ],
                 address: [
                   { required: true, message: "请填写单位地址", trigger: "blur" }

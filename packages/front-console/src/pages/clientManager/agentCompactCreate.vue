@@ -39,7 +39,7 @@
             <el-form-item label="代理商名称" prop="agentName">
                 <el-input class="w400" v-model="form.agentName"></el-input> <el-button type="text" @click="show = !show">选择已有代理商</el-button>
             </el-form-item>
-            <el-form-item label="机构代码" prop="agency">
+            <el-form-item label="税号" prop="agency">
                 <el-input class="w400" v-model="form.agency"></el-input>
             </el-form-item>
             <el-form-item label="代理商单位地址" prop="address">
@@ -212,7 +212,7 @@ export default {
                     { required: true, message: "请选择或填写代理商", trigger: "change" }
                 ],
                 agency: [
-                    { required: true, message: "请填写机构代码", trigger: "blur" }
+                    { required: true, message: "请填写税号", trigger: "blur" }
                 ],
                 address: [
                     { required: true, message: "请填写代理商单位地址", trigger: "blur" }
