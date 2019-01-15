@@ -328,8 +328,7 @@ export default {
     methods: {
         initChargeBy() {
             if(this.userInformation && this.chargeByList.length) {
-                !this.chargeByList.filter(e => e.id == this.userInformation.id).length && this.chargeByList.unshift(this.userInformation)
-                if(!this.form.chargeBy) {
+                if(this.chargeByList.filter(e => e.id == this.userInformation.id).length && !this.form.chargeBy) {
                     this.form.chargeBy = this.userInformation.id
                     this.getSales()
                     this.$nextTick(() => {
