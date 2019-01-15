@@ -23,7 +23,7 @@
             <el-button size="small">创建代理商合同</el-button>
         </router-link>
         <el-table class="table" :data="data.list">
-            <el-table-column label="合同编号" prop="generateId"></el-table-column>
+            <el-table-column label="合同编号" prop="contractNo"></el-table-column>
             <el-table-column label="代理商名称" prop="agentName"></el-table-column>
             <el-table-column label="代理期限" align="center">
                 <template slot-scope="scope">
