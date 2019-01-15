@@ -328,13 +328,16 @@ export default {
     methods: {
         initChargeBy() {
             if(this.userInformation && this.chargeByList.length) {
-                if(this.chargeByList.filter(e => e.id == this.userInformation.id).length && !this.form.chargeBy) {
-                    this.form.chargeBy = this.userInformation.id
-                    this.getSales()
-                    this.$nextTick(() => {
-                        this.$refs.form.clearValidate()
-                    })
-                }
+                !this.form.chargeBy && this.chargeByList.forEach(e => {
+                    if(e.mobilephone == this.userInformation.mobilephone) {
+                        this.form.chargeBy = e.id
+                        this.getSales()
+                        this.$nextTick(() => {
+                            this.$refs.form.clearValidate()
+                        })
+                        return
+                    }
+                })
             }
         },
         setDeadline() {
