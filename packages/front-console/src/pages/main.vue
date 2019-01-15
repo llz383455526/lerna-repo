@@ -279,6 +279,7 @@ export default {
 @import "../style/color";
 
 .top-menu {
+  min-width: 1440px;
   height: 60px;
   background-color: $basic-green;
   position: relative;
