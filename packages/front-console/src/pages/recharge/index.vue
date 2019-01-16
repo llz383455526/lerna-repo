@@ -670,6 +670,12 @@ export default {
         });
       }
     },
+    productName() {
+        if(this.productName.length == 1) {
+            this.dialogCreateForm.appId = this.productName[0].value
+            this.getService()
+        }
+    },
     'dialogCreateForm.amount': function(a) {
         clearTimeout(this.calc)
         this.calc = setTimeout(() => {
@@ -860,6 +866,10 @@ export default {
             this.msg = ''
             this.sub = ''
             this.serviceName = data
+            if(this.serviceName.length == 1) {
+                this.dialogCreateForm.serviceCompanyId = this.serviceName[0].value
+                this.getChannlType()
+            }
         })
     },
     getChannlType() {
@@ -876,13 +886,17 @@ export default {
             this.calcServiceFee = data.calcServiceFee
             this.prePayContent = JSON.parse(data.prePayContent)
             this.isRecharge = false
+            if(this.channelTypes.length == 1) {
+                this.dialogCreateForm.channelBusinessType = this.channelTypes[0].value
+                this.getRechargeMsg()
+            }
             if(!this.isService) {
               this.getServiceFee()
             }
-            else {
-              this.dialogCreateForm.channelBusinessType == 'bank'
-              this.getRechargeMsg()
-            }
+            // else {
+            //   this.dialogCreateForm.channelBusinessType == 'bank'
+            //   this.getRechargeMsg()
+            // }
         })
     },
     getRechargeMsg() {
