@@ -1,6 +1,6 @@
 <template>
 
-    <div :class="`main-container ${isHandle ? 'mb100' : ''}`">
+    <div :class="`main-container ${isHandle ? 'mb100' : ''}`" v-loading="isReady">
         <div style="margin: 0 40px 20px 0; display: inline-block;">电子签约记录</div>
         <el-button size="small" type="primary" @click="$router.back()">返回</el-button>
         <el-tabs v-model="activeTab" @tab-click="handleTabClick" v-if="!isHandle">
@@ -81,7 +81,7 @@
         <el-button type="primary" size="small" @click="handle(1)">{{isHandle && ableType == 1 ? '取消批量重发通知' : '批量重发通知' }}</el-button>
         <el-button type="primary" size="small" @click="handle(2)">{{isHandle && ableType == 2 ? '取消批量取消' : '批量取消' }}</el-button>
         <div class="table-container">
-            <el-table :data="tableList.data" v-loading="isReady" @selection-change="getRow" ref="table">
+            <el-table :data="tableList.data" @selection-change="getRow" ref="table">
                 <el-table-column type="selection" :selectable="isAble" v-if="isHandle" fixed></el-table-column>
                 <el-table-column label="操作" align="center" fixed>
                     <template slot-scope="scope">

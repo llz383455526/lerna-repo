@@ -1,5 +1,5 @@
 <template>
-    <div class="content">
+    <div class="content" v-loading="isReady">
         <el-form :inline="true">
             <el-form-item label="服务公司" size="small">
                 <el-select v-model="serviceCompanyId" placeholder="查看落地公司剩余票量" @change="getCompanyInfo">
@@ -335,7 +335,8 @@
                 isCan: false,
                 dshow: false,
                 isCancel: false,
-                wait: 0
+                wait: 0,
+                isReady: true
             }
         },
         computed: {
@@ -441,6 +442,7 @@
                 };
                 post('/api/invoice-web/invoice/invoice-approve-list', param).then(data => {
                     this.tableList = data
+                    this.isReady = false
                 })
             },
             handleSizeChange(value) {

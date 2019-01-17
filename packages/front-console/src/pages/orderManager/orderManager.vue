@@ -1,5 +1,5 @@
 <template>
-    <div style="margin-top: 15px;background-color: #fff;padding: 15px; position: relative;">
+    <div style="margin-top: 15px;background-color: #fff;padding: 15px; position: relative;" v-loading="isReady">
         <el-tabs @tab-click="tab">
             <el-tab-pane label="所有订单"></el-tab-pane>
             <el-tab-pane label="待支付"></el-tab-pane>
@@ -255,7 +255,8 @@ export default {
         channelCode: "",
         channelAccount: ""
       },
-      activeData: ''
+      activeData: '',
+      isReady: true
     };
   },
   activated() {
@@ -301,6 +302,7 @@ export default {
         // console.log(data);
         this.list = data.list;
         this.total = data.total;
+        this.isReady = false
       });
     },
     tab(a) {

@@ -1,5 +1,5 @@
 <template>
-    <div style="margin-top: 15px;background-color: #fff;padding: 15px;">
+    <div style="margin-top: 15px;background-color: #fff;padding: 15px;" v-loading="isReady">
         <div style="margin: 0 0 20px;">发放流水记录</div>
 
         <el-tabs v-model="activeTab" @tab-click="handleTabClick">
@@ -218,9 +218,15 @@
                 showPro: false,
                 delay: '',
                 proNum: 0,
-                frame: ''
+                frame: '',
+                isReady: true
 			}
-		},
+        },
+        watch: {
+            flowTableList() {
+                this.isReady = false
+            }
+        },
 		computed: {
 			...mapGetters({
 				flowTableList: 'flowTableList',

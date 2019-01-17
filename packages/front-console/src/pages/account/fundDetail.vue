@@ -1,5 +1,5 @@
 <template>
-    <div class="company-build-container company-container">
+    <div class="company-build-container company-container" v-loading="isReady">
         <div class="title">资金明细</div>
         <el-form :model="form" :inline="true" ref="form">
             <el-form-item label="企业" prop="companyId">
@@ -104,7 +104,8 @@ export default {
       companys: [],
       apps: [],
       handles: [],
-      option: new optionModel()
+      option: new optionModel(),
+      isReady: true
     };
   },
   mounted() {
@@ -128,6 +129,7 @@ export default {
           this.form.page = a
           post('/api/balance-web/balance-account/query-fund', this.form).then(data => {
               this.data = data
+              this.isReady = false
           })
       },
       setSize(a) {

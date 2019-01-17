@@ -1,5 +1,5 @@
 <template>
-    <div style="margin-top: 15px;background-color: #fff;padding: 15px;">
+    <div style="margin-top: 15px;background-color: #fff;padding: 15px;" v-loading="isReady">
         <div style="margin: 0px 30px 30px;">充值申请记录</div>
 
         <el-form :inline="true" ref="formSearch" onsubmit="return false;"  :model="formSearch" style="padding-left: 35px;padding: 10px 0 10px 35px;">
@@ -659,7 +659,8 @@ export default {
       isToggle: false,
       acccountList: [],
       toggleAccount: '',
-      needQuery: false
+      needQuery: false,
+      isReady: true
     };
   },
   watch: {
@@ -762,6 +763,7 @@ export default {
         this.formSearch.page = a
         post(`/api/balance-web/recharge-order/${this.riskApprove ? 'query-risk-approve-list': 'query-list'}`, this.formSearch).then(data => {
             this.rechargeApplyList = data
+            this.isReady = false
         })
         // this.$store.dispatch("getRechargeApplyList", this.formSearch);
     },

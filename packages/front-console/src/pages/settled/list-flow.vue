@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white p15">
+    <div class="bg-white p15" v-loading="isReady">
         <div class="mb30">流水账单</div>
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
             <el-form-item label="商户名称" size="small" placeholder="请输入内容">
@@ -146,7 +146,8 @@
                 pageSize: 10,
                 tableData: [],
                 serviceCompanies: [],
-                statusList: []
+                statusList: [],
+                isReady: true
             }
         },
         methods: {
@@ -229,6 +230,7 @@
                 };
                 post(url, param).then(data => {
                     this.tableData = data;
+                    this.isReady = false
                 })
             },
             handleDownload(appId, billType, settledTime) {

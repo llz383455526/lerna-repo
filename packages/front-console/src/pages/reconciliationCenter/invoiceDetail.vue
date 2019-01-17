@@ -1,6 +1,6 @@
 <template>
 
-    <div class="main-container">
+    <div class="main-container" v-loading="isReady">
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
             <el-form-item label="客户公司:"   size="small" prop="customCompanyId">
                 <el-select filterable v-model="formSearch.customCompanyId">
@@ -114,7 +114,8 @@
 				pageIndex: 1,
 				invoiceOptions: {},
 				companyData: {},
-				customCompanyList: []
+                customCompanyList: [],
+                isReady: true
 			}
 		},
 		methods: {
@@ -175,7 +176,8 @@
 
 				post('/api/invoice-web/invoice/custom-company-invoice-list', options)
 					.then(result => {
-						this.tableList = result
+                        this.tableList = result
+                        this.isReady = false
 					})
 			},
 			exportFile() {
