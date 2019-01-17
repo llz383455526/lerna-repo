@@ -509,9 +509,7 @@ export default {
             }
           }
           else {
-            party.params[0].varPages = ''
-            party.params[0].varX = ''
-            party.params[0].varY = ''
+              this.setDefaultPosition(party.signNo)
           }
           this.$forceUpdate()
           this.checkNote()
@@ -633,9 +631,12 @@ export default {
         back() {
             this.$router.back()
         },
-        setDefaultPosition() {
+        setDefaultPosition(signNo) {
             if(this.defaultPosition) {
                 this.form.partys.forEach((e, i) => {
+                    if(signNo && e.signNo != signNo) {
+                        return
+                    }
                     if(e.signMode == 3) {
                       e.params.forEach(ev => {
                         if(ev.varPages && ev.varPages > this.form.fpages) {
