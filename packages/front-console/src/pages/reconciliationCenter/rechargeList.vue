@@ -54,7 +54,6 @@
 	import { post, get } from "../../store/api"
 	import _ from 'lodash'
 	import { showNotify } from '../../plugin/utils-notify'
-	import { baseUrl } from '../../config/address'
 	import { urlEncode } from '../../plugin/utils-functions'
 	export default {
 		created() {
@@ -144,10 +143,10 @@
 			        endAt = this.dateValue[1]
 		        }
 		        let formSearch = _.cloneDeep(this.formSearch)
-		        formSearch.startTime = startAt
-		        formSearch.endTime = endAt
+		        formSearch.createAtBegin = startAt
+		        formSearch.createAtEnd = endAt
 
-		        window.location.href = `${baseUrl}/api/balance-web/recharge-order/export-statistics-list?${urlEncode(formSearch)}`
+		        window.location.href = `/api/balance-web/recharge-order/export-statistics-list?${urlEncode(formSearch)}`
 	        }
         }
     }
