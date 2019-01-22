@@ -26,7 +26,7 @@ export function cacheArray(arr, action, cache = true) {
  */
 export function cacheGetString(str, action, cache = true) {
     return new Promise((resolve, reject) => {
-        if (str.length === 0) {
+        if (!cache || str.length === 0) {
             get(action.url, action.param).then(data => {
                 if (action.resPath) {
                     resolve(data[action.resPath]);

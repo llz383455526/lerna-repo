@@ -303,6 +303,21 @@
 					</el-col>
       			</el-row>
 			</template>
+            <template v-if="data.thirdpaySystemId == 'yeepay'">
+				<el-row :gutter="20">
+                    <el-col :span="10">
+						  <el-col :span="8" class="right">商户号</el-col><el-col :span="10">{{data['yeepay.merchId']}}</el-col>
+					</el-col>
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">我方私钥</el-col><el-col :span="10">{{data['yeepay.privatekey']}}</el-col>
+					</el-col>
+      			</el-row>
+                  <el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">易宝公钥</el-col><el-col :span="10">{{data['yeepay.thirdPublickey']}}</el-col>
+					</el-col>
+      			</el-row>
+			</template>
       	</div>
         <div class="title">支付用户</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="addChannel">添加支付用户</el-button>
         <el-form :model="form" class="mt20" :inline="true" size="small">
@@ -536,6 +551,17 @@
                 </el-form-item>
                 <el-form-item label="前置机地址" prop="hxb$server">
                     <el-input class="form_input" v-model="eform.hxb$server"></el-input>
+                </el-form-item>
+            </template>
+            <template v-if="eform.thirdpaySystemId == 'yeepay'">
+                <el-form-item label="商户号" size="small" prop="yeepay$merchId">
+                    <el-input class="form_input" v-model="eform.yeepay$merchId"></el-input>
+                </el-form-item>
+                <el-form-item label="我方私钥" size="small" prop="yeepay$privatekey">
+                    <el-input class="form_input" v-model="eform.yeepay$privatekey"></el-input>
+                </el-form-item>
+                <el-form-item label="易宝公钥" size="small" prop="yeepay$thirdPublickey">
+                    <el-input class="form_input" v-model="eform.yeepay$thirdPublickey"></el-input>
                 </el-form-item>
             </template>
 		  </el-form>
@@ -1276,6 +1302,42 @@ export default {
             },
             {
                 max: 512,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        yeepay$merchId: [
+            {
+                required: true,
+                message: '请输入商户名',
+                trigger: 'blur'
+            },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        yeepay$privatekey: [
+            {
+                required: true,
+                message: '请输我方私钥',
+                trigger: 'blur'
+            },
+            {
+                max: 2048,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        yeepay$thirdPublickey: [
+            {
+                required: true,
+                message: '请输入公钥',
+                trigger: 'blur'
+            },
+            {
+                max: 2048,
                 message: '输入过长',
                 trigger: 'blur'
             }

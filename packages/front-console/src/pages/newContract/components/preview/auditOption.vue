@@ -29,13 +29,13 @@
 <script>
 import {
     post
-} from "../../../store/api"
+} from "../../../../store/api"
 import {
     showNotify
-} from "../../../plugin/utils-notify";
+} from "../../../../plugin/utils-notify";
 import {
     showConfirm
-} from '../../../plugin/utils-message';
+} from '../../../../plugin/utils-message';
 export default {
     name: "auditOption",
     props: ['contractModel', 'editType'],

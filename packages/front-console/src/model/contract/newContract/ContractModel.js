@@ -74,9 +74,15 @@ class ContractModel extends BaseModel {
             status: '',
             // 送审的三个字段
             approveType: '',
-            originalType: '',
-            originalTypeName: '',
-            original: ''
+            // originalType: '',
+            // originalTypeName: '',
+            // original: '',
+            receiver: '',
+            receivePhone: '',
+            receiveAddrList: [],
+            receiveAddr: '',
+            receiveMemo: '',
+            receiveAttachments: [],
         };
         this.contractTplList = [];
         this.businessTypeList = [];
@@ -220,9 +226,9 @@ class ContractModel extends BaseModel {
         this.chargeByName = obj.chargeByName;
     }
     // 获取合同详细信息
-    getContractDetail(id, callback) {
+    getContractDetail(id, callback, type) {
         get(`/api/opencrm/workflow/details/${id}`).then(result => {
-            this.contractForm = result.datas;
+            this.contractForm = _.assign({}, this.contractForm, result.datas);
             this.actions = result.actions;
             this.processLogs = result.processLogs;
             this.workflowType = result.workflowType;
@@ -241,6 +247,9 @@ class ContractModel extends BaseModel {
             this.getServiceTypeList();
             this.getContractDate();
             this.getFiles();
+            if (type !== 'create') {
+                this.getArea()
+            }
             // 获取渠道经理
             if (this.contractForm.agentCompanyId) {
                 this.getChargeByName(this.contractForm.agentCompanyId)
@@ -286,6 +295,19 @@ class ContractModel extends BaseModel {
         this.contractForm.contractTel = auth.mobilephone;
         this.contractForm.contractEmail = auth.email;
         this.contractForm.contractAddr = '广州市天河区建中路59号柏朗奴商务大厦9楼';
+    }
+    // 处理省市区
+    getArea() {
+        if (this.contractForm.receiveAddrList.length !== 3) {
+            return
+        }
+        let areaArr = []
+        this.contractForm.receiveAddrList.forEach(element => {
+            let keyArr = Object.keys(element)
+            let val = element[keyArr[0]]
+            areaArr.push(val)
+        });
+        this.contractForm.receiveAddrList = areaArr
     }
 }
 

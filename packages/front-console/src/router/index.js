@@ -29,6 +29,9 @@ let submitOrder = r => require.ensure([], () => r(require('../pages/orderManager
 let postalService = r => require.ensure([], () => r(require('../pages/orderManager/postalService.vue')), 'postalService');
 let orderComplete = r => require.ensure([], () => r(require('../pages/orderManager/orderComplete.vue')), 'orderComplete');
 let cancleOrder = r => require.ensure([], () => r(require('../pages/orderManager/cancleOrder.vue')), 'cancleOrder');
+let riskRule = r => require.ensure([], () => r(require('../pages/orderManager/riskRule.vue')), 'riskRule');
+let addRiskRule = r => require.ensure([], () => r(require('../pages/orderManager/addRiskRule.vue')), 'addRiskRule');
+let clientRiskRule = r => require.ensure([], () => r(require('../pages/orderManager/clientRiskRule.vue')), 'clientRiskRule');
 
 let eContractIndex = r => require.ensure([], () => r(require('../pages/eContract/index.vue')), 'eContractIndex');
 let contractManager = r => require.ensure([], () => r(require('../pages/eContract/contractManager.vue')), 'contractManager');
@@ -334,6 +337,27 @@ export default [{
             {
               path: 'cancleOrder',
               component: cancleOrder,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'riskRule',
+              component: riskRule,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'addRiskRule',
+              component: addRiskRule,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'clientRiskRule',
+              component: clientRiskRule,
               meta: {
                 keepAlive: false
               }

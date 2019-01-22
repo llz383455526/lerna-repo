@@ -146,7 +146,7 @@ export default {
                 example: formSearch,
             }
 
-            post('/api/opencrm/workflow/complated_list', options)
+            post('/api/opencrm/sale_contract/complated_list', options)
                 .then(result => {
                     this.tableList = result
                 })
@@ -156,7 +156,8 @@ export default {
                 path: 'preview',
                 query: {
                     id: id,
-                    editType: type
+                    editType: type,
+                    fromUrl: 'list_complated',
                 }
             })
         },

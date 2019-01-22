@@ -1,101 +1,106 @@
 <template>
-<div class="main-container">
-    <div style="margin-bottom:30px;">合同申请审核管理</div>
+    <div class="main-container">
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+            <el-tab-pane label="我的合同" name="first"></el-tab-pane>
+            <el-tab-pane label="待处理合同" name="second"></el-tab-pane>
+            <el-tab-pane label="全部合同" name="third"></el-tab-pane>
+        </el-tabs>
 
-    <el-form :inline="true" :model="formSearch" ref="formSearch">
-        <el-form-item label="企业名称" size="small" prop="customerName">
-            <el-input v-model="formSearch.customerName"></el-input>
-        </el-form-item>
+        <div style="margin-bottom:30px;">合同申请审核管理</div>
 
-        <el-form-item label="申请人姓名" size="small" prop="createBy">
-            <el-input v-model="formSearch.createBy"></el-input>
-        </el-form-item>
+        <el-form :inline="true" :model="formSearch" ref="formSearch">
+            <el-form-item label="企业名称" size="small" prop="customerName">
+                <el-input v-model="formSearch.customerName"></el-input>
+            </el-form-item>
 
-        <el-form-item label="服务商名称" size="small" prop="serviceCompanyName">
-            <el-input v-model="formSearch.serviceCompanyName"></el-input>
-        </el-form-item>
+            <el-form-item label="申请人姓名" size="small" prop="createBy">
+                <el-input v-model="formSearch.createBy"></el-input>
+            </el-form-item>
 
-        <el-form-item label="合同类型" size="small">
-            <el-select v-model="formSearch.workflowType" placeholder="请选择" style="width:100%;">
-                <el-option label="全部" value=""></el-option>
-                <el-option label="标准" value="create_sale_contract"></el-option>
-                <el-option label="非标" value="create_ns_sale_contract"></el-option>
-            </el-select>
-        </el-form-item>
+            <el-form-item label="服务商名称" size="small" prop="serviceCompanyName">
+                <el-input v-model="formSearch.serviceCompanyName"></el-input>
+            </el-form-item>
 
-        <el-form-item label="申请状态" size="small" prop="status">
-            <el-select v-model="formSearch.status" placeholder="请选择" style="width:100%;">
-                <el-option label="全部" value=""></el-option>
-                <el-option v-for="item in statusList" :key="item.value" :label="item.text" :value="item.value"></el-option>
-            </el-select>
-        </el-form-item>
+            <el-form-item label="合同类型" size="small">
+                <el-select v-model="formSearch.workflowType" placeholder="请选择" style="width:100%;">
+                    <el-option label="全部" value=""></el-option>
+                    <el-option label="标准" value="create_sale_contract"></el-option>
+                    <el-option label="非标" value="create_ns_sale_contract"></el-option>
+                </el-select>
+            </el-form-item>
 
-        <el-form-item style="margin-top: -4px">
-            <el-button type="primary" @click="search" size="small">查询</el-button>
-            <el-button size="small" @click="resetForm">清除</el-button>
-        </el-form-item>
-    </el-form>
+            <el-form-item label="申请状态" size="small" prop="status">
+                <el-select v-model="formSearch.status" placeholder="请选择" style="width:100%;">
+                    <el-option label="全部" value=""></el-option>
+                    <el-option v-for="item in statusList" :key="item.value" :label="item.text" :value="item.value"></el-option>
+                </el-select>
+            </el-form-item>
 
-    <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_sale_contract'}})">创建合同</el-button>
-    <!-- <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_ns_sale_contract'}})">新客户非标准合同</el-button> -->
-    
-    <div class="table-container">
-        <el-table :data="tableList.data">
-            <el-table-column prop="id" label="申请编号"></el-table-column>
-            <el-table-column prop="customerName" label="企业名称"></el-table-column>
-            <el-table-column prop="createdByName" label="申请人"></el-table-column>
-            <el-table-column prop="updatedAt" label="提交时间"></el-table-column>
-            <el-table-column prop="processedAt" label="最后审批时间"></el-table-column>
-            <el-table-column label="合同类型">
-                <template slot-scope="scope">
-                    {{scope.row.workflowType === 'create_sale_contract' ? '标准合同' : '非标准合同'}}
-                </template>
-            </el-table-column>
-            <el-table-column prop="statusName" label="申请状态">
-                <template slot-scope="scope">
-                    <span v-if="scope.row.statusName">{{scope.row.statusName}}</span>
-                    <span v-else-if="scope.row.status === 'init'">待提交</span>
-                </template>
-            </el-table-column>
+            <el-form-item style="margin-top: -4px">
+                <el-button type="primary" @click="search" size="small">查询</el-button>
+                <el-button size="small" @click="resetForm">清除</el-button>
+            </el-form-item>
+        </el-form>
 
-            <el-table-column label="操作" width="200">
-                <template slot-scope="scope">
-                    <el-button v-if="scope.row.status != 'draft'" @click="toPreview(scope.row.id, 'watch')" type="text" size="medium" style="padding:0;">查看</el-button>
-                    <el-button v-if="scope.row.status === 'init' || scope.row.status === 'draft'" @click="toCreate(scope.row.id, 'edit')" type="text" size="medium" style="padding:0;">编辑</el-button>
-                    <el-button v-if="scope.row.status === 'init' && scope.row.createdBy == userInformation.id" @click="toDetail(scope.row.id, 'watch')" type="text" size="medium" style="padding:0;">送审</el-button>
-                    <el-button v-if="scope.row.status === 'draft' || scope.row.status === 'init'" @click="closeContract(scope.row.id)" type="text" size="medium" style="padding:0;">删除</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
+        <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_sale_contract'}})">创建合同</el-button>
+        <!-- <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_ns_sale_contract'}})">新客户非标准合同</el-button> -->
+
+        <div class="table-container">
+            <el-table :data="tableList.data">
+                <el-table-column prop="id" label="申请编号"></el-table-column>
+                <el-table-column prop="customerName" label="企业名称"></el-table-column>
+                <el-table-column prop="createdByName" label="申请人"></el-table-column>
+                <el-table-column prop="updatedAt" label="提交时间"></el-table-column>
+                <el-table-column prop="curProcessUser" label="当前处理人"></el-table-column>
+                <el-table-column prop="processedAt" label="最后审批时间"></el-table-column>
+                <el-table-column label="合同类型">
+                    <template slot-scope="scope">
+                        {{scope.row.workflowType === 'create_sale_contract' ? '标准合同' : '非标准合同'}}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="statusName" label="申请状态">
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.statusName">{{scope.row.statusName}}</span>
+                        <span v-else-if="scope.row.status === 'init'">待提交</span>
+                    </template>
+                </el-table-column>
+
+                <el-table-column label="操作" width="200">
+                    <template slot-scope="scope">
+                        <el-button v-if="scope.row.status != 'draft'" @click="toPreview(scope.row.id, 'watch')" type="text" size="medium" style="padding:0;">查看</el-button>
+                        <el-button v-if="scope.row.status === 'init' || scope.row.status === 'draft'" @click="toCreate(scope.row.id, 'edit')" type="text" size="medium" style="padding:0;">编辑</el-button>
+                        <el-button v-if="scope.row.status === 'init' && scope.row.createdBy == userInformation.id" @click="toDetail(scope.row.id, 'watch')" type="text" size="medium" style="padding:0;">送审</el-button>
+                        <el-button v-if="scope.row.status === 'draft' || scope.row.status === 'init'" @click="closeContract(scope.row.id)" type="text" size="medium" style="padding:0;">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+        </div>
+        <ayg-pagination v-if="tableList.total" :total="tableList.total" v-on:handleSizeChange="handleSizeChange" :currentSize="pageSize" v-on:handleCurrentChange="handleCurrentChange" :currentPage="pageIndex"></ayg-pagination>
 
     </div>
-    <ayg-pagination v-if="tableList.total" :total="tableList.total" v-on:handleSizeChange="handleSizeChange" :currentSize="pageSize" v-on:handleCurrentChange="handleCurrentChange" :currentPage="pageIndex"></ayg-pagination>
-
-</div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 import _ from 'lodash'
-import {
-    post,
-    get
-} from "../../store/api"
-import {
-    showNotify
-} from "../../plugin/utils-notify";
-import {
-    showConfirm
-} from "../../plugin/utils-message";
+import { post, get } from "../../store/api"
+import { showNotify } from "../../plugin/utils-notify";
+import { showConfirm } from "../../plugin/utils-message";
 
 export default {
     created() {
         this.getStatusList()
-        this.getList()
+        // 获取用户数据
+        this.$store.dispatch("getAuth", { menuType: "console-admin" }).then(() => {
+            // this.getList()
+            this.handleClick()
+        });
     },
     computed: {
       ...mapGetters({
-        userInformation: "userInformation"
+        userInformation: "userInformation",
+        auth: "auth",
       })
     },
     data() {
@@ -111,7 +116,8 @@ export default {
                 status: '',
                 moduleName: 'sale_contract'
             },
-            statusList: []
+            statusList: [],
+            activeName: 'first'
         }
     },
     methods: {
@@ -123,7 +129,8 @@ export default {
                 createBy: '',
                 serviceCompanyName: '',
                 status: '',
-                moduleName: 'sale_contract'
+                moduleName: 'sale_contract',
+                scope: 'create'
             }
         },
         search() {
@@ -201,6 +208,18 @@ export default {
                 this.statusList = result
             })
 
+        },
+        handleClick(tab, event) {
+            if (this.activeName === 'first') {
+                this.formSearch.scope = 'create'
+            }
+            if (this.activeName === 'second') {
+                this.formSearch.scope = 'process'
+            }
+            if (this.activeName === 'third') {
+                this.formSearch.scope = 'all'
+            }
+            this.handleCurrentChange(1)
         }
     }
 }

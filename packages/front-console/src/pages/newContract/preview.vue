@@ -1,13 +1,13 @@
 <template>
     <div>
         <div style="margin:20px 0;" v-if="contractModel.status == 'completed'">
-            <el-button size="small" @click="backToList('list')">返回</el-button>
+            <el-button size="small" @click="backToList">返回</el-button>
         </div>
         <div style="margin:20px 0;" v-if="contractModel.status == 'init'">
             <el-button size="small" type="primary" @click="toDetail(contractModel.contractId, 'watch')">送审</el-button>
             <el-button size="small" type="info" @click="toCreate(contractModel.contractId, 'edit')">编辑</el-button>
             <el-button size="small" type="danger" @click="closeContract(contractModel.contractId)">删除</el-button>
-            <el-button size="small" @click="backToList('list')">返回</el-button>
+            <el-button size="small" @click="backToList">返回</el-button>
         </div>
         <div class="widget-box bg-white">
             <div class="widget-header">
@@ -121,6 +121,7 @@
         <div class="widget-box bg-white" style="margin-top:20px;">
             <div class="widget-header">
                 <h4 class="widget-title">合同附件管理</h4>
+                <a href="javascript:;" class="ml20" @click="handleDownloadAll">打包下载全部附件</a>
             </div>
             <div class="widget-body">
                 <div class="widget-main" style="font-size: 16px;line-height: 30px;">
@@ -152,12 +153,13 @@
                 </div>
             </div>
         </div>
+        <contractInfo :contractModel="contractModel"></contractInfo>
         <auditOption :contractModel="contractModel" :editType="editType"></auditOption>
         <div style="margin:20px 0;" v-if="contractModel.status == 'init'">
             <el-button size="small" type="primary" @click="toDetail(contractModel.contractId, 'watch')">送审</el-button>
             <el-button size="small" type="info" @click="toCreate(contractModel.contractId, 'edit')">编辑</el-button>
             <el-button size="small" type="danger" @click="closeContract(contractModel.contractId)">删除</el-button>
-            <el-button size="small" @click="backToList('list')">返回</el-button>
+            <el-button size="small" @click="backToList">返回</el-button>
         </div>
     </div>
 </template>
@@ -165,8 +167,9 @@
 <script>
 import ContractModel from '../../model/contract/newContract/ContractModel'
 import { baseUrl } from '../../config/address.js';
-import { showConfirm } from "../../plugin/utils-message";
-import auditOption from './components/auditOption.vue' // 审核意见
+import { showConfirm } from "../../plugin/utils-message"
+import contractInfo from './components/preview/contractInfo.vue' // 合同业务信息补充
+import auditOption from './components/preview/auditOption.vue' // 审核意见
 import showService from '../../pageComponent/showService.vue'
 import showCloseService from '../../pageComponent/showCloseService'
 export default {
@@ -174,7 +177,8 @@ export default {
   components: {
     auditOption,
     showService,
-    showCloseService
+    showCloseService,
+    contractInfo,
   },
   data () {
     return {
@@ -245,7 +249,8 @@ export default {
             })
             return arr.join(',')
         },
-        backToList(path) {
+        backToList() {
+            let path = this.$route.query.fromUrl || 'list'
             this.$router.replace({
                 path: path
             })
@@ -257,6 +262,9 @@ export default {
         handleDownload(downloadCode) {
             window.location.href = baseUrl + '/api/contract-web/file/download' +
                 '?downloadCode=' + downloadCode;
+        },
+        handleDownloadAll() {
+            window.location.href = baseUrl + '/api/contract-web/contract/download-sales-flow-attachments?salesInstanceId=' + this.contractModel.contractId
         },
         toPreview(id, type) {
             this.$router.push({
@@ -303,7 +311,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 h4.block {
     margin: 10px 0 16px;
 }

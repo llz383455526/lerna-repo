@@ -78,11 +78,11 @@ export default {
         let id = this.$route.query.id;
         if (id) {
             this.contractModel.contractId = id;
-            this.contractModel.getContractDetail(id);
+            this.contractModel.getContractDetail(id, null, 'create');
         } else {
             // 新建的时候
             // 获取用户数据
-            this.$store.dispatch("getAuth", { menuType: "console-admin" }).then(() => {
+            this.$store.dispatch("getAuth", { menuType: "console-admin", cache: false, }).then(() => {
                 // 直塞用户数据
                 this.contractModel.setAuth(this.auth);
             });

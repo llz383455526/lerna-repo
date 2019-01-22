@@ -682,14 +682,9 @@ button{
   overflow: unset;
 }
 
-
-
-
-
-
-
-
-
-
-
-
+.el-checkbox__input.is-disabled+span.el-checkbox__label {
+    color: #999999;
+}
+.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner:after {
+    border-color: #999999;
+}

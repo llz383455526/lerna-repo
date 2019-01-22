@@ -47,9 +47,9 @@ class Check extends BaseModel {
             contractPerson: [
                 { required: true, message: '请输入销售姓名', trigger: 'blur' }
             ],
-            contractEmail: [
-                { required: true, message: '请输入销售联系邮箱', trigger: 'blur' }
-            ],
+            // contractEmail: [
+            //     { required: true, message: '请输入销售联系邮箱', trigger: 'blur' }
+            // ],
             contractTel: [
                 { required: true, message: '请输入销售联系电话', trigger: 'blur' }
             ],

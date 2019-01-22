@@ -19,6 +19,9 @@
             <el-form-item label="客户公司" prop="customerCompanyName">
                 <el-input v-model="form.customerCompanyName" placeholder="请输入"></el-input>
             </el-form-item>
+            <el-form-item label="落地公司" prop="serviceCompanyName">
+                <el-input v-model="form.serviceCompanyName" placeholder="请输入"></el-input>
+            </el-form-item>
             <el-form-item label="税优地" prop="taxLandingName">
                 <el-input v-model="form.taxLandingName" placeholder="请输入"></el-input>
             </el-form-item>
@@ -41,6 +44,7 @@
             <el-table-column label="身份证号" prop="idcd"></el-table-column>
             <el-table-column :label="form.statisticsType == 'year' ? '年收入' : '月收入'" prop="totalAmountStr" ></el-table-column>
             <el-table-column label="客户公司" prop="customCompanyName"></el-table-column>
+            <el-table-column label="落地公司" prop="serviceCompanyName"></el-table-column>
             <el-table-column label="税优地" prop="taxLandingName"></el-table-column>
             <el-table-column label="风控规则" width="240">
                 <template slot-scope="scope">
@@ -83,6 +87,7 @@ export default {
                 customerCompanyName: '',
                 taxLandingName: '',
                 idCard: '',
+                serviceCompanyName: '',
                 page: 1,
                 pageSize: 10
             },

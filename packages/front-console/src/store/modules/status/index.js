@@ -16,12 +16,14 @@ const getters = {
 const actions = {
     getAuth({ commit }, param) {
         return actionApi.returnPromise((resolve) => {
+            let cache = param.cache === undefined ? true : param.cache
+            delete param.cache
             let action = {
                 url: apiconfig.auth.principal,
                 param: param,
                 resPath: 'user'
             };
-            actionApi.cacheGetString(state.auth, action).then((data) => {
+            actionApi.cacheGetString(state.auth, action, cache).then((data) => {
                 commit('setAuth', data);
                 resolve(data);
             });

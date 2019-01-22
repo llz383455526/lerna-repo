@@ -205,6 +205,17 @@
                     <el-input class="form_input" v-model="form.hxb$server"></el-input>
                 </el-form-item>
             </template>
+            <template v-if="form.thirdpaySystemId == 'yeepay'">
+                <el-form-item label="商户号" size="small" prop="yeepay$merchId">
+                    <el-input class="form_input" v-model="form.yeepay$merchId"></el-input>
+                </el-form-item>
+                <el-form-item label="我方私钥" size="small" prop="yeepay$privatekey">
+                    <el-input class="form_input" v-model="form.yeepay$privatekey"></el-input>
+                </el-form-item>
+                <el-form-item label="易宝公钥" size="small" prop="yeepay$thirdPublickey">
+                    <el-input class="form_input" v-model="form.yeepay$thirdPublickey"></el-input>
+                </el-form-item>
+            </template>
             <el-form-item label="备注" prop="memo" size="small">
                 <el-input class="form_input" v-model="form.memo"></el-input>
             </el-form-item>
@@ -914,6 +925,42 @@ export default {
                 message: '输入过长',
                 trigger: 'blur'
             }
+        ],
+        yeepay$merchId: [
+            {
+                required: true,
+                message: '请输入商户名',
+                trigger: 'blur'
+            },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        yeepay$privatekey: [
+            {
+                required: true,
+                message: '请输我方私钥',
+                trigger: 'blur'
+            },
+            {
+                max: 2048,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        yeepay$thirdPublickey: [
+            {
+                required: true,
+                message: '请输入公钥',
+                trigger: 'blur'
+            },
+            {
+                max: 2048,
+                message: '输入过长',
+                trigger: 'blur'
+            }
         ]
       },
       types: [
@@ -1038,6 +1085,13 @@ export default {
         Object.assign(this.form, {
             'hxb$merchId': '',
             'hxb$server': ''
+        })
+    }
+    if(this.form.thirdpaySystemId == 'yeepay'){
+        Object.assign(this.form, {
+            'yeepay$merchId': '',
+            'yeepay$privatekey': '',
+            'yeepay$thirdPublickey': ''
         })
     }
     post("/api/sysmgr-web/company-app/get-two-step-phone").then(data => {

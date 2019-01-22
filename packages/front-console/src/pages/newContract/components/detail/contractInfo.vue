@@ -1,0 +1,71 @@
+<template>
+    <div class="widget-box bg-white">
+        <div class="widget-header">
+            <h4 class="widget-title">合同业务信息补充</h4>
+        </div>
+        <div class="widget-body">
+            <div class="widget-main">
+                <el-form :inline="true">
+                    <h4 class="h4">合同收件人信息</h4>
+                    <el-form-item label="合同收件人姓名">
+                        <el-input style="width:450px;" v-model="contractModel.contractForm.receiver"></el-input>
+                    </el-form-item>
+                    <el-form-item label="合同收件人电话">
+                        <el-input style="width:450px;" v-model="contractModel.contractForm.receivePhone"></el-input>
+                    </el-form-item>
+                    <el-form-item label="合同收件人地址">
+                        <div style="display: flex;justify-content: start;">
+                            <area-select type="all" class="postion-sel" v-model="contractModel.contractForm.receiveAddrList" :level="2" :isLinkage="true" :data="pcaa" />
+                            <span style="margin: 0 12px 0 10px;">备注地址</span>
+                            <el-input style="width:400px;" v-model="contractModel.contractForm.receiveAddr"></el-input>
+                        </div>
+                    </el-form-item>
+                    <hr>
+                    <h4 class="h4">合同其他附件</h4>
+                    <upload :list="contractModel.contractForm.receiveAttachments" style="width: 1100px;" @remove="handleRemove"></upload>
+                    <h4 class="h4">合同备注</h4>
+                    <el-form-item>
+                        <el-input style="width:1140px;" type="textarea" v-model="contractModel.contractForm.receiveMemo" maxlength="200"></el-input>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import {pcaa, pca} from 'area-data'
+import upload from './upload.vue'
+export default {
+    props: ['contractModel'],
+    components: { upload },
+    data() {
+        return {
+             // 地区
+            pcaa: pcaa,
+        }
+    },
+    methods: {
+        handleRemove(index) {
+            this.contractModel.contractForm.receiveAttachments.splice(index, 1)
+        }
+    }
+}
+</script>
+
+<style>
+.h4 {
+    margin: 0 0 10px;
+}
+.widget-box {
+    margin-bottom: 20px;
+}
+.area-select-wrap .area-select {
+    height: 40px;
+}
+.area-select-wrap .area-select .area-selected-trigger {
+    padding: 0 10px;
+}
+</style>
+
+
