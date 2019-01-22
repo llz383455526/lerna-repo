@@ -21,7 +21,7 @@
                         </div>
                     </el-form-item>
                     <hr>
-                    <h4 class="h4">合同其他附件</h4>
+                    <h4 class="h4">合同证据链</h4>
                     <upload :list="contractModel.contractForm.receiveAttachments" style="width: 1100px;" @remove="handleRemove"></upload>
                     <h4 class="h4">合同备注</h4>
                     <el-form-item>

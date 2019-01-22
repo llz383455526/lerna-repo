@@ -14,7 +14,7 @@
                         <div class="col-xs-6">合同收件人电话：{{ contractModel.contractForm.receivePhone }}</div>
                         <div class="col-xs-12">合同收件人地址：{{ addr + ' ' + contractModel.contractForm.receiveAddr }}</div>
                         <div class="col-xs-12">
-                            <h4 class="block green">合同其他附件</h4>
+                            <h4 class="block green">合同证据链</h4>
                         </div>
                         <div class="col-xs-8">
                             <el-table :data="contractModel.contractForm.receiveAttachments" class="mb20">
