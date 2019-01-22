@@ -235,7 +235,6 @@
           Ajax.post('/api/sysmgr-web/file/progress', {
             id: this.upLoadData.referId
           }, true).then(data => {
-            console.log('data = ', data)
             this.progress = data.progress
             if (this.progress === 100) {
               this.clearTimer()

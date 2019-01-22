@@ -6,11 +6,19 @@
       </el-breadcrumb-item>
     </el-breadcrumb>
     <el-form class="form" :model="form" :inline="true" label-width="100px" ref="form">
+      <el-form-item label="服务公司" prop="serviceCompanyName">
+        <el-input v-model="form.serviceCompanyName" class="in_input" size="small"></el-input>
+      </el-form-item>
       <el-form-item label="商户名称" prop="customCompanyName">
         <el-input v-model="form.customCompanyName" class="in_input" size="small"></el-input>
       </el-form-item>
       <el-form-item label="申请编号" prop="orderNo">
         <el-input v-model="form.orderNo" class="in_input" size="small"></el-input>
+      </el-form-item>
+      <el-form-item label="发票类型" prop="invoiceType">
+        <el-select v-model="form.invoiceType" class="in_input" size="small">
+          <el-option v-for="item in categoryList" :key="item.value" :label="item.text" :value="item.value"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="申请日期">
         <el-date-picker
@@ -22,11 +30,7 @@
           value-format="yyyy-MM-dd"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="发票类型" prop="invoiceType">
-        <el-select v-model="form.invoiceType" class="in_input" size="small">
-          <el-option v-for="item in categoryList" :key="item.value" :label="item.text" :value="item.value"></el-option>
-        </el-select>
-      </el-form-item>
+
       <el-form-item label="申请类型" size="small" prop="applyType">
         <el-select v-model="form.applyType" placeholder="请选择" style="width:100%;">
           <el-option label="全部" value=""></el-option>
@@ -379,7 +383,11 @@
           applyType: '',
           customerInvoiceType: '',
           page: 1,
-          pageSize: 10
+          pageSize: 10,
+          /**
+           * 服务公司
+           */
+          serviceCompanyName: null
         },
         // 修改开票状态
         xiuGaiKaiPiaoZhuangTaiPop: false,
