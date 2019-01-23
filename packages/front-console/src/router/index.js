@@ -776,7 +776,10 @@ export default [{
             },
             {
               path: 'create',
-              component: r => require.ensure([], () => r(require('../pages/billingManager/create.vue')), 'create')
+              component: r => require.ensure([], () => r(require('../pages/billingManager/create.vue')), 'create'),
+              meta: {
+                keepAlive: false, //此组件不需要被缓存
+              }
             },
             {
                 path: 'monitoring',

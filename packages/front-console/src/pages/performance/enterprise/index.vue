@@ -175,6 +175,7 @@
       }
     },
     methods: {
+
       onSubmit(again = false) {
         if (again) {
           this.tableData.page = 1
