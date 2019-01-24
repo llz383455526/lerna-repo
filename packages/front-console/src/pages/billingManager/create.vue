@@ -271,6 +271,20 @@
         options: regionData,
         changeMode: false,
         companyForm: {
+          name: null,
+          taxIdcd: null,
+          taxType: null,
+          ppMaxAmount: null,
+          zpMaxAmount: null,
+          addr1Code: null,
+          addr2: null,
+          phone: null,
+          bankName: null,
+          bankAccount: null,
+          payee: null,
+          checker: null,
+          drawer: null,
+          supportSelfInvoice: null,
           configType: 2,
           /**
            * 安全凭证
