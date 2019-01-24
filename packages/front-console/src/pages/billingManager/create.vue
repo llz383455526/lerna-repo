@@ -271,6 +271,7 @@
         options: regionData,
         changeMode: false,
         companyForm: {
+          configType: 2,
           /**
            * 安全凭证
            */
@@ -392,7 +393,7 @@
       queryDetail(id) {
         let url = '/api/invoice-web/service-company/detail';
         get (url, {id: id}).then (data => {
-          this.companyForm = data;
+          Object.assign(this.companyForm, data)
           if (data.addr) {
             var addrs = data.addr.split (' ');
             if (addrs.length >= 4) {
