@@ -10,13 +10,13 @@
             </el-select>
           </el-form-item>
           <el-form-item label="商户公司" prop="shangHuId">
-            <el-select filterable size="small" class="form_input_short" v-model="applyForm.shangHuId" placeholder="请选择服务商">
+            <el-select filterable size="small" class="form_input_short" v-model="applyForm.shangHuId" placeholder="请选择服务商" @change="clearData">
               <el-option v-for="v in shangHuGongSiArr" :value="v.value" :label="v.text" :key="v.value"></el-option>
             </el-select>
           </el-form-item>
           <br>
           <el-form-item  label="服务公司" prop="serviceCompanys">
-            <el-select style="width: 469px;" size="small" v-model="applyForm.serviceCompanys" multiple placeholder="请选择">
+            <el-select style="width: 469px;" size="small" v-model="applyForm.serviceCompanys" multiple placeholder="请选择" @change="clearData">
               <el-option
                 v-for="item in serviceCompanys"
                 :key="`${item.companyId}`"
@@ -143,7 +143,7 @@
         timer: null,
         // 进度
         progress: null,
-        // 是否上传唱功
+        // 是否上传成功
         upSuccess: false,
         // 列表数据
         analyticalData: {
@@ -186,6 +186,17 @@
         }).then(data => {
           this.shangHuGongSiArr = data
         })
+        this.shangHuGongSiArr = []
+        this.applyForm.shangHuId = null
+        this.clearData()
+      },
+      // 清除数据
+      clearData() {
+        this.upSuccess = false
+        this.analyticalData.list = []
+        this.analyticalData.total = 0
+        this.analyticalData.pageNumber = 1
+        this.analyticalData.pageSize = 5
       },
       // 校验发放起到是否选中
       checkFaFangQuDao() {
@@ -224,7 +235,6 @@
           formData.append('file', a.raw)
           formData.append('targetExt', JSON.stringify({ appId: this.applyForm.shangHuId, serviceCompanys: serviceCompanys }))
           Ajax.importPost('/api/sysmgr-web/file/upload-ext', formData, true).then(data => {
-            console.log('data = ', data)
             this.upLoadData = data
             this.searchProgress()
           })
@@ -261,7 +271,6 @@
       },
       // 清除定时器
       clearTimer() {
-        console.log('this.timer = ', this.timer)
         if (this.timer) {
           clearInterval(this.timer)
           this.progress = null
