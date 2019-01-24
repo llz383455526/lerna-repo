@@ -68,6 +68,7 @@
               <el-button class="ml0" type="text" size="small">下载{{scope.row.orderState == 'CLOSED' ? '纸质' : '纸质'}}合同</el-button>
             </a>
             <el-button type="text" @click="show = true; currId = scope.row.orderId">{{scope.row.orderState == 'CLOSED' ? '重新' : ''}}上传合同</el-button>
+            <el-button type="text" @click="resetOrder(scope.row.orderId)" v-if="scope.row.orderState == 'CLOSED'">重置签约</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -104,6 +105,8 @@ import { post, get, importPost } from '../../store/api';
 import { baseUrl } from "../../config/address.js"
 export default {
   data() {
+    var time = new Date()
+    var t = `${time.getFullYear()}-${time.getMonth() + 1 > 9 ? time.getMonth() + 1 : '0' + (time.getMonth() + 1)}-${time.getDate()}`
     return {
       form: {
         startTime: '',
@@ -114,11 +117,13 @@ export default {
         personalName: '',
         personalIdentity: '',
         personalMobile: '',
+        orderId: '',
+        signState: '',
         pageSize: 10,
         pageNo: 1,
         manufacturer: 1
       },
-      range: [],
+      range: [t, t],
       extrSystemOptions: [],
       sighStateList: [],
       data: {},
@@ -136,12 +141,13 @@ export default {
 			this.sighStateList = result
     })
     Object.assign(this.form, this.$route.query)
+    this.getTime()
     this.query()
   },
   methods: {
     getTime() {
-      this.form.startTime = this.range[0]
-      this.form.endTime = this.range[1]
+        this.form.startTime = this.range[0] || ''
+      this.form.endTime = this.range[1] || ''
     },
     query(a) {
       if(isNaN(a)) {
@@ -171,7 +177,6 @@ export default {
           url += `&${k}=${this.form[k]}`
         }
       }
-      console.log(`/api/econtract/inner/export${url}`)
       window.open(`/api/econtract/inner/export${url}`)
     },
     upload(a) {
@@ -196,6 +201,21 @@ export default {
     remove() {
       this.fileList.length = 0
     },
+    resetOrder(orderId) {
+        this.$confirm('是否重置订单?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+            post(`/api/econtract/order/redo-offline?orderId=${orderId}`).then(data => {
+                this.$message({
+                    type: 'success',
+                    message: '订单已重置！'
+                })
+                this.query()
+            })
+        }).catch(err => {})
+    }
   }
 }
 </script>

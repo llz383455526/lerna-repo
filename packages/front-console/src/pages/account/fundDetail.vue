@@ -87,6 +87,10 @@ import { post, get } from "../../store/api";
 import optionModel from '../../model/option/optionModel.js'
 export default {
   data() {
+    var time = new Date(),
+        time_0 = new Date(time.getTime() - 1000 * 60 * 60 * 24 * 7), 
+        t = `${time.getFullYear()}-${time.getMonth() + 1 > 9 ? time.getMonth() + 1 : '0' + (time.getMonth() + 1)}-${time.getDate()}`,
+        t_0 = `${time_0.getFullYear()}-${time_0.getMonth() + 1 > 9 ? time_0.getMonth() + 1 : '0' + (time_0.getMonth() + 1)}-${time_0.getDate()}`
     return {
       form: {
         appId: "",
@@ -99,7 +103,7 @@ export default {
         pageSize: 10,
         serviceCompanyId: ""
       },
-      range: [],
+      range: [t_0, t],
       data: {},
       companys: [],
       apps: [],
@@ -118,6 +122,7 @@ export default {
       get('/api/balance-web/commom/option?enumType=BalanceAppTradeType').then(data => { //1
           this.handles = data
       })
+      this.getTime()
       this.query()
       this.option.getServeCompanyList()
   },

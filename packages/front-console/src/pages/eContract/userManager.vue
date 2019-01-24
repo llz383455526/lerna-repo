@@ -120,6 +120,8 @@ import { post, get, importPost } from '../../store/api';
 import { baseUrl } from "../../config/address.js"
 export default {
   data() {
+    var time = new Date()
+    var t = `${time.getFullYear()}-${time.getMonth() + 1 > 9 ? time.getMonth() + 1 : '0' + (time.getMonth() + 1)}-${time.getDate()}`
     return {
       form: {
         startTime: '',
@@ -130,11 +132,13 @@ export default {
         personalName: '',
         personalIdentity: '',
         personalMobile: '',
+        orderId: '',
+        signState: '',
         pageSize: 10,
         pageNo: 1,
         manufacturer: ''
       },
-      range: [],
+      range: [t, t],
       extrSystemOptions: [],
       sighStateList: [],
       data: {},
@@ -163,12 +167,13 @@ export default {
 			this.sighStateList = result
     })
     Object.assign(this.form, this.$route.query)
+    this.getTime()
     this.query()
   },
   methods: {
     getTime() {
-      this.form.startTime = this.range[0]
-      this.form.endTime = this.range[1]
+      this.form.startTime = this.range[0] || ''
+      this.form.endTime = this.range[1] || ''
     },
     query(a) {
       if(isNaN(a)) {

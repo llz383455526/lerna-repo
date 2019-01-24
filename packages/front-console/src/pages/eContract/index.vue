@@ -161,7 +161,7 @@
 				orderStateList: [],
 				sighStateList: [],
 				extrSystemOptions: [],
-				dateValue: '',
+				dateValue: [],
 				tableList: [],
 				pageSize: 10,
 				pageIndex: 1,
@@ -214,7 +214,7 @@
 					pageNo: this.pageIndex,
 					pageSize: this.pageSize
 				})
-
+                options.manufacturer = 0
                 var url = '', isFirst = true
                 for(var k in options) {
                     if(isFirst) {
@@ -224,7 +224,7 @@
                     else {
                         url += `&${k}=${options[k]}`
                     }
-				}
+                }
                 window.open(`/api/econtract/inner/export${url}`)
 	        },
 			getOrderStateList() {

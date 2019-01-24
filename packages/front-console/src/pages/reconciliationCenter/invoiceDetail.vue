@@ -4,7 +4,7 @@
     <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
       <el-form-item label="服务公司" size="small">
         <el-select filterable v-model="formSearch.serviceCompanyId" placeholder="请选择">
-          <el-option v-for="item in serviceCompanyList" :label="item.text" :value="item.value"></el-option>
+          <el-option v-for="item in serviceCompanyList" :key="item.value" :label="item.text" :value="item.value"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="客户公司:" size="small" prop="customCompanyId">

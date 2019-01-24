@@ -141,7 +141,7 @@ export default {
       formData.append('targetType', 'vci_attach');
       formData.append('fileName', file.name);
       formData.append('file', file.raw);
-      importPost('/api/contract-web/file/transfer-docx2pdf', formData, true).then(data => {
+      importPost('/api/contract-web/file/upload', formData, true).then(data => {
         if (this.contractForm.approveType == 'partial') {
           this.contractModel.contractForm.contracts[this.index].partialAttachments.push({
             refId: data.referId,
