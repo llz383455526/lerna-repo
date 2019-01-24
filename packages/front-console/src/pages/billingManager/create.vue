@@ -100,16 +100,16 @@
         </el-radio-group>
       </el-form-item>
       <template v-if="isShowSuccess">
-        <el-form-item label="安全凭证" prop="secretId">
+        <el-form-item label="安全凭证">
           <el-input class="form_input" v-model="companyForm.secretId"></el-input>
         </el-form-item>
-        <el-form-item label="秘钥" prop="secretKey">
+        <el-form-item label="秘钥">
           <el-input class="form_input" v-model="companyForm.secretKey"></el-input>
         </el-form-item>
-        <el-form-item label="受理点ID" prop="sldId">
+        <el-form-item label="受理点ID">
           <el-input class="form_input" v-model="companyForm.sldId"></el-input>
         </el-form-item>
-        <el-form-item label="开票机号" prop="kpjh">
+        <el-form-item label="开票机号">
           <el-input class="form_input" v-model="companyForm.kpjh"></el-input>
         </el-form-item>
       </template>
