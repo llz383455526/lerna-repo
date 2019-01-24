@@ -100,18 +100,24 @@
         </el-radio-group>
       </el-form-item>
       <template v-if="isShowSuccess">
-        <el-form-item label="安全凭证">
-          <el-input class="form_input" v-model="companyForm.secretId"></el-input>
+        <el-form-item label="开票渠道" prop="configType">
+          <el-radio v-model="companyForm.configType" :label="1">大象慧云</el-radio>
+          <el-radio v-model="companyForm.configType" :label="2">票加加</el-radio>
         </el-form-item>
-        <el-form-item label="秘钥">
-          <el-input class="form_input" v-model="companyForm.secretKey"></el-input>
-        </el-form-item>
-        <el-form-item label="受理点ID">
-          <el-input class="form_input" v-model="companyForm.sldId"></el-input>
-        </el-form-item>
-        <el-form-item label="开票机号">
-          <el-input class="form_input" v-model="companyForm.kpjh"></el-input>
-        </el-form-item>
+        <template v-if="companyForm.configType === 1">
+          <el-form-item label="安全凭证" prop="secretId">
+            <el-input class="form_input" v-model="companyForm.secretId"></el-input>
+          </el-form-item>
+          <el-form-item label="秘钥" prop="secretKey">
+            <el-input class="form_input" v-model="companyForm.secretKey"></el-input>
+          </el-form-item>
+          <el-form-item label="受理点ID" prop="sldId">
+            <el-input class="form_input" v-model="companyForm.sldId"></el-input>
+          </el-form-item>
+          <el-form-item label="开票机号" prop="kpjh">
+            <el-input class="form_input" v-model="companyForm.kpjh"></el-input>
+          </el-form-item>
+        </template>
       </template>
       <el-form-item>
         <el-button type="primary" @click="submitForm('companyForm')">保存</el-button>
@@ -247,6 +253,13 @@
             [{
               required: true,
               message: "请输入开票机号",
+              trigger: "change"
+            }
+            ],
+          configType:
+            [{
+              required: true,
+              message: "请选择开票渠道",
               trigger: "change"
             }
             ]
