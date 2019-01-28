@@ -86,7 +86,7 @@
             </el-table-column>
             <el-table-column prop="statusName" label="申请状态" width="120"></el-table-column>
             <el-table-column prop="customCompanyName" label="客户名称" width="220"></el-table-column>
-            <el-table-column prop="remark" label="发票用途" width="220"></el-table-column>
+            <el-table-column prop="purpose" label="发票用途" width="220"></el-table-column>
             <el-table-column prop="amount" label="申请金额" width="120"></el-table-column>
             <el-table-column prop="num" label="申请票数" width="120"></el-table-column>
             <el-table-column prop="realAmount" label="实开金额" width="120"></el-table-column>
