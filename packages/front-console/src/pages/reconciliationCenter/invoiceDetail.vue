@@ -202,8 +202,8 @@
         }
 
         let formSearch = _.cloneDeep (this.formSearch)
-        formSearch.startAt = startAt
-        formSearch.endAt = endAt
+        formSearch.issueStartDate = startAt
+        formSearch.issueEndDate = endAt
         let options = _.assign (formSearch, {
           page: this.pageIndex,
           pageSize: this.pageSize
@@ -229,12 +229,12 @@
         window.location.href = `${baseUrl}/api/invoice-web/invoice/export-custom-invoice-details?${urlEncode (formSearch)}`
       },
       getCompanyData() {
-        const startAt = this.dateValue[0]
-        const endAt = this.dateValue[1]
+        const issueStartDate = this.dateValue[0]
+        const issueEndDate = this.dateValue[1]
         post('/api/invoice-web/invoice/sum-paper-invoice-list', {
           ...this.formSearch,
-          startAt,
-          endAt
+          issueStartDate,
+          issueEndDate
         }).then(function (data) {
           this.companyData = data
         }.bind(this))
