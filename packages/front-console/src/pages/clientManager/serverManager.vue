@@ -666,11 +666,15 @@ export default {
                 {
 			        text: '华夏银行',
 			        value: 'hxb'
-    		    },
+                },
                 {
                     text: '易宝',
                     value: 'yeepay'
-                }
+                },
+                {
+                    text: '连连支付',
+                    value: 'lianlianpay'
+    		    }
             ],
             checkValue: 'first',
             businessShow:false,

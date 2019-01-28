@@ -79,7 +79,7 @@
       <el-col :span="8">{{data.quoteRule == '0' ? '结算规则' : '返佣规则'}} <i class="el-icon-question ml10" title="结算规则：按高于结算费率的部分结算返佣规则：按返佣费率直接返佣"></i></el-col>
     </el-row>
     <el-row class="mb15" style="font-weight: normal;">
-      <el-col :span="4" style="text-align: right; margin-right: 20px;">结算费率：</el-col>
+      <el-col :span="4" style="text-align: right; margin-right: 20px;">代理推广费率：</el-col>
       <el-col :span="16">
         <show-close-service :detail="data"></show-close-service>
       </el-col>

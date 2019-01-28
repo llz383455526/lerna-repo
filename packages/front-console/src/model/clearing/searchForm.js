@@ -13,6 +13,7 @@ class searchForm extends baseModel {
         this.orderBy = ''; // 排序子句(不含orderBy)
         this.toPaymentUserNo = ''; // 转入支付用户账户ID
         this.state = ''; // 状态
+        this.sourceType = ''
     }
 }
 

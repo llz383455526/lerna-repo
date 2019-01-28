@@ -34,7 +34,8 @@ class Check extends BaseModel {
             remarks: [
                 { required: true, message: '请输入调账备注', trigger: 'blur'},
                 { validator: checkNumber, trigger: 'blur' }
-            ]
+            ],
+            toAccountNo:  [{ required: true, message: '请选择转入账户', trigger: 'change' }]
         }
     }
 }

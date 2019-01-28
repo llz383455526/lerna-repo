@@ -371,7 +371,7 @@ export default {
       show: false,
       queryForm: {
         accountInfo: "",
-        pageSize: 5,
+        pageSize: 10,
         page: 1
       },
       result: {},
@@ -451,7 +451,7 @@ export default {
         endAt: "",
         orderBy: "",
         page: 1,
-        pageSize: 5
+        pageSize: 10
       },
       aform: {
         isFromOutApp: "",

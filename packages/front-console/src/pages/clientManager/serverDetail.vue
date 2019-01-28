@@ -318,6 +318,60 @@
 					</el-col>
       			</el-row>
 			</template>
+            <template v-if="data.thirdpaySystemId == 'lianlianpay'">
+				<el-row :gutter="20">
+                    <el-col :span="10">
+						  <el-col :span="8" class="right">商户号</el-col><el-col :span="10">{{data['lianlianpay.merchId']}}</el-col>
+					</el-col>
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">我方私钥</el-col><el-col :span="10">{{data['lianlianpay.privatekey']}}</el-col>
+					</el-col>
+      			</el-row>
+                  <el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">连连支付公钥</el-col><el-col :span="10">{{data['lianlianpay.thirdPublickey']}}</el-col>
+					</el-col>
+                    <el-col :span="10">
+						  <el-col :span="8" class="right">凭证sftp地址</el-col><el-col :span="10">{{data['lianlianpay.vou.sftp.host']}}</el-col>
+					</el-col>
+      			</el-row>
+                </el-row>
+                  <el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">凭证sftp端口</el-col><el-col :span="10">{{data['lianlianpay.vou.sftp.port']}}</el-col>
+					</el-col>
+                    <el-col :span="10">
+						  <el-col :span="8" class="right">凭证sftp用户名</el-col><el-col :span="10">{{data['lianlianpay.vou.sftp.username']}}</el-col>
+					</el-col>
+      			</el-row>
+                </el-row>
+                  <el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">凭证sftp密码</el-col><el-col :span="10">{{data['lianlianpay.vou.sftp.password']}}</el-col>
+					</el-col>
+                    <el-col :span="10">
+						  <el-col :span="8" class="right">对账sftp地址</el-col><el-col :span="10">{{data['lianlianpay.rec.sftp.host']}}</el-col>
+					</el-col>
+      			</el-row>
+                </el-row>
+                  <el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">对账sftp端口</el-col><el-col :span="10">{{data['lianlianpay.rec.sftp.port']}}</el-col>
+					</el-col>
+                    <el-col :span="10">
+						  <el-col :span="8" class="right">对账sftp用户名</el-col><el-col :span="10">{{data['lianlianpay.rec.sftp.username']}}</el-col>
+					</el-col>
+      			</el-row>
+                </el-row>
+                  <el-row :gutter="20">
+      			    <el-col :span="10">
+						  <el-col :span="8" class="right">对账sftp密码</el-col><el-col :span="10">{{data['lianlianpay.rec.sftp.password']}}</el-col>
+					</el-col>
+                    <el-col :span="10">
+						  <el-col :span="8" class="right">对账sftp目录</el-col><el-col :span="10">{{data['lianlianpay.rec.sftp.dir']}}</el-col>
+					</el-col>
+      			</el-row>
+			</template>
       	</div>
         <div class="title">支付用户</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="addChannel">添加支付用户</el-button>
         <el-form :model="form" class="mt20" :inline="true" size="small">
@@ -562,6 +616,45 @@
                 </el-form-item>
                 <el-form-item label="易宝公钥" size="small" prop="yeepay$thirdPublickey">
                     <el-input class="form_input" v-model="eform.yeepay$thirdPublickey"></el-input>
+                </el-form-item>
+            </template>
+            <template v-if="eform.thirdpaySystemId == 'lianlianpay'">
+                <el-form-item label="商户号" size="small" prop="lianlianpay$merchId">
+                    <el-input class="form_input" v-model="eform.lianlianpay$merchId"></el-input>
+                </el-form-item>
+                <el-form-item label="我方私钥" size="small" prop="lianlianpay$privatekey">
+                    <el-input class="form_input" v-model="eform.lianlianpay$privatekey"></el-input>
+                </el-form-item>
+                <el-form-item label="连连支付公钥" size="small" prop="lianlianpay$thirdPublickey">
+                    <el-input class="form_input" v-model="eform.lianlianpay$thirdPublickey"></el-input>
+                </el-form-item>
+                <el-form-item label="凭证sftp地址" size="small" prop="lianlianpay$vou$sftp$host">
+                    <el-input class="form_input" v-model="eform.lianlianpay$vou$sftp$host"></el-input>
+                </el-form-item>
+                <el-form-item label="凭证sftp端口" size="small" prop="lianlianpay$vou$sftp$port">
+                    <el-input class="form_input" v-model="eform.lianlianpay$vou$sftp$port"></el-input>
+                </el-form-item>
+                <el-form-item label="凭证sftp用户名" size="small" prop="lianlianpay$vou$sftp$username">
+                    <el-input class="form_input" v-model="eform.lianlianpay$vou$sftp$username"></el-input>
+                </el-form-item>
+                <el-form-item label="凭证sftp密码" size="small" prop="lianlianpay$vou$sftp$password">
+                    <el-input class="form_input" v-model="eform.lianlianpay$vou$sftp$password"></el-input>
+                </el-form-item>
+                
+                <el-form-item label="对账sftp地址" size="small" prop="lianlianpay$rec$sftp$host">
+                    <el-input class="form_input" v-model="eform.lianlianpay$rec$sftp$host"></el-input>
+                </el-form-item>
+                <el-form-item label="对账sftp端口" size="small" prop="lianlianpay$rec$sftp$port">
+                    <el-input class="form_input" v-model="eform.lianlianpay$rec$sftp$port"></el-input>
+                </el-form-item>
+                <el-form-item label="对账sftp用户名" size="small" prop="lianlianpay$rec$sftp$username">
+                    <el-input class="form_input" v-model="eform.lianlianpay$rec$sftp$username"></el-input>
+                </el-form-item>
+                <el-form-item label="对账sftp密码" size="small" prop="lianlianpay$rec$sftp$password">
+                    <el-input class="form_input" v-model="eform.lianlianpay$rec$sftp$password"></el-input>
+                </el-form-item>
+                <el-form-item label="对账sftp目录" size="small" prop="lianlianpay$rec$sftp$dir">
+                    <el-input class="form_input" v-model="eform.lianlianpay$rec$sftp$dir"></el-input>
                 </el-form-item>
             </template>
 		  </el-form>
@@ -1338,6 +1431,151 @@ export default {
             },
             {
                 max: 2048,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        lianlianpay$merchId: [
+            {
+                required: true,
+                message: '请输入商户名',
+                trigger: 'blur'
+            },
+            {
+                max: 128,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        lianlianpay$privatekey: [
+            {
+                required: true,
+                message: '请输我方私钥',
+                trigger: 'blur'
+            },
+            {
+                max: 2048,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        lianlianpay$thirdPublickey: [
+            {
+                required: true,
+                message: '请输入公钥',
+                trigger: 'blur'
+            },
+            {
+                max: 2048,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        lianlianpay$vou$sftp$host: [
+            {
+                required: true,
+                message: '请输入对帐sftp地址',
+                trigger: 'blur'
+            },
+            {
+                max: 256,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        lianlianpay$vou$sftp$port: [
+            {
+                required: true,
+                message: '请输入对帐sftp端口',
+                trigger: 'blur'
+            },
+            {
+                max: 256,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        lianlianpay$vou$sftp$username: [
+            {
+                required: true,
+                message: '请输入对帐sftp用户名',
+                trigger: 'blur'
+            },
+            {
+                max: 256,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        lianlianpay$vou$sftp$password: [
+            {
+                required: true,
+                message: '请输入对帐sftp密码',
+                trigger: 'blur'
+            },
+            {
+                max: 256,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+
+        lianlianpay$rec$sftp$host: [
+            {
+                required: true,
+                message: '请输入凭证sftp地址',
+                trigger: 'blur'
+            },
+            {
+                max: 256,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        lianlianpay$rec$sftp$port: [
+            {
+                required: true,
+                message: '请输入凭证sftp端口',
+                trigger: 'blur'
+            },
+            {
+                max: 256,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        lianlianpay$rec$sftp$username: [
+            {
+                required: true,
+                message: '请输入凭证sftp用户名',
+                trigger: 'blur'
+            },
+            {
+                max: 256,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        lianlianpay$rec$sftp$password: [
+            {
+                required: true,
+                message: '请输入凭证sftp密码',
+                trigger: 'blur'
+            },
+            {
+                max: 256,
+                message: '输入过长',
+                trigger: 'blur'
+            }
+        ],
+        lianlianpay$rec$sftp$dir: [
+            {
+                required: true,
+                message: '请输入凭证sftp目录',
+                trigger: 'blur'
+            },
+            {
+                max: 256,
                 message: '输入过长',
                 trigger: 'blur'
             }

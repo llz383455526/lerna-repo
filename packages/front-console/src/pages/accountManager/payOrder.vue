@@ -81,6 +81,13 @@
 					@change="getTime">
 				</el-date-picker>
             </el-form-item>
+            <el-form-item label="代理商公司名称:" prop="agentCompanyName">
+                <el-select style="width: 150px" v-model="formSearch.agentCompanyName" filterable placeholder="请选择">
+                    <el-option label="所有" value=""></el-option>
+                    <el-option v-for="(item, index) in agentList" :label="item.companyName" :value="item.companyName" :key="index"></el-option>
+                </el-select>
+                </el-input>
+            </el-form-item>
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="query">查询</el-button>
                 <el-button @click="clear">清除</el-button>
@@ -115,7 +122,8 @@
                 </el-table-column>
                 <el-table-column prop="outOrderNo" label="客户订单号" width="120"></el-table-column>
                 <el-table-column prop="serviceCompanyName" label="服务公司" width="140"></el-table-column>
-				<el-table-column prop="subServiceCompanyName" label="转包服务公司" width="140"></el-table-column>7
+				<el-table-column prop="subServiceCompanyName" label="转包服务公司" width="140"></el-table-column>
+                <el-table-column prop="agentCompanyName" label="代理商公司名称" width="140"></el-table-column>
                 <el-table-column prop="paymentThirdTypeName" label="发放渠道" width="80"></el-table-column>
                 <el-table-column prop="sourceTypeName" label="发放方式" width="80"></el-table-column>
 				<el-table-column prop="paymentTradeNo" label="支付订单号" width="90"></el-table-column>
@@ -202,7 +210,8 @@
 					createAtBegin: '',
 					createAtEnd: '',
 					paymentResTimeBegin: '',
-					paymentResTimeEnd: '',
+                    paymentResTimeEnd: '',
+                    agentCompanyName: '',
 					page: 1,
 					pageSize: 10
 				},
@@ -219,7 +228,8 @@
                 delay: '',
                 proNum: 0,
                 frame: '',
-                isReady: true
+                isReady: true,
+                agentList: []
 			}
         },
         watch: {
@@ -249,7 +259,10 @@
     		    companyIdentity: 'service'
     		}).then(data => {
     		    this.servers = data
-    		})
+            })
+            get('/api/contract-web/agent-contract/agent-company-option?sign=true').then(data => {
+                this.agentList = data
+            })
 		},
 		methods: {
 			getDate() {

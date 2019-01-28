@@ -75,6 +75,7 @@
             <el-table-column prop="bankTypeName" label="业务类型"></el-table-column>
             <el-table-column prop="paymentThirdTypeName" label="发放渠道"></el-table-column>
             <el-table-column prop="adjustTypeName" label="平账操作"></el-table-column>
+            <el-table-column prop="yearMonth" label="所属月份"></el-table-column>
             <el-table-column prop="memo" label="备注"></el-table-column>
             <el-table-column label="查看凭证">
                 <template slot-scope="scope">
@@ -232,6 +233,19 @@
                             实发金额 / (1 - {{prePayContent.serviceFeeRate}}%)
                         </template>
                         ;保留2位小数，四舍五入
+                    </div>
+                </div>
+                <div class="input-container">
+                    <div class="label">所属月份：<span>*</span></div>
+                    <div class="input">
+                        <el-form-item prop="yearMonth">
+                            <el-date-picker
+                                  v-model="dialogCreateForm.yearMonth"
+                                  type="month"
+                                  placeholder="选择月"
+                                  value-format="yyyyMM">
+                                </el-date-picker>
+                        </el-form-item>
                     </div>
                 </div>
                 <div class="input-container">
@@ -564,6 +578,7 @@
                     channelBalanceAccountId: '',
                     amount: '',
                     serviceFeeAmount: '',
+                    yearMonth: '',
                     memo: "",
                     attachmentIds: [],
                     subServiceCompanyId: ''
@@ -583,6 +598,7 @@
                         { required: true, message: "请输入服务费金额", trigger: "blur" },
                         { validator: checkNumber, trigger: 'blur' }
                     ],
+                    yearMonth: [{ required: true, message: "请选择月份", trigger: "blur" }],
                     memo: [{ required: true, message: "请填写申请说明", trigger: "blur"}],
                     attachmentIds: [{ required: true, message: "请上传凭证", trigger: "blur"},]
                 },

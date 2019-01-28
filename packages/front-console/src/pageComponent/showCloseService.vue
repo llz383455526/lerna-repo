@@ -2,10 +2,10 @@
   <div>
     <el-col :span="16" v-if="detail.quoteFeeContent && detail.quoteFeeContent.quoteFeeType">
         <template v-if="detail.quoteFeeContent.quoteFeeType == 'ratio'">
-            {{'固定费率结算: '+detail.quoteFeeContent.quoteFeeRate+'%'}}
+            {{`固定费率${(detail.quoteRule == '' || detail.quoteRule == 'settle') ? '结算' : '返佣'}: ${detail.quoteFeeContent.quoteFeeRate}%`}}
         </template>
         <template v-else-if="detail.quoteFeeContent.quoteFeeType == 'nonflow'">
-            {{`${detail.quoteFeeContent.stepwiseList[0].endAmount}万 - 无流水阶梯结算：`}}
+            {{`${detail.quoteFeeContent.stepwiseList[0].endAmount}万 - 无流水阶梯${(detail.quoteRule == '' || detail.quoteRule == 'settle') ? '结算' : '返佣'}：`}}
             <div v-for="(e, i) in detail.quoteFeeContent.stepwiseList" :key="i">
                 <div class="pl10">
                     <span >
@@ -20,7 +20,7 @@
             </div>
         </template>
         <template v-else-if="detail.quoteFeeContent.quoteFeeType == 'flow'">
-            {{`分${detail.quoteFeeContent.incomeAmount}万 - 按流水分阶梯报价：`}}
+            {{`分${detail.quoteFeeContent.incomeAmount}万 - 按流水分阶梯${(detail.quoteRule == '' || detail.quoteRule == 'settle') ? '结算' : '返佣'}：`}}
             <div class="pl10">
                 {{`（1）${detail.quoteFeeContent.incomeAmount}万（含）以下：`}}
                 <div v-for="(e, i) in detail.quoteFeeContent.stepwiseList" :key="i">

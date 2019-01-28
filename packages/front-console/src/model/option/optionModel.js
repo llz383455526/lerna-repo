@@ -9,7 +9,8 @@ class optionModel extends BaseModel {
 		this.serveCompanyList = []; // 服务商公司列表
 		this.primaryAccountList = []; // 主账户列表
 		this.bypassAccountList = []; // 子账户列表
-		this.clearingStateList = []; // 清分状态下拉列表
+        this.clearingStateList = []; // 清分状态下拉列表
+        this.withdrawInfo = {}
 	}
 	getJson (list, key, value) {
 		return list.find(function(element) {
@@ -44,7 +45,13 @@ class optionModel extends BaseModel {
 		}).then(res => {
 			this.primaryAccountList = res.data
 		})
-	}
+    }
+    getWithdrawInfo(param) {
+        this.withdrawInfo = {}
+        post('/api/balance-web/pay-user-recon/get-withdraw-info', param).then(res => {
+            this.withdrawInfo = res
+        })
+    }
 	getBypassAccountList(channelId) {
 		post('/api/paymentmgt/front/channel/payuser/qrylist', {
 			channelId: channelId,
@@ -58,7 +65,12 @@ class optionModel extends BaseModel {
 		get('/api/balance-web/commom/option', {enumType: 'ReconciliationState'}).then(result => {
             this.clearingStateList = result;
         })
-	}
+    }
+    getSourceTypeList() {
+        get('/api/balance-web/commom/option', {enumType: 'ReconciliationSourceType'}).then(result => {
+            this.sourceTypeList = result;
+        })
+    }
 }
 
 export default optionModel;

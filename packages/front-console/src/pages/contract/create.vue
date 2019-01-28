@@ -415,7 +415,7 @@
                   <el-radio v-for="e in ruleList" :key="e.value" v-model="contractForm.quoteRule" :label="e.value">{{e.text}}</el-radio>
                   <i class="el-icon-question ml10" title="结算规则：按高于结算费率的部分结算   返佣规则：按返佣费率直接返佣"></i>
                 </el-form-item>
-                <el-form-item label="结算费率" prop="check">
+                <el-form-item label="代理推广费率" prop="check">
                   <contract-close-item @result="result" :form="contractForm" :initCheck="true" ref="contract"></contract-close-item>
                 </el-form-item>
             </template>

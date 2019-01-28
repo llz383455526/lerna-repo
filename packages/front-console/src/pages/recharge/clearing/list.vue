@@ -18,7 +18,7 @@
         <el-form-item label="转出子账户" prop="fromPaymentUserNo">
             <el-input v-model.number="searchForm.fromPaymentUserNo"></el-input>
         </el-form-item>
-        <el-form-item label="转入子账户" prop="toPaymentUserNo">
+        <el-form-item label="转入账户" prop="toPaymentUserNo">
             <el-input v-model.number="searchForm.toPaymentUserNo"></el-input>
         </el-form-item>
         <el-form-item label="状态" prop="state">
@@ -31,6 +31,12 @@
             <el-date-picker v-model="dateValue" type="daterange" value-format="yyyy-MM-dd" start-placeholder="开始日期" end-placeholder="结束日期" @change="setTime"></el-date-picker>
             <!-- <dataPicker @setTime="setTime"></dataPicker> -->
         </el-form-item>
+        <el-form-item label="调账类型" prop="sourceType">
+            <el-select filterable v-model="searchForm.sourceType">
+                <el-option label="全部" value=""></el-option>
+                <el-option v-for="(item, key) in option.sourceTypeList" :key="key" :label="item.text" :value="item.value"></el-option>
+            </el-select>
+        </el-form-item>
         <el-form-item>
             <el-button @click="query">查询</el-button>
             <el-button @click="resetForm('searchForm')">清除</el-button>
@@ -39,6 +45,7 @@
     </el-form>
 
     <el-button @click="dialogCreateVisible=true">手动清分</el-button>
+    <el-button @click="show=true">平安对公转账</el-button>
 
     <el-table :data="tableData.list">
         <el-table-column label="客户公司" prop="companyName"></el-table-column>
@@ -49,17 +56,18 @@
         <el-table-column label="主账户户名" prop="mainAccountName"></el-table-column>
         <el-table-column label="转出子账户账号" prop="fromPaymentUserNo"></el-table-column>
         <el-table-column label="转出子账户名" prop="fromPaymentUserName"></el-table-column>
-        <el-table-column label="转入子账户账号" prop="toPaymentUserNo"></el-table-column>
-        <el-table-column label="转入子账户名" prop="toPaymentUserName"></el-table-column>
+        <el-table-column label="转入账户账号" prop="toPaymentUserNo"></el-table-column>
+        <el-table-column label="转入账户名" prop="toPaymentUserName"></el-table-column>
         <el-table-column label="金额" prop="tradeAmount"></el-table-column>
         <el-table-column label="调整备注" prop="remarks"></el-table-column>
         <el-table-column label="操作人" prop="createByName"></el-table-column>
         <el-table-column label="处理时间" prop="updateTime"></el-table-column>
         <el-table-column label="状态" prop="stateName"></el-table-column>
+        <el-table-column label="调账类型" prop="sourceTypeName"></el-table-column>
     </el-table>
     <ayg-pagination v-if="tableData.total" :total="tableData.total" :currentPage="searchForm.page" v-on:handleSizeChange="sizeChange" v-on:handleCurrentChange="query"></ayg-pagination>
 
-    <el-dialog title="手动清分" :visible.sync="dialogCreateVisible">
+    <el-dialog title="手动清分" :visible.sync="dialogCreateVisible" @open="resetForm('createForm')">
         <el-form label-width="150px" ref="createForm" :rules="check.rules" :model="createForm">
             <el-form-item label="服务商名称" prop="serviceCompanyId">
                 <el-select filterable v-model="createForm.serviceCompanyId" class="form-width" @change="changeService">
@@ -93,12 +101,55 @@
             </el-form-item>
         </el-form>
     </el-dialog>
+
+    <el-dialog title="服务费提现" :visible.sync="show" @open="resetForm('withdrawForm')" width="800px">
+        <el-form label-width="150px" ref="withdrawForm" :rules="check.rules" :model="withdrawForm">
+            <el-form-item label="服务商名称" prop="serviceCompanyId">
+                <el-select filterable v-model="withdrawForm.serviceCompanyId" class="form-width" @change="changeService_0">
+                    <el-option v-for="(item, key) in option.serveCompanyList" :key="key" :label="item.name" :value="item.id"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="转出账户账号">
+                {{option.withdrawInfo.fromPaymentUserName}}
+            </el-form-item>
+            <el-form-item label="转入账户" prop="toAccountNo">
+                <el-select filterable v-model="withdrawForm.toAccountNo" class="form-width" @change="changeTo_0">
+                    <el-option v-for="(item, key) in option.withdrawInfo.toBankAccounts" :key="key" :label="item.accountName" :value="item.accountNo"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item v-if="option.withdrawInfo.toBankAccounts">
+                <template v-if="bankMsg">
+                    <div>账户名称：{{bankMsg.accountName}}</div>
+                    <div>开户行：{{bankMsg.depositBank}}</div>
+                    <div>账号：{{bankMsg.accountNo}}</div>
+                </template>
+                <div>待提服务费金额：{{option.withdrawInfo.withdrawAmount | formatMoney}} 
+                    <i class="el-icon-question ml10" title="服务费子账户当前余额 &lt;= {平安主账户余额 - 【全部客户公司平安余额总和】-3万（手续费预留）}；
+则 待提现服务费金额 = 服务费子账户当前余额；
+服务费子账户当前余额 > {平安主账户余额 - 【全部客户公司平安余额总和】-3万（手续费预留）};
+则 待提现服务费金额 =  {平安主账户余额 - 【全部客户公司平安余额总和】-3万（手续费预留）};">
+                    </i>
+                </div>
+            </el-form-item>
+            <el-form-item label="转入调账金额" prop="tradeAmount">
+                <el-input v-model="withdrawForm.tradeAmount" class="form-width"></el-input>
+            </el-form-item>
+            <el-form-item label="备注说明" prop="remarks">
+                <el-input v-model="withdrawForm.remarks" class="form-width"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button @click="save">保存</el-button>
+                <el-button @click="show = false">取消</el-button>
+            </el-form-item>
+        </el-form>
+    </el-dialog>
 </div>
 </template>
 
 <script>
 import createForm from '../../../model/clearing/createForm.js'
 import searchForm from '../../../model/clearing/searchForm.js'
+import withdrawForm from '../../../model/clearing/withdrawForm.js'
 import check from '../../../model/clearing/check.js'
 import optionModel from '../../../model/option/optionModel.js'
 import dataPicker from '../../../pageComponent/dataPicker'
@@ -113,10 +164,13 @@ export default {
             dialogCreateVisible: false,
             createForm: new createForm(),
             searchForm: new searchForm(),
+            withdrawForm: new withdrawForm(),
             option: new optionModel(),
             check: new check(),
             tableData: '',
-            dateValue: []
+            dateValue: [],
+            show: false,
+            bankMsg: ''
         }
     },
     components: {
@@ -126,6 +180,7 @@ export default {
         this.option.getCustomerCompanies();
         this.option.getServeCompanyList();
         this.option.getClearingStateList();
+        this.option.getSourceTypeList();
         this.query();
     },
     methods: {
@@ -145,6 +200,17 @@ export default {
             this.createForm.fromPaymentUserId = '';
             this.createForm.toPaymentUserId = '';
         },
+        changeService_0(e) {
+            let json = this.option.getJson(this.option.serveCompanyList, 'id', e);
+            this.option.getPrimaryAccountList(e);
+            this.option.getWithdrawInfo({
+                paymentThirdType: this.withdrawForm.paymentThirdType,
+                serviceCompanyId: this.withdrawForm.serviceCompanyId
+            })
+            this.withdrawForm.toAccountNo = ''
+            this.bankMsg = ''
+            this.withdrawForm.serviceCompanyName = json.name;
+        },
         changeChannel(e) {
             let json = this.option.getJson(this.option.primaryAccountList, 'merchId', e);
             this.option.getBypassAccountList(json.id);
@@ -162,6 +228,12 @@ export default {
             this.createForm.toPaymentUserName = json.payeruserName;
             this.createForm.toPaymentUserNo = json.thirdpayUserId;
         },
+        changeTo_0(e) {
+            let json = this.option.getJson(this.option.withdrawInfo.toBankAccounts, 'accountNo', e);
+            this.withdrawForm.toAccountName = json.accountName;
+            this.withdrawForm.toDepositBank = json.depositBank;
+            this.bankMsg = json
+        },
         submitForm(formName) {
             this.$refs[formName].validate(valid => {
                 if (valid) {
@@ -170,6 +242,16 @@ export default {
                         this.dialogCreateVisible = false;
                         this.resetForm(formName);
                     });
+                }
+            })
+        },
+        save() {
+            this.$refs.withdrawForm.validate(valid => {
+                if(valid) {
+                    post('/api/balance-web/pay-user-recon/withdraw',this.withdrawForm).then(data => {
+                        this.query();
+                        this.show = false;
+                    })
                 }
             })
         },
@@ -197,17 +279,18 @@ export default {
                     }
                 }
             }
-            location.href = `${baseUrl}/api/balance-web/pay-user-recon/export-recon-list${str}`
+            location.href = `/api/balance-web/pay-user-recon/export-recon-list${str}`
         },
         sizeChange(pageSize) {
             this.searchForm.pageSize = pageSize
             this.query()
         },
         resetForm(formName) {
-            this.$refs[formName].resetFields();
+            this.$refs[formName] && this.$refs[formName].resetFields();
             this.dateValue = [];
             this.searchForm.createAtBegin = '';
             this.searchForm.createAtEnd = '';
+            this.option.withdrawInfo = {}
         },
         setTime() {
             if (this.dateValue && this.dateValue.length) {
@@ -217,6 +300,13 @@ export default {
                 this.searchForm.createAtBegin = ''
                 this.searchForm.createAtEnd = ''
             }
+        },
+        toPublic() {
+            post('/api/balance-web/pay-user-recon/get-withdraw-info', {
+                paymentThirdType: '',
+                serviceCompanyId: ''
+            })
+            this.dialogCreateVisible = true
         }
     }
 }
@@ -225,5 +315,10 @@ export default {
 <style scoped>
 .form-width {
     width: 300px;
+}
+.el-icon-question {
+    margin-right: 5px;
+    color: #f56c6c;
+    cursor: pointer;
 }
 </style>

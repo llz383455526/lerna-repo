@@ -90,7 +90,7 @@
                             <template v-if="contractForm.originalType == 20">
                               <div class="col-xs-12">代理商名称：{{ getText(contractForm.agentCompanyId, contractModel.agentList, 'companyId', 'companyName') }}</div>
                               <div class="col-xs-12">渠道经理：{{ contractModel.chargeByName }}</div>
-                              <div class="col-xs-12">代理结算费率：<show-close-service :detail="formItem"></show-close-service> </div>
+                              <div class="col-xs-12">代理推广费率：<show-close-service :detail="formItem"></show-close-service> </div>
                             </template>
                             <hr v-if="key+1 != contractForm.contracts.length">
                         </div>
