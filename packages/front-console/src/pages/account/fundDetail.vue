@@ -180,16 +180,6 @@ export default {
                     })
                 }, 1000 * 1)
             })
-            // var str = ''
-            // for (var k in this.form) {
-            //     if(!str) {
-            //         str += `?${k}=${this.form[k]}`
-            //     }
-            //     else {
-            //         str += `&${k}=${this.form[k]}`
-            //     }
-            // }
-            // window.open(`/api/balance-web/balance-account/export-fund-list${str}`)
         }
     }
 };
