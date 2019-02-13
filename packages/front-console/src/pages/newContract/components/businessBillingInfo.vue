@@ -22,8 +22,8 @@
         <el-form-item label="发票类型" prop="invoiceType">
             <el-select v-model="contractModel.contractForm.invoiceType" placeholder="请选择" style="width:450px;">
                 <el-option v-for="(item,key) in contractModel.invoiceTypeList" :key="key" :label="item.text" :value="item.value"></el-option>
-            </el-select><br>
-            <!-- <el-checkbox v-model="contractModel.contractForm.showSubjectInfo">合同中显示发票类型</el-checkbox> -->
+            </el-select>
+            <el-checkbox v-model="contractModel.contractForm.showSubjectInfo">合同中显示发票类型</el-checkbox>
         </el-form-item>
     </div>
 </template>

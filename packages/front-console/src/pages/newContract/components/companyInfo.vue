@@ -136,7 +136,7 @@ export default {
                 serviceLegalPerson: info.corporateName,
                 serviceRegisterAddr: info.address,
                 servicePhone: info.telephone,
-                showServiceCompanyInfo: '',
+                showServiceCompanyInfo: true,
                 serviceCompanyId: info.serviceCompanyId,
                 goodsId: '',
                 goodsList: info.goodsList,

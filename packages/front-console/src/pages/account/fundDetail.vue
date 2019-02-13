@@ -85,92 +85,113 @@
 <script>
 import { post, get } from "../../store/api";
 import optionModel from '../../model/option/optionModel.js'
+import {showLoading, hideLoading} from '../../plugin/utils-loading'
 export default {
-  data() {
-    var time = new Date(),
-        time_0 = new Date(time.getTime() - 1000 * 60 * 60 * 24 * 7), 
-        t = `${time.getFullYear()}-${time.getMonth() + 1 > 9 ? time.getMonth() + 1 : '0' + (time.getMonth() + 1)}-${time.getDate()}`,
-        t_0 = `${time_0.getFullYear()}-${time_0.getMonth() + 1 > 9 ? time_0.getMonth() + 1 : '0' + (time_0.getMonth() + 1)}-${time_0.getDate()}`
-    return {
-      form: {
-        appId: "",
-        balanceType: '',
-        bizTradeName: "",
-        companyId: "",
-        createAtBegin: "",
-        createAtEnd: "",
-        page: 1,
-        pageSize: 10,
-        serviceCompanyId: ""
-      },
-      range: [t_0, t],
-      data: {},
-      companys: [],
-      apps: [],
-      handles: [],
-      option: new optionModel(),
-      isReady: true
-    };
-  },
-  mounted() {
-      get('/api/sysmgr-web/commom/company?companyIdentity=custom').then(data => {
-          this.companys = data
-      })
-      get('/api/sysmgr-web/commom/app-list').then(data => {
-          this.apps = data
-      })
-      get('/api/balance-web/commom/option?enumType=BalanceAppTradeType').then(data => { //1
-          this.handles = data
-      })
-      this.getTime()
-      this.query()
-      this.option.getServeCompanyList()
-  },
-  methods: {
-      query(a) {
-          if(isNaN(a)) {
-              a = 1
-          }
-          this.form.page = a
-          post('/api/balance-web/balance-account/query-fund', this.form).then(data => {
-              this.data = data
-              this.isReady = false
-          })
-      },
-      setSize(a) {
-          this.form.pageSize = a
-          this.query()
-      },
-      reset() {
-        //   console.log(this.$refs['form'])
-          this.$refs['form'].resetFields()
-          this.range = []
-          this.form.createAtBegin = ''
-          this.form.createAtEnd = ''
-      },
-      getTime() {
-          if(this.range && this.range.length) {
-              this.form.createAtBegin = this.range[0]
-              this.form.createAtEnd = this.range[1]
-          }
-          else {
-              this.form.createAtBegin = ''
-              this.form.createAtEnd = ''
-          }
-      },
-      exportDetail() {
-          var str = ''
-          for (var k in this.form) {
-              if(!str) {
-                  str += `?${k}=${this.form[k]}`
-              }
-              else {
-                  str += `&${k}=${this.form[k]}`
-              }
-          }
-          window.open(`/api/balance-web/balance-account/export-fund-list${str}`)
-      }
-  }
+    data() {
+      var time = new Date(),
+          time_0 = new Date(time.getTime() - 1000 * 60 * 60 * 24 * 7), 
+          t = `${time.getFullYear()}-${time.getMonth() + 1 > 9 ? time.getMonth() + 1 : '0' + (time.getMonth() + 1)}-${time.getDate()}`,
+          t_0 = `${time_0.getFullYear()}-${time_0.getMonth() + 1 > 9 ? time_0.getMonth() + 1 : '0' + (time_0.getMonth() + 1)}-${time_0.getDate()}`
+      return {
+        form: {
+          appId: "",
+          balanceType: '',
+          bizTradeName: "",
+          companyId: "",
+          createAtBegin: "",
+          createAtEnd: "",
+          page: 1,
+          pageSize: 10,
+          serviceCompanyId: ""
+        },
+        range: [t_0, t],
+        data: {},
+        companys: [],
+        apps: [],
+        handles: [],
+        option: new optionModel(),
+        isReady: true,
+        downloadCode: '',
+        interval: ''
+      };
+    },
+    mounted() {
+        get('/api/sysmgr-web/commom/company?companyIdentity=custom').then(data => {
+            this.companys = data
+        })
+        get('/api/sysmgr-web/commom/app-list').then(data => {
+            this.apps = data
+        })
+        get('/api/balance-web/commom/option?enumType=BalanceAppTradeType').then(data => { //1
+            this.handles = data
+        })
+        this.getTime()
+        this.query()
+        this.option.getServeCompanyList()
+    },
+    methods: {
+        query(a) {
+            if(isNaN(a)) {
+                a = 1
+            }
+            this.form.page = a
+            post('/api/balance-web/balance-account/query-fund', this.form).then(data => {
+                this.data = data
+                this.isReady = false
+            })
+        },
+        setSize(a) {
+            this.form.pageSize = a
+            this.query()
+        },
+        reset() {
+          //   console.log(this.$refs['form'])
+            this.$refs['form'].resetFields()
+            this.range = []
+            this.form.createAtBegin = ''
+            this.form.createAtEnd = ''
+        },
+        getTime() {
+            if(this.range && this.range.length) {
+                this.form.createAtBegin = this.range[0]
+                this.form.createAtEnd = this.range[1]
+            }
+            else {
+                this.form.createAtBegin = ''
+                this.form.createAtEnd = ''
+            }
+        },
+        exportDetail() {
+            showLoading('请稍等...')
+            var param = JSON.parse(JSON.stringify(this.form))
+            delete param.page
+            delete param.pageSize
+            get('/api/balance-web/balance-account/export-fund-list', param, true).then(data => {
+                this.downloadCode = data
+                this.interval = setInterval(() => {
+                    get('/api/balance-web/file/check-export', {
+                        downloadCode: this.downloadCode
+                    }, true).then(res => {
+                        if(res) {
+                            clearInterval(this.interval)
+                            hideLoading()
+                            location.href = `/api/balance-web/file/download-export?downloadCode=${this.downloadCode}`
+                        }
+                    })
+                }, 1000 * 1)
+            })
+            // var str = ''
+            // for (var k in this.form) {
+            //     if(!str) {
+            //         str += `?${k}=${this.form[k]}`
+            //     }
+            //     else {
+            //         str += `&${k}=${this.form[k]}`
+            //     }
+            // }
+            // window.open(`/api/balance-web/balance-account/export-fund-list${str}`)
+        }
+    }
 };
 </script>
 <style scoped>

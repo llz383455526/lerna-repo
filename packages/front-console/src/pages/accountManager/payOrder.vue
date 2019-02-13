@@ -321,7 +321,7 @@
 							if(res) {
 								clearInterval(this.interval)
 								hideLoading()
-								location.href = `${baseUrl}/api/console-dlv/file/download-export?downloadCode=${this.downloadCode}`
+								location.href = `/api/console-dlv/file/download-export?downloadCode=${this.downloadCode}`
 							}
 						})
 					}, 1000 * 1)
