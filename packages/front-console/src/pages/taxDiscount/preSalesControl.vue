@@ -1,16 +1,20 @@
 <template>
     <div class="main-container">
         <div>售前风控报表  （针对企业客户的背景调查及合同草稿审核）</div>
-        <el-table class="mt20" :data="[]">
-            <el-table-column label="月份"></el-table-column>
-            <el-table-column label="服务公司"></el-table-column>
-            <el-table-column label="业务申请总量"></el-table-column>
-            <el-table-column label="拒绝审批数据"></el-table-column>
-            <el-table-column label="A高风险行业用户" :render-header="renderHeader" width="170px"></el-table-column>
-            <el-table-column label="B有违法违规记录的用户" :render-header="renderHeader" width="160px"></el-table-column>
-            <el-table-column label="C经营范围与申请业务不一致" :render-header="renderHeader" width="180px"></el-table-column>
-            <el-table-column label="D申请业务类型与发票类目不一致" :render-header="renderHeader" width="200px"></el-table-column>
-            <el-table-column label="E申请业务超出落地公司经营范围或经营资质" :render-header="renderHeader" width="200px"></el-table-column>
+        <el-table class="mt20" :data="tableList.list">
+            <el-table-column label="月份">
+                <template slot-scope="scope">
+                    {{scope.row.generateMonth | formatTime('yyyy年MM月') }}
+                </template>
+            </el-table-column>
+            <el-table-column label="服务公司" prop="serviceCompanyName"></el-table-column>
+            <el-table-column label="业务申请总量" prop="totalCount"></el-table-column>
+            <el-table-column label="拒绝审批数据" prop="rejectCount"></el-table-column>
+            <el-table-column label="A高风险行业用户" prop="rejectA" :render-header="renderHeader" width="170px"></el-table-column>
+            <el-table-column label="B有违法违规记录的用户" prop="rejectB" :render-header="renderHeader" width="160px"></el-table-column>
+            <el-table-column label="C经营范围与申请业务不一致" prop="rejectC" :render-header="renderHeader" width="180px"></el-table-column>
+            <el-table-column label="D申请业务类型与发票类目不一致" prop="rejectD" :render-header="renderHeader" width="200px"></el-table-column>
+            <el-table-column label="E申请业务超出落地公司经营范围或经营资质" prop="rejectE" :render-header="renderHeader" width="200px"></el-table-column>
         </el-table>
         <ayg-pagination
             v-if="tableList.total"
@@ -23,6 +27,7 @@
     </div>
 </template>
 <script>
+import {get, post} from '../../store/api'
 export default {
     data() {
         return {
@@ -37,14 +42,14 @@ export default {
                 page: 1,
                 pageSize: 10
             },
-            tableList: {
-                total: 1
-            }
+            tableList: {}
         }
+    },
+    mounted() {
+        this.query()
     },
     methods: {
         renderHeader(h, data) {
-            console.log(data)
             return h("div", [
                 h("span", [data.column.label]),
                 h("i", {
@@ -56,11 +61,18 @@ export default {
                 )
             ])
         },
-        query() {
-
+        query(a) {
+            if(isNaN(a)) {
+                a = 1
+            }
+            this.form.page = a
+            post('/api/contract-web/risk-statistics/contract-approve-statistics', this.form).then(data => {
+                this.tableList = data
+            })
         },
-        sizeChange() {
-
+        sizeChange(a) {
+            this.form.pageSize = a
+            this.query()
         }
     }
 }

@@ -1,19 +1,23 @@
 <template>
     <div class="main-container">
         <div>售后风控报表 （针对承接业务的自由职业者的风险控制）</div>
-        <el-table class="mt20" :data="[]">
-            <el-table-column label="月份"></el-table-column>
-            <el-table-column label="服务公司"></el-table-column>
-            <el-table-column label="申请发放笔数" width="120px"></el-table-column>
-            <el-table-column label="风控金额"></el-table-column>
-            <el-table-column label="挂起笔数"></el-table-column>
-            <el-table-column label="挂起金额"></el-table-column>
-            <el-table-column label="二次审核通过笔数"></el-table-column>
-            <el-table-column label="二次审核通过金额"></el-table-column>
-            <el-table-column label="二次审核拒绝笔数"></el-table-column>
-            <el-table-column label="二次审核拒绝金额"></el-table-column>
-            <el-table-column label="个人不处于合理就业年龄段-被拒笔数" :render-header="renderHeader" width="180px"></el-table-column>
-            <el-table-column label="个人收入不符合行业平均线-被拒笔数"  width="180px"></el-table-column>
+        <el-table class="mt20" :data="tableList.list">
+            <el-table-column label="月份">
+                <template slot-scope="scope">
+                    {{scope.row.year}}年{{scope.row.month}}月
+                </template>
+            </el-table-column>
+            <el-table-column label="服务公司" prop="serviceCompanyName"></el-table-column>
+            <el-table-column label="申请发放笔数" prop="applySalaryNum" width="120px"></el-table-column>
+            <el-table-column label="风控金额" prop="riskAmount"></el-table-column>
+            <el-table-column label="挂起笔数" prop="hangNum"></el-table-column>
+            <el-table-column label="挂起金额" prop="hangAmount"></el-table-column>
+            <el-table-column label="二次审核通过笔数" prop="secondVerifySuccessNum"></el-table-column>
+            <el-table-column label="二次审核通过金额" prop="secondVerifySuccessAmount"></el-table-column>
+            <el-table-column label="二次审核拒绝笔数" prop="secondVerifyFailNum"></el-table-column>
+            <el-table-column label="二次审核拒绝金额" prop="secondVerifyFailAmount"></el-table-column>
+            <el-table-column label="个人不处于合理就业年龄段-被拒笔数" prop="ageIllegalFailNum" :render-header="renderHeader" width="180px"></el-table-column>
+            <el-table-column label="个人收入不符合行业平均线-被拒笔数" prop="incomeAverageIllegalFailNum" width="180px"></el-table-column>
         </el-table>
         <ayg-pagination
             v-if="tableList.total"
@@ -26,6 +30,7 @@
     </div>
 </template>
 <script>
+import {get, post} from '../../store/api'
 export default {
     data() {
         return {
@@ -33,10 +38,11 @@ export default {
                 page: 1,
                 pageSize: 10
             },
-            tableList: {
-                total: 1
-            }
+            tableList: {}
         }
+    },
+    mounted() {
+        this.query()
     },
     methods: {
         renderHeader(h, data) {
@@ -54,11 +60,18 @@ export default {
                 )
             ])
         },
-        query() {
-
+        query(a) {
+            if(isNaN(a)) {
+                a = 1
+            }
+            this.form.page = a
+            post('/api/console-dlv/after-sales-risk/list', this.form).then(data => {
+                this.tableList = data
+            })
         },
-        sizeChange() {
-
+        sizeChange(a) {
+            this.form.pageSize = a
+            this.query()
         }
     }
 }
