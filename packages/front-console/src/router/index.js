@@ -131,7 +131,9 @@ const taxDiscountStep4 = r => require.ensure([], () => r(require('../pages/taxDi
 const taxDiscountStep5 = r => require.ensure([], () => r(require('../pages/taxDiscount/step/5')), 'taxDiscountStep5')
 let taxDiscountSetting = r => require.ensure([], () => r(require('../pages/taxDiscount/userSetting')), 'taxDiscountSetting')
 let attachmentList = r => require.ensure([], () => r(require('../pages/taxDiscount/attachmentList')), 'attachmentList')
-
+let preSalesControl = r => require.ensure([], () => r(require('../pages/taxDiscount/preSalesControl')), 'preSalesControl')
+let afterSalesControl = r => require.ensure([], () => r(require('../pages/taxDiscount/afterSalesControl')), 'afterSalesControl')
+let controlApproveDetail = r => require.ensure([], () => r(require('../pages/taxDiscount/controlApproveDetail')), 'controlApproveDetail')
 
 let landingCompanyList = r => require.ensure([], () => r(require('../pages/landingCompany/list')), 'landingCompanyList')
 let landingCompanyCreate = r => require.ensure([], () => r(require('../pages/landingCompany/create')), 'landingCompanyCreate')
@@ -1116,6 +1118,27 @@ export default [{
               meta: {
                 keepAlive: false
               }
+            },
+            {
+                path: 'preSalesControl',
+                component: preSalesControl,
+                meta: {
+                    keepAlive: false
+                }
+            },
+            {
+                path: 'afterSalesControl',
+                component: afterSalesControl,
+                meta: {
+                    keepAlive: false
+                }
+            },
+            {
+                path: 'controlApproveDetail',
+                component: controlApproveDetail,
+                meta: {
+                    keepAlive: false
+                }
             }
           ]
         },

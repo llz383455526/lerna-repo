@@ -688,3 +688,11 @@ button{
 .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner:after {
     border-color: #999999;
 }
+.el-icon-question {
+    margin-left: 5px;
+    color: #f56c6c;
+    cursor: pointer;
+}
+.el-table th div{
+    white-space: normal;
+}

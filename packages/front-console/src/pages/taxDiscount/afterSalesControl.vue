@@ -1,0 +1,74 @@
+<template>
+    <div class="main-container">
+        <div>售后风控报表 （针对承接业务的自由职业者的风险控制）</div>
+        <el-table class="mt20" :data="[]">
+            <el-table-column label="月份"></el-table-column>
+            <el-table-column label="服务公司"></el-table-column>
+            <el-table-column label="申请发放笔数" width="120px"></el-table-column>
+            <el-table-column label="风控金额"></el-table-column>
+            <el-table-column label="挂起笔数"></el-table-column>
+            <el-table-column label="挂起金额"></el-table-column>
+            <el-table-column label="二次审核通过笔数"></el-table-column>
+            <el-table-column label="二次审核通过金额"></el-table-column>
+            <el-table-column label="二次审核拒绝笔数"></el-table-column>
+            <el-table-column label="二次审核拒绝金额"></el-table-column>
+            <el-table-column label="个人不处于合理就业年龄段-被拒笔数" :render-header="renderHeader" width="180px"></el-table-column>
+            <el-table-column label="个人收入不符合行业平均线-被拒笔数"  width="180px"></el-table-column>
+        </el-table>
+        <ayg-pagination
+            v-if="tableList.total"
+            :total="tableList.total"
+            v-on:handleSizeChange="sizeChange"
+            :currentSize="form.pageSize"
+            v-on:handleCurrentChange="query"
+            :currentPage="form.page">
+        </ayg-pagination>
+    </div>
+</template>
+<script>
+export default {
+    data() {
+        return {
+            form: {
+                page: 1,
+                pageSize: 10
+            },
+            tableList: {
+                total: 1
+            }
+        }
+    },
+    methods: {
+        renderHeader(h, data) {
+            console.log(data)
+            return h("div", [
+                h("span", [data.column.label]),
+                h("i", {
+                        attrs: {
+                            'class': 'el-icon-question',
+                            'title': `• 一般行业风控审核金额：单笔超过20万，单月超过50万；
+• 文娱传媒及医疗业：单月超过9.3万；
+提示：未来将继续客户星级评定和行业平均值细化风控金额；`
+                        }
+                    }
+                )
+            ])
+        },
+        query() {
+
+        },
+        sizeChange() {
+
+        }
+    }
+}
+</script>
+<style scoped>
+.main-container {
+    background-color: #fff;
+    padding: 15px;
+}
+.mt20 {
+    margin-top: 20px;
+}
+</style>
