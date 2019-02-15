@@ -24,11 +24,7 @@
             <el-table-column label="客户公司" prop="customCompanyName"></el-table-column>
             <el-table-column label="落地公司" prop="serviceCompanyName"></el-table-column>
             <el-table-column label="税优地" prop="taxLandingName"></el-table-column>
-            <el-table-column label="风控规则">
-                <template slot-scope="scope">
-                    <div v-for="e in scope.row.riskRuleStr">{{e}}</div>
-                </template>
-            </el-table-column>
+            <el-table-column label="风控规则" prop="riskRuleStr"></el-table-column>
             <el-table-column label="处理状态" prop="stateName"></el-table-column>
             <el-table-column label="操作"></el-table-column>
         </el-table>
