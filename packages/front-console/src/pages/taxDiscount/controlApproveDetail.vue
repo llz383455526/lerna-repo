@@ -3,7 +3,8 @@
         <el-form :model="form" :inline="true" size="small">
             <el-form-item label="处理状态">
                 <el-select v-model="form.state">
-                    <el-option v-for="e in approvalList" :label="e.text" :value="e.value"></el-option>
+                    <el-option label="全部" value=""></el-option>
+                    <el-option v-for="e in approvalList" :key="e.value" :label="e.text" :value="e.value"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item>
