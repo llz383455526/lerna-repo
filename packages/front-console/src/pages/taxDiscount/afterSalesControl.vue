@@ -8,16 +8,16 @@
                 </template>
             </el-table-column>
             <el-table-column label="服务公司" prop="serviceCompanyName"></el-table-column>
-            <el-table-column label="申请发放笔数" prop="applySalaryNum" width="120px"></el-table-column>
+            <el-table-column label="申请发放人数" prop="applySalaryNum" width="120px"></el-table-column>
             <el-table-column label="风控金额" prop="riskAmount"></el-table-column>
-            <el-table-column label="挂起笔数" prop="hangNum"></el-table-column>
+            <el-table-column label="挂起人数" prop="hangNum"></el-table-column>
             <el-table-column label="挂起金额" prop="hangAmount"></el-table-column>
-            <el-table-column label="二次审核通过笔数" prop="secondVerifySuccessNum"></el-table-column>
+            <el-table-column label="二次审核通过人数" prop="secondVerifySuccessNum"></el-table-column>
             <el-table-column label="二次审核通过金额" prop="secondVerifySuccessAmount"></el-table-column>
-            <el-table-column label="二次审核拒绝笔数" prop="secondVerifyFailNum"></el-table-column>
+            <el-table-column label="二次审核拒绝人数" prop="secondVerifyFailNum"></el-table-column>
             <el-table-column label="二次审核拒绝金额" prop="secondVerifyFailAmount"></el-table-column>
-            <el-table-column label="个人不处于合理就业年龄段-被拒笔数" prop="ageIllegalFailNum" :render-header="renderHeader" width="180px"></el-table-column>
-            <el-table-column label="个人收入不符合行业平均线-被拒笔数" prop="incomeAverageIllegalFailNum" width="180px"></el-table-column>
+            <el-table-column label="个人不处于合理就业年龄段-被拒人数" prop="ageIllegalFailNum" :render-header="renderHeader" width="180px"></el-table-column>
+            <el-table-column label="个人收入不符合行业平均线-被拒人数" prop="incomeAverageIllegalFailNum" width="180px"></el-table-column>
         </el-table>
         <ayg-pagination
             v-if="tableList.total"
