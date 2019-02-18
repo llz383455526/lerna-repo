@@ -1,6 +1,30 @@
 <template>
     <div class="main-container">
         <div>售前风控报表  （针对企业客户的背景调查及合同草稿审核）</div>
+        <el-form class="mt20" :model="form" :inline="true" size="small">
+            <el-form-item label="服务商">
+                <el-input v-model="form.serviceCompanyName"></el-input>
+            </el-form-item>
+            <el-form-item label="月份">
+                <el-date-picker
+                    v-model="form.monthStart"
+                    type="month"
+                    value-format="yyyy-MM-dd"
+                    placeholder="开始月">
+                </el-date-picker>
+                -
+                <el-date-picker
+                    v-model="form.monthEnd"
+                    type="month"
+                    value-format="yyyy-MM-dd"
+                    placeholder="结束月">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="query">查询</el-button>
+                <el-button @click="clear">清空</el-button>
+            </el-form-item>
+        </el-form>
         <el-table class="mt20" :data="tableList.list">
             <el-table-column label="月份">
                 <template slot-scope="scope">
@@ -39,6 +63,9 @@ export default {
                 8: '申请业务超出落地公司经营范围或经营资质：例如申请业务为物流运输，但由于落地公司并无道路运输经营许可证，不能承接该业务'
             },
             form: {
+                serviceCompanyName: '',
+                monthStart: '',
+                monthEnd: '',
                 page: 1,
                 pageSize: 10
             },
@@ -73,6 +100,13 @@ export default {
         sizeChange(a) {
             this.form.pageSize = a
             this.query()
+        },
+        clear() {
+            Object.assign(this.form, {
+                serviceCompanyName: '',
+                monthStart: '',
+                monthEnd: ''
+            })
         }
     }
 }
