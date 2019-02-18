@@ -17,7 +17,7 @@
             <el-table-column label="二次审核拒绝人数" prop="secondVerifyFailNum"></el-table-column>
             <el-table-column label="二次审核拒绝金额" prop="secondVerifyFailAmount"></el-table-column>
             <el-table-column label="个人不处于合理就业年龄段-被拒人数" prop="ageIllegalFailNum" :render-header="renderHeader" width="180px"></el-table-column>
-            <el-table-column label="个人收入不符合行业平均线-被拒人数" prop="incomeAverageIllegalFailNum" width="180px"></el-table-column>
+            <el-table-column label="个人收入不符合行业平均线-被拒人数" prop="incomeAverageIllegalFailNum" :render-header="renderHeader" width="180px"></el-table-column>
         </el-table>
         <ayg-pagination
             v-if="tableList.total"
@@ -34,6 +34,12 @@ import {get, post} from '../../store/api'
 export default {
     data() {
         return {
+            title: {
+                10: '18岁（含18岁）< 适合就业年龄 <65岁（含65岁）',
+                11: `• 一般行业风控审核金额：单笔超过20万，单月超过50万；
+• 文娱传媒及医疗业：单月超过9.3万；
+提示：未来将继续客户星级评定和行业平均值细化风控金额；`
+            },
             form: {
                 page: 1,
                 pageSize: 10
@@ -46,15 +52,12 @@ export default {
     },
     methods: {
         renderHeader(h, data) {
-            console.log(data)
             return h("div", [
                 h("span", [data.column.label]),
                 h("i", {
                         attrs: {
                             'class': 'el-icon-question',
-                            'title': `• 一般行业风控审核金额：单笔超过20万，单月超过50万；
-• 文娱传媒及医疗业：单月超过9.3万；
-提示：未来将继续客户星级评定和行业平均值细化风控金额；`
+                            'title': this.title[data.$index]
                         }
                     }
                 )
