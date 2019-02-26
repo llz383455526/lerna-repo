@@ -77,6 +77,7 @@ let contractPreview = r => require.ensure([], () => r(require('../pages/contract
 let serviceInvoiceManager = r => require.ensure([], () => r(require('../pages/contract/serviceInvoiceManager')), 'serviceInvoiceManager')
 let agentContractList = r => require.ensure([], () => r(require('../pages/contract/agentContractList')), 'agentContractList')
 let agentContractCreate = r => require.ensure([], () => r(require('../pages/contract/agentContractCreate')), 'agentContractCreate')
+let agentShareList = r => require.ensure([], () => r(require('../pages/contract/agentShareList')), 'agentShareList')
 
 
 let clientManager = r => require.ensure([], () => r(require('../pages/clientManager/clientManager')), 'clientManager')
@@ -447,7 +448,7 @@ export default [{
               path: 'agentContractList',
               component: agentContractList,
               meta: {
-                keepAlive: true
+                keepAlive: false
               }
             },
             {
@@ -456,6 +457,13 @@ export default [{
               meta: {
                 keepAlive: false
               }
+            },
+            {
+                path: 'agentShareList',
+                component: agentShareList,
+                meta: {
+                    keepAlive: false
+                }
             }
           ]
         }, {

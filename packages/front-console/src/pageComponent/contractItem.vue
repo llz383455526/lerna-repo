@@ -22,7 +22,7 @@
                     <el-table-column label="月收入下限" width="240">
                         <template slot-scope="scope">
                             <template v-if="scope.row.sequence">
-                                <el-input v-model="scope.row.startAmount" disabled class="input_100" @change="checkTable">
+                                <el-input v-model="scope.row.startAmount" disabled class="input_100" @change="checkTable(true)">
                                     <template slot="append">万</template>
                                 </el-input>
                                 <el-checkbox v-model="scope.row.equalsStart" @change="equals(scope.$index, 0)">含 
@@ -83,7 +83,7 @@
                     <el-table-column label="月总额下限" width="240">
                         <template slot-scope="scope">
                             <template v-if="scope.row.sequence">
-                                <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 4)" class="input_100" @change="checkTable">
+                                <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 4)" class="input_100" @change="checkTable(true)">
                                     <template slot="append">万</template>
                                 </el-input>
                                 <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 4)" @change="equals(scope.$index, 0)">含 
@@ -153,7 +153,7 @@
                     <el-table-column label="月总额下限" width="240">
                         <template slot-scope="scope">
                             <template v-if="scope.row.sequence">
-                                <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable">
+                                <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable(true)">
                                     <template slot="append">万</template>
                                 </el-input>
                                 <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0)">含 
@@ -209,7 +209,7 @@
                     <el-table-column label="月总额下限" width="240">
                         <template slot-scope="scope">
                             <template v-if="scope.row.sequence">
-                                <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable">
+                                <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable(true)">
                                     <template slot="append">万</template>
                                 </el-input>
                                 <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0, 2)">含 
@@ -490,17 +490,18 @@ export default {
                 }
             }
         },
-        amount(a, b, c) {
+        amount(a, b, c, type) {
+            console.log(true)
             var stepwiseList = this.contractForm.serviceFeeContent.stepwiseList, amount = '', result = ''
             if(c) {
                 stepwiseList = this.contractForm.serviceFeeContent2.stepwiseList
             }
             if(b) {
-                stepwiseList[a + 1] && (stepwiseList[a + 1].startAmount = stepwiseList[a].endAmount)
+                stepwiseList[a + 1] && (type === true ? stepwiseList[a].endAmount = stepwiseList[a + 1].startAmount : stepwiseList[a + 1].startAmount = stepwiseList[a].endAmount)
                 amount = stepwiseList[a].endAmount
             }
             else {
-                stepwiseList[a - 1] && (stepwiseList[a - 1].endAmount = stepwiseList[a].startAmount)
+                stepwiseList[a - 1] && (type === true ? stepwiseList[a].startAmount = stepwiseList[a - 1].endAmount : stepwiseList[a - 1].endAmount = stepwiseList[a].startAmount)
                 amount = stepwiseList[a].startAmount
             }
             if(this.float2.test(amount) && stepwiseList[a].startAmount - 0 < stepwiseList[a].endAmount) {
@@ -508,11 +509,11 @@ export default {
             }
             return result
         },
-        checkTable() {
+        checkTable(type) {
             var results = []
             for(var i =0; i < this.contractForm.serviceFeeContent.stepwiseList.length; i++) {
                 for(var j = 0; j < 2; j++) {
-                    (j || i) && (i + 1 < this.contractForm.serviceFeeContent.stepwiseList.length) && results.push(this.amount(i, j))
+                    (j || i) && (i + 1 < this.contractForm.serviceFeeContent.stepwiseList.length) && results.push(this.amount(i, j, 0, type))
                 }
                 var a = this.contractForm.serviceFeeContent.stepwiseList[i].percent
                 results.push((this.float2.test(a) && a <= 100) ? 0 : '')
@@ -523,7 +524,7 @@ export default {
             if(this.contractForm.serviceFeeContent2.stepwiseList.length) {
                 for(var i = 0; i < this.contractForm.serviceFeeContent2.stepwiseList.length; i++) {
                     for(var j = 0; j < 2; j++) {
-                       (j || i) && (i + 1 < this.contractForm.serviceFeeContent2.stepwiseList.length) && results.push(this.amount(i, j, 2))
+                       (j || i) && (i + 1 < this.contractForm.serviceFeeContent2.stepwiseList.length) && results.push(this.amount(i, j, 2, type))
                     }
                     var a = this.contractForm.serviceFeeContent2.stepwiseList[i].percent
                     results.push((this.float2.test(a) && a <= 100) ? 0 : '')
