@@ -254,7 +254,7 @@
                 </el-form-item>
               </template>
               <template v-else>
-                <el-form-item label="手机号码(发放短信验证)：" prop="phone">
+                <el-form-item label="手机号码(发放短信验证)" prop="phone">
                     <el-input class="f_input" v-model="aform.phone"></el-input>
                 </el-form-item>
               </template>
@@ -262,10 +262,10 @@
                   <el-checkbox-group v-model="aform.serviceCompanyList" @change="change">
                       <el-checkbox v-for="(item, i) in company" :label="item.value" :key="item.value" class="block">
                           <span class="mr10">{{item.text}}</span>
-                          <el-select v-model="assign[i].subcontractType" v-if="aform.serviceCompanyList.indexOf(item.value) > -1">
+                          <!-- <el-select v-model="assign[i].subcontractType" v-if="aform.serviceCompanyList.indexOf(item.value) > -1">
 							<el-option label="非转包" value="0"></el-option>
                             <el-option label="业务转包" value="1"></el-option>
-                        </el-select>
+                        </el-select> -->
                         <el-select v-model="assign[i].subServiceList[0].subServiceCompanyId" filterable v-if="aform.serviceCompanyList.indexOf(item.value) > -1 && assign[i].subcontractType - 0" @change="getassignCompanyName(i)">
                             <el-option v-for="e in filterAssignCompany(item.value)" :key="e.id" :label="e.name" :value="e.id"></el-option>
                         </el-select>
