@@ -203,7 +203,8 @@
                 </ayg-pagination>
             </el-tab-pane>
             <!-- v-loading="load" -->
-            <el-tab-pane label="转包服务商账户余额" name="assign">
+            <!-- <el-button size="small" style="margin-left: 60px" @click="exportService">导出搜索结果</el-button> -->
+            <!-- <el-tab-pane label="转包服务商账户余额" name="assign">
                 <el-form :inline="true" :model="assignForm" ref="assignForm">
                     <el-form-item label="商户" prop="appId">
                         <el-select size="small" filterable v-model="assignForm.appId">
@@ -223,7 +224,6 @@
                     <el-form-item>
                         <el-button size="small" type="primary" @click="assignBalance">查询</el-button>
                         <el-button size="small" @click="reset('assignForm')">清除</el-button>
-                        <!-- <el-button size="small" style="margin-left: 60px" @click="exportService">导出搜索结果</el-button> -->
                     </el-form-item>
                 </el-form>
                 <el-table :data="assignData.list" style="width: 100%;margin-top: 20px;">
@@ -293,7 +293,7 @@
                     v-on:handleSizeChange="setSizeAssign"
                     v-on:handleCurrentChange="assignBalance">
                 </ayg-pagination>
-            </el-tab-pane>
+            </el-tab-pane> -->
             <el-tab-pane label="渠道账户余额" name="old" v-loading="load">
                 <div style="padding: 30px;">
                     <img src="../../image/money.png" style="width: 120px;height: 120px;float: left; margin-right: 50px;"/>

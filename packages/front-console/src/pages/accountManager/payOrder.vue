@@ -91,7 +91,7 @@
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="query">查询</el-button>
                 <el-button @click="clear">清除</el-button>
-                <el-button @click="exportXls">导出xls</el-button>
+                <!-- <el-button @click="exportXls">导出xls</el-button> -->
             </el-form-item>
         </el-form>
 
@@ -122,7 +122,7 @@
                 </el-table-column>
                 <el-table-column prop="outOrderNo" label="客户订单号" width="120"></el-table-column>
                 <el-table-column prop="serviceCompanyName" label="服务公司" width="140"></el-table-column>
-				<el-table-column prop="subServiceCompanyName" label="转包服务公司" width="140"></el-table-column>
+				<!-- <el-table-column prop="subServiceCompanyName" label="转包服务公司" width="140"></el-table-column> -->
                 <el-table-column prop="agentCompanyName" label="代理商公司名称" width="140"></el-table-column>
                 <el-table-column prop="paymentThirdTypeName" label="发放渠道" width="80"></el-table-column>
                 <el-table-column prop="sourceTypeName" label="发放方式" width="80"></el-table-column>
