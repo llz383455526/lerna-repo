@@ -98,6 +98,10 @@
             </el-col>
         </el-row>
     </div>
+    <div class="title">系统配置</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="eshow = true">编辑</el-button>
+    <div class="text">
+        C端银行卡绑定（C端签约时） {{data.clientAccountBind === 0 ? '关闭' : '开启'}}
+    </div>
           <div class="title">支付渠道</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="addChannel">添加支付渠道</el-button>
           <el-table :data="data.payUsers">
               <el-table-column prop="payUserId" label="支付用户ID"></el-table-column>
@@ -349,6 +353,15 @@
               <el-button size="small" @click="cshow = false">关闭</el-button>
           </span>
       </el-dialog>
+      <el-dialog title="编辑" :visible.sync="eshow" @open="clientAccountBind = data.clientAccountBind" width="50%">
+          C端银行卡绑定（C端签约时） 
+          <el-radio v-model="clientAccountBind" :label="1">开启</el-radio>
+          <el-radio v-model="clientAccountBind" :label="0">关闭</el-radio>
+          <span class="form_footer" slot="footer">
+              <el-button size="small" @click="changeStatus" type="primary">确定</el-button>
+              <el-button size="small" @click="eshow = false">取消</el-button>
+          </span>
+      </el-dialog>
     </div>
 </template>
 <script>
@@ -460,7 +473,9 @@ export default {
       subServiceList: [],
       services: [],
       serviceList: [],
-      toggle: false
+      toggle: false,
+      eshow: false,
+      clientAccountBind: ''
     };
   },
   mounted() {
@@ -884,6 +899,16 @@ export default {
           message: '切换成功'
         })
       })
+    },
+    changeStatus() {
+        // clientAccountBind
+        post('/api/sysmgr-web/company-app/update-app-sys-config', {
+            appId: this.data.appId,
+            clientAccountBind: this.clientAccountBind
+        }).then(data => {
+            this.eshow = false
+            this.query()
+        })
     }
   }
 };
@@ -972,5 +997,10 @@ export default {
 }
 .ml20 {
   margin-left: 20px;
+}
+.text {
+    font-size: 14px;
+    margin-left: 32px;
+    margin-top: 20px;
 }
 </style>

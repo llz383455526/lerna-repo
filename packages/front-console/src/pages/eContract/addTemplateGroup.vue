@@ -19,12 +19,12 @@
                         @visible-change="platformSelectVisible"
                         @change="platformSelectChange"
                         size="small">
-                    <el-option
+                        <el-option
                             v-for="e in platform"
                             :key="e.extrSystemId"
                             :label="e.extrSystemName"
                             :value="e.extrSystemId">
-                    </el-option>
+                        </el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="备注" prop="memo">
@@ -59,6 +59,12 @@
             </el-form-item>
             <el-form-item label="是否需要上传证件照" prop="passportType">
                 <el-radio-group v-model="form.passportType" @change="settingChangeConfirm('passportType', '签约方式', ['1', '2'])">
+                    <el-radio label="1">是</el-radio>
+                    <el-radio label="2">否</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="是否需要绑定银行卡" prop="bindBank" v-if="bindBank">
+                <el-radio-group v-model="form.bindBank">
                     <el-radio label="1">是</el-radio>
                     <el-radio label="2">否</el-radio>
                 </el-radio-group>
@@ -174,7 +180,7 @@
 
                         <el-form-item label="签约对象类型" :prop="`partys[${i}].userType`" :rules="{required: true, message: '请选择签约对象类型', trigger: 'blur'}">
                             <el-select v-model="item.userDetailType" size="small" @change="objectChange(i)">
-                                <el-option v-for="e in type" :key="e" :label="e.name" :value="e.userDetailType"></el-option>
+                                <el-option v-for="e in type" :key="e.userDetailType" :label="e.name" :value="e.userDetailType"></el-option>
                             </el-select>
                         </el-form-item>
 
@@ -310,12 +316,14 @@
                     _.forEach(this.templateArr, template => {
 	                    template.fromModel = true
                     })
-
-					this.platform.push({
-						extrSystemName: this.form.platformName,
-						extrSystemId: this.form.platform,
-						extrSystemGroup: this.form.companyId
-					})
+                    this.remoteMethod(this.form.platformName).then(data => {
+                        this.getBindStatus(true)
+                    })
+					// this.platform.push({
+					// 	extrSystemName: this.form.platformName,
+					// 	extrSystemId: this.form.platform,
+					// 	extrSystemGroup: this.form.companyId
+					// })
 				})
 			}
 		},
@@ -347,7 +355,8 @@
 					smsType: '1',
 					signSmsType: '1',
 					linkType: '1',
-					passportType: '1',
+                    passportType: '1',
+                    bindBank: '2',
 					partyCount: '2'
 				},
 				rules: {},
@@ -434,7 +443,8 @@
 				editIndex: '',
                 groupId: '',
                 oldPlatForm: [],
-                oldExtrSystemId: ''
+                oldExtrSystemId: '',
+                bindBank: false
 			}
 		},
 		watch: {
@@ -478,16 +488,23 @@
 		},
 		methods: {
 			remoteMethod(a) {
-				if(a) {
-					get('/api/econtract/user/clientqry', {
-						extrSystemName: a,
-						pageNo: 1,
-						pageSize: 10
-					}).then(data => {
-						// console.log(data)
-						this.platform = data
-					})
-				}
+                return new Promise((resolve, reject) => {
+                    if(a) {
+                        get('/api/econtract/user/clientqry', {
+                            extrSystemName: a,
+                            pageNo: 1,
+                            pageSize: 10
+                        }).then(data => {
+                            this.platform = data
+                            resolve(data)
+                        }).catch(err => {
+                            reject(err)
+                        })
+                    }
+                    else {
+                        reject(a)
+                    }
+                })
 			},
 			back() {
 				this.$router.back()
@@ -706,7 +723,8 @@
 							smsType: this.form.smsType,
 							signSmsType: this.form.signSmsType,
 							linkType: this.form.linkType,
-							passportType: this.form.passportType,
+                            passportType: this.form.passportType,
+                            bindBank: this.form.bindBank,
 							partycount: this.form.partyCount,
 							isChange: '1',
 							fromGroup: '1',
@@ -772,7 +790,8 @@
 					linkType: this.form.linkType,
 					smsType: this.form.smsType,
 					signSmsType: this.form.signSmsType,
-					passportType: this.form.passportType,
+                    passportType: this.form.passportType,
+                    bindBank: this.form.bindBank,
 					extrSystemId: this.form.platform
 				})
 
@@ -1065,19 +1084,33 @@
                 }
             },
 			platformSelectChange() {
-				if(!this.templateArr.length) return
+				if(!this.templateArr.length) {
+                    this.getBindStatus()
+                    return
+                }
 
 				let _this = this
 				showConfirm({
 					msg: '确认修改后，将自动移除商户名称不一致的合同模板，是否确认修改？',
 					confirmCallback: function() {
-						_this.templateArr = []
+                        _this.templateArr = []
+                        this.getBindStatus()
 					},
 					cancelCallback: function () {
 						_this.platform = _this.oldPlatForm
 						_this.form.platform = _this.oldExtrSystemId
                     }
 				})
+            },
+            getBindStatus(a) {
+                this.platform.forEach(e => {
+                    if(this.form.platform == e.extrSystemId) {
+                        this.bindBank = e.bindBank === '1' ? true : false
+                        if(a !== true && this.bindBank) {
+                            this.form.bindBank = '1'
+                        }
+                    }
+                })
             }
 		}
 	}

@@ -16,6 +16,7 @@
                     placeholder="请输入关键词"
                     :remote-method="remoteMethod"
                     :loading="loading"
+                    @change="getBindStatus"
                     size="small">
                     <el-option
                         v-for="e in platform"
@@ -154,6 +155,10 @@
                 <el-radio v-model="form.passportType" label="1">是</el-radio>
                 <el-radio v-model="form.passportType" label="2">否</el-radio>
             </el-form-item>
+            <el-form-item label="是否需要绑定银行卡" prop="bindBank" v-if="form.signModel && form.signModel == 2 && bindBank">
+                <el-radio v-model="form.bindBank" label="1">是</el-radio>
+                <el-radio v-model="form.bindBank" label="2">否</el-radio>
+            </el-form-item>
             <el-form-item>
                 <el-button type="primary" size="small" @click="submit" v-if="!ltype">提交</el-button>
                 <el-button size="small" @click="back">{{ltype ? '返回' : '取消'}}</el-button>
@@ -236,10 +241,11 @@ export default {
                 fpages: '',
                 accessType: '1',
                 smsType: '1',
-	              signSmsType: '1',
+	            signSmsType: '1',
                 linkType: '1',
                 passportType: '1',
-                signModel: '2'
+                signModel: '2',
+                bindBank: '2'
             },
             rules: {
                 name: [
@@ -271,6 +277,9 @@ export default {
                 ],
                 passportType: [
                     { required: true, message: '请选择是否需要上传证件照', trigger: 'blur' }
+                ],
+                bindBank: [
+                    { required: true, message: '请选择是否需要绑定银行卡', trigger: 'blur' }
                 ]
             },
             platform: [],
@@ -351,7 +360,8 @@ export default {
                     text: 'API对接',
                     value: '2'
                 }
-            ]
+            ],
+            bindBank: false
         }
     },
     watch: {
@@ -393,11 +403,14 @@ export default {
             this.form = JSON.parse(sessionStorage.getItem('msg'))
             delete this.form.notifyType
             sessionStorage.removeItem('msg')
-            this.platform.push({
-                extrSystemName: this.form.platformName,
-                extrSystemId: this.form.platform,
-                extrSystemGroup: this.form.companyId
+            this.remoteMethod(this.form.platformName).then(data => {
+                this.getBindStatus(true)
             })
+            // this.platform.push({
+            //     extrSystemName: this.form.platformName,
+            //     extrSystemId: this.form.platform,
+            //     extrSystemGroup: this.form.companyId
+            // })
             if(this.form.partys) {
 	            this.form.partys.forEach((e, i) => {
 		            if(e.userName) {
@@ -429,15 +442,23 @@ export default {
     },
     methods: {
         remoteMethod(a) {
-            if(a) {
-                get('/api/econtract/user/clientqry', {
-                    extrSystemName: a,
-                    pageNo: 1,
-                    pageSize: 10
-                }).then(data => {
-                    this.platform = data
-                })
-            }
+            return new Promise((resolve, reject) => {
+                if(a) {
+                    get('/api/econtract/user/clientqry', {
+                        extrSystemName: a,
+                        pageNo: 1,
+                        pageSize: 10
+                    }).then(data => {
+                        this.platform = data
+                        resolve(data)
+                    }).catch(err => {
+                        reject(err)
+                    })
+                }
+                else {
+                    reject(a)
+                }
+            })
         },
         remoteObject(a) {
             if(a !== '') {
@@ -696,6 +717,17 @@ export default {
                 this.form.signModel = '1'
             }
             this.checkNote()
+        },
+        getBindStatus(a) {
+            this.platform.forEach(e => {
+                if(this.form.platform == e.extrSystemId) {
+                    this.bindBank = e.bindBank === '1' ? true : false
+                    if(a !== true && this.bindBank) {
+                        this.form.signModel = '2'
+                        this.form.bindBank = '1'
+                    }
+                }
+            })
         }
     }
 }
