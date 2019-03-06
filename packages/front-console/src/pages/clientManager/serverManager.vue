@@ -674,7 +674,11 @@ export default {
                 {
                     text: '连连支付',
                     value: 'lianlianpay'
-    		    }
+    		    },
+                {
+                    text: '阿里网商',
+                    value: 'alibank'
+                }
             ],
             checkValue: 'first',
             businessShow:false,

@@ -687,9 +687,13 @@ export default {
       this.others = [];
       this.result = "";
       this.payeruserName = "";
+      let paymentThirdType = this.paymentThirdType
+      if(paymentThirdType == 'alibank-bank' || paymentThirdType == 'alibank-alipay') {
+          paymentThirdType = 'alibank'
+      }
       post("/api/paymentmgt/front/payuser/qrybycompany", {
         companyId: this.subServiceCompanyId || this.serviceCompanyId,
-        thirdpaySystemId: this.paymentThirdType
+        thirdpaySystemId: paymentThirdType
       }).then(data => {
         this.others = data;
       });
@@ -719,7 +723,7 @@ export default {
             postWithErrorCallback("/api/sysmgr-web/company-app/add-payment-user", {
               appId: this.appId,
               payUserNo: this.result.thirdpayUserId,
-              paymentThirdType: this.result.thirdpaySystemId,
+              paymentThirdType: this.paymentThirdType,
               payUserName: this.result.payeruserName,
               paymentUserId: this.result.userId,
               authCode: this.authCode,

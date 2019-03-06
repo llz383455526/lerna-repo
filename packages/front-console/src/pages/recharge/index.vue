@@ -148,7 +148,7 @@
                         <div>(请通过线下支付方式支付费用到该收款账号)</div>
                     </div>
                 </div>
-                <template v-if="rechargeMsg && dialogCreateForm.channelBusinessType == 'bank'">
+                <template v-if="rechargeMsg && (dialogCreateForm.channelBusinessType == 'bank' || dialogCreateForm.channelBusinessType == 'alipay')">
                     <div class="input-container">
                         <div class="label"></div>
                         <div class="input">
@@ -888,7 +888,7 @@ export default {
             this.calcServiceFee = data.calcServiceFee
             this.prePayContent = JSON.parse(data.prePayContent)
             this.isRecharge = false
-            if(this.channelTypes.length == 1) {
+            if(!this.isService && this.channelTypes.length == 1) {
                 this.dialogCreateForm.channelBusinessType = this.channelTypes[0].value
                 this.getRechargeMsg()
             }
