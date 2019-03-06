@@ -91,7 +91,7 @@
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="query">查询</el-button>
                 <el-button @click="clear">清除</el-button>
-                <!-- <el-button @click="exportXls">导出xls</el-button> -->
+                <el-button @click="exportXls">导出xls</el-button>
             </el-form-item>
         </el-form>
 
