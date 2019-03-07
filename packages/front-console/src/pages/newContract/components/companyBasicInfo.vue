@@ -8,7 +8,10 @@
             <i class="el-icon-question ml10" title="非直接用工企业：人力资源公司、服务外包公司、城市合伙人公司、第三方平台等"></i>
         </el-form-item>
         <el-form-item label="企业名称" prop="customerName">
-            <el-input v-model="contractModel.contractForm.customerName" style="width:450px;"></el-input>
+            <el-select v-if="checkRight(permissions, 'sysmgr-web:/data-permission-tag/sales-contract-interim-company-flag')" v-model="contractModel.contractForm.customerName" filterable style="width:450px;">
+                <el-option v-for="e in companyList" :key="e.value" :value="e.text" :label="e.text"></el-option>
+            </el-select>
+            <el-input v-else v-model="contractModel.contractForm.customerName" style="width:450px;"></el-input>
         </el-form-item>
         <el-form-item label="企业地址" prop="areaName">
             <el-input v-model="contractModel.contractForm.areaName" style="width:450px;"></el-input>
@@ -35,10 +38,27 @@
 </template>
 
 <script>
-    export default {
-        name: "companyBasicInfo",
-        props: ['contractModel']
+import {mapGetters} from 'vuex';
+import { post, get, importPost } from '../../../store/api';
+export default {
+    name: "companyBasicInfo",
+    props: ['contractModel'],
+    data() {
+        return {
+            companyList: []
+        }
+    },
+    computed: {
+      ...mapGetters({
+          permissions: 'permissions'
+      })
+    },
+    mounted() {
+        get('/api/sysmgr-web/interim-company/interim-company-options').then(data => {
+            this.companyList = data
+        })
     }
+}
 </script>
 
 <style scoped>

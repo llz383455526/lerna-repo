@@ -32,6 +32,10 @@ let cancleOrder = r => require.ensure([], () => r(require('../pages/orderManager
 let riskRule = r => require.ensure([], () => r(require('../pages/orderManager/riskRule.vue')), 'riskRule');
 let addRiskRule = r => require.ensure([], () => r(require('../pages/orderManager/addRiskRule.vue')), 'addRiskRule');
 let clientRiskRule = r => require.ensure([], () => r(require('../pages/orderManager/clientRiskRule.vue')), 'clientRiskRule');
+let missionList = r => require.ensure([], () => r(require('../pages/orderManager/missionList.vue')), 'missionList');
+let addMission = r => require.ensure([], () => r(require('../pages/orderManager/addMission.vue')), 'addMission');
+let auditMission = r => require.ensure([], () => r(require('../pages/orderManager/auditMission.vue')), 'auditMission');
+let checkMission = r => require.ensure([], () => r(require('../pages/orderManager/checkMission.vue')), 'checkMission');
 
 let eContractIndex = r => require.ensure([], () => r(require('../pages/eContract/index.vue')), 'eContractIndex');
 let contractManager = r => require.ensure([], () => r(require('../pages/eContract/contractManager.vue')), 'contractManager');
@@ -46,6 +50,8 @@ let signSuccess = r => require.ensure([], () => r(require('../pages/eContract/si
 let batchRecord = r => require.ensure([], () => r(require('../pages/eContract/batchRecord.vue')), 'batchRecord');
 let offlineManager = r => require.ensure([], () => r(require('../pages/eContract/offlineManager.vue')), 'offlineManager');
 let userManager = r => require.ensure([], () => r(require('../pages/eContract/userManager.vue')), 'userManager');
+let consumerManager = r => require.ensure([], () => r(require('../pages/eContract/consumerManager.vue')), 'consumerManager');
+let addConsumer = r => require.ensure([], () => r(require('../pages/eContract/addConsumer.vue')), 'addConsumer');
 
 let rechargeIndex = r => require.ensure([], () => r(require('../pages/recharge/index.vue')), 'rechargeIndex');
 let balanceAdjust = r => require.ensure([], () => r(require('../pages/recharge/balanceAdjust/list.vue')), 'balanceAdjust');
@@ -138,7 +144,9 @@ let controlApproveDetail = r => require.ensure([], () => r(require('../pages/tax
 
 let landingCompanyList = r => require.ensure([], () => r(require('../pages/landingCompany/list')), 'landingCompanyList')
 let landingCompanyCreate = r => require.ensure([], () => r(require('../pages/landingCompany/create')), 'landingCompanyCreate')
-
+let companyAudit = r => require.ensure([], () => r(require('../pages/landingCompany/companyAudit')), 'companyAudit')
+let addCompany = r => require.ensure([], () => r(require('../pages/landingCompany/addCompany')), 'addCompany')
+let previewCompany = r => require.ensure([], () => r(require('../pages/landingCompany/previewCompany')), 'previewCompany')
 
 const documentList = () => import('../pages/management/documentList')
 const documentDetail = () => import('../pages/management/documentDetail')
@@ -364,6 +372,34 @@ export default [{
               meta: {
                 keepAlive: false
               }
+            },
+            {
+                path: 'missionList',
+                component: missionList,
+                meta: {
+                    keepAlive: false
+                }
+            },
+            {
+                path: 'addMission',
+                component: addMission,
+                meta: {
+                    keepAlive: false
+                }
+            },
+            {
+                path: 'auditMission',
+                component: auditMission,
+                meta: {
+                    keepAlive: false
+                }
+            },
+            {
+                path: 'checkMission',
+                component: checkMission,
+                meta: {
+                    keepAlive: false
+                }
             }
           ]
         },
@@ -724,6 +760,20 @@ export default [{
                 keepAlive: false
               }
             },
+            {
+                path: 'consumerManager',
+                component: consumerManager,
+                meta: {
+                  keepAlive: false
+                }
+            },
+            {
+                path: 'addConsumer',
+                component: addConsumer,
+                meta: {
+                  keepAlive: false
+                }
+            }
           ]
         },
         {
@@ -1053,25 +1103,6 @@ export default [{
               }
             },
             {
-              path: 'landingCompany',
-              component: index,
-              children: [{
-                  path: 'list',
-                  component: landingCompanyList,
-                  meta: {
-                    keepAlive: false
-                  }
-                },
-                {
-                  path: 'create',
-                  component: landingCompanyCreate,
-                  meta: {
-                    keepAlive: false
-                  }
-                }
-              ]
-            },
-            {
               path: 'add',
               component: taxDiscountAdd,
               meta: {
@@ -1166,6 +1197,27 @@ export default [{
               meta: {
                 keepAlive: false
               }
+            },
+            {
+                path: 'companyAudit',
+                component: companyAudit,
+                meta: {
+                    keepAlive: false
+                }
+            },
+            {
+                path: 'addCompany',
+                component: addCompany,
+                meta: {
+                    keepAlive: false
+                }
+            },
+            {
+                path: 'previewCompany',
+                component: previewCompany,
+                meta: {
+                    keepAlive: false
+                }
             }
           ]
         }
