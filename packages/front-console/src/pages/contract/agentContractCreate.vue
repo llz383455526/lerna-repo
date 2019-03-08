@@ -56,7 +56,7 @@
             :on-change="upload"
             :multiple="false"
             :show-file-list="false"
-            accept=".pdf, .doc, .docx, .png, .jpg, .gif">
+            accept=".pdf, .png, .jpg, .jpeg">
             <el-button class="mt20" size="small" type="primary">点击上传</el-button>
         </el-upload>
         <el-table class="table" :data="form.attachments">

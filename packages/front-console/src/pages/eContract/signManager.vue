@@ -6,80 +6,28 @@
             <el-tab-pane label="合同模板组" name="contractArr"></el-tab-pane>
         </el-tabs>
         <el-form :model="form" :inline="true" ref="form" size="small">
+            <el-form-item :label="tabName === 'contract' ? '合同模板ID' : '合同模板组ID'" :prop="tabName === 'contract' ? 'templateId' : 'templateGroupId'">
+                <el-input class="form_input_short" v-model="form[`${tabName === 'contract' ? 'templateId' : 'templateGroupId'}`]"></el-input>
+            </el-form-item>
             <el-form-item :label="tabName === 'contract' ? '合同模板' : '合同模板组'" prop="name">
-                <el-input class="form_input_short" v-if="tabName === 'contract'" v-model="form.name" placeholder="请输入关键词"></el-input>
-                <!-- <el-select
-                    class="form_input_short"
-                    v-if="tabName === 'contract'"
-                    v-model="form.name"
-                    filterable
-                    remote
-                    reserve-keyword
-                    placeholder="请输入关键词"
-                    :remote-method="getName"
-                    :loading="loading"
-                    size="small">
-                    <el-option
-                        v-for="e in names"
-                        :key="e.name"
-                        :label="e.name"
-                        :value="e.name">
-                    </el-option>
-                </el-select> -->
-                 <el-input v-else v-model="form.name" size="small"></el-input>
+                <el-input class="form_input_short" v-model="form.name" placeholder="请输入关键词"></el-input>
             </el-form-item>
             <el-form-item :label="tabName === 'contract' ? '签约对象' : '服务商公司'" prop="userName">
                 <el-input class="form_input_short" v-model="form.userName" placeholder="请输入关键词"></el-input>
-                <!-- <el-select
-                    class="form_input_short"
-                    v-model="form.userName"
-                    filterable
-                    remote
-                    reserve-keyword
-                    placeholder="请输入关键词"
-                    :remote-method="getObject"
-                    :loading="loading"
-                    size="small">
-                    <el-option
-                        v-for="e in objects"
-                        :key="e.name"
-                        :label="e.name"
-                        :value="e.name">
-                    </el-option>
-                </el-select> -->
-                <!-- <el-input v-model="form.name" size="small"></el-input> -->
             </el-form-item>
             <el-form-item label="对接方式" prop="accessType">
                 <el-select v-model="form.accessType" size="small" class="form_input_short">
                     <el-option v-for="e in type" :key="e.value" :label="e.text" :value="e.value"></el-option>
                 </el-select>
-                <!-- <el-input v-model="form.accessType" size="small"></el-input> -->
             </el-form-item>
-            <!--<el-form-item label="发起时间">
-                <el-date-picker
-                    v-model="range"
-                    type="daterange"
-                    range-separator="至"
-                    placeholder="选择日期"
-                    value-format="yyyy-MM-dd"
-                    size="small"
-                    @change="getTime">
-                </el-date-picker>
-            </el-form-item>-->
             <el-form-item>
                 <el-button type="primary" size="small" @click="query">查询</el-button>
                 <el-button type="text" size="small" @click="reset('form')">清空所有条件</el-button>
             </el-form-item>
         </el-form>
         <el-table :data="list">
+            <el-table-column :label="tabName == 'contract' ? '合同模板ID' : '合同模板组ID'" :prop="tabName === 'contract' ? 'templateId' : 'groupId'"></el-table-column>
             <el-table-column :label="tabName == 'contract' ? '合同模板名称' : '合同模板组名称'" :prop="tabName === 'contract' ? 'name' : 'groupName'"></el-table-column>
-            <!--<el-table-column label="签约对象">
-                <template slot-scope="scope">
-                    <div v-for="(e, i) in scope.row.partys">
-                        {{partys[i]}}：{{e.userName ? e.userName : '个人'}}
-                    </div>
-                </template>
-            </el-table-column>-->
             <el-table-column label="服务商公司">
                 <template slot-scope="scope">
                     <div v-if="scope.row.templateId">
@@ -120,6 +68,8 @@ export default {
     data() {
         return {
             form: {
+                templateId: '',
+                templateGroupId: '',
                 name: '',
                 userName: '',
                 accessType: '',

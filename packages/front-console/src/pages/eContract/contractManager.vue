@@ -8,42 +8,11 @@
         <el-form :model="form" :inline="true" ref="query">
             <el-form-item label="商户名称：" prop="platformName" size="small">
                 <el-input v-model="form.platformName" placeholder="请输入关键词"></el-input>
-                <!-- <el-select
-                    v-model="form.platformName"
-                    filterable
-                    remote
-                    reserve-keyword
-                    placeholder="请输入关键词"
-                    :remote-method="remoteMethod"
-                    :loading="loading"
-                    size="small">
-                    <el-option
-                        v-for="e in platform"
-                        :key="e.extrSystemId"
-                        :label="e.extrSystemName"
-                        :value="e.extrSystemName">
-                    </el-option>
-                </el-select> -->
+            </el-form-item>
+            <el-form-item :label="tabName === 'contract' ? '合同模板ID' : '合同模板组ID'" :prop="tabName === 'contract' ? 'templateId' : 'templateGroupId'">
+                <el-input v-model="form[`${tabName === 'contract' ? 'templateId' : 'templateGroupId'}`]"></el-input>
             </el-form-item>
             <el-form-item :label="tabName === 'contract' ? '合同模板名称' : '合同模板组名称'" prop="name">
-                <!-- <el-select
-                    v-model="form.name"
-                    v-if="tabName === 'contract'"
-                    filterable
-                    remote
-                    reserve-keyword
-                    placeholder="请输入关键词"
-                    :remote-method="getName"
-                    :loading="loading"
-                    size="small">
-                    <el-option
-                        v-for="e in names"
-                        :key="e.name"
-                        :label="e.name"
-                        :value="e.name">
-                    </el-option>
-                </el-select> -->
-                <!-- v-else -->
                 <el-input v-model="form.name" placeholder="请输入关键词" size="small"></el-input>
             </el-form-item>
             <el-form-item label="签约对象" prop="userName">
