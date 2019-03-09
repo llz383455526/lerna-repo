@@ -10,7 +10,9 @@
                     <el-option v-for="item in systemList" :label="item.text" :value="item.value" :key="item.value"></el-option>
                 </el-select>
             </el-form-item>
-
+            <el-form-item label="角色名称" size="small" prop="roleName">
+                <el-input v-model="formSearch.roleName"></el-input>
+            </el-form-item>
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="search" size="small">查询</el-button>
                 <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
@@ -65,7 +67,8 @@
                 pageSize: 10,
 				systemList: [],
 				formSearch: {
-					sourceType: ''
+					sourceType: '',
+                    roleName: '',
                 }
             }
         },

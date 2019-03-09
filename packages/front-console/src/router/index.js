@@ -4,6 +4,7 @@ let login = r => require.ensure([], () => r(require('../pages/login.vue')), 'log
 let main = r => require.ensure([], () => r(require('../pages/main.vue')), 'main');
 let account = r => require.ensure([], () => r(require('../pages/account/basic.vue')), 'account');
 let payOrder = r => require.ensure([], () => r(require('../pages/accountManager/payOrder.vue')), 'payOrder');
+const releaseRecord = r => require.ensure([], () => r(require('../pages/accountManager/releaseRecord.vue')), 'releaseRecord')
 let accountIndex = r => require.ensure([], () => r(require('../pages/account/index.vue')), 'accountIndex');
 let payOrderReject = r => require.ensure([], () => r(require('../pages/accountManager/payOrderReject.vue')), 'payOrderReject');
 let fundDetail = r => require.ensure([], () => r(require('../pages/account/fundDetail.vue')), 'fundDetail');
@@ -183,6 +184,14 @@ export default [{
               meta: {
                 keepAlive: false
               }
+            },
+            {
+              path: 'releaseRecord',
+              component: releaseRecord,
+              meta: {
+                keepAlive: false,
+              },
+              name: '发放记录'
             },
             {
               path: 'offlineSalaryUpload',

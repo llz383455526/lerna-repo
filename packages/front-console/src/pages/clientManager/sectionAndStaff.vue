@@ -1,6 +1,20 @@
 <template>
   <div class="r_main">
-    <div style="margin:30px 00px;font-size:20px">部门及员工帐号</div>
+    <div style="margin:30px 0 0;font-size:20px;">
+      <div style="float:left;">部门及员工帐号</div>
+      <div style="float:right;">
+        <el-form :inline="true" size="small" :model="staff_query_form" ref="staff_query_form">
+          <el-form-item label="姓名/电话" prop="accountInfo">
+            <el-input v-model="staff_query_form.accountInfo"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="staff_query">查询</el-button>
+            <el-button @click="staff_clear">清除</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div style="clear:both;"></div>
+    </div>
     <div class="box">
       <div>
         <span>组织结构管理</span>
@@ -292,7 +306,8 @@ export default {
         companyId: -1,
         orgGroupId: '',
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        accountInfo: '',
       },
       staff_query_data: {},
       // -----------------------------
@@ -595,6 +610,9 @@ export default {
     staff_size_change(a) {
       this.staff_query_form.pageSize = a
       this.staff_query()
+    },
+    staff_clear() {
+      this.$refs.staff_query_form.resetFields()
     },
     staff_edit(id) {
       get('/api/sysmgr-web/employee/employeeDetail', { id }).then(data => {
