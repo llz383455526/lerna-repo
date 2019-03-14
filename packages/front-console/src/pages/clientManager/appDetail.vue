@@ -99,8 +99,25 @@
         </el-row>
     </div>
     <div class="title">系统配置</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="eshow = true">编辑</el-button>
-    <div class="text">
-        C端银行卡绑定（C端签约时） {{data.clientAccountBind === 0 ? '关闭' : '开启'}}
+    <div class="box">
+        <el-row :gutter="20">
+            <el-col :span="20">
+                <el-col :span="6" class="right">C端银行卡绑定（C端签约时）</el-col>
+                <el-col :span="10" style="word-wrap: break-word;">{{!data.clientAccountBind ? '关闭' : '开启'}}</el-col>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20">
+            <el-col :span="20">
+                <el-col :span="6" class="right">安心记直充模式</el-col>
+                <el-col :span="10" style="word-wrap: break-word;">{{!data.apiRecharge ? '关闭' : '开启'}}</el-col>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20">
+            <el-col :span="20">
+                <el-col :span="6" class="right">退汇回调地址</el-col>
+                <el-col :span="10" style="word-wrap: break-word;">{{data.reexchangeCallbackUrl}}</el-col>
+            </el-col>
+        </el-row>
     </div>
           <div class="title">支付渠道</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="addChannel">添加支付渠道</el-button>
           <el-table :data="data.payUsers">
@@ -353,10 +370,20 @@
               <el-button size="small" @click="cshow = false">关闭</el-button>
           </span>
       </el-dialog>
-      <el-dialog title="编辑" :visible.sync="eshow" @open="clientAccountBind = data.clientAccountBind" width="50%">
-          C端银行卡绑定（C端签约时） 
-          <el-radio v-model="clientAccountBind" :label="1">开启</el-radio>
-          <el-radio v-model="clientAccountBind" :label="0">关闭</el-radio>
+      <el-dialog title="编辑" :visible.sync="eshow" @open="initSetForm" width="50%">
+          <el-form :model="setForm" label-width="220px" ref="setForm">
+              <el-form-item label="C端银行卡绑定（C端签约时）" prop="clientAccountBind">
+                    <el-radio v-model="setForm.clientAccountBind" :label="1">开启</el-radio>
+                    <el-radio v-model="setForm.clientAccountBind" :label="0">关闭</el-radio>
+              </el-form-item>
+              <el-form-item label="安心记直充模式" prop="apiRecharge">
+                    <el-radio v-model="setForm.apiRecharge" :label="1">开启</el-radio>
+                    <el-radio v-model="setForm.apiRecharge" :label="0">关闭</el-radio>
+              </el-form-item>
+              <el-form-item label="退汇回调地址" prop="reexchangeCallbackUrl">
+                  <el-input v-model="setForm.reexchangeCallbackUrl"></el-input>
+              </el-form-item>
+          </el-form>
           <span class="form_footer" slot="footer">
               <el-button size="small" @click="changeStatus" type="primary">确定</el-button>
               <el-button size="small" @click="eshow = false">取消</el-button>
@@ -475,7 +502,12 @@ export default {
       serviceList: [],
       toggle: false,
       eshow: false,
-      clientAccountBind: ''
+      setForm: {
+          appId: '',
+          clientAccountBind: '',
+          apiRecharge: '',
+          reexchangeCallbackUrl: ''
+      }
     };
   },
   mounted() {
@@ -524,6 +556,8 @@ export default {
       post("/api/sysmgr-web/company-app/detail", {
         appId: this.appId
       }).then(data => {
+        data.clientAccountBind = data.clientAccountBind || 0
+        data.apiRecharge = data.apiRecharge || 0
         this.data = data;
         !this.data.payUsers && (this.data.payUsers = []);
         for(let k in this.aform) {
@@ -906,13 +940,15 @@ export default {
     },
     changeStatus() {
         // clientAccountBind
-        post('/api/sysmgr-web/company-app/update-app-sys-config', {
-            appId: this.data.appId,
-            clientAccountBind: this.clientAccountBind
-        }).then(data => {
+        post('/api/sysmgr-web/company-app/update-app-sys-config', this.setForm).then(data => {
             this.eshow = false
             this.query()
         })
+    },
+    initSetForm() {
+        for(let k in this.setForm) {
+            this.setForm[k] = this.data[k]
+        }
     }
   }
 };
