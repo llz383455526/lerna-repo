@@ -86,7 +86,6 @@
                     <el-option label="所有" value=""></el-option>
                     <el-option v-for="(item, index) in agentList" :label="item.companyName" :value="item.companyName" :key="index"></el-option>
                 </el-select>
-                </el-input>
             </el-form-item>
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="query">查询</el-button>

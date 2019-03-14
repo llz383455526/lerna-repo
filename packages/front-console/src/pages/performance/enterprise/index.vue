@@ -132,7 +132,7 @@
         label="操作">
         <template slot-scope="scope">
           <el-button @click="downloadBtnClick(scope.row)" type="text" size="small">下载</el-button>
-          <el-button @click="downloadPdf(scope.row)" type="text" size="small">下载结算函</el-button>
+          <el-button @click="downloadPdf(scope.row)" type="text" size="small">下载结算确认函</el-button>
         </template>
       </el-table-column>
     </el-table>
