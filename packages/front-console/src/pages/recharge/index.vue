@@ -40,7 +40,7 @@
         <el-button type="primary" @click="dialogCreateVisible=true;isService = false" v-if="checkRight(permissions, 'balance-web:/recharge-order/comfirm') && !riskApprove">充值申请</el-button>
         <!-- v-if="checkRight(permissions, 'balance-web:/recharge-order/comfirm') && !riskApprove" -->
         <el-button type="primary" @click="dialogCreateVisible=true;isService = true" >服务费充值申请</el-button>
-        <el-table :data="rechargeApplyList.list" style="width: 100%;margin-top: 20px;">
+        <el-table :data="rechargeApplyList.list" style="margin-top: 20px;">
                 <el-table-column prop="stateName" label="处理状态" width="100px">
                     <template slot-scope="scope">
                         {{scope.row.stateName}}
@@ -88,6 +88,11 @@
                 <el-table-column prop="purpose" label="备注"></el-table-column>
                 <el-table-column prop="updateByNme" label="处理人" width="100px"></el-table-column>
                 <el-table-column prop="updateAt" label="处理时间" width="100px"></el-table-column>
+                <el-table-column label="操作" width="120px">
+                    <template slot-scope="scope">
+                        <el-button type="text" v-if="scope.row.state == 30 && checkRight(permissions, 'balance-web:/recharge-order/generate-signature')" @click="downloadPdf(scope.row)">发放审核函</el-button>
+                    </template>
+                </el-table-column>
         </el-table>
 
         <ayg-pagination 
@@ -1292,6 +1297,11 @@ export default {
                 cancelAnimationFrame(this.frame)
             })
         }
+    },
+    downloadPdf(a) {
+        get(`/api/balance-web/recharge-order/generate-signature?orderId=${a.id}`).then(data => {
+            window.open(`/api/sysmgr-web/file/download?downloadCode=${data}`)
+        })
     }
   }
 };

@@ -132,6 +132,7 @@
         label="操作">
         <template slot-scope="scope">
           <el-button @click="downloadBtnClick(scope.row)" type="text" size="small">下载</el-button>
+          <el-button @click="downloadPdf(scope.row)" type="text" size="small">下载结算函</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -237,6 +238,9 @@
       // 下载按钮点击
       downloadBtnClick(e) {
         window.open(`/api/recon/perf/export-month-perf-by-id?id=${e.id}`)
+      },
+      downloadPdf(e) {
+        window.open(`/api/recon/perf/pdf-export-month-perf-by-id?id=${e.id}`)
       }
     },
     mounted() {
