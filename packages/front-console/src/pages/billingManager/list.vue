@@ -40,11 +40,7 @@
       <el-table-column prop="checker" label="复核"></el-table-column>
       <el-table-column prop="drawer" label="开票人"></el-table-column>
       <el-table-column prop="ppMaxAmount" label="普票最大限额" width="120"></el-table-column>
-      <!-- <el-table-column prop="ppMaxNum" label="普票最大张数" width="120"></el-table-column> -->
-      <el-table-column prop="ppLeftNum" label="普票剩余票量" width="120"></el-table-column>
       <el-table-column prop="zpMaxAmount" label="专票最大限额" width="120"></el-table-column>
-      <!-- <el-table-column prop="zpMaxNum" label="专票最大张数" width="120"></el-table-column> -->
-      <el-table-column prop="zpLeftNum" label="专票剩余票量" width="120"></el-table-column>
       <el-table-column prop="phone" label="电话" width="150"></el-table-column>
       <el-table-column prop="bankName" label="开户行" width="150"></el-table-column>
       <el-table-column prop="bankAccount" label="银行账号" width="200"></el-table-column>

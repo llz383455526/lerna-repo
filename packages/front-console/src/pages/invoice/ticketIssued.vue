@@ -124,7 +124,7 @@
         :currentPage="form.page">
       </el-pagination>
     </div> -->
-    <el-dialog title="已开发票" :visible.sync="ashow" width="70%">
+    <el-dialog title="已开发票" :visible.sync="ashow" width="1000px">
       <div class="half">
         <span>申请编号： {{invoiceData.orderNo}}</span>
         <span>申请时间： {{invoiceData.createTime | formatTime}}</span>
@@ -146,7 +146,7 @@
       </div>
       <el-table class="table" :data="invoiceData.items" border>
         <el-table-column type="index" label="序号"></el-table-column>
-        <el-table-column prop="subjectName" label="开票类目"></el-table-column>
+        <el-table-column prop="fullName" label="开票类目"></el-table-column>
         <el-table-column prop="amount" label="开票金额"></el-table-column>
         <el-table-column prop="serviceCompanyName" label="开票公司"></el-table-column>
         <el-table-column prop="paperStatusName" label="状态"></el-table-column>
@@ -158,6 +158,12 @@
             {{scope.row.createTime | formatTime}}
           </template>
         </el-table-column>
+        <!-- <el-table-column label="操作" width="200">
+          <template slot-scope="scope">
+            <el-button type="text">作废</el-button>
+            <el-button type="text">冲红</el-button>
+          </template>
+        </el-table-column> -->
       </el-table>
       <span slot="footer">
             <el-button @click="ashow = false" type="primary">关闭</el-button>
@@ -184,15 +190,15 @@
         <span>开票类型： {{invoiceData.invoiceTypeName}}</span>
       </div>
       <el-table class="table" @selection-change="select" :data="invoiceData.items" border>
-        <el-table-column type="selection"></el-table-column>
+        <el-table-column type="selection" :selectable="checkRow"></el-table-column>
         <el-table-column type="index" label="序号"></el-table-column>
-        <el-table-column prop="subjectName" label="开票类目"></el-table-column>
+        <el-table-column prop="fullName" label="开票类目"></el-table-column>
         <el-table-column prop="amount" label="开票金额"></el-table-column>
         <el-table-column prop="serviceCompanyName" label="开票公司"></el-table-column>
         <el-table-column prop="statusMsg" label="状态"></el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <el-button v-if="scope.row.status === 'fail' || scope.row.status === 'dealing'" size="mini" @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
+            <el-button v-if="scope.row.status === 'fail' || scope.row.status === 'dealing'" type="text" @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -225,13 +231,13 @@
       <el-table class="table" @selection-change="select" :data="invoiceData.items" border>
         <!-- <el-table-column type="selection"></el-table-column> -->
         <el-table-column type="index" label="序号"></el-table-column>
-        <el-table-column prop="subjectName" label="开票类目"></el-table-column>
+        <el-table-column prop="fullName" label="开票类目"></el-table-column>
         <el-table-column prop="amount" label="开票金额"></el-table-column>
         <el-table-column prop="serviceCompanyName" label="开票公司"></el-table-column>
         <el-table-column prop="statusMsg" label="状态"></el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <el-button v-if="scope.row.status === 'fail' || scope.row.status === 'dealing'" size="mini" @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
+            <el-button v-if="scope.row.status === 'fail' || scope.row.status === 'dealing'" type="text" @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -514,8 +520,9 @@
     methods: {
       // 修改开票状态
       changeInvoiceStatus(item) {
-        this.xiuGaiKaiPiaoZhuangTaiPop = true
-        this.xiuGaiKaiPiaoZhuangTaiForm.id = item.id
+          this.oshow = false
+          this.xiuGaiKaiPiaoZhuangTaiPop = true
+          this.xiuGaiKaiPiaoZhuangTaiForm.id = item.id
       },
       // 膝盖开票状态确定按钮点击
       xiuGaiKaiPiaoZhuangTaiOkBtnClick() {
@@ -749,6 +756,9 @@
           })
         }).catch(err => {
         })
+      },
+      checkRow(a) {
+          return a.status != "fail"
       }
     }
   };

@@ -1,20 +1,16 @@
 <template>
     <div class="content" v-loading="isReady">
         <el-form :inline="true">
-            <el-form-item label="服务公司" size="small">
+            <el-form-item label="服务公司" size="small" style="padding-top: 7px">
                 <el-select v-model="serviceCompanyId" placeholder="查看落地公司剩余票量" @change="getCompanyInfo">
                     <el-option v-for="item in companyList" :key="item.value" :label="item.text":value="item.value"></el-option>
                 </el-select>
             </el-form-item>
-            <div v-if="companyInfo" style="display: inline-block;vertical-align: middle;">
-                <span>
-                    本月专票数：{{companyInfo.currentMonthCount}}张 ，
-                    总金额：{{companyInfo.currentMonthAmount}}
-                </span>
-                <span>
-                    剩余票数：<span class="red">{{companyInfo.leftCount}}</span>张
-                    可开票金额：<span class="red">{{companyInfo.leftAmount}}</span>
-                </span>
+            <div class="server-gongsi-piao-text" v-if="companyInfo" style="display: inline-block;vertical-align: middle;">
+                <span>专票剩余票数：{{companyInfo.leftZPCount}}</span>
+                <span>专票可开金额：{{companyInfo.leftZPAmount}}</span><br>
+                <span>普票剩余票数：{{companyInfo.leftPPCount}}</span>
+                <span>普票剩余金额：{{companyInfo.leftPPAmount}}</span>
             </div>
         </el-form>
 
@@ -87,20 +83,21 @@
             <el-table-column prop="statusName" label="申请状态" width="120"></el-table-column>
             <el-table-column prop="customCompanyName" label="客户名称" width="220"></el-table-column>
             <el-table-column prop="purpose" label="发票用途" width="220"></el-table-column>
+            <el-table-column prop="fullName" label="发票类目" width="220"></el-table-column>
             <el-table-column prop="amount" label="申请金额" width="120"></el-table-column>
             <el-table-column prop="num" label="申请票数" width="120"></el-table-column>
-            <el-table-column prop="realAmount" label="实开金额" width="120"></el-table-column>
-            <el-table-column prop="realNum" label="实开票数" width="120"></el-table-column>
-            <el-table-column prop="rejectAmount" label="拒开金额" width="120"></el-table-column>
-            <el-table-column prop="rejectNum" label="拒开票数" width="120"></el-table-column>
+            <el-table-column prop="serviceCompanyName" label="开票公司" width="220"></el-table-column>
             <el-table-column prop="invoiceTypeName" label="发票类型" width="120">
                 <template slot-scope="scope">
                     <div class="bill common" v-if="scope.row.invoiceTypeName.indexOf('普通') > -1">普票</div>
                     <div class="bill special" v-else>专票</div>
                 </template>
             </el-table-column>
-            <el-table-column prop="serviceCompanyName" label="开票公司" width="220"></el-table-column>
             <el-table-column prop="createByName" label="申请人" width="120"></el-table-column>
+            <!--<el-table-column prop="realAmount" label="实开金额" width="120"></el-table-column>-->
+            <!--<el-table-column prop="realNum" label="实开票数" width="120"></el-table-column>-->
+            <!--<el-table-column prop="rejectAmount" label="拒开金额" width="120"></el-table-column>-->
+            <!--<el-table-column prop="rejectNum" label="拒开票数" width="120"></el-table-column>-->
             <el-table-column prop="createTime" label="申请时间" width="220">
                 <template slot-scope="scope">
                     <span>{{scope.row.createTime | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
@@ -214,11 +211,10 @@
                 <span>{{formDetail.remark}}</span>
             </div>
 
-            <el-table :data="formDetail.items" style="width: 100%;margin-top: 20px;"
-                      @selection-change="handleSelectionChange">
+            <el-table :data="formDetail.items" style="width: 100%;margin-top: 20px;" @selection-change="handleSelectionChange" height="450px">
                 <el-table-column type="selection" v-if="formDetail.status == '1' && !isCancel"></el-table-column>
                 <el-table-column type="index" :index="indexMethod" width="70"></el-table-column>
-                <el-table-column prop="subjectName" label="开票类目"></el-table-column>
+                <el-table-column prop="fullName" label="开票类目"></el-table-column>
                 <el-table-column prop="amount" label="开票金额（含税）" width="150"></el-table-column>
                 <el-table-column prop="serviceCompanyName" label="开票公司" width="220"></el-table-column>
                 <el-table-column prop="statusName" label="状态"></el-table-column>
@@ -565,6 +561,15 @@
                 }).catch(() => {})
             },
             showOpenDialog() {
+
+                if (this.ChooseList.length === 0) {
+                    this.$message({
+                        message: '请至少选择一项',
+                        type: 'warning'
+                    });
+                    return
+                }
+
                 this.dialogDetailVisible = false;
                 this.dialogOpenVisible = true;
 
@@ -674,5 +679,10 @@
     }
     .special {
         background-color: #63D1F2;
+    }
+    .server-gongsi-piao-text span {
+        font-size: 12px;
+        width: 200px;
+        display: inline-block;
     }
 </style>

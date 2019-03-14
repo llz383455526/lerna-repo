@@ -9,13 +9,12 @@
                     <div class="label">商户名称<span>*</span></div>
                     <div class="input">
                         <el-form-item prop="customCompanyId">
-                            <el-select v-model="formData.customCompanyId" filterable placeholder="请选择" style="width: 250px;"
-                                       @change="getCompaniesDetail">
+                            <el-select v-model="formData.customCompanyId" filterable placeholder="请选择" style="width: 250px;" @change="getCompaniesDetail">
                                 <el-option
-                                        v-for="item in customCompaniesList"
-                                        :key="item.value"
-                                        :label="item.text"
-                                        :value="item.value">
+                                    v-for="item in customCompaniesList"
+                                    :key="item.value"
+                                    :label="item.text"
+                                    :value="item.value">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -88,7 +87,7 @@
             <el-form :inline="true" :model="formCategory" :rules="rulesCategory" ref="formCategory" v-if="tableShow">
                 <div class="input-container">
                     <div class="label">开票类目名
-                        <!--<span>*</span>-->
+                        <span>*</span>
                     </div>
                     <div class="input">
                         <el-form-item prop="subjectId">
@@ -128,7 +127,7 @@
                 </div>
                 <div class="input-container">
                     <div class="label">税率
-                        <!--<span>*</span>-->
+                        <span>*</span>
                     </div>
                     <div class="input">
                         <el-form-item prop="taxRate">
@@ -138,7 +137,7 @@
                 </div>
                 <div class="input-container">
                     <div class="label">发票用途（对内说明）
-                        <!--<span>*</span>-->
+                        <span>*</span>
                     </div>
                     <div class="input">
                         <el-form-item prop="purpose">
@@ -240,7 +239,7 @@
             </div>
 
             <div style="padding: 50px;">
-                <el-button type="primary" @click="previewForm('formData')">生成预览</el-button>
+                <!-- <el-button type="primary" @click="previewForm('formData')">生成预览</el-button> -->
                 <el-button type="primary" @click="submitForm('formData')">提交申请</el-button>
                 <el-button @click="routerPush('/main/invoice/list');resetForm();">取消</el-button>
             </div>
@@ -409,10 +408,8 @@
                 });
             },
             getCustomCompanies() {
-                let url = '/api/invoice-web/invoice/custom-company-options';
-                let self = this;
-                get(url).then(data => {
-                    self.customCompaniesList = data;
+                get(`/api/invoice-web/invoice//custom-company-by-serviceId?serviceCompanyId=${this.formData.serviceCompanyId}`).then(data => {
+                    this.customCompaniesList = data;
                 })
             },
             getCustomSubject() {
@@ -539,12 +536,29 @@
                 // }
 
                 // if (validData && validCategory) {
+
                 if (validData) {
-                    post(url, param).then(data => {
-                        showNotify('success', data);
-                        this.$router.push({path: '/main/invoice/list'});
-                    });
+                    this.checkFormCategory().then(() => {
+                        post(url, param).then(data => {
+                            showNotify('success', data);
+                            this.$router.push({path: '/main/invoice/list'});
+                        });
+                    }).catch(() => {})
                 }
+            },
+            /**
+             * 校验发票类目
+             */
+            checkFormCategory() {
+                return new Promise((resolve, reject) => {
+                    this.$refs['formCategory'].validate((valid) => {
+                        if (valid) {
+                            resolve();
+                        } else {
+                            reject()
+                        }
+                    });
+                })
             },
             previewForm() {
                 let validData = false;
@@ -581,9 +595,11 @@
 
                 // if (validData && validCategory) {
                 if (validData) {
-                    post(url, param).then(data => {
-                		window.open(data);
-                    });
+                    this.checkFormCategory().then(() => {
+                        post(url, param).then(data => {
+                            window.open(data);
+                        });
+                    }).catch(() => {})
                 }
             },
             resetForm() {
@@ -632,8 +648,8 @@
             },
         },
         created() {
-            this.getCustomCompanies();
             this.formData.serviceCompanyId = this.$route.query.serviceCompanyId;
+            this.getCustomCompanies();
             if(this.$route.query.invoiceType == 'ZP') {
                 Object.assign(this.rulesData, {
                     addr: [

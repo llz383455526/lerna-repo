@@ -743,9 +743,6 @@
                 this.dialogDetailVisible = false
                 this.showDown = true
                 this.go(0)
-                // post('/api/invoice-web/invoice/create-preview').then(data => {
-
-                // })
             },
             go(a) {
                 if(isNaN(a)) {

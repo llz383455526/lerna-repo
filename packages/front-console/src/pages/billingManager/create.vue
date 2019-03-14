@@ -249,13 +249,13 @@
               message: "请输入受理点ID",
               trigger: "change"
             }],
-          kpjh:
-            [{
-              required: true,
-              message: "请输入开票机号",
-              trigger: "change"
-            }
-            ],
+        //   kpjh:
+        //     [{
+        //       required: true,
+        //       message: "请输入开票机号",
+        //       trigger: "change"
+        //     }
+        //     ],
           configType:
             [{
               required: true,

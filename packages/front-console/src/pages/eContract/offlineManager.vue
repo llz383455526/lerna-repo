@@ -41,6 +41,11 @@
           <el-option v-for="item in sighStateList" :label="item.value" :value="item.key" :key="item.key"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="签章类型:" prop="sealType" v-if="!userInformation.scrutator">
+        <el-select v-model="form.sealType">
+          <el-option v-for="item in sealTypeList" :label="item.text" :value="item.value" :key="item.value"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="query" size="small" :class="{disable: isHandle}">查询</el-button>
         <el-button size="small" @click="reset">清除</el-button>
@@ -101,6 +106,7 @@
   </div>
 </template>
 <script>
+import { mapGetters } from "vuex";
 import { post, get, importPost } from '../../store/api';
 import { baseUrl } from "../../config/address.js"
 export default {
@@ -121,7 +127,8 @@ export default {
         signState: '',
         pageSize: 10,
         pageNo: 1,
-        manufacturer: 1
+        manufacturer: 1,
+        sealType: ''
       },
       range: [t, t],
       extrSystemOptions: [],
@@ -130,8 +137,23 @@ export default {
       show: false,
       fileList: [],
       currId: '',
-      baseUrl: ''
+      baseUrl: '',
+      sealTypeList: [
+          {
+              value: '0',
+              text: '机器印章'
+          },
+          {
+              value: '1',
+              text: '人工印章'
+          }
+      ]
     }
+  },
+  computed: {
+    ...mapGetters({
+      userInformation: "userInformation"
+    })
   },
   mounted() {
     get('/api/econtract/inner/clientqry', {}).then(result => {
@@ -146,8 +168,14 @@ export default {
   },
   methods: {
     getTime() {
-        this.form.startTime = this.range[0] || ''
-      this.form.endTime = this.range[1] || ''
+        if(this.range && this.range.length) {
+            this.form.startTime = this.range[0]
+            this.form.endTime = this.range[1]
+        }
+        else {
+            this.form.startTime = ''
+            this.form.endTime = ''
+        }
     },
     query(a) {
       if(isNaN(a)) {

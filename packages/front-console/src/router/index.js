@@ -113,6 +113,7 @@ let messageCreate = r => require.ensure([], () => r(require('../pages/management
 
 let invoiceListNew = r => require.ensure([], () => r(require('../pages/reconciliationCenter/invoiceList')), 'invoiceList')
 let invoiceDetail = r => require.ensure([], () => r(require('../pages/reconciliationCenter/invoiceDetail')), 'invoiceDetail')
+let invoiceImport = r => require.ensure([], () => r(require('../pages/reconciliationCenter/invoiceImport')), 'invoiceImport')
 let contractListNew = r => require.ensure([], () => r(require('../pages/reconciliationCenter/contractList')), 'contractList')
 let contractDetail = r => require.ensure([], () => r(require('../pages/reconciliationCenter/contractDetail')), 'contractDetail')
 let rechargeList = r => require.ensure([], () => r(require('../pages/reconciliationCenter/rechargeList')), 'rechargeList')
@@ -852,8 +853,32 @@ export default [{
             },
             {
                 path: 'monitoring',
-                component: r => require.ensure([], () => r(require('../pages/billingManager/monitoring.vue')), 'monitoring')
-              }
+                component: r => require.ensure([], () => r(require('../pages/billingManager/monitoring.vue')), 'monitoring'),
+                meta: {
+                    keepAlive: false, //此组件不需要被缓存
+                }
+            },
+            {
+                path: 'clientInvoiceDetail',
+                component: r => require.ensure([], () => r(require('../pages/billingManager/clientInvoiceDetail.vue')), 'clientInvoiceDetail'),
+                meta: {
+                    keepAlive: false, //此组件不需要被缓存
+                }
+            },
+            {
+                path: 'forecastFlow',
+                component: r => require.ensure([], () => r(require('../pages/billingManager/forecastFlow.vue')), 'forecastFlow'),
+                meta: {
+                    keepAlive: false, //此组件不需要被缓存
+                }
+            },
+            {
+                path: 'forecastFlowList',
+                component: r => require.ensure([], () => r(require('../pages/billingManager/forecastFlowList.vue')), 'forecastFlowList'),
+                meta: {
+                    keepAlive: false, //此组件不需要被缓存
+                }
+            }
           ]
         },
         {
@@ -1041,7 +1066,17 @@ export default [{
             },
             {
               path: 'invoiceDetail',
-              component: invoiceDetail
+              component: invoiceDetail,
+              meta: {
+                  keepAlive: false
+              }
+            },
+            {
+                path: 'invoiceImport',
+                component: invoiceImport,
+                meta: {
+                    keepAlive: false
+                }
             },
             {
               path: 'contractList',

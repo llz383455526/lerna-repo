@@ -112,10 +112,10 @@
                                 <el-button type="primary" style="margin-left: 20px;" size="small" @click="handleEdit">修改</el-button>
                                 <div style="width:60%">
                                     <p class="fp" style="margin-left: 20px;">增值税普通发票量</p>
-                                    <p class="fp">剩余票量:{{invoice.ppLeftNum}}</p>
+                                    <p class="fp">剩余票量:{{invoice.surplusPpNum}}</p>
                                     <p class="fp">最大限额：{{invoice.ppMaxAmount}}</p><br/>
                                     <p class="fp" style="margin-left: 20px;">增值税专用发票量</p>
-                                    <p class="fp">剩余票量:{{invoice.zpLeftNum}}</p>
+                                    <p class="fp">剩余票量:{{invoice.surplusZpNum}}</p>
                                     <p class="fp">最大限额：{{invoice.zpMaxAmount}}</p>
                                 </div>
                             </div>
@@ -409,6 +409,18 @@
                     </div>
                     <div class="input">
                         <el-form-item prop="selectInvoiceType" size="small">
+                            <el-select v-model="formAdd.month">
+                                <el-option :value="new Date().getMonth() == 0 ? 12 : new Date().getMonth()"></el-option>
+                                <el-option :value="new Date().getMonth() + 1"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </div>
+                </div>
+                <div class="input-container">
+                    <div class="label dialog-label text-label">发票类型<span>*</span>
+                    </div>
+                    <div class="input">
+                        <el-form-item prop="selectInvoiceType" size="small">
                             <el-select v-model="formAdd.selectInvoiceType" placeholder="请选择发票类型">
                                 <el-option label="增值税专用发票" value="ZP"></el-option>
                                 <el-option label="增值税普通发票" value="PP"></el-option>
@@ -684,6 +696,7 @@ export default {
             businessShow:false,
             dialogAddInvoiceVisible:false,
             formAdd: {
+                month: '',
                 selectInvoiceType: '',
                 addInvoiceAmount: '',
                 addInvoiceComment: ''
@@ -783,7 +796,9 @@ export default {
         });*/
         this.getSchemeList();
     },
-    mounted() {},
+    mounted() {
+        this.formAdd.month = new Date().getMonth() + 1
+    },
     // computed: {
     //     ...mapGetters({
     //         userInformation: 'userInformation'
@@ -795,7 +810,10 @@ export default {
         },
         getData(){
             //票据状态
-            get(`/api/invoice-web/service-company/detail?id=${this.form.companyId}`).then(data => {
+            // get(`/api/invoice-web/service-company/detail?id=${this.form.companyId}`).then(data => {
+            //     this.invoice = data;
+            // })
+            get(`/api/invoice-web/invoice-monitor/serviceCompanyTicket?serviceCompanyId=${this.form.companyId}`).then(data => {
                 this.invoice = data;
             })
 
@@ -819,10 +837,11 @@ export default {
             this.$refs[formName].validate(valid => {
                 if (valid) {
                     let param = {
-                        id:this.form.companyId,
+                        id: this.form.companyId,
                         addNum: this.formAdd.addInvoiceAmount,
-                        invoiceType:this.formAdd.selectInvoiceType,
-                        remark:this.formAdd.addInvoiceComment
+                        invoiceType: this.formAdd.selectInvoiceType,
+                        remark: this.formAdd.addInvoiceComment,
+                        month: this.formAdd.month
                     };
                     post('/api/invoice-web/service-company/add-num', param).then(data => {
                         showNotify('success', data);

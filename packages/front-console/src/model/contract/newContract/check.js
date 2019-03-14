@@ -2,7 +2,7 @@ import BaseModel from '../../base/BaseModel';
 
 // 是否为邮箱
 var isEmail = (rule, value, callback) => {
-    if (!/(^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$)/.test(value)) {
+    if (!/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/.test(value)) {
         callback(new Error('请输入正确的邮箱地址'));
     } else {
         callback()
@@ -47,9 +47,10 @@ class Check extends BaseModel {
             contractPerson: [
                 { required: true, message: '请输入销售姓名', trigger: 'blur' }
             ],
-            // contractEmail: [
-            //     { required: true, message: '请输入销售联系邮箱', trigger: 'blur' }
-            // ],
+            contractEmail: [
+                { required: true, message: '请输入销售联系邮箱', trigger: 'blur' },
+                { validator: isEmail, message: '邮箱格式不正确', trigger: 'blur' }
+            ],
             contractTel: [
                 { required: true, message: '请输入销售联系电话', trigger: 'blur' }
             ],
@@ -82,10 +83,10 @@ class Check extends BaseModel {
                 { required: true, message: '请输入负责人手机', trigger: 'blur' },
                 { validator: isMobile, trigger: 'blur' }
             ],
-            // customMail1: [
-            //     { required: true, message: '请输入负责人邮箱', trigger: 'blur' },
-            //     { validator: isEmail, trigger: 'blur' }
-            // ],
+            customMail1: [
+                { required: true, message: '请输入负责人邮箱', trigger: 'blur' },
+                { validator: isEmail, message: '邮箱格式不正确', trigger: 'blur' }
+            ],
             customCollectorAddr: [
                 { required: true, message: '请输入负责人地址', trigger: 'blur' }
             ],
