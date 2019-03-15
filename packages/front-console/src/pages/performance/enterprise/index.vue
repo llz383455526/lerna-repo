@@ -120,12 +120,12 @@
         align="center"
         label="绩效金额">
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="updateTime"
         header-align="center"
         align="center"
         label="更新时间">
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         header-align="center"
         align="center"
