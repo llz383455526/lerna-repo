@@ -49,7 +49,7 @@
                         </template>
                     </template>
                 </el-table-column>
-                <el-table-column prop="companyName" label="充值单号" width="120px">
+                <el-table-column prop="companyName" label="充值单号" width="110px">
                     <template slot-scope="scope">
                         <el-button @click="getDetail(scope.row)" type="text">{{scope.row.orderNo}}</el-button>
                     </template>
@@ -61,7 +61,7 @@
                 </el-table-column>
                 <el-table-column prop="appName" label="商户名称"></el-table-column>
                 <el-table-column prop="companyName" label="公司名称"></el-table-column>
-                <el-table-column label="服务商信息" width="240px">
+                <el-table-column label="服务商信息" width="200px">
                     <template slot-scope="scope">
                         <div>账户名称：{{scope.row.accountName}}</div>
                         <div>开户行：{{scope.row.depositBank}}</div>
@@ -86,9 +86,9 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="purpose" label="备注"></el-table-column>
-                <el-table-column prop="updateByNme" label="处理人" width="100px"></el-table-column>
+                <el-table-column prop="updateByNme" label="处理人" width="80px"></el-table-column>
                 <el-table-column prop="updateAt" label="处理时间" width="100px"></el-table-column>
-                <el-table-column label="操作" width="120px">
+                <el-table-column label="操作">
                     <template slot-scope="scope">
                         <el-button type="text" v-if="scope.row.state == 30 && checkRight(permissions, 'balance-web:/recharge-order/generate-signature')" @click="downloadPdf(scope.row)">发放审核函</el-button>
                     </template>
