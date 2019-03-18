@@ -16,12 +16,12 @@ export default {
         return {
           msg: {},
           routerName: 'index',
-	        templateName: ''
+	      templateName: ''
         }
     },
     mounted() {
         this.msg = JSON.parse(sessionStorage.getItem('sign'))
-        if(this.msg.partys[this.msg.partys.length - 1].signMode == 3) {
+        if(this.msg && this.msg.partys[this.msg.partys.length - 1].signMode == 3) {
           this.routerName = 'offlineManager'
         }
         this.templateName = this.$route.query.name

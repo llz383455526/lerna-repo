@@ -63,7 +63,7 @@
             <el-table-column label="合同原件">
                 <template slot-scope="scope">
                     <div v-if="scope.row.templateId">
-                        <a target="_bank" :href="`${baseUrl}/api/econtract/template/download?fileName=${scope.row.fname}`">{{scope.row.fname}}</a>
+                        <a target="_bank" :href="`${baseUrl}/api/econtract/template/download?fileName=${scope.row.fname}&storeType=${scope.row.storeType}`">{{scope.row.fname}}</a>
                     </div>
                     <div v-else>
                         <div v-for="item in scope.row.templateFileNames">

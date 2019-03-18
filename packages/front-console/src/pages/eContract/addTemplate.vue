@@ -155,6 +155,10 @@
                 <el-radio v-model="form.passportType" label="1">是</el-radio>
                 <el-radio v-model="form.passportType" label="2">否</el-radio>
             </el-form-item>
+            <el-form-item label="存储方式" prop="storeType">
+                <el-radio v-model="form.storeType" label="1" :disabled="form.enable ? true : false">硬盘存储</el-radio>
+                <el-radio v-model="form.storeType" label="2" :disabled="form.enable ? true : false">OSS存储</el-radio>
+            </el-form-item>
             <el-form-item label="是否需要绑定银行卡" prop="bindBank" v-if="form.signModel && form.signModel == 2 && bindBank">
                 <el-radio v-model="form.bindBank" label="1">是</el-radio>
                 <el-radio v-model="form.bindBank" label="2">否</el-radio>
@@ -245,6 +249,7 @@ export default {
                 linkType: '1',
                 passportType: '1',
                 signModel: '2',
+                storeType: '2',
                 bindBank: '2'
             },
             rules: {
@@ -277,6 +282,9 @@ export default {
                 ],
                 passportType: [
                     { required: true, message: '请选择是否需要上传证件照', trigger: 'blur' }
+                ],
+                storeType: [
+                    { required: true, message: '请选择储存方式', trigger: 'blur' }
                 ],
                 bindBank: [
                     { required: true, message: '请选择是否需要绑定银行卡', trigger: 'blur' }
@@ -607,6 +615,7 @@ export default {
                         formData.append('personalPartyNum', this.form.partys[1].signNo)
                         formData.append('companyPartyNum', companyPartyNum)
                         formData.append('partyCount', this.form.partycount)
+                        formData.append('storeType', this.form.storeType)
                         importPost('/api/econtract/template/uploadfile', formData).then(data => {
                             this.form.fname = data.fname
                             this.form.furl = data.url

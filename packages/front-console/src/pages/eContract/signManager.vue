@@ -169,6 +169,7 @@ export default {
 		        sessionStorage.setItem('sign', JSON.stringify(a))
 		        this.$router.push('uploadObject')
             }else {
+                sessionStorage.removeItem('sign')
                 this.$router.push({
                     path: `start/${a.groupId}`,
                     query: {
@@ -177,7 +178,6 @@ export default {
                     }
                 })
             }
-
         },
         record(a) {
             sessionStorage.setItem('query', JSON.stringify({
