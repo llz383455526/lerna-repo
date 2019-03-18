@@ -112,15 +112,27 @@
                 <el-table-column prop="certStateDesc" label="身份证认证状态"></el-table-column>
             </el-table>
         </div>
-
-        <ayg-pagination
+        <div class="right">
+            <el-pagination
+                v-if="!isHandle && tableList.total"
+                background
+                :total="tableList.total"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="pageIndex"
+                :page-sizes="[10, 20, 30, 40, 500, 1000]"
+                :page-size="pageSize"
+                layout="total, prev, pager, next, sizes, jumper">
+            </el-pagination>
+        </div>
+        <!-- <ayg-pagination
             v-if="!isHandle && tableList.total"
             :total="tableList.total"
             v-on:handleSizeChange="handleSizeChange"
             :currentSize="pageSize"
             v-on:handleCurrentChange="handleCurrentChange"
             :currentPage="pageIndex">
-        </ayg-pagination>
+        </ayg-pagination> -->
         <div class="tip" v-if="isHandle">
             <div class="center">
                 已选 <span class="c66B1FF">{{selection.length}}</span> 条，是否确认批量{{ableType == 1 ? '重发' : '取消'}}？
@@ -434,5 +446,9 @@
     }
     .c66B1FF {
         color: #66B1FF;
+    }
+    .right {
+        display: flex;
+        justify-content: flex-end;
     }
 </style>

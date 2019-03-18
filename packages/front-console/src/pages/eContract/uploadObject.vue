@@ -94,7 +94,7 @@
                 </div>
                 <div class="ditem">
                     <div>上传文件导入</div>
-                    <div>请上传小于5M的xls或xlsx格式文件。</div>
+                    <div>请上传小于5M的xls或xlsx格式文件。<span class="red">注：Excel表格中实际用户行数不得大于1.5万条，若超过请手动拆分，若有占位空行请删除。</span></div>
                     <el-upload
                         class="form_input"
                         drag
@@ -122,7 +122,7 @@
                 </el-form-item>
                 <el-form-item label="证件类型：" prop="identityType">
                     <el-select v-model="editor.identityType" class="form_input">
-                        <el-option v-for="e in type" :key="e" :label="e.text" :value="e.value"></el-option>
+                        <el-option v-for="e in type" :key="e.value" :label="e.text" :value="e.value"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="证件号码：" prop="identity">
@@ -510,5 +510,9 @@ a {
 }
 .form_input {
     width: 400px;
+}
+.red {
+    color: red;
+    font-weight: bold;
 }
 </style>
