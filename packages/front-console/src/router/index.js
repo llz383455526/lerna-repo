@@ -169,7 +169,12 @@ const newContractPreview = () => import('../pages/newContract/preview')
 const newContractListComplated = () => import('../pages/newContract/list_complated')
 
 // iframe
-const iframeIndex = () => import('../pages/iframe/iframeIndex')
+const clientCompany = () => import('../pages/iframe/clientCompany')
+const grantRecord = () => import('../pages/iframe/grantRecord')
+const invoiceRecord = () => import('../pages/iframe/invoiceRecord')
+const technologyFee = () => import('../pages/iframe/technologyFee')
+const taxRecord = () => import('../pages/iframe/taxRecord')
+const paymentRecord = () => import('../pages/iframe/paymentRecord')
 
 
 export default [{
@@ -1271,13 +1276,50 @@ export default [{
         {
             path: 'iframe',
             component: index,
-            children: [{
-                path: 'iframeIndex',
-                component: iframeIndex,
+            children: [
+              {
+                path: 'clientCompany',
+                component: clientCompany,
                 meta: {
                   keepAlive: false
                 }
-            }]
+              },
+              {
+                path: 'grantRecord',
+                component: grantRecord,
+                meta: {
+                  keepAlive: false
+                }
+              },
+              {
+                path: 'invoiceRecord',
+                component: invoiceRecord,
+                meta: {
+                  keepAlive: false
+                }
+              },
+              {
+                path: 'technologyFee',
+                component: technologyFee,
+                meta: {
+                  keepAlive: false
+                }
+              },
+              {
+                path: 'taxRecord',
+                component: taxRecord,
+                meta: {
+                  keepAlive: false
+                }
+              },
+              {
+                path: 'paymentRecord',
+                component: paymentRecord,
+                meta: {
+                  keepAlive: false
+                }
+              }
+          ]
         }
       ],
     },
