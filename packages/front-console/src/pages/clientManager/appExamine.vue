@@ -71,6 +71,12 @@
     	        		  <el-col :span="5" class="right">客户归属</el-col><el-col :span="10">{{msg.originalName}}</el-col>
     	        	  </el-col>
                 </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="10">
+                        <el-col :span="5" class="right">企业审核人</el-col>
+                        <el-col :span="10">{{msg.companyAuditor}}</el-col>
+                    </el-col>
+                </el-row>
     	    </div>
             <el-table class="table" :data="tableData" border="">
                 <el-table-column prop="appName" label="商户名称"></el-table-column>

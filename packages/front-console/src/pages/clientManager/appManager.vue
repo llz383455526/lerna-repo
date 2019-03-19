@@ -92,6 +92,12 @@
             <el-col :span="10">{{msg.originalName}}</el-col>
           </el-col>
         </el-row>
+        <el-row :gutter="20">
+          <el-col :span="10">
+            <el-col :span="5" class="right">企业审核人</el-col>
+            <el-col :span="10">{{msg.companyAuditor}}</el-col>
+          </el-col>
+        </el-row>
       </div>
       <el-button style="margin-top: 30px" type="primary" @click="add">添加商户</el-button>
       <el-table class="table" :data="tableData" border>
@@ -216,6 +222,9 @@
               </template>
             </el-table-column>
           </el-table>
+        </el-form-item>
+        <el-form-item label="企业审核人" prop="companyAuditor">
+          <el-input v-model="cform.companyAuditor" class="f_input"></el-input>
         </el-form-item>
       </el-form>
       <span class="form_footer" slot="footer">
@@ -367,7 +376,24 @@ export default {
     return {
       baseUrl: baseUrl,
       fullName: "",
-      cform: {},
+      cform: {
+        id: '',
+        fullName: '',
+        name: '',
+        taxLandingId: '',
+        chargeBy: '',
+        chargeByName: '',
+        legalPerson: '',
+        areaName: '',
+        registerDate: '',
+        salesList: [],
+        email: '',
+        chargeMobile: '',
+        original: '',
+        originalType: '',
+        originalTypeName: '',
+        companyAuditor: ''
+      },
       show: false,
       queryForm: {
         accountInfo: "",
@@ -676,23 +702,12 @@ export default {
     },
     editCompany() {
       this.coshow = true;
-      this.cform = {
-        id: this.msg.id,
-        fullName: this.msg.fullName,
-        name: this.msg.name,
-        taxLandingId: this.msg.taxLandingId,
-        chargeBy: this.msg.chargeBy,
-        chargeByName: this.msg.chargeByName,
-        legalPerson: this.msg.legalPerson,
-        areaName: this.msg.areaName,
-        registerDate: this.msg.registerDate,
-        salesList: this.msg.salesList || [],
-        email: this.msg.chargeEmail,
-        chargeMobile: this.msg.chargeMobile,
-        original: this.msg.original,
-        originalType: this.msg.originalType,
-        originalTypeName: this.msg.originalTypeName
-      };
+      for(let k in this.cform) {
+          if(this.msg[k]) {
+              this.cform[k] = this.msg[k]
+          }
+      }
+      this.cform.email = this.msg.chargeEmail
     },
     upDate() {
       this.$refs["cform"].validate(valid => {

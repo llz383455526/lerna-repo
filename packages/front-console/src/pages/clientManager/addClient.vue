@@ -59,6 +59,9 @@
                     </el-table-column>
                 </el-table>
             </el-form-item>
+            <el-form-item label="企业审核人" prop="companyAuditor">
+                <el-input class="form_input" v-model="form.companyAuditor"></el-input>
+            </el-form-item>
         </el-form>
         <el-dialog title="添加" :visible.sync="show">
             <el-form :model="queryForm" size="small" :inline="true">
@@ -113,7 +116,8 @@ export default {
           registerDate: "",
           salesList: [],
           originalType: '',
-          originalTypeName: ''
+          originalTypeName: '',
+          companyAuditor: ''
         },
         queryForm: {
           accountInfo: '',
