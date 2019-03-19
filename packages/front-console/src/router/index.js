@@ -168,6 +168,9 @@ const newContractDetail = () => import('../pages/newContract/detail')
 const newContractPreview = () => import('../pages/newContract/preview')
 const newContractListComplated = () => import('../pages/newContract/list_complated')
 
+// iframe
+const iframeIndex = () => import('../pages/iframe/iframeIndex')
+
 
 export default [{
   path: '/',
@@ -1264,6 +1267,17 @@ export default [{
                 }
             }
           ]
+        },
+        {
+            path: 'iframe',
+            component: index,
+            children: [{
+                path: 'iframeIndex',
+                component: iframeIndex,
+                meta: {
+                  keepAlive: false
+                }
+            }]
         }
       ],
     },
