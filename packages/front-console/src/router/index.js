@@ -173,9 +173,11 @@ const clientCompany = () => import('../pages/iframe/clientCompany')
 const grantRecord = () => import('../pages/iframe/grantRecord')
 const invoiceRecord = () => import('../pages/iframe/invoiceRecord')
 const technologyFee = () => import('../pages/iframe/technologyFee')
-const taxRecord = () => import('../pages/iframe/taxRecord')
 const paymentRecord = () => import('../pages/iframe/paymentRecord')
-
+const companyTax = () => import('../pages/iframe/companyTax')
+const personTax = () => import('../pages/iframe/personTax')
+const addedValue = () => import('../pages/iframe/addedValue')
+const incomeTax = () => import('../pages/iframe/incomeTax')
 
 export default [{
   path: '/',
@@ -1306,15 +1308,36 @@ export default [{
                 }
               },
               {
-                path: 'taxRecord',
-                component: taxRecord,
+                path: 'paymentRecord',
+                component: paymentRecord,
                 meta: {
                   keepAlive: false
                 }
               },
               {
-                path: 'paymentRecord',
-                component: paymentRecord,
+                path: 'companyTax',
+                component: companyTax,
+                meta: {
+                  keepAlive: false
+                }
+              },
+              {
+                path: 'personTax',
+                component: personTax,
+                meta: {
+                  keepAlive: false
+                }
+              },
+              {
+                path: 'addedValue',
+                component: addedValue,
+                meta: {
+                  keepAlive: false
+                }
+              },
+              {
+                path: 'incomeTax',
+                component: incomeTax,
                 meta: {
                   keepAlive: false
                 }
