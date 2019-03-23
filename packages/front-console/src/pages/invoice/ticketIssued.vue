@@ -152,7 +152,7 @@
         <el-table-column prop="paperStatusName" label="状态"></el-table-column>
         <el-table-column prop="invoiceCode" label="发票代码"></el-table-column>
         <el-table-column prop="invoiceNo" label="发票号码"></el-table-column>
-        <el-table-column prop="createByName" label="开票人"></el-table-column>
+        <el-table-column prop="createByName" label="操作人"></el-table-column>
         <el-table-column prop="createTime" label="开票时间">
           <template slot-scope="scope">
             {{scope.row.createTime | formatTime}}

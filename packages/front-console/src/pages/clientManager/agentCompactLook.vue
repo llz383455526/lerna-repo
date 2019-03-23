@@ -48,7 +48,7 @@
     </el-row>
     <el-row class="mb15" style="font-weight: normal;">
       <el-col :span="4" style="text-align: right; margin-right: 20px;">银行账号：</el-col>
-      <el-col :span="8">155515</el-col>
+      <el-col :span="8">{{data.accountNo}}</el-col>
     </el-row>
     <div class="title">
       代理商联系信息

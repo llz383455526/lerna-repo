@@ -12,7 +12,7 @@
                         </div>
                         <div class="col-xs-6">合同收件人姓名：{{ contractModel.contractForm.receiver }}</div>
                         <div class="col-xs-6">合同收件人电话：{{ contractModel.contractForm.receivePhone }}</div>
-                        <div class="col-xs-12">合同收件人地址：{{ addr + ' ' + contractModel.contractForm.receiveAddr }}</div>
+                        <div class="col-xs-12">合同收件人地址：{{ addr + ' ' }}{{ contractModel.contractForm.receiveAddr }}</div>
                         <div class="col-xs-12">
                             <h4 class="block green">合同证据链</h4>
                         </div>
@@ -70,4 +70,3 @@ export default {
     }
 }
 </script>
-

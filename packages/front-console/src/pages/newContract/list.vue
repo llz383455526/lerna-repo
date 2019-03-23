@@ -43,6 +43,8 @@
         </el-form>
 
         <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_sale_contract'}})">创建合同</el-button>
+        <el-button size="small" @click="$router.push({path:'create_add'})">补签合同</el-button>
+        <!-- <el-button size="small" @click="$router.push({path:'create_update'})">修改已有合同</el-button> -->
         <!-- <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_ns_sale_contract'}})">新客户非标准合同</el-button> -->
 
         <div class="table-container">
@@ -55,7 +57,8 @@
                 <el-table-column prop="processedAt" label="最后审批时间"></el-table-column>
                 <el-table-column label="合同类型">
                     <template slot-scope="scope">
-                        {{scope.row.workflowType === 'create_sale_contract' ? '标准合同' : '非标准合同'}}
+                        {{workflowTypeList[scope.row.workflowType] || '非标合同'}}
+                        <!-- {{scope.row.workflowType === 'create_sale_contract' ? '标准合同' : '非标准合同'}} -->
                     </template>
                 </el-table-column>
                 <el-table-column prop="statusName" label="申请状态">
@@ -68,7 +71,7 @@
                 <el-table-column label="操作" width="200">
                     <template slot-scope="scope">
                         <el-button v-if="scope.row.status != 'draft'" @click="toPreview(scope.row.id, 'watch')" type="text" size="medium" style="padding:0;">查看</el-button>
-                        <el-button v-if="scope.row.status === 'init' || scope.row.status === 'draft'" @click="toCreate(scope.row.id, 'edit')" type="text" size="medium" style="padding:0;">编辑</el-button>
+                        <el-button v-if="scope.row.status === 'init' || scope.row.status === 'draft'" @click="toCreate(scope.row.id, scope.row.workflowType)" type="text" size="medium" style="padding:0;">编辑</el-button>
                         <el-button v-if="scope.row.status === 'init' && scope.row.createdBy == userInformation.id" @click="toDetail(scope.row.id, 'watch')" type="text" size="medium" style="padding:0;">送审</el-button>
                         <el-button v-if="scope.row.status === 'draft' || scope.row.status === 'init'" @click="closeContract(scope.row.id)" type="text" size="medium" style="padding:0;">删除</el-button>
                     </template>
@@ -117,7 +120,12 @@ export default {
                 moduleName: 'sale_contract'
             },
             statusList: [],
-            activeName: 'first'
+            activeName: 'first',
+            workflowTypeList: {
+                create_sale_contract: '标准合同',
+                add_sale_contract: '标准合同',
+                update_sale_contract: '标准合同',
+            },
         }
     },
     methods: {
@@ -178,8 +186,16 @@ export default {
             })
         },
         toCreate(id, type) {
+            const editType = {
+                create_sale_contract: 'create',
+                create_ns_sale_contract: 'create',
+                add_sale_contract: 'create_add',
+                add_ns_sale_contract: 'create_add',
+                update_sale_contract: 'create_update',
+                update_ns_sale_contract: 'create_update',
+            }
             this.$router.push({
-                path: 'create',
+                path: editType[type],
                 query: {
                     id: id,
                     editType: type

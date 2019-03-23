@@ -27,6 +27,9 @@ import offlineSalaryManager from './modules/offlineSalaryManager'
 import taxDiscount from './modules/taxDiscount'
 
 import status from './modules/status/index'
+import options from './modules/options'
+
+import saleContract from './modules/form/saleContract'
 
 Vue.use(Vuex);
 
@@ -59,7 +62,9 @@ export default new Vuex.Store({
 		offlineSalaryImport,
 		offlineSalaryManager,
         taxDiscount,
-        status
+        status,
+        options,
+        saleContract,
     }
 })
 

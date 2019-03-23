@@ -22,7 +22,7 @@
                     </el-form-item>
                     <hr>
                     <h4 class="h4">合同证据链</h4>
-                    <upload :list="contractModel.contractForm.receiveAttachments" style="width: 1100px;" @remove="handleRemove"></upload>
+                    <upload :list="contractModel.contractForm.receiveAttachments" style="width: 1100px;" @remove="handleRemove" @uploadSuccess="uploadSuccess"></upload>
                     <h4 class="h4">合同备注</h4>
                     <el-form-item>
                         <el-input style="width:1140px;" type="textarea" v-model="contractModel.contractForm.receiveMemo" maxlength="200"></el-input>
@@ -48,6 +48,10 @@ export default {
     methods: {
         handleRemove(index) {
             this.contractModel.contractForm.receiveAttachments.splice(index, 1)
+        },
+        uploadSuccess(obj) {
+            console.log(this.contractModel.contractForm)
+            this.contractModel.contractForm.receiveAttachments.push(obj)
         }
     }
 }

@@ -16,13 +16,13 @@
 
                 <el-form :inline="true" :model="contractModel.contractForm" :rules="check.rules" ref="contractForm"
                     label-width="200px" class="contractForm" :disabled="editType === 'watch'||editType ==='workflow'">
-                    <contractOption :contractModel="contractModel" @setSettleType="setSettleType" v-if="active === 0"></contractOption>
+                    <contractOption :ruleForm="contractModel.contractForm" @setSettleType="setSettleType" v-if="active === 0"></contractOption>
                     <customerEva :contractModel="contractModel" v-if="active === 1"></customerEva>
                     <salesContactInfo :contractModel="contractModel" v-if="active === 1"></salesContactInfo>
                     <companyBasicInfo :contractModel="contractModel" v-if="active === 2"></companyBasicInfo>
                     <relevantMerchantInfo :contractModel="contractModel" v-if="false"></relevantMerchantInfo>
                     <businessBillingInfo :contractModel="contractModel" v-if="active === 2"></businessBillingInfo>
-                    <companyInfo :contractModel="contractModel" v-if="active === 3"></companyInfo>
+                    <companyInfo :ruleForm="contractModel.contractForm" :serviceFeeList="contractModel.serviceFeeList" v-if="active === 3"></companyInfo>
                     <additionalClause :contractModel="contractModel" :editType="editType" :files="contractModel.files"
                         v-if="active === 4"></additionalClause>
                     <el-form-item v-if="editType != 'watch' && editType!='workflow' && false">
@@ -78,7 +78,10 @@ export default {
         let id = this.$route.query.id;
         if (id) {
             this.contractModel.contractId = id;
-            this.contractModel.getContractDetail(id, null, 'create');
+            this.contractModel.getContractDetail(id, null, 'create').then(() => {
+                // 返回数据处理服务类型
+                this.getServiceType();
+            });
         } else {
             // 新建的时候
             // 获取用户数据
@@ -103,7 +106,8 @@ export default {
     },
     computed: {
         ...mapGetters({
-            auth: "auth"
+            auth: "auth",
+            serviceTypeList: 'serviceTypeList',
         })
     },
     methods: {
@@ -156,6 +160,9 @@ export default {
                         showNotify('error', '请上传清单');
                         return;
                     }
+
+                    // 上传之前处理服务类型数据
+                    this.setServiceType()
 
                     let url = '/api/contract-web/contract/create-flow-contracts';
                     let param = {
@@ -210,6 +217,32 @@ export default {
                     this.saveContract(false);
                 }
             })
+        },
+        getServiceType() {
+            const serviceType = this.contractModel.contractForm.serviceType;
+            let arr = [];
+            if (serviceType && serviceType.length) {
+                serviceType.forEach(item => {
+                    if (item && item.serviceId) {
+                        arr.push(item.serviceId)
+                    }
+                })
+            }
+            if (arr.length > 0) {
+                this.contractModel.contractForm.serviceType = arr;
+            }
+        },
+        setServiceType() {
+            let arr = []
+            const serviceType = this.contractModel.contractForm.serviceType
+            this.serviceTypeList.forEach(item => {
+                serviceType.forEach(el => {
+                    if (item.serviceId === el) {
+                        arr.push(item)
+                    }
+                })
+            })
+            this.contractModel.contractForm.serviceType = arr
         }
     }
 }

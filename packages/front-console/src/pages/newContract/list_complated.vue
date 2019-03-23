@@ -37,7 +37,7 @@
 
     <!-- <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_sale_contract'}})">创建合同</el-button> -->
     <!-- <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_ns_sale_contract'}})">新客户非标准合同</el-button> -->
-    
+
     <div class="table-container">
         <el-table :data="tableList.data">
             <el-table-column prop="id" label="申请编号"></el-table-column>
@@ -47,7 +47,8 @@
             <el-table-column prop="processedAt" label="最后审批时间"></el-table-column>
             <el-table-column label="合同类型">
                 <template slot-scope="scope">
-                    {{scope.row.workflowType === 'create_sale_contract' ? '标准合同' : '非标准合同'}}
+                    {{workflowTypeList[scope.row.workflowType] || '非标合同'}}
+                    <!-- {{scope.row.workflowType === 'create_sale_contract' ? '标准合同' : '非标准合同'}} -->
                 </template>
             </el-table-column>
             <el-table-column prop="statusName" label="申请状态">
@@ -110,7 +111,12 @@ export default {
                 status: '',
                 moduleName: 'sale_contract'
             },
-            statusList: []
+            statusList: [],
+            workflowTypeList: {
+                create_sale_contract: '标准合同',
+                add_sale_contract: '标准合同',
+                update_sale_contract: '标准合同',
+            },
         }
     },
     methods: {
@@ -171,8 +177,16 @@ export default {
             })
         },
         toCreate(id, type) {
+            const editType = {
+                create_sale_contract: 'create',
+                create_ns_sale_contract: 'create',
+                add_sale_contract: 'create_add',
+                add_ns_sale_contract: 'create_add',
+                update_sale_contract: 'create_update',
+                update_ns_sale_contract: 'create_update',
+            }
             this.$router.push({
-                path: 'create',
+                path: editType[type],
                 query: {
                     id: id,
                     editType: type

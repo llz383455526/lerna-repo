@@ -168,20 +168,47 @@ export default {
     },
     submit () {
         if (this.contractForm.approveType == 'standard') {
-            this.contractModel.workflowType = 'create_sale_contract';
-            this.submitContract()
+            // this.contractModel.workflowType = 'create_sale_contract';
+            let workflowType = 'create_sale_contract'
+            if (this.contractModel.workflowType === 'add_ns_sale_contract') {
+                workflowType = 'add_sale_contract'
+            }
+            if (this.contractModel.workflowType === 'add_sale_contract') {
+                workflowType = 'add_sale_contract'
+            }
+            if (this.contractModel.workflowType === 'update_ns_sale_contract') {
+                workflowType = 'update_sale_contract'
+            }
+            if (this.contractModel.workflowType === 'update_sale_contract') {
+                workflowType = 'update_sale_contract'
+            }
+            // this.submitContract(this.contractModel.workflowType)
+            this.submitContract(workflowType)
         }
         if (this.contractForm.approveType == 'partial' || this.contractForm.approveType == 'customer') {
-            this.contractModel.workflowType = 'create_ns_sale_contract';
-            this.submitContract();
+            // this.contractModel.workflowType = 'create_ns_sale_contract';
+            let workflowType = 'create_ns_sale_contract'
+            if (this.contractModel.workflowType === 'update_sale_contract') {
+                workflowType = 'update_ns_sale_contract'
+            }
+            if (this.contractModel.workflowType === 'add_sale_contract') {
+                workflowType = 'add_ns_sale_contract'
+            }
+            if (this.contractModel.workflowType === 'add_ns_sale_contract') {
+                workflowType = 'add_ns_sale_contract'
+            }
+            if (this.contractModel.workflowType === 'update_ns_sale_contract') {
+                workflowType = 'update_ns_sale_contract'
+            }
+            this.submitContract(workflowType);
         }
     },
-    submitContract () {
+    submitContract (workflowType) {
       let url = '/api/opencrm/workflow/save_submit';
       let param = {
         datas: this.contractModel.contractForm,
         instanceId: this.contractModel.contractId,
-        workflowType: this.contractModel.workflowType
+        workflowType: workflowType
       };
       post(url, param).then(result => {
         this.$alert('您的合同表单已提交，谢谢！', '', {

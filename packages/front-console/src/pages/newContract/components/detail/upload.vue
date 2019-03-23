@@ -41,14 +41,19 @@ export default {
             formData.append('fileName', file.name);
             formData.append('file', file.raw);
             importPost('/api/contract-web/file/upload', formData, true).then(data => {
-                this.list.push({
+                // this.list.push({
+                //     refId: data.referId,
+                //     downloadCode: data.downloadCode,
+                //     displayname: data.fileName,
+                // })
+                this.$emit('uploadSuccess', {
                     refId: data.referId,
                     downloadCode: data.downloadCode,
                     displayname: data.fileName,
                 })
                 this.$message({
-                type: 'success',
-                message: '上传成功！'
+                    type: 'success',
+                    message: '上传成功！'
                 })
             })
         },

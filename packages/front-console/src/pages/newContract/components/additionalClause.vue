@@ -63,15 +63,17 @@
 </template>
 
 <script>
-import {
-    importPost
-} from "../../../store/api";
-import {
-    baseUrl
-} from '../../../config/address';
+import { importPost } from "../../../store/api";
+import { baseUrl } from '../../../config/address';
+import { mapGetters } from 'vuex'
 export default {
     name: "additionalClause",
     props: ['contractModel', 'editType', 'referNames', 'files'],
+    computed: {
+        ...mapGetters({
+            serviceTypeList: 'serviceTypeList',
+        })
+    },
     data() {
         return {
             invoiceCompanyName: '',
@@ -93,13 +95,14 @@ export default {
     methods: {
         hasInsurance() {
             var isHas = false;
-            this.contractModel.serviceTypes.forEach(e => {
-                this.contractModel.serviceTypeList.forEach(ev => {
-                    if (e.serviceId == ev && e.vciStatus == 1) {
+            var ruleForm = this.contractModel.contractForm
+            this.serviceTypeList.forEach(item => {
+                ruleForm.serviceType.forEach(el => {
+                    if (item.serviceId === el && item.vciStatus === '1') {
                         isHas = true
                     }
                 })
-            });
+            })
             return isHas;
         },
         upload(file) {

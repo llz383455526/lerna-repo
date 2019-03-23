@@ -5,7 +5,7 @@
         </div>
         <div style="margin:20px 0;" v-if="contractModel.status == 'init'">
             <el-button size="small" type="primary" @click="toDetail(contractModel.contractId, 'watch')">送审</el-button>
-            <el-button size="small" type="info" @click="toCreate(contractModel.contractId, 'edit')">编辑</el-button>
+            <el-button size="small" type="info" @click="toCreate(contractModel.contractId, contractModel.workflowType)">编辑</el-button>
             <el-button size="small" type="danger" @click="closeContract(contractModel.contractId)">删除</el-button>
             <el-button size="small" @click="backToList">返回</el-button>
         </div>
@@ -19,15 +19,12 @@
                         <div class="col-xs-12">
                             <h4 class="block green">合同选项</h4>
                         </div>
-                        <div class="col-xs-6">合同模板：{{ getText(contractForm.contractTplId,
-                            contractModel.contractTplList) }}</div>
-                        <div class="col-xs-6">客户行业类型：{{ getText(contractForm.contractType,
-                            contractModel.businessTypeList) }}</div>
+                        <div class="col-xs-6">合同模板：{{ getText(contractForm.contractTplId, contractTplList) }}</div>
+                        <div class="col-xs-6">客户行业类型：{{ getText(contractForm.contractType, industryTypeList) }}</div>
                         <div class="col-xs-6">客户从事：{{ contractForm.customIndustry }}</div>
                         <div class="col-xs-6">合同期限：{{ contractForm.contractStartDate + ' - ' +
                             contractForm.contractEndDate }}</div>
-                        <div class="col-xs-12">服务类型：{{ getCheckText(contractForm.serviceType,
-                            contractModel.serviceTypes, 'serviceName') }}</div>
+                        <div class="col-xs-12">服务类型：{{ getCheckText(contractForm.serviceType, serviceTypeList) }}</div>
                     </div>
                     <div class="row" style="margin-bottom: 15px;">
                         <div class="col-xs-12">
@@ -48,18 +45,22 @@
                         </div>
                         <div class="col-xs-12">客户性质：{{ getText(contractForm.customNature,
                             contractModel.customNatureList) }}</div>
+                        <div class="col-xs-12">企业对接方式：{{ contractForm.isFromOutApp ? (contractForm.isFromOutApp === '0' ? 'SaaS发放' : 'API发放') : contractForm.isFromOutApp }}</div>
                         <div class="col-xs-6">企业名称：{{ contractForm.customerName }}</div>
                         <div class="col-xs-6">企业地址：{{ contractForm.areaName }}</div>
                         <div class="col-xs-6">法定代表人：{{ contractForm.customLegalPerson }}</div>
-                        <div class="col-xs-6">企业负责人：{{ contractForm.customCollector }}</div>
-                        <div class="col-xs-6">负责人手机：{{ contractForm.customCollectorPhone }}</div>
-                        <div class="col-xs-6">负责人邮箱：{{ contractForm.customMail1 }}</div>
+                        <div class="col-xs-6">系统操作人：{{ contractForm.customCollector }}</div>
+                        <div class="col-xs-6">操作人手机：{{ contractForm.customCollectorPhone }}</div>
+                        <div class="col-xs-6">操作人邮箱：{{ contractForm.customMail1 }}</div>
+                        <div class="col-xs-6">企业负责人：{{ contractForm.companyChargeName }}</div>
+                        <div class="col-xs-6">负责人手机：{{ contractForm.companyChargePhone }}</div>
+                        <div class="col-xs-6">负责人邮箱：{{ contractForm.companyChargeMail }}</div>
                         <div class="col-xs-6">负责人地址：{{ contractForm.customCollectorAddr }}</div>
                         <div class="col-xs-12">
                             <hr>
                         </div>
                         <div class="col-xs-6">开票企业名称：{{ contractForm.invoiceCompanyName }}</div>
-                        <div class="col-xs-6">开票企业地址：{{ contractForm.areaName }}</div>
+                        <div class="col-xs-6">开票企业地址：{{ contractForm.invoiceAddress }}</div>
                         <div class="col-xs-6">纳税人识别号：{{ contractForm.customTaxIdcd }}</div>
                         <div class="col-xs-6">开票企业电话：{{ contractForm.customPhone }}</div>
                         <div class="col-xs-6">开户银行名称：{{ contractForm.customBankName }}</div>
@@ -106,7 +107,7 @@
                         </template>
                         <div class="col-xs-12">付款方式：{{ getText(contractForm.vciPayType, contractModel.VciPayTypeList)
                             }}</div>
-                        <div class="col-xs-12">付款方与收款方一致：{{ contractForm.payAndInvoiceSame == 1 ? '是' : '否' }}</div>
+                        <div class="col-xs-12" v-if="contractForm.payAndInvoiceSame">付款方与收款方一致：{{ contractForm.payAndInvoiceSame == 1 ? '是' : '否' }}</div>
                         <div class="col-xs-12" v-if="contractForm.payAndInvoiceSame === '0'">甲方下属公司类型：{{
                             getText(contractForm.customCompanyUnderType, contractModel.customCompanyUnderTypeList) }}</div>
                         <div class="col-xs-12" v-if="contractForm.payAndInvoiceSame === '0'">甲方下属公司清单：
@@ -157,7 +158,7 @@
         <auditOption :contractModel="contractModel" :editType="editType"></auditOption>
         <div style="margin:20px 0;" v-if="contractModel.status == 'init'">
             <el-button size="small" type="primary" @click="toDetail(contractModel.contractId, 'watch')">送审</el-button>
-            <el-button size="small" type="info" @click="toCreate(contractModel.contractId, 'edit')">编辑</el-button>
+            <el-button size="small" type="info" @click="toCreate(contractModel.contractId, contractModel.workflowType)">编辑</el-button>
             <el-button size="small" type="danger" @click="closeContract(contractModel.contractId)">删除</el-button>
             <el-button size="small" @click="backToList">返回</el-button>
         </div>
@@ -172,23 +173,34 @@ import contractInfo from './components/preview/contractInfo.vue' // 合同业务
 import auditOption from './components/preview/auditOption.vue' // 审核意见
 import showService from '../../pageComponent/showService.vue'
 import showCloseService from '../../pageComponent/showCloseService'
+import { mapGetters } from 'vuex'
 export default {
-  name: "detail",
-  components: {
-    auditOption,
-    showService,
-    showCloseService,
-    contractInfo,
-  },
-  data () {
-    return {
-      contractModel: new ContractModel(),
-      contractForm: ''
-    }
-  },
-  created () {
-    let id = this.$route.query.id;
-    this.contractModel.contractId = id;
+    name: "detail",
+    components: {
+        auditOption,
+        showService,
+        showCloseService,
+        contractInfo,
+    },
+    computed: {
+        ...mapGetters({
+            contractTplList: 'contractTplList',
+            industryTypeList: 'industryTypeList',
+            serviceTypeList: 'serviceTypeList',
+        })
+    },
+    data () {
+        return {
+            contractModel: new ContractModel(),
+            contractForm: '',
+        }
+    },
+    mounted () {
+        this.$store.dispatch('getContractTplList')
+        this.$store.dispatch('getIndustryTypeList')
+        this.$store.dispatch('getServiceTypeList')
+        let id = this.$route.query.id;
+        this.contractModel.contractId = id;
         let first = new Promise((res, rej) => {
             this.contractModel.getContractDetail(id, () => {
                 this.contractForm = this.contractModel.contractForm
@@ -209,10 +221,11 @@ export default {
     },
     methods: {
         hasInsurance() {
+            if (!this.contractForm.serviceType) return
             var isHas = false;
-            this.contractModel.serviceTypes.forEach(e => {
-                this.contractModel.serviceTypeList.forEach(ev => {
-                    if (e.serviceId == ev && e.vciStatus == 1) {
+            this.contractForm.serviceType.forEach(item => {
+                this.serviceTypeList.forEach(el => {
+                    if (el.serviceId == (item.serviceId || item) && el.vciStatus == 1) {
                         isHas = true
                     }
                 })
@@ -228,16 +241,20 @@ export default {
                 return obj[outputKey];
             };
         },
-        getCheckText(valueArr, list, key) {
+        getCheckText(valueArr, list) {
             let objArr = [];
             if (!valueArr) return;
-            valueArr.forEach(element => {
-                let value = element[key];
-                let obj = list.find((element) => {
-                    return element[key] == value;
-                });
-                if (obj) {
-                    objArr.push(obj[key]);
+            if (!list) return;
+            valueArr.forEach(value => {
+                if (value.serviceName) {
+                    objArr.push(value.serviceName)
+                } else {
+                    let obj = list.find((element) => {
+                        return element['serviceId'] == value;
+                    });
+                    if (obj) {
+                        objArr.push(obj['serviceName']);
+                    }
                 }
             });
             return objArr.join(',');
@@ -285,8 +302,16 @@ export default {
             })
         },
         toCreate(id, type) {
+            const editType = {
+                create_sale_contract: 'create',
+                create_ns_sale_contract: 'create',
+                add_sale_contract: 'create_add',
+                add_ns_sale_contract: 'create_add',
+                update_sale_contract: 'create_update',
+                update_ns_sale_contract: 'create_update',
+            }
             this.$router.push({
-                path: 'create',
+                path: editType[type],
                 query: {
                     id: id,
                     editType: type

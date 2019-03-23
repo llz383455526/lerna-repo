@@ -279,13 +279,16 @@ export default {
 @import "../style/color";
 
 .top-menu {
-  min-width: 1440px;
+  width: 100%;
   height: 60px;
   background-color: $basic-green;
   position: relative;
+  overflow: auto;
   .menu-container {
-    position: absolute;
+    // position: absolute;
     right: 0;
+    min-width: 1400px;
+    overflow: auto;
 
     .login-menu-wrap {
       .el-menu {
@@ -312,7 +315,7 @@ export default {
 
   #mainContainer {
     position: relative;
-    width: 1366px;
+    max-width: 1366px;
     margin: 20px auto 0;
     /*background-color: $white;
             border-radius: 15px;*/

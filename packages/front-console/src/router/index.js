@@ -162,7 +162,9 @@ const accountDetail = () => import('../pages/management/accountDetail')
 
 const flowSigning = () => import('../pages/eContract/flowSigning') //签约流程
 
-const newContractCreate = () => import('../pages/newContract/create')
+const newContractCreate = () => import('../pages/newContract/create') // 销售合同创建
+const newContractCreateAdd = () => import('../pages/newContract/create_add')  // 销售合同补签
+const newContractCreateUpdate = () => import('../pages/newContract/create_update')  // 销售合同修改
 const newContractList = () => import('../pages/newContract/list')
 const newContractDetail = () => import('../pages/newContract/detail')
 const newContractPreview = () => import('../pages/newContract/preview')
@@ -531,6 +533,20 @@ export default [{
               meta: {
                 keepAlive: false
               }
+            },
+            {
+              path: 'create_add',
+              component: newContractCreateAdd,
+              meta: {
+                keepAlive: false,
+              },
+            },
+            {
+              path: 'create_update',
+              component: newContractCreateUpdate,
+              meta: {
+                keepAlive: false,
+              },
             },
             {
               path: 'list',

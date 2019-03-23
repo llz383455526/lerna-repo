@@ -1,28 +1,28 @@
 <template>
     <div>
         <h3 class="green">请添加落地公司
-            <el-button size="small" type="primary" @click="dialogVisible = true" v-if="contractModel.editType != 'watch'"
+            <el-button size="small" type="primary" @click="dialogVisible = true" v-if="!showAddBtn"
                 style="margin-left: 20px;">添加</el-button>
         </h3>
-        <div class="widget-box" v-for="(formItem,index) in contractModel.contractForm.contracts" :key="index" style="margin-bottom: 20px;">
+        <div class="widget-box" v-for="(formItem,index) in ruleForm.contracts" :key="index" style="margin-bottom: 20px;">
             <div class="widget-header">
                 <h4 class="widget-title" style="margin-right: 25px;">{{ formItem.serviceCompanyName || '落地公司名称' }}</h4>
                 <div class="widget-title">
                     <el-checkbox v-model="formItem.showServiceCompanyInfo" label="1">合同中显示服务商收款账户信息</el-checkbox>
                 </div>
                 <div class="widget-toolbar">
-                    <el-button @click="deleteForm(index)" type="text" size="medium">删除</el-button>
+                    <el-button @click="deleteForm(index)" type="text" size="medium" v-if="!showDelBtn">删除</el-button>
                 </div>
             </div>
             <div class="widget-main">
                 <el-form-item label="业务方案" :prop="'contracts.'+index+'.goodsId'" :rules="{required: true, message: '请选择业务方案', trigger: 'change'}">
                     <el-select v-model="formItem.goodsId" placeholder="请选择" style="width:400px;">
-                        <el-option v-for="(item, key) in formItem.goodsList" :key="key" :label="item.name" :value="item.id"></el-option>
+                        <el-option v-for="(item, key) in (formItem.goodsList.length ? formItem.goodsList : goodsList)" :key="key" :label="item.name" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="结算方式" :prop="'contracts.'+index+'.settleType'" :rules="{required: true, message: '请选择结算方式', trigger: 'change'}">
                     <el-select v-model="formItem.settleType" placeholder="请选择" style="width:400px;">
-                        <el-option v-for="(item,key) in contractModel.settleTypeList" :key="key" :label="item.text"
+                        <el-option v-for="(item,key) in settleTypeList" :key="key" :label="item.text"
                             :value="item.value"></el-option>
                     </el-select>
                     <el-tooltip placement="left">
@@ -32,15 +32,16 @@
                 </el-form-item>
                 <el-form-item label="发放方式" :prop="'contracts.'+index+'.channelTypeList'" :rules="{required: true, message: '请选择服务类型', trigger: 'change'}">
                     <el-checkbox-group v-model="formItem.channelTypeList" style="width:800px;">
-                        <el-checkbox v-for="(item, key) in contractModel.payMode" :key="key" :label="item.value">{{item.label}}</el-checkbox>
+                        <el-checkbox v-for="(item, key) in payModeList" :key="key" :label="item.value">{{item.label}}</el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
-                <el-form-item label="服务商报价" :prop="'contracts.'+index+'.check'" :rules="{required: true, message: '请正确填写服务商报价', trigger: 'blur'}">
-                    <contractItem label-width="0" :arrIndex="index" @result="result" :initCheck="true" :contractForm="{serviceFeeContent:formItem.serviceFeeContent,serviceFeeContent2:formItem.serviceFeeContent2}"></contractItem>
+                <el-form-item label="服务商报价" :prop="`contracts[${index}].serviceFeeContent.fixFee`" :rules="{required: true, message: '请正确填写服务商报价', trigger: 'blur'}">
+                    <contract-create-item :arrIndex="index" @result="result" :showSettledRate="true" :contractForm="formItem"></contract-create-item>
+                    <!-- <contractItem label-width="0" :arrIndex="index" @result="result" :initCheck="true" :contractForm="{serviceFeeContent:formItem.serviceFeeContent,serviceFeeContent2:formItem.serviceFeeContent2}"></contractItem> -->
                 </el-form-item><br>
-                <template v-if="contractModel.contractForm.originalType == 20">
+                <template v-if="ruleForm.originalType == 20">
                     <el-form-item label="渠道经理" required>
-                        <el-input v-model="contractModel.chargeByName" disabled style="width:400px;"></el-input>
+                        <el-input v-model="chargeByName" disabled style="width:400px;"></el-input>
                     </el-form-item><br>
                     <el-form-item label="报价规则">
                         <el-radio v-for="e in ruleList" :key="e.value" v-model="formItem.quoteRule" :label="e.value" :rules="{required: true, message: '请选择报价规则', trigger: 'blur'}">{{e.text}}</el-radio>
@@ -57,7 +58,7 @@
             <el-form :inline="true" :model="appForm" label-width="150px" ref="appForm">
                 <el-form-item label="服务商名称">
                     <el-select v-model="info.serviceCompanyId" filterable placeholder="请选择" @change="setServiceCompany" style="width: 450px;">
-                        <el-option v-for="(item,key) in contractModel.serviceCompaniesList" :key="key" :label="item.name" :value="item.companyId"></el-option>
+                        <el-option v-for="(item,key) in serviceCompaniesList" :key="key" :label="item.name" :value="item.companyId"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item style="margin-left: 150px;">
@@ -72,16 +73,25 @@
 <script>
 import _ from 'lodash'
 import { get } from '../../../store/api'
-import contractItem from '../../../pageComponent/contractItem.vue'
+import contractCreateItem from '../../../pageComponent/contractCreateItem'
 import contractCloseItem from '../../../pageComponent/contractCloseItem'
 import upload from './upload'
+import { mapGetters } from 'vuex'
 export default {
     name: "companyInfo",
-    props: ['contractModel'],
+    props: ['ruleForm', 'editType', 'chargeByName', 'serviceFeeList', 'showAddBtn', 'showDelBtn', 'goodsList'],
     components: {
-        contractItem,
+        contractCreateItem,
         contractCloseItem,
         upload
+    },
+    computed: {
+        ...mapGetters({
+            agentList: 'agentList',
+            serviceCompaniesList: 'serviceCompaniesList',
+            settleTypeList: 'settleTypeList',
+            payModeList: 'payModeList',
+        }),
     },
     data () {
         return {
@@ -96,12 +106,12 @@ export default {
             },
             customerInvoiceTypes: {
                 '10': {
-                text: '账单开票',
-                value: 10
+                    text: '账单开票',
+                    value: 10
                 },
                 '20': {
-                text: '预开票',
-                value: 20
+                    text: '预开票',
+                    value: 20
                 }
             },
             chargeByNames: [],
@@ -121,17 +131,48 @@ export default {
                 }
             ],
             quoteRule: '',
-            quoteFeeContent: ''
+            quoteFeeContent: {
+              containIncomeAmount: '',
+              incomeAmount: '',
+              quoteFeeRate: '',
+              quoteFeeType: '',
+              serviceCompanyRateList: [
+                  {
+                      feeRateContent: {
+                          containIncomeAmount: '',
+                          incomeAmount: '',
+                          quoteFeeRate: '',
+                          quoteFeeType: ''
+                      },
+                      serviceCompanyId: '',
+                      serviceCompanyName: ''
+                  }
+              ],
+              stepwiseList: [
+                  {
+                      endAmount: '',
+                      equalsEnd: '',
+                      equalsStart: '',
+                      percent: '',
+                      sequence: '',
+                      startAmount: ''
+                  }
+              ]
+            },
         }
     },
     methods: {
         formAdd() {
             let info = _.cloneDeep(this.info);
-            this.contractModel.contractForm.serviceCompanyList.push({
+            let quoteFeeContent = _.cloneDeep(this.quoteFeeContent);
+            console.log(quoteFeeContent)
+            quoteFeeContent.serviceCompanyRateList[0].serviceCompanyId = info.serviceCompanyId
+            quoteFeeContent.serviceCompanyRateList[0].serviceCompanyName = info.serviceCompanyName
+            this.ruleForm.serviceCompanyList.push({
                 serviceCompanyName: info.serviceCompanyName,
                 serviceCompanyId: info.serviceCompanyId
             });
-            this.contractModel.contractForm.contracts.push({
+            this.ruleForm.contracts.push({
                 serviceCompanyName: info.serviceCompanyName,
                 serviceLegalPerson: info.corporateName,
                 serviceRegisterAddr: info.address,
@@ -151,11 +192,11 @@ export default {
                 },
                 serviceFeeContent: {
                     discountRate: '',
-                    secondType: '',
+                    secondType: 'real',
                     fixFee: 0,
                     monthIncomeAmount: '',
                     serviceFeeRate: '',
-                    serviceFeeType: '',
+                    serviceFeeType: 'ratio',
                     containMonthAmount: true,
                     stepwiseList: []
                 },
@@ -176,7 +217,7 @@ export default {
                     serviceFeeType: 'ratio'
                 },
                 quoteRule: this.quoteRule,
-                quoteFeeContent: this.quoteFeeContent
+                quoteFeeContent: quoteFeeContent
             });
             this.dialogVisible = false;
         },
@@ -186,28 +227,30 @@ export default {
             arrIndex,
             check
         }) {
-            this.contractModel.contractForm.contracts[arrIndex].check = check;
-            this.contractModel.serviceFeeList[arrIndex] = {
-                serviceFeeContent: serviceFeeContent,
-                serviceFeeContent2: serviceFeeContent2
-            };
+            this.ruleForm.contracts[arrIndex].check = check;
+            this.ruleForm.contracts[arrIndex].serviceFeeContent = serviceFeeContent
+            this.ruleForm.contracts[arrIndex].serviceFeeContent2 = serviceFeeContent2
+            // this.serviceFeeList[arrIndex] = {
+            //     serviceFeeContent: serviceFeeContent,
+            //     serviceFeeContent2: serviceFeeContent2
+            // };
         },
         resultClose({quoteFeeContent, arrIndex, check}) {
-            this.contractModel.contractForm.contracts[arrIndex].checkC = check;
-            this.contractModel.contractForm.contracts[arrIndex].quoteFeeContent = quoteFeeContent
+            this.ruleForm.contracts[arrIndex].checkC = check;
+            this.ruleForm.contracts[arrIndex].quoteFeeContent = quoteFeeContent
 	    },
         handleSuccess(fileList, referArr, arrIndex) {
-            let contract = this.contractModel.contractForm.contracts[arrIndex];
+            let contract = this.ruleForm.contracts[arrIndex];
             contract.referNames = fileList;
             contract.referIds = referArr;
         },
         deleteForm(i) {
-            this.contractModel.contractForm.serviceCompanyList.splice(i, 1);
-            this.contractModel.contractForm.contracts.splice(i, 1);
-            this.contractModel.serviceFeeList.splice(i, 1);
+            this.ruleForm.serviceCompanyList.splice(i, 1);
+            this.ruleForm.contracts.splice(i, 1);
+            this.serviceFeeList.splice(i, 1);
         },
         setServiceCompany(o, serviceCompanyId) {
-            let serviceCompany = _.find(this.contractModel.serviceCompaniesList, o => {
+            let serviceCompany = _.find(this.serviceCompaniesList, o => {
                 return o.companyId === this.info.serviceCompanyId
             });
             this.info.serviceCompanyName = serviceCompany.name;
@@ -221,9 +264,12 @@ export default {
             })
         }
     },
-    created() {
-        this.contractModel.agentList.forEach(e => {
-            if(e.companyId == this.contractModel.contractForm.agentCompanyId) {
+    mounted() {
+        this.$store.dispatch('getAgentList')
+        this.$store.dispatch('getServiceCompaniesList')
+        this.$store.dispatch('getSettleTypeList')
+        this.agentList.forEach(e => {
+            if(e.companyId == this.ruleForm.agentCompanyId) {
                 this.quoteFeeContent = e.quoteFeeContent
                 this.quoteRule = e.quoteRule
             }
@@ -256,14 +302,14 @@ export default {
                 }
             ]
         }
-        let isChange = sessionStorage.getItem('companyChange')
-        sessionStorage.removeItem('companyChange')
-        this.contractModel.contractForm.contracts.forEach(item => {
+        // let isChange = sessionStorage.getItem('companyChange')
+        // sessionStorage.removeItem('companyChange')
+        this.ruleForm.contracts.forEach(item => {
             item.showServiceCompanyInfo = item.showServiceCompanyInfo === '1' ? true : false;
-            if(!item.quoteFeeContent || isChange) {
-                item.quoteFeeContent = this.quoteFeeContent
-                item.quoteRule = this.quoteRule
-            }
+            // if(!item.quoteFeeContent || isChange) {
+            // item.quoteFeeContent = this.quoteFeeContent
+            // item.quoteRule = this.quoteRule
+            // }
         })
     }
 }

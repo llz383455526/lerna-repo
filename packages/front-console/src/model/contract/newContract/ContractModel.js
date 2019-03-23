@@ -1,6 +1,7 @@
 import BaseModel from '../../base/BaseModel'
 import { get } from '../../../store/api'
 import _ from 'lodash'
+import { resolve } from 'path';
 /**
  * 合同表单 model
  */
@@ -28,12 +29,17 @@ class ContractModel extends BaseModel {
             agentCompanyId: '', // 代理商名称
             // 企业基本信息
             customNature: '',
+            serviceCodes: [],
+            isFromOutApp: '0',
             customerName: '',
             areaName: '',
             customLegalPerson: '',
             customCollector: '',
             customCollectorPhone: '',
             customMail1: '',
+            companyChargeName: '',
+            companyChargePhone: '',
+            companyChargeMail: '',
             customMail2: '',
             customCollectorAddr: '',
             // 相关商户信息
@@ -44,7 +50,7 @@ class ContractModel extends BaseModel {
                 chargeByName: '',
                 chargeByPhone: '',
                 chargeByMail: '',
-                isFromOutApp: '0'
+                isFromOutApp: '{{isFromOutApp}}'
             }],
             // 企业开票信息
             invoiceCompanyName: '',
@@ -84,10 +90,7 @@ class ContractModel extends BaseModel {
             receiveMemo: '',
             receiveAttachments: [],
         };
-        this.contractTplList = [];
-        this.businessTypeList = [];
         this.serviceTypeList = []; // 已选择的服务类型
-        this.serviceTypes = []; // 全部服务类型列表
         this.serviceCompaniesList = [];
         this.invoiceTypeList = []; // 发票类型
         this.settleTypeList = []; // 结算方式
@@ -114,35 +117,12 @@ class ContractModel extends BaseModel {
         this.agentList = []; // 代理商列表
     }
     getAllOptions() {
-        this.getContractTpl();
-        this.getBusinessType();
-        this.getServiceTypes();
         this.getOptionServiceCompanies();
         this.getInvoiceType();
         this.getSettleType();
         this.getCustomNatureList();
         this.getVciPayTypeList();
         this.getAgentList();
-    }
-    // 获取合同模板列表
-    getContractTpl() {
-        get('/api/contract-web/contract-tpl/tpl-options').then(result => {
-            this.contractTplList = result
-        })
-    }
-    // 获取合同类型列表
-    getBusinessType() {
-        get('/api/sysmgr-web/commom/option', {
-            enumType: 'IndustryType'
-        }).then(result => {
-            this.businessTypeList = result
-        })
-    }
-    // 获取服务类型列表 (转化为类型列表数组)
-    getServiceTypes() {
-        get('/api/contract-web/service-mgr/get-service-type-options').then(result => {
-            this.serviceTypes = result;
-        })
     }
     // 获取服务商名称列表
     getOptionServiceCompanies() {
@@ -184,15 +164,6 @@ class ContractModel extends BaseModel {
             })
         })
     }
-    // 获取已选择服务类型数组
-    getServiceTypeList() {
-        let serviceType = this.contractForm.serviceType;
-        if (serviceType && serviceType.length) {
-            _.forEach(serviceType, item => {
-                this.serviceTypeList.push(item.serviceId)
-            })
-        }
-    }
     // 获取合同周期
     getContractDate() {
         let contractStartDate = this.contractForm.contractStartDate;
@@ -227,36 +198,41 @@ class ContractModel extends BaseModel {
     }
     // 获取合同详细信息
     getContractDetail(id, callback, type) {
-        get(`/api/opencrm/workflow/details/${id}`).then(result => {
-            this.contractForm = _.assign({}, this.contractForm, result.datas);
-            this.actions = result.actions;
-            this.processLogs = result.processLogs;
-            this.workflowType = result.workflowType;
-            this.status = result.status;
-            this.contractForm.contracts.forEach(e => {
-                if (!e.agentFeeContent) {
-                    e.agentFeeContent = {
-                        discountRate: '',
-                        fixFee: '',
-                        secondType: 'real',
-                        serviceFeeRate: '',
-                        serviceFeeType: 'ratio'
+        return new Promise((resolve, reject) => {
+            get(`/api/opencrm/workflow/details/${id}`).then(result => {
+                this.contractForm = _.assign({}, result.datas);
+                this.actions = result.actions;
+                this.processLogs = result.processLogs;
+                this.workflowType = result.workflowType;
+                this.status = result.status;
+                this.contractForm.contracts.forEach(e => {
+                    if (!e.agentFeeContent) {
+                        e.agentFeeContent = {
+                            discountRate: '',
+                            fixFee: '',
+                            secondType: 'real',
+                            serviceFeeRate: '',
+                            serviceFeeType: 'ratio'
+                        }
                     }
+                })
+                this.getContractDate();
+                this.getFiles();
+                if (type !== 'create') {
+                    this.getArea()
                 }
+                // 获取渠道经理
+                if (this.contractForm.agentCompanyId) {
+                    this.getChargeByName(this.contractForm.agentCompanyId)
+                }
+                // this.changeCheckbox();
+                if (typeof callback === 'function') callback();
+                // 合同期限时间处理
+                this.contractForm.dataValue = [this.contractForm.contractStartDate, this.contractForm.contractEndDate]
+                resolve()
             })
-            this.getServiceTypeList();
-            this.getContractDate();
-            this.getFiles();
-            if (type !== 'create') {
-                this.getArea()
-            }
-            // 获取渠道经理
-            if (this.contractForm.agentCompanyId) {
-                this.getChargeByName(this.contractForm.agentCompanyId)
-            }
-            // this.changeCheckbox();
-            if (typeof callback === 'function') callback();
         })
+
     }
     // 获取详细信息之后转换checkbox
     changeCheckbox() {
