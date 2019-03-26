@@ -229,20 +229,20 @@ export default {
         }).then(data => {
             this.detail = data.partys
             this.signModel = data.signModel
-            if(data.signModel == 2) {
-                this.erules = {
-                    identityType: [
-                        { required: true, message: '请选择证件类型', trigger: 'blur' }
-                    ],
-                    identity: [
-                        { pattern: /^[\w]+$/, message: '请正确输入证件号码', trigger: 'blur'}
-                    ],
-                    personalMobile: [
-                        { required: true, message: '手机号码不能为空', trigger: 'blur' },
-                        { pattern: /^(1\d{10})$/, message: '请正确输入手机号码', trigger: 'blur'}
-                    ]
-                }
-            }
+            // if(data.signModel == 2) {
+            //     this.erules = {
+            //         identityType: [
+            //             { required: true, message: '请选择证件类型', trigger: 'blur' }
+            //         ],
+            //         identity: [
+            //             { pattern: /^[\w]+$/, message: '请正确输入证件号码', trigger: 'blur'}
+            //         ],
+            //         personalMobile: [
+            //             { required: true, message: '手机号码不能为空', trigger: 'blur' },
+            //             { pattern: /^(1\d{10})$/, message: '请正确输入手机号码', trigger: 'blur'}
+            //         ]
+            //     }
+            // }
             if(this.detail) {
 	            this.detail.forEach(e => {
 		            if(e.userId) {
@@ -350,7 +350,7 @@ export default {
             // this.editor.identityType = a.personalIdentityType
             // this.editor.name = a.personalName
             // this.editor.personalMobile = a.personalMobile
-            this.$refs['editor'].clearValidate()
+            this.$refs['editor'] && this.$refs['editor'].clearValidate()
         },
         save() {
 	        this.$refs['editor'].validate(valid => {
@@ -442,10 +442,11 @@ export default {
             this.$router.back()
         },
         customFieldColumn (h, { column, $index }) {
+            // this.signModel == '1' || (this.signModel == '2' && ($index == 1 || $index == 3)) ? 'require' : ''
             return (
                 h('span', [
                     h('i', {
-                        class: this.signModel == '1' || (this.signModel == '2' && ($index == 1 || $index == 3)) ? 'require' : ''
+                        class: 'require'
                     }),
                     h('span', column.label)
                 ])

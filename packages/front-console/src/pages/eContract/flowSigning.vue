@@ -307,20 +307,20 @@
 			}).then(data => {
                 this.dataArr = data;
                 // this.signModel = data.signModel
-                if(this.signModel == '2') {
-                    this.erules = {
-                        identityType: [
-						    {required: true, message: '请选择证件类型', trigger: 'blur'}
-					    ],
-                        identity: [
-                            { pattern: /^[\w]+$/, message: '请正确输入证件号码', trigger: 'blur'}
-                        ],
-                        personalMobile: [
-                            { required: true, message: '手机号码不能为空', trigger: 'blur' },
-                            { pattern: /^(1\d{10})$/, message: '请正确输入手机号码', trigger: 'blur'}
-                        ]
-                    }
-                }
+                // if(this.signModel == '2') {
+                //     this.erules = {
+                //         identityType: [
+				// 		    {required: true, message: '请选择证件类型', trigger: 'blur'}
+				// 	    ],
+                //         identity: [
+                //             { pattern: /^[\w]+$/, message: '请正确输入证件号码', trigger: 'blur'}
+                //         ],
+                //         personalMobile: [
+                //             { required: true, message: '手机号码不能为空', trigger: 'blur' },
+                //             { pattern: /^(1\d{10})$/, message: '请正确输入手机号码', trigger: 'blur'}
+                //         ]
+                //     }
+                // }
 				this.dataArr.forEach((item) => {
 					if(item.partys) {
 						item.partys.forEach((item1) => {
@@ -450,7 +450,7 @@
                     name: a.personalName,
                     batchId: a.batchId,
                     identity: a.personalIdentity,
-                    identityType: a.personalIdentityType || 0,
+                    identityType: a.personalIdentityType || '0',
                     orderId: a.orderId,
                     personalMobile: a.personalMobile
                 }

@@ -1104,9 +1104,16 @@
             },
             getBindStatus(a) {
                 this.platform.forEach(e => {
+                    // if(this.form.platform == e.extrSystemId) {
+                    //     this.bindBank = e.bindBank === '1' ? true : false
+                    //     if(a !== true && this.bindBank) {
+                    //         this.form.bindBank = '1'
+                    //     }
+                    // }
                     if(this.form.platform == e.extrSystemId) {
                         this.bindBank = e.bindBank === '1' ? true : false
                         if(a !== true && this.bindBank) {
+                            this.form.signModel = '2'
                             this.form.bindBank = '1'
                         }
                     }

@@ -16,16 +16,31 @@
                 </el-select>
             </el-form-item>
 
-			<el-form-item label="订单批次号" size="small" prop="batchId">
-                <el-input v-model="formSearch.batchId"></el-input>
-            </el-form-item>
-
 			<el-form-item label="合同模板名称" size="small" prop="templateName">
                 <el-input v-model="formSearch.templateName"></el-input>
             </el-form-item>
 
-			<el-form-item label="签约服务商" size="small" prop="serverName">
-                <el-input v-model="formSearch.serverName"></el-input>
+            <el-form-item label="合同模板组名称" size="small" prop="templateGroupName">
+                <el-input v-model="formSearch.templateGroupName"></el-input>
+            </el-form-item>
+
+			<el-form-item label="签约服务商" size="small" prop="partyaUserId">
+                <el-select
+                    v-model="formSearch.partyaUserId"
+                    filterable
+                    remote
+                    reserve-keyword
+                    placeholder="请输入关键词"
+                    :remote-method="remoteObject"
+                    :loading="loading"
+                    size="small">
+                    <el-option
+                        v-for="e in objects"
+                        :key="e.userId"
+                        :label="e.name"
+                        :value="e.userId">
+                    </el-option>
+                </el-select>
             </el-form-item>
 
             <el-form-item label="签约订单号" size="small" prop="orderId">
@@ -46,12 +61,12 @@
 
             <el-form-item label="发起签约时间范围" size="small">
                 <el-date-picker
-                        v-model="dateValue"
-                        type="daterange"
-                        :unlink-panels="true"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd">
+                    v-model="dateValue"
+                    type="daterange"
+                    :unlink-panels="true"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    value-format="yyyy-MM-dd">
                 </el-date-picker>
             </el-form-item>
 
@@ -148,7 +163,8 @@
 	import { post, get } from "../../store/api"
 	import _ from 'lodash'
 	import { showNotify } from '../../plugin/utils-notify'
-	import { baseUrl } from "../../config/address.js"
+    import { baseUrl } from "../../config/address.js"
+    import {formatTime} from '../../plugin/utils-functions'
 	export default {
 		created() {
 			this.getOrderStateList()
@@ -156,16 +172,17 @@
 			this.getClient()
 		},
 		data() {
+            let t = formatTime(new Date().getTime(), 'yyyy-MM-dd');
 			return {
 				formSearch: {
 					extrSystemIds: [],
 					orderId: '',
-					batchId: '',
 					personalName: '',
-					templateName: '',
+                    templateName: '',
+                    templateGroupName: '',
 					personalIdentity: '',
 					personalMobile: '',
-					serverName: '',
+					partyaUserId: '',
 					signState: '',
 					orderState: '',
 					certState: ''
@@ -173,7 +190,7 @@
 				orderStateList: [],
 				sighStateList: [],
 				extrSystemOptions: [],
-				dateValue: [],
+				dateValue: [t, t],
 				tableList: [],
 				pageSize: 10,
 				pageIndex: 1,
@@ -203,7 +220,8 @@
                 isReady: true,
                 selection: [],
                 isHandle: false,
-                ableType: ''
+                ableType: '',
+                objects: []
 			}
 		},
 		mounted() {
@@ -211,10 +229,21 @@
 			this.getList()
 		},
 		methods: {
+            remoteObject(a) {
+                if(a !== '') {
+                    post('/api/econtract/user/company/qrylist', {
+                        name: a,
+                        pageNo: 1,
+                        pageSize: 10
+                    }).then(data => {
+                        this.objects = data.data
+                    })
+                }
+            },
             download() {
 				let startAt = ''
 				let endAt = ''
-				if (this.dateValue[0]) {
+				if (this.dateValue && this.dateValue[0]) {
 					startAt = this.dateValue[0]
 					endAt = this.dateValue[1]
 				}

@@ -19,10 +19,28 @@
         </el-select>
       </el-form-item>
       <el-form-item label="合同模板" prop="templateName">
-        <el-input class="form_input_short" v-model="form.templateName" placeholder="请输入关键词"></el-input>
+        <el-input class="form_input_short" v-model="form.templateName"></el-input>
       </el-form-item>
-      <el-form-item label="签约服务商" prop="serverName">
-        <el-input v-model="form.serverName"></el-input>
+      <el-form-item label="合同模板组" prop="templateGroupName">
+        <el-input class="form_input_short" v-model="form.templateGroupName"></el-input>
+      </el-form-item>
+      <el-form-item label="签约服务商" prop="partyaUserId">
+        <el-select
+            v-model="form.partyaUserId"
+            filterable
+            remote
+            reserve-keyword
+            placeholder="请输入关键词"
+            :remote-method="remoteObject"
+            :loading="loading"
+            size="small">
+            <el-option
+                v-for="e in objects"
+                :key="e.userId"
+                :label="e.name"
+                :value="e.userId">
+            </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="签约订单号" prop="orderId">
         <el-input v-model="form.orderId"></el-input>
@@ -128,7 +146,8 @@ export default {
         endTime: '',
         extrSystemIds: '',
         templateName: '',
-        serverName: '',
+        templateGroupName: '',
+        partyaUserId: '',
         personalName: '',
         personalIdentity: '',
         personalMobile: '',
@@ -156,7 +175,8 @@ export default {
           value: '1'
         }
       ],
-      isRe: ['SIGNING', 'CREATE_ERR', 'AUTH_ERR', 'NOTIFY_ERR', 'SIGN_ERR', 'CLOSE_ERR', 'EXPIRED', 'REJECTED', 'AUTHING']
+      isRe: ['SIGNING', 'CREATE_ERR', 'AUTH_ERR', 'NOTIFY_ERR', 'SIGN_ERR', 'CLOSE_ERR', 'EXPIRED', 'REJECTED', 'AUTHING'],
+      objects: []
     }
   },
   mounted() {
@@ -171,9 +191,20 @@ export default {
     this.query()
   },
   methods: {
+    remoteObject(a) {
+        if(a !== '') {
+            post('/api/econtract/user/company/qrylist', {
+                name: a,
+                pageNo: 1,
+                pageSize: 10
+            }).then(data => {
+                this.objects = data.data
+            })
+        }
+    },
     getTime() {
-      this.form.startTime = this.range[0] || ''
-      this.form.endTime = this.range[1] || ''
+      this.form.startTime = this.range && this.range.length ? this.range[0] : ''
+      this.form.endTime = this.range && this.range.length ? this.range[1] : ''
     },
     query(a) {
       if(isNaN(a)) {

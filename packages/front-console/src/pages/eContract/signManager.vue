@@ -183,7 +183,7 @@ export default {
             sessionStorage.setItem('query', JSON.stringify({
                 orderId: a.orderId
             }))
-            this.$router.push(`index?templateName=${a.name || a.groupName}&isGroup=${a.groupName ? '1' :'0'}`)
+            this.$router.push(`index?${a.groupName ? 'templateGroupName' : 'templateName'}=${a.name || a.groupName}&isGroup=${a.groupName ? '1' :'0'}`)
         },
         batch(a) {
             this.$router.push(`batchRecord?templateName=${a.name}`)

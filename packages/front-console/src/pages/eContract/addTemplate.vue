@@ -159,6 +159,7 @@
                 <el-radio v-model="form.storeType" label="1" :disabled="form.enable ? true : false">硬盘存储</el-radio>
                 <el-radio v-model="form.storeType" label="2" :disabled="form.enable ? true : false">OSS存储</el-radio>
             </el-form-item>
+            {{form.signModel}} {{bindBank}}
             <el-form-item label="是否需要绑定银行卡" prop="bindBank" v-if="form.signModel && form.signModel == 2 && bindBank">
                 <el-radio v-model="form.bindBank" label="1">是</el-radio>
                 <el-radio v-model="form.bindBank" label="2">否</el-radio>
