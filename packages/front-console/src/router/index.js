@@ -1359,12 +1359,18 @@ export default [{
                 }
               }
           ]
+        },
+        {
+          path: 'agentList',
+          component: () => import('../pages/agent/list')
         }
-      ],
-    },
+      ]},
     {
       path: '/login',
       component: login
-    }
-  ]
+    },
+    {
+      path: '/agent/invite_form',
+      component: () => import('../pages/agent/invite_form')
+    }]
 }]

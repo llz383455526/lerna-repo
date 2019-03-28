@@ -22,6 +22,7 @@
     "del": "^3.0.0",
     "element-china-area-data": "^4.1.0",
     "element-ui": "2.3.9",
+    "eslint": "^5.15.3",
     "gulp": "^3.9.1",
     "vue": "^2.5.16",
     "vue-area-linkage": "^5.0.0",
