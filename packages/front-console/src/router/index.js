@@ -1363,6 +1363,10 @@ export default [{
         {
           path: 'agentList',
           component: () => import('../pages/agent/list')
+        },
+        {
+          path: 'agentSet',
+          component: () => import('../pages/agent/set_form')
         }
       ]},
     {
