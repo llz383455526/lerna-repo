@@ -1361,13 +1361,19 @@ export default [{
           ]
         },
         {
-          path: 'agentList',
-          component: () => import('../pages/agent/list')
+          path: 'agent',
+          component: index,
+          children: [
+            {
+              path: 'oemList',
+              component: () => import('../pages/agent/oemList')
+            },
+            {
+              path: 'oemSet',
+              component: () => import('../pages/agent/oemSet')
+            },
+          ],
         },
-        {
-          path: 'agentSet',
-          component: () => import('../pages/agent/set_form')
-        }
       ]},
     {
       path: '/login',

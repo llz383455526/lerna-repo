@@ -1,28 +1,28 @@
 <template>
     <div class="bg-white p15">
         <div class="mb30">代理商OEM管理</div>
-        <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
+        <el-form :inline="true" :model="searchForm" :rules="searchForm" ref="searchForm">
             <el-form-item label="代理商名称" size="small" prop="outOrderNo">
-                <el-input v-model="formSearch.outOrderNo"></el-input>
+                <el-input v-model="searchForm.outOrderNo"></el-input>
             </el-form-item>
             <el-form-item label="负责人" size="small" prop="accountName">
-                <el-input v-model="formSearch.accountName"></el-input>
+                <el-input v-model="searchForm.accountName"></el-input>
             </el-form-item>
             <el-form-item label="手机号" size="small" prop="accountNo">
-                <el-input v-model="formSearch.accountNo"></el-input>
+                <el-input v-model="searchForm.accountNo"></el-input>
             </el-form-item>
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="search" size="small">查询</el-button>
-                <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
+                <el-button size="small" @click="resetForm('searchForm')">清除</el-button>
             </el-form-item>
         </el-form>
         <el-table :data="tableData.list">
-            <el-table-column prop="appName" label="代理商名称"></el-table-column>
+            <el-table-column prop="agentName" label="代理商名称" width="200"></el-table-column>
             <el-table-column prop="accountName" label="负责人"></el-table-column>
-            <el-table-column prop="accountNo" label="负责人手机号" width="180"></el-table-column>
-            <el-table-column prop="amount" label="专属域名"></el-table-column>
-            <el-table-column prop="createAt" label="短信签名" width="180"></el-table-column>
-            <el-table-column prop="paymentThirdTypeName" label="平台名称"></el-table-column>
+            <el-table-column prop="chargeByPhone" label="负责人手机号"></el-table-column>
+            <el-table-column prop="domain" label="专属域名"></el-table-column>
+            <el-table-column prop="smsSign" label="短信签名"></el-table-column>
+            <el-table-column prop="platformName" label="平台名称"></el-table-column>
             <el-table-column label="logo">
                 <template slot-scope="scope">
                     <el-button size="small" type="text" @click="getVModal(scope.row.id)">查看图片</el-button>
@@ -35,9 +35,7 @@
             </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button @click="edit(scope.row.id)" type="text" size="medium" style="padding:0;"
-                               v-if="scope.row.approveState == 1">配置
-                    </el-button>
+                    <el-button size="small" type="text" @click="edit(scope.row.agentId)">配置</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -62,7 +60,7 @@
                 appName: '',
                 pageSize: 10,
                 tableData: [],
-                formSearch: {
+                searchForm: {
                     appId: '',
                     outOrderNo: '',
                     approveState: '',
@@ -104,11 +102,11 @@
                     pageSize: this.pageSize,
                 });
             },
-            edit(id) {
+            edit(agentId) {
                 this.$router.push({
                   path: '/main/agentSet',
                   query: {
-                    id: id,
+                    agentId: agentId,
                   },
                 })
             },
@@ -132,34 +130,8 @@
                 });
             },
             requestAction(pageInfo) {
-                let url = '/api/console-dlv/pay-order/query-big-amount-approve-list';
-                let self = this;
-                _.foreach(this.allAppList, function (value) {
-                    if (value['text'] == self.appName) {
-                        self.formSearch.appId = value['value'];
-                        return false;
-                    } else {
-                        self.formSearch.appId = '';
-                    }
-                });
-                let startAt = '';
-                let endAt = '';
-                if (this.dateValue && this.dateValue.length) {
-                    startAt = this.dateValue[0];
-                    endAt = this.dateValue[1];
-                }
-                let param = {
-                    createAtBegin: startAt,
-                    createAtEnd: endAt,
-                    appId: this.formSearch.appId,
-                    outOrderNo: this.formSearch.outOrderNo,
-                    approveState: this.formSearch.approveState,
-                    accountName: this.formSearch.accountName,
-                    accountNo: this.formSearch.accountNo,
-                    paymentThirdType: this.formSearch.paymentThirdType,
-                    page: pageInfo.page,
-                    pageSize: pageInfo.pageSize,
-                };
+                let url = '/api/sysmgr-web/agent-oem/query-agent-list';
+                let param = _.assign({}, pageInfo, this.searchForm);
                 post(url, param).then(data => {
                     this.tableData = data;
                 })
