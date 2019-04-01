@@ -20,18 +20,21 @@
             <el-table-column prop="agentName" label="代理商名称" width="200"></el-table-column>
             <el-table-column prop="accountName" label="负责人"></el-table-column>
             <el-table-column prop="chargeByPhone" label="负责人手机号"></el-table-column>
-            <el-table-column prop="domain" label="专属域名"></el-table-column>
+            <el-table-column prop="domain" label="专属域名" width="200"></el-table-column>
             <el-table-column prop="smsSign" label="短信签名"></el-table-column>
             <el-table-column prop="platformName" label="平台名称"></el-table-column>
             <el-table-column label="logo">
-                <template slot-scope="scope">
-                    <el-button size="small" type="text" @click="getVModal(scope.row.id)">查看图片</el-button>
-                </template>
+              <template slot-scope="scope">
+                <img :src="`/api/sysmgr-web/file/oem-agent-scan?targetType=agent_oem_logo&targetExt=${scope.row.domain}&zoomImage=true`" alt="" v-if="scope.row.domain" style="max-width: 100%;">
+                <span v-if="!scope.row.domain">暂无缩略图</span>
+              </template>
             </el-table-column>
             <el-table-column label="客户登录页">
-                <template slot-scope="scope">
-                    <el-button size="small" type="text" @click="getVModal(scope.row.id)">查看图片</el-button>
-                </template>
+              <template slot-scope="scope">
+                <!-- <el-button size="small" type="text" @click="getVModal(scope.row.id)">查看图片</el-button> -->
+                <img :src="`/api/sysmgr-web/file/oem-agent-scan?targetType=agent_oem_home&targetExt=${scope.row.domain}&zoomImage=true`" alt="" v-if="scope.row.domain" style="max-width: 100%;">
+                <span v-if="!scope.row.domain">暂无缩略图</span>
+              </template>
             </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
@@ -104,7 +107,7 @@
             },
             edit(agentId) {
                 this.$router.push({
-                  path: '/main/agentSet',
+                  path: '/main/agent/oemSet',
                   query: {
                     agentId: agentId,
                   },

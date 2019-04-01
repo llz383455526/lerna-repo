@@ -41,10 +41,10 @@
           <el-input v-model="platForm.platformName"></el-input>
         </el-form-item>
         <el-form-item label="系统展示logo：(建议尺寸60×60)" prop="logoCode">
-          <upload :targetId="agentId" targetType="agent_oem_logo" @success="successLogo"></upload>
+          <upload :targetId="agentId" targetType="agent_oem_logo" :targetExt="detail.domain" @success="successLogo"></upload>
         </el-form-item>
         <el-form-item label="客户登陆页面：(建议尺寸1920×1080)" prop="homeCode">
-          <upload :targetId="agentId" targetType="agent_oem_home" @success="successHome"></upload>
+          <upload :targetId="agentId" targetType="agent_oem_home" :targetExt="detail.domain" @success="successHome"></upload>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

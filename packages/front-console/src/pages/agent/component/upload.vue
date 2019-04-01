@@ -30,6 +30,9 @@ export default {
     targetType: {
       type: String,
     },
+    targetExt: {
+      type: String,
+    },
   },
   methods: {
     upload(a) {
@@ -38,6 +41,7 @@ export default {
       form.append('file', a.raw);
       form.append('targetId', this.targetId)
       form.append('targetType', this.targetType)
+      form.append('targetExt', this.targetExt)
       formPost('/api/sysmgr-web/file/upload-ext', form).then(data => {
           this.referId = data.referId
           this.$emit('success', data)
