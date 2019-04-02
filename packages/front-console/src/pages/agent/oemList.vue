@@ -1,6 +1,6 @@
 <template>
     <div class="bg-white p15">
-        <div class="mb30">代理商OEM管理</div>
+        <div class="mb30">邀请客户注册</div>
         <el-form :inline="true" :model="searchForm" :rules="searchForm" ref="searchForm">
             <el-form-item label="代理商名称" size="small" prop="outOrderNo">
                 <el-input v-model="searchForm.outOrderNo"></el-input>
@@ -25,14 +25,14 @@
             <el-table-column prop="platformName" label="平台名称"></el-table-column>
             <el-table-column label="logo">
               <template slot-scope="scope">
-                <img :src="`/api/sysmgr-web/file/oem-agent-scan?targetType=agent_oem_logo&targetExt=${scope.row.domain}&zoomImage=true`" alt="" v-if="scope.row.domain" style="max-width: 100%;">
+                <img :src="`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_logo&targetExt=${scope.row.domain}&zoomImage=true`" alt="" v-if="scope.row.domain" style="max-width: 100%;">
                 <span v-if="!scope.row.domain">暂无缩略图</span>
               </template>
             </el-table-column>
             <el-table-column label="客户登录页">
               <template slot-scope="scope">
                 <!-- <el-button size="small" type="text" @click="getVModal(scope.row.id)">查看图片</el-button> -->
-                <img :src="`/api/sysmgr-web/file/oem-agent-scan?targetType=agent_oem_home&targetExt=${scope.row.domain}&zoomImage=true`" alt="" v-if="scope.row.domain" style="max-width: 100%;">
+                <img :src="`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_home&targetExt=${scope.row.domain}&zoomImage=true`" alt="" v-if="scope.row.domain" style="max-width: 100%;">
                 <span v-if="!scope.row.domain">暂无缩略图</span>
               </template>
             </el-table-column>
@@ -82,17 +82,6 @@
             }
         },
         methods: {
-            querySearch1(queryString, cb) {
-                var restaurants = this.restaurants1;
-                var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
-                // 调用 callback 返回建议列表的数据
-                cb(results);
-            },
-            createFilter(queryString) {
-                return (restaurant) => {
-                    return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-                };
-            },
             resetForm(formName) {
                 this.$refs[formName].resetFields();
                 this.dateValue = '';
@@ -139,30 +128,6 @@
                     this.tableData = data;
                 })
             },
-            getThirdPaymentType() {
-                let url = '/api/console-dlv/option/get-by-types';
-                get(url, {type: 'ThirdPaymentType'}).then(data => {
-                    this.options1 = data.ThirdPaymentType;
-                })
-            },
-            getPayOrderApproveState() {
-                let url = '/api/console-dlv/option/get-by-types';
-                get(url, {type: 'PayOrderApproveState'}).then(data => {
-                    this.options2 = data.PayOrderApproveState;
-                })
-            },
-            getAllApp() {
-                let url = '/api/console-dlv/option/get-all-app';
-                let self = this;
-                get(url).then(data => {
-                    self.allAppList = data;
-                    _.foreach(data, function (value) {
-                        self.restaurants1.push({
-                            "value": value['text']
-                        });
-                    });
-                })
-            },
             getVModal(id) {
                 let url = '/api/balance-web/balance-adjust/attachments';
                 let param = {
@@ -179,9 +144,6 @@
                 page: 1,
                 pageSize: this.pageSize,
             });
-            this.getThirdPaymentType();
-            this.getPayOrderApproveState();
-            this.getAllApp();
         }
     }
 </script>

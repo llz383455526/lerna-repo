@@ -16,8 +16,16 @@
       <div class="edit-box">
         <h3 class="edit-title mb30">系统展示信息 <a class="edit-btn" href="#" @click="dialogVisible=true">修改</a> </h3>
         <div class="edit-content">系统名称：{{ detail.platformName || '无' }}</div>
-        <div class="edit-content"><span>系统展示logo： <br> 建议尺寸60×60 </span>{{ detail.logoCode || '无' }}</div>
-        <div class="edit-content"><span>客户登陆页面： <br> 建议尺寸1920×1080 </span>{{ detail.homeCode || '无' }}</div>
+        <div class="edit-content">
+          <span>系统展示logo： <br> 建议尺寸60×60 </span>
+          <span>{{ detail.logoCode || '无' }}</span>
+          <img :src="logo_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_logo&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="detail.logoCode" style="max-width: 100%;">
+        </div>
+        <div class="edit-content">
+          <span>客户登陆页面： <br> 建议尺寸1920×1080 </span>
+          <span>{{ detail.homeCode || '无' }}</span>
+          <img :src="home_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_home&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="detail.homeCode" style="max-width: 100%;">
+        </div>
       </div>
     </div>
     <div class="bg-white p15 mb15">
@@ -41,10 +49,14 @@
           <el-input v-model="platForm.platformName"></el-input>
         </el-form-item>
         <el-form-item label="系统展示logo：(建议尺寸60×60)" prop="logoCode">
-          <upload :targetId="agentId" targetType="agent_oem_logo" :targetExt="detail.domain" @success="successLogo"></upload>
+          <upload :targetId="agentId" targetType="oem_logo" :targetExt="detail.domain" @success="successLogo" v-if="!detail.logoCode"></upload>
+          <img :src="logo_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_logo&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="detail.logoCode" style="max-width: 100%;">
+          <el-button size="small" v-if="detail.logoCode" @click="detail.logoCode=''">删除</el-button>
         </el-form-item>
         <el-form-item label="客户登陆页面：(建议尺寸1920×1080)" prop="homeCode">
-          <upload :targetId="agentId" targetType="agent_oem_home" :targetExt="detail.domain" @success="successHome"></upload>
+          <upload :targetId="agentId" targetType="oem_home" :targetExt="detail.domain" @success="successHome" v-if="!detail.homeCode"></upload>
+          <img :src="home_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_home&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="detail.homeCode" style="max-width: 100%;">
+          <el-button size="small" v-if="detail.homeCode" @click="detail.homeCode=''">删除</el-button>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -165,6 +177,8 @@ export default {
           { required: true, message: '请输入短信签名', trigger: 'blur' },
         ],
       },
+      logo_url: '',
+      home_url: '',
     }
   },
   methods: {
@@ -177,12 +191,16 @@ export default {
             this.detail = res
         })
     },
-    successLogo(ev) {
+    successLogo(ev, file) {
       this.platForm.logoCode = ev.downloadCode
+      this.detail.logoCode = ev.downloadCode
+      this.logo_url = URL.createObjectURL(file.raw)
       this.$refs.platForm.validateField('logoCode')
     },
-    successHome(ev) {
+    successHome(ev, file) {
       this.platForm.homeCode = ev.downloadCode
+      this.detail.homeCode = ev.downloadCode
+      this.home_url = URL.createObjectURL(file.raw)
       this.$refs.platForm.validateField('homeCode')
     },
     platSubmit() {
@@ -258,7 +276,7 @@ export default {
 }
 </script>
 
-<style lang="css" scoped>
+<style lang="scss" scoped>
 .edit-box {
   margin-bottom: 30px;
 }
@@ -277,6 +295,11 @@ export default {
   display: inline-block;
   margin-bottom: 20px;
   vertical-align: top;
+  span {
+    vertical-align: top;
+    display: inline-block;
+    margin-right: 20px;
+  }
 }
 .copy-input {
   border: none;

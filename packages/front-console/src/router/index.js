@@ -1372,6 +1372,10 @@ export default [{
               path: 'oemSet',
               component: () => import('../pages/agent/oemSet')
             },
+            {
+              path: 'inviteList',
+              component: () => import('../pages/agent/inviteList')
+            },
           ],
         },
       ]},

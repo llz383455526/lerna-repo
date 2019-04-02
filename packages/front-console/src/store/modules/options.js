@@ -16,6 +16,7 @@ const url = {
     settleTypeList: '/api/contract-web/commom/option?enumType=SettleType',
     agentList: '/api/contract-web/agent-contract/agent-company-option?sign=true',
     serverConfigList: '/api/sysmgr-web/commom/service-config',
+    invitationStateList: '/api/contract-web/commom/option?enumType=InvitationState',
 }
 
 const store = {
@@ -39,6 +40,7 @@ const store = {
         settleTypeList: [], // 结算方式
         agentList: [], // 代理商列表
         serverConfigList: [], // 服务类型
+        invitationStateList: [], // 邀请状态
     },
     getters: {
         customerCompaniesList: state => state.customerCompaniesList,
@@ -56,6 +58,7 @@ const store = {
         settleTypeList: state => state.settleTypeList,
         agentList: state => state.agentList,
         serverConfigList: state => state.serverConfigList,
+        invitationStateList: state => state.invitationStateList,
     },
     mutations: {
         setCustomerCompaniesList(state, payload) {
@@ -99,7 +102,10 @@ const store = {
         },
         setServerConfigList(state, payload) {
             state.serverConfigList = payload
-        }
+        },
+        setInvitationStateList(state, payload) {
+            state.invitationStateList = payload
+        },
     },
     actions: {
         getCustomerCompaniesList({commit} ) {
@@ -176,7 +182,12 @@ const store = {
             get(url.serverConfigList).then(res => {
                 commit('setServerConfigList', res)
             })
-        }
+        },
+        getInvitationStateList({commit}) {
+            get(url.invitationStateList).then(res => {
+                commit('setInvitationStateList', res)
+            })
+        },
     },
 }
 

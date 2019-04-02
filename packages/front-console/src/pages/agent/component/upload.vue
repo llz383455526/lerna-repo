@@ -24,15 +24,9 @@ export default {
     }
   },
   props: {
-    targetId: {
-      type: String,
-    },
-    targetType: {
-      type: String,
-    },
-    targetExt: {
-      type: String,
-    },
+    targetId: '',
+    targetType: '',
+    targetExt: '',
   },
   methods: {
     upload(a) {
@@ -44,7 +38,7 @@ export default {
       form.append('targetExt', this.targetExt)
       formPost('/api/sysmgr-web/file/upload-ext', form).then(data => {
           this.referId = data.referId
-          this.$emit('success', data)
+          this.$emit('success', data, a)
       });
     },
   },

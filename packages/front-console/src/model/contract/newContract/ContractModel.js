@@ -274,7 +274,7 @@ class ContractModel extends BaseModel {
     }
     // 处理省市区
     getArea() {
-        if (this.contractForm.receiveAddrList.length !== 3) {
+        if (!this.contractForm.receiveAddrList || this.contractForm.receiveAddrList.length !== 3) {
             return
         }
         let areaArr = []
