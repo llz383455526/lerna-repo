@@ -53,7 +53,7 @@
           <el-input v-model="inviteForm.companyName"></el-input>
         </el-form-item>
         <el-form-item label="手机号" prop="companyPhone">
-          <el-input v-model="inviteForm.companyPhone"></el-input>
+          <el-input v-model="inviteForm.companyPhone" :maxLength="11"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -68,7 +68,7 @@
           <el-input v-model="inviteForm.companyName"></el-input>
         </el-form-item>
         <el-form-item label="手机号" prop="companyPhone">
-          <el-input v-model="inviteForm.companyPhone"></el-input>
+          <el-input v-model="inviteForm.companyPhone" :maxLength="11"></el-input>
         </el-form-item>
         <el-form-item label="发送记录">
           <el-table :data="historyList" style="width: 100%">
@@ -122,7 +122,7 @@ export default {
           { required: true, message: '请输入企业名称', trigger: 'blur' },
         ],
         companyPhone: [
-          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { required: true, message: '请填写正确的电话号码', trigger: 'blur', pattern: /^1\d{10}$/ },
         ],
       },
       prevList: [],
