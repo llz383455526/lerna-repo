@@ -1384,7 +1384,7 @@ export default [{
       component: login
     },
     {
-      path: '/agent/invite_form',
-      component: () => import('../pages/agent/invite_form')
+      path: '/main/agent/inviteSet',
+      component: () => import('../pages/agent/inviteSet')
     }]
 }]

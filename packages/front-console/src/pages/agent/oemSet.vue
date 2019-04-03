@@ -15,15 +15,15 @@
     <div class="bg-white p15 mb15">
       <div class="edit-box">
         <h3 class="edit-title mb30">系统展示信息 <a class="edit-btn" href="#" @click="dialogVisible=true">修改</a> </h3>
-        <div class="edit-content">系统名称：{{ detail.platformName || '无' }}</div>
+        <div class="edit-content" style="width:100%;">系统名称：{{ detail.platformName || '无' }}</div>
         <div class="edit-content">
           <span>系统展示logo： <br> 建议尺寸60×60 </span>
-          <span>{{ detail.logoCode || '无' }}</span>
+          <span v-if="! detail.logoCode">'无'</span>
           <img :src="logo_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_logo&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="detail.logoCode" style="max-width: 100%;">
         </div>
         <div class="edit-content">
           <span>客户登陆页面： <br> 建议尺寸1920×1080 </span>
-          <span>{{ detail.homeCode || '无' }}</span>
+          <span v-if="!detail.homeCode">无</span>
           <img :src="home_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_home&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="detail.homeCode" style="max-width: 100%;">
         </div>
       </div>
@@ -51,12 +51,12 @@
         <el-form-item label="系统展示logo：(建议尺寸60×60)" prop="logoCode">
           <upload :targetId="agentId" targetType="oem_logo" :targetExt="detail.domain" @success="successLogo" v-if="!detail.logoCode"></upload>
           <img :src="logo_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_logo&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="detail.logoCode" style="max-width: 100%;">
-          <el-button size="small" v-if="detail.logoCode" @click="detail.logoCode=''">删除</el-button>
+          <el-button type="text" size="small" v-if="detail.logoCode" @click="detail.logoCode=''">删除</el-button>
         </el-form-item>
         <el-form-item label="客户登陆页面：(建议尺寸1920×1080)" prop="homeCode">
           <upload :targetId="agentId" targetType="oem_home" :targetExt="detail.domain" @success="successHome" v-if="!detail.homeCode"></upload>
           <img :src="home_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_home&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="detail.homeCode" style="max-width: 100%;">
-          <el-button size="small" v-if="detail.homeCode" @click="detail.homeCode=''">删除</el-button>
+          <el-button type="text" size="small" v-if="detail.homeCode" @click="detail.homeCode=''">删除</el-button>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
