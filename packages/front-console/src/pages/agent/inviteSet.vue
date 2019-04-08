@@ -49,7 +49,7 @@
           </el-form-item>
           <el-form-item label="发票类型" prop="invoiceType">
               <el-select v-model="form.data.invoiceType" placeholder="请选择">
-                  <el-option v-for="(item,key) in contractGenInvoiceType" :key="key" :label="item.text" :value="item.value"></el-option>
+                  <el-option v-for="(item,key) in invoiceTypeList" :key="key" :label="item.text" :value="item.value"></el-option>
               </el-select>
           </el-form-item>
         </div>
@@ -67,13 +67,16 @@
           <el-form-item label="从事行业" prop="customIndustry">
             <el-input placeholder="请填写" v-model="form.data.customIndustry"></el-input>
           </el-form-item>
-            <el-form-item prop="serviceType" label-width="0px">
-                <p style="text-align:left;font-size:36px;margin:0 0 15px;color:#606266;"><span style="color:#f56c6c;margin-right:4px;">*</span>服务类型</p>
-                <el-checkbox-group v-model="form.data.serviceType">
-                    <el-checkbox v-for="(item, key) in serviceTypeOptions"
-                                 :key="key" :label="item.serviceId">{{item.serviceName}}
-                    </el-checkbox>
-                </el-checkbox-group>
+            <!--<el-form-item prop="serviceType" label-width="0px">-->
+                <!--<p style="text-align:left;font-size:36px;margin:0 0 15px;color:#606266;"><span style="color:#f56c6c;margin-right:4px;">*</span>服务类型</p>-->
+                <!--<el-checkbox-group v-model="form.data.serviceType">-->
+                    <!--<el-checkbox v-for="(item, key) in serviceTypeOptions"-->
+                                 <!--:key="key" :label="item.serviceId">{{item.serviceName}}-->
+                    <!--</el-checkbox>-->
+                <!--</el-checkbox-group>-->
+            <!--</el-form-item>-->
+            <el-form-item prop="serviceType" label="服务类型">
+                <el-input readOnly :placeholder="form.data.serviceType.length === 0 ? '请选择' : '已选择'" @focus="dialogVisible=true"></el-input>
             </el-form-item>
           <el-form-item label="预计月流水" prop="expectedMonthlyFlow">
             <el-input placeholder="请填写" v-model="form.data.expectedMonthlyFlow"></el-input>
@@ -84,6 +87,16 @@
         </div>
         <el-button type="danger" @click="submit">提交</el-button>
       </el-form>
+        <el-dialog :visible.sync="dialogVisible" width="90%">
+            <el-checkbox-group v-model="form.data.serviceType">
+                <el-checkbox v-for="(item, key) in serviceTypeOptions"
+                             :key="key" :label="item.serviceId">{{item.serviceName}}
+                </el-checkbox>
+            </el-checkbox-group>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="dialogConfirm">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
   </div>
 </template>
@@ -102,11 +115,12 @@
                 check: new Check(),
                 lock: false,
                 inviteNo: '',
+                dialogVisible: false,
             }
         },
         computed: {
             ...mapGetters({
-                contractGenInvoiceType: 'contractGenInvoiceType',
+                invoiceTypeList: 'invoiceTypeList',
                 industryTypeList: 'industryTypeList',
                 serviceTypeOptions: 'serviceTypeOptions',
             })
@@ -178,9 +192,13 @@
                     this.form.data = _.assign({}, res, this.form.data)
                 })
             },
+            dialogConfirm() {
+                this.dialogVisible = false
+                this.$refs['invite-form'].validateField('serviceType')
+            }
         },
         mounted() {
-            this.$store.dispatch('getContractGenInvoiceType');
+            this.$store.dispatch('getInvoiceTypeList');
             this.$store.dispatch('getIndustryTypeList');
             this.$store.dispatch('getServiceTypeOptions');
             this.inviteNo = this.getParam('inviteNo', window.location.href);
@@ -264,5 +282,11 @@
     font-size: 36px;
     height: 100px;
     line-height: 100px;
+}
+.el-checkbox__inner:after {
+    height: 19px;
+    left: 6px;
+    top: -1px;
+    width: 13px;
 }
 </style>
