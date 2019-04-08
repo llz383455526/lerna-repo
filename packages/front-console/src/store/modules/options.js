@@ -17,6 +17,8 @@ const url = {
     agentList: '/api/contract-web/agent-contract/agent-company-option?sign=true',
     serverConfigList: '/api/sysmgr-web/commom/service-config',
     invitationStateList: '/api/contract-web/commom/option?enumType=InvitationState',
+    serviceTypeOptions: '/api/contract-web/commom/service-type-options',
+    contractGenInvoiceType: '/api/contract-web/commom/option?enumType=ContractGenInvoiceType',
 }
 
 const store = {
@@ -41,6 +43,8 @@ const store = {
         agentList: [], // 代理商列表
         serverConfigList: [], // 服务类型
         invitationStateList: [], // 邀请状态
+        serviceTypeOptions: [], // 服务类型
+        contractGenInvoiceType: [], // 发票类型
     },
     getters: {
         customerCompaniesList: state => state.customerCompaniesList,
@@ -59,6 +63,8 @@ const store = {
         agentList: state => state.agentList,
         serverConfigList: state => state.serverConfigList,
         invitationStateList: state => state.invitationStateList,
+        serviceTypeOptions: state => state.serviceTypeOptions,
+        contractGenInvoiceType: state => state.contractGenInvoiceType,
     },
     mutations: {
         setCustomerCompaniesList(state, payload) {
@@ -105,6 +111,12 @@ const store = {
         },
         setInvitationStateList(state, payload) {
             state.invitationStateList = payload
+        },
+        setServiceTypeOptions(state, payload) {
+            state.serviceTypeOptions = payload
+        },
+        setContractGenInvoiceType(state, payload) {
+            state.contractGenInvoiceType = payload
         },
     },
     actions: {
@@ -186,6 +198,16 @@ const store = {
         getInvitationStateList({commit}) {
             get(url.invitationStateList).then(res => {
                 commit('setInvitationStateList', res)
+            })
+        },
+        getServiceTypeOptions({commit}) {
+            get(url.serviceTypeOptions).then(res => {
+                commit('setServiceTypeOptions', res)
+            })
+        },
+        getContractGenInvoiceType({commit}) {
+            get(url.contractGenInvoiceType).then(res => {
+                commit('setContractGenInvoiceType', res)
             })
         },
     },

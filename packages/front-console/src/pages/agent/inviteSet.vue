@@ -49,7 +49,7 @@
           </el-form-item>
           <el-form-item label="发票类型" prop="invoiceType">
               <el-select v-model="form.data.invoiceType" placeholder="请选择">
-                  <el-option v-for="(item,key) in invoiceTypeList" :key="key" :label="item.text" :value="item.value"></el-option>
+                  <el-option v-for="(item,key) in contractGenInvoiceType" :key="key" :label="item.text" :value="item.value"></el-option>
               </el-select>
           </el-form-item>
         </div>
@@ -70,7 +70,7 @@
             <el-form-item prop="serviceType" label-width="0px">
                 <p style="text-align:left;font-size:36px;margin:0 0 15px;color:#606266;"><span style="color:#f56c6c;margin-right:4px;">*</span>服务类型</p>
                 <el-checkbox-group v-model="form.data.serviceType">
-                    <el-checkbox v-for="(item, key) in serviceTypeList"
+                    <el-checkbox v-for="(item, key) in serviceTypeOptions"
                                  :key="key" :label="item.serviceId">{{item.serviceName}}
                     </el-checkbox>
                 </el-checkbox-group>
@@ -106,9 +106,9 @@
         },
         computed: {
             ...mapGetters({
-                invoiceTypeList: 'invoiceTypeList',
+                contractGenInvoiceType: 'contractGenInvoiceType',
                 industryTypeList: 'industryTypeList',
-                serviceTypeList: 'serviceTypeList',
+                serviceTypeOptions: 'serviceTypeOptions',
             })
         },
         methods: {
@@ -160,7 +160,7 @@
             setServiceType() {
                 let arr = [];
                 const serviceType = this.form.data.serviceType
-                this.serviceTypeList.forEach(item => {
+                this.serviceTypeOptions.forEach(item => {
                     serviceType.forEach(el => {
                         if (item.serviceId === el) {
                             arr.push(item)
@@ -180,9 +180,9 @@
             },
         },
         mounted() {
-            this.$store.dispatch('getInvoiceTypeList');
+            this.$store.dispatch('getContractGenInvoiceType');
             this.$store.dispatch('getIndustryTypeList');
-            this.$store.dispatch('getServiceTypeList');
+            this.$store.dispatch('getServiceTypeOptions');
             this.inviteNo = this.getParam('inviteNo', window.location.href);
             this.request();
         }
