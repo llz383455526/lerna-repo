@@ -168,7 +168,7 @@ export default {
             console.log(quoteFeeContent)
             quoteFeeContent.serviceCompanyRateList[0].serviceCompanyId = info.serviceCompanyId
             quoteFeeContent.serviceCompanyRateList[0].serviceCompanyName = info.serviceCompanyName
-            this.ruleForm.serviceCompanyList.push({
+            this.ruleForm.serviceCompanyList && this.ruleForm.serviceCompanyList.push({
                 serviceCompanyName: info.serviceCompanyName,
                 serviceCompanyId: info.serviceCompanyId
             });

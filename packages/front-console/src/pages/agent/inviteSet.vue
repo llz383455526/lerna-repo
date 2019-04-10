@@ -189,7 +189,7 @@
                     inviteNo: this.inviteNo,
                 };
                 get(url, param).then(res => {
-                    this.form.data = _.assign({}, res, this.form.data)
+                    this.form.data = _.assign({}, this.form.data, res)
                 })
             },
             dialogConfirm() {

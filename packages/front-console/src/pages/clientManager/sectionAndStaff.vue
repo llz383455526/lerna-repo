@@ -130,7 +130,7 @@
                 </el-tab-pane>
                 <el-tab-pane label="配置客户" name="fourth">
                   <el-button @click="openDialog('新增客户', 'company')">新增</el-button>
-                  <el-checkbox v-model="isCompanyAll[power]" @change="$forceUpdate()" style="margin-left: 15px;">全部</el-checkbox>
+                  <el-checkbox v-model="isCompanyAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
                   <div class="table-container" v-if="!isCompanyAll[power]">
                     <el-table :data="selectedCompanyList[power]">
                       <el-table-column prop="fullName" label="名称"></el-table-column>
@@ -144,7 +144,7 @@
                 </el-tab-pane>
                 <el-tab-pane label="配置商户" name="second">
                   <el-button @click="openDialog('新增商户', 'app')">新增</el-button>
-                  <el-checkbox v-model="isAppAll[power]" @change="$forceUpdate()" style="margin-left: 15px;">全部</el-checkbox>
+                  <el-checkbox v-model="isAppAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
                   <div class="table-container" v-if="!isAppAll[power]">
                     <el-table :data="selectedAppList[power]">
                       <el-table-column prop="appName" label="商户名称"></el-table-column>
@@ -159,9 +159,23 @@
                 </el-tab-pane>
                 <el-tab-pane label="配置服务商" name="third" v-if="power == systemList[0].value">
                   <el-button @click="openDialog('新增服务商', 'service')">新增</el-button>
-                  <el-checkbox v-model="isProviderAll[power]" @change="$forceUpdate()" style="margin-left: 15px;">全部</el-checkbox>
+                  <el-checkbox v-model="isProviderAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
                   <div class="table-container" v-if="!isProviderAll[power]">
                     <el-table :data="selectedServiceList[power]">
+                      <el-table-column prop="fullName" label="名称"></el-table-column>
+                      <el-table-column label="操作">
+                        <template slot-scope="scope">
+                          <el-button @click="deleteSelection('service', scope.$index)" type="text" size="medium" style="padding:0;">删除</el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </div>
+                </el-tab-pane>
+                <el-tab-pane label="配置代理商">
+                  <el-button @click="openDialog('新增代理商', 'agent')">新增</el-button>
+                  <el-checkbox v-model="isAgentAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
+                  <div class="table-container">
+                    <el-table :data="selectedAgentList[power]">
                       <el-table-column prop="fullName" label="名称"></el-table-column>
                       <el-table-column label="操作">
                         <template slot-scope="scope">
@@ -203,7 +217,7 @@
             <el-table-column prop="appName" label="商户名称"></el-table-column>
             <el-table-column prop="companyName" label="公司名称"></el-table-column>
           </el-table>
-          <el-table v-else-if="dialogType === 'service' || dialogType === 'company'" ref="multipleTable" :data="tableList.list" height="250" @selection-change="handleSelectionChange">
+          <el-table v-else-if="dialogType === 'service' || dialogType === 'company' || dialogType === 'agent'" ref="multipleTable" :data="tableList.list" height="250" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="fullName" label="名称"></el-table-column>
           </el-table>
@@ -235,8 +249,14 @@ import {
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { setTimeout } from 'timers';
+import { mapGetters } from 'vuex'
 export default {
   components: { Treeselect },
+  computed: {
+    ...mapGetters({
+      userInformation: 'userInformation'
+    })
+  },
   data() {
     return {
       list: [],
@@ -279,12 +299,14 @@ export default {
         adminContextParam: {
           platformType: '',
           roleIds: [],
-          userContextList: []
+          userContextList: [],
+          agentList: [],
         },
         companyContextParam: {
           platformType: '',
           roleIds: [],
-          userContextList: []
+          userContextList: [],
+          agentList: [],
         }
       },
       staff_rules: {
@@ -316,6 +338,7 @@ export default {
       selectedAppList: {},
       selectedServiceList: {},
       selectedCompanyList: {},
+      selectedAgentList: {},
       roleList: {},
       activeRoleList: [],
       list_form: {
@@ -334,6 +357,7 @@ export default {
       isCompanyAll: {},
       isAppAll: {},
       isProviderAll: {},
+      isAgentAll: {},
       render: true,
       power: '',
       labelName: ['运营管理平台', '企业客户平台']
@@ -561,6 +585,21 @@ export default {
             })
           })
         }
+        if(this.isAgentAll[e.value]) {
+          userContextList.push({
+            isAllSubject: true,
+            subjectType: 'company'
+          })
+        }
+        else {
+          this.selectedAgentList[e.value] && this.selectedAgentList[e.value].forEach(item => {
+            userContextList.push({
+              subjectId: item.id,
+              subjectName: item.fullName,
+              subjectType: 'agent'
+            })
+          })
+        }
         this.staff_form[i == 0 ? 'adminContextParam' : 'companyContextParam'].userContextList = userContextList
       })
       this.staff_list.forEach(e => {
@@ -653,6 +692,14 @@ export default {
                 this.selectedCompanyList[type] = this.formatList(e.userContextCollectionMap.company.userContexts, 'Company')
               }
             }
+            if(e.userContextCollectionMap.agent) {
+              if(e.userContextCollectionMap.agent.isAllSubject) {
+                this.isAgentAll[type] = true
+              }
+              else {
+                this.selectedAgentList[type] = this.formatList(e.userContextCollectionMap.agent.userContexts, 'Agent')
+              }
+            }
           }
         })
         this.queryRoleList()
@@ -671,6 +718,10 @@ export default {
           companyName: e.lvl1SubjectName
         })
         name == 'Service' && arr.push({
+          id: e.subjectId,
+          fullName: e.subjectName
+        })
+        name == 'Agent' && arr.push({
           id: e.subjectId,
           fullName: e.subjectName
         })
@@ -729,6 +780,9 @@ export default {
           break
         case 'company':
           url = '/api/sysmgr-web/commom/query-customer-company-page-list'
+          break
+        case 'agent':
+          url = '/api/sysmgr-web/commom/query-agent-company-page-list'
           break
       }
       post(url, this.list_form).then(result => {
