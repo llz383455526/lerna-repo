@@ -19,12 +19,12 @@
         <div class="edit-content">
           <span>系统展示logo： <br> 建议尺寸60×60 </span>
           <span v-if="! detail.logoCode">'无'</span>
-          <img :src="logo_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_logo&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="detail.logoCode" style="max-width: 100%;">
+          <img :src="logo_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_logo&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="detail.logoCode" style="width: 200px;">
         </div>
         <div class="edit-content">
           <span>客户登陆页面： <br> 建议尺寸1920×1080 </span>
           <span v-if="!detail.homeCode">无</span>
-          <img :src="home_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_home&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="detail.homeCode" style="max-width: 100%;">
+          <img :src="home_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_home&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="detail.homeCode" style="width: 200px;">
         </div>
       </div>
     </div>
