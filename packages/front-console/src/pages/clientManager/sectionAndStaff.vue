@@ -689,9 +689,7 @@ export default {
         for(var k in this.staff_form) {
           data[k] && (this.staff_form[k] = data[k])
         }
-        console.log(this.systemList, data.userInfoDetail.userProfiles.length)
         data.userInfoDetail.userProfiles.forEach((e, i) => {
-          console.log(this.systemList[i], i)
           var k = i == 0 ? 'adminContextParam' : 'companyContextParam', type = this.systemList[i].value
           this.staff_form[k].roleIds = []
           e.roles && e.roles.forEach(ev => {
@@ -733,6 +731,8 @@ export default {
           }
         })
         this.queryRoleList()
+        this.companyId = data.companyId
+        this.getAgentRoot()
       })
     },
     formatList(list, name) {
