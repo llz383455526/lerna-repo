@@ -390,7 +390,7 @@ export default {
   methods: {
     getstaffList() {
       post('/api/sysmgr-web/employee/allEmployeeByOrg', {
-        companyId: -1
+        companyId: this.companyId
       }).then(data => {
         this.staff_list = data
       })
@@ -473,6 +473,7 @@ export default {
         this.showAll = true
       }
       this.companyId = arr[0].companyId
+      this.queryRoleList()
     },
     setDisabled(a) {
       a = a || this.root
@@ -750,17 +751,19 @@ export default {
     //   this.queryRoleList()
     // },
     queryRoleList() {
-      if(!this.roleList[this.staff_form.platformType]) {
+      // console.log('111'+this.staff_form.platformType)
+      // console.log(this.roleList[this.staff_form.platformType])
+      // if(!this.roleList[this.staff_form.platformType]) {
         get('/api/sysmgr-web/user/role-list', {
           sourceType: this.staff_form.platformType,
           companyId: this.companyId,
         }).then(result => {
           this.activeRoleList = this.roleList[this.staff_form.platformType] = result
         })
-      }
-      else {
-        this.activeRoleList = this.roleList[this.staff_form.platformType]
-      }
+      // }
+      // else {
+      //   this.activeRoleList = this.roleList[this.staff_form.platformType]
+      // }
     },
     openDialog(title, type) {
       this.dialogTitle = title
