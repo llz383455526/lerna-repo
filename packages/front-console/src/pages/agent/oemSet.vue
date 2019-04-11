@@ -69,11 +69,11 @@
       <el-form ref="domainForm" :model="domainForm" :rules="domainRules" label-position="top">
         <el-form-item label="1. 请复制记录值，在第三方域名提供商中，添加A记录类型：">
           <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="address" label="记录类型"></el-table-column>
-            <el-table-column prop="address" label="记录值（选1个绑定即可）">
+            <el-table-column prop="recordType" label="记录类型" width="150"></el-table-column>
+            <el-table-column prop="recordValue" label="记录值（选1个绑定即可）">
               <template slot-scope="scope">
-                <input class="copy-input" readonly type="text" :value="scope.row.address" :id="scope.row.date">
-                <el-button size="small" type="text" @click="Copy(scope.row.date)">复制</el-button>
+                <input class="copy-input" readonly type="text" :value="scope.row.recordValue" :id="scope.row.id">
+                <el-button size="small" type="text" @click="Copy(scope.row.id)">复制</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -116,23 +116,7 @@ export default {
   components: { upload },
   data() {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }],
+      tableData: [],
       dialogVisible: false,
       ipVisible: false,
       smsVisible: false,
@@ -268,10 +252,17 @@ export default {
         alert("复制错误！")
       }
     },
+    getTable() {
+      let url = '/api/sysmgr-web/commom/ayg-domain-config';
+      get(url).then(data => {
+        this.tableData = data
+      })
+    }
   },
   mounted () {
     this.agentId = this.$route.query.agentId
     this.query()
+    this.getTable()
   },
 }
 </script>
@@ -307,5 +298,6 @@ export default {
   font-size: 14px;
   color: #606266;
   outline: none;
+  width: 210px;
 }
 </style>
