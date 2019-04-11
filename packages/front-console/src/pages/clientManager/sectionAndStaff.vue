@@ -171,7 +171,7 @@
                     </el-table>
                   </div>
                 </el-tab-pane>
-                <el-tab-pane label="配置代理商">
+                <el-tab-pane label="配置代理商" v-if="power == systemList[0].value">
                   <el-button @click="openDialog('新增代理商', 'agent')">新增</el-button>
                   <el-checkbox v-model="isAgentAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="showAll">全部</el-checkbox>
                   <div class="table-container">
@@ -409,6 +409,20 @@ export default {
         this.f_root = JSON.parse(JSON.stringify(this.root))
       })
     },
+    getAgentRoot() {
+      get('/api/sysmgr-web/org/companyOrgList', {
+        companyId: this.companyId
+      }).then(data => {
+        this.list = data
+        // this.root = []
+        // this.list.forEach((e, i) => {
+        //   if(!e.pid) {
+        //     this.root.push(this.getChildren(e))
+        //   }
+        // })
+        // this.f_root = JSON.parse(JSON.stringify(this.root))
+      })
+    },
     getChildren(e) {
       e.children = []
       e.label = e.name || ''
@@ -472,7 +486,7 @@ export default {
       } else {
         this.showAll = true
       }
-      this.companyId = arr[0].companyId
+      this.companyId = arr[0].companyId || ''
       this.queryRoleList()
     },
     setDisabled(a) {
@@ -550,6 +564,7 @@ export default {
     },
     staff_add() {
       this.staff_show = true
+      this.getAgentRoot();
     },
     staff_submit() {
       this.systemList.forEach((e, i) => {
