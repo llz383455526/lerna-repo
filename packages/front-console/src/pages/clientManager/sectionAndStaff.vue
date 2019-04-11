@@ -130,7 +130,7 @@
                 </el-tab-pane>
                 <el-tab-pane label="配置客户" name="fourth">
                   <el-button @click="openDialog('新增客户', 'company')">新增</el-button>
-                  <el-checkbox v-model="isCompanyAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
+                  <el-checkbox v-model="isCompanyAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="showAll">全部</el-checkbox>
                   <div class="table-container" v-if="!isCompanyAll[power]">
                     <el-table :data="selectedCompanyList[power]">
                       <el-table-column prop="fullName" label="名称"></el-table-column>
@@ -144,7 +144,7 @@
                 </el-tab-pane>
                 <el-tab-pane label="配置商户" name="second">
                   <el-button @click="openDialog('新增商户', 'app')">新增</el-button>
-                  <el-checkbox v-model="isAppAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
+                  <el-checkbox v-model="isAppAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="showAll">全部</el-checkbox>
                   <div class="table-container" v-if="!isAppAll[power]">
                     <el-table :data="selectedAppList[power]">
                       <el-table-column prop="appName" label="商户名称"></el-table-column>
@@ -159,7 +159,7 @@
                 </el-tab-pane>
                 <el-tab-pane label="配置服务商" name="third" v-if="power == systemList[0].value">
                   <el-button @click="openDialog('新增服务商', 'service')">新增</el-button>
-                  <el-checkbox v-model="isProviderAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
+                  <el-checkbox v-model="isProviderAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="showAll">全部</el-checkbox>
                   <div class="table-container" v-if="!isProviderAll[power]">
                     <el-table :data="selectedServiceList[power]">
                       <el-table-column prop="fullName" label="名称"></el-table-column>
@@ -173,7 +173,7 @@
                 </el-tab-pane>
                 <el-tab-pane label="配置代理商">
                   <el-button @click="openDialog('新增代理商', 'agent')">新增</el-button>
-                  <el-checkbox v-model="isAgentAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
+                  <el-checkbox v-model="isAgentAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="showAll">全部</el-checkbox>
                   <div class="table-container">
                     <el-table :data="selectedAgentList[power]">
                       <el-table-column prop="fullName" label="名称"></el-table-column>
@@ -360,7 +360,8 @@ export default {
       isAgentAll: {},
       render: true,
       power: '',
-      labelName: ['运营管理平台', '企业客户平台']
+      labelName: ['运营管理平台', '企业客户平台'],
+      showAll: true, // 显示全选按钮
     }
   },
   mounted() {
@@ -447,6 +448,15 @@ export default {
     },
     choose() {
       let arr = this.$refs.tree.getCheckedNodes()
+
+      console.log(arr)
+      // 判断是否显示全选按钮
+      if(arr.length && arr[0].pid === 10) {
+        this.showAll = false
+      } else {
+        this.showAll = true
+      }
+      
       if(arr.length) {
         if(arr.length != 1) {
           arr = arr.filter(e => e.id != this.curr.id)
