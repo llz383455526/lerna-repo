@@ -194,10 +194,17 @@ export default {
             })
         },
         fillRelevant() {
-            this.contractModel.contractForm.companyApps[0]['appName'] = this.contractModel.contractForm.customerName // 商户名称            this.contractModel.contractForm.companyApps[0]['appName'] = this.contractModel.contractForm.customerName // 商户名称
-            this.contractModel.contractForm.companyApps[0]['chargeByName'] = this.contractModel.contractForm.customLegalPerson // 商户负责人姓名
-            this.contractModel.contractForm.companyApps[0]['chargeByPhone'] = this.contractModel.contractForm.customCollectorPhone // 商户负责人手机
-            this.contractModel.contractForm.companyApps[0]['chargeByMail'] = this.contractModel.contractForm.customMail1 // 商户负责人邮箱
+            // this.contractModel.contractForm.companyApps[0]['appName'] = this.contractModel.contractForm.customerName // 商户名称            this.contractModel.contractForm.companyApps[0]['appName'] = this.contractModel.contractForm.customerName // 商户名称
+            // this.contractModel.contractForm.companyApps[0]['chargeByName'] = this.contractModel.contractForm.customLegalPerson // 商户负责人姓名
+            // this.contractModel.contractForm.companyApps[0]['chargeByPhone'] = this.contractModel.contractForm.customCollectorPhone // 商户负责人手机
+            // this.contractModel.contractForm.companyApps[0]['chargeByMail'] = this.contractModel.contractForm.customMail1 // 商户负责人邮箱
+
+            this.contractModel.contractForm.companyApps[0] = {
+                'appName': this.contractModel.contractForm.customerName,
+                'chargeByName': this.contractModel.contractForm.customLegalPerson,
+                'chargeByPhone': this.contractModel.contractForm.customCollectorPhone,
+                'chargeByMail': this.contractModel.contractForm.customMail1,
+            }
         },
         backToList(path) {
             this.$router.replace({
