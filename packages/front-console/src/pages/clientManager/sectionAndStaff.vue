@@ -362,6 +362,7 @@ export default {
       power: '',
       labelName: ['运营管理平台', '企业客户平台'],
       showAll: true, // 显示全选按钮
+      companyId: '',
     }
   },
   mounted() {
@@ -375,7 +376,8 @@ export default {
       this.staff_form.companyContextParam.platformType = result[1].value
       result.forEach(e => {
         get('/api/sysmgr-web/user/role-list', {
-          sourceType: e.value
+          sourceType: e.value,
+          companyId: this.companyId,
         }).then(result => {
           this.roleList[e.value] = result
         })
@@ -448,15 +450,8 @@ export default {
     },
     choose() {
       let arr = this.$refs.tree.getCheckedNodes()
-
-      console.log(arr)
-      // 判断是否显示全选按钮
-      if(arr.length && arr[0].pid === 10) {
-        this.showAll = false
-      } else {
-        this.showAll = true
-      }
       
+      // 强制单选
       if(arr.length) {
         if(arr.length != 1) {
           arr = arr.filter(e => e.id != this.curr.id)
@@ -469,6 +464,15 @@ export default {
       }
       this.staff_query()
       this.$refs.tree.setCheckedKeys([arr.length ? arr[0].id : '']);
+
+      console.log(arr)
+      // 判断是否显示全选按钮
+      if(arr.length && arr[0].pid === 10) {
+        this.showAll = false
+      } else {
+        this.showAll = true
+      }
+      this.companyId = arr[0].companyId
     },
     setDisabled(a) {
       a = a || this.root
@@ -748,7 +752,8 @@ export default {
     queryRoleList() {
       if(!this.roleList[this.staff_form.platformType]) {
         get('/api/sysmgr-web/user/role-list', {
-          sourceType: this.staff_form.platformType
+          sourceType: this.staff_form.platformType,
+          companyId: this.companyId,
         }).then(result => {
           this.activeRoleList = this.roleList[this.staff_form.platformType] = result
         })
@@ -777,6 +782,7 @@ export default {
         a = 1
       }
       this.list_form.page = a
+      this.list_form.agentCompanyId = this.companyId
       this.getArr()
       let url
       switch (this.dialogType) {
