@@ -14,7 +14,7 @@
     </el-form-item>
     <hr>
     <el-form-item label="客户类型" prop="originalType">
-      <el-radio v-for="e in originalTypeList" v-model="contractModel.contractForm.originalType" :key="e.value" :label="e.value" @change="getOriginalTypeName">{{e.text}}</el-radio>
+      <el-radio v-for="e in originalTypeList" v-model="contractModel.contractForm.originalType" :key="e.value" :label="e.value" @change="getOriginalTypeName" :disabled="disableRadio">{{e.text}}</el-radio>
     </el-form-item><br>
     <template v-if="contractModel.contractForm.originalType == 20">
       <el-form-item label="代理商名称" prop="agentCompanyId">
@@ -24,22 +24,29 @@
       </el-form-item><br>
     </template>
     <el-form-item label="客户归属" prop="original">
-      <el-radio v-for="e in originals" v-model="contractModel.contractForm.original" :key="e.value" :label="e.value" @change="getOriginalName">{{e.text}}</el-radio>
+      <el-radio v-for="e in originals" v-model="contractModel.contractForm.original" :key="e.value" :label="e.value" @change="getOriginalName" :disabled="disableRadio">{{e.text}}</el-radio>
     </el-form-item>
 </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import {
     get
 } from '../../../store/api'
 export default {
     name: "salesContactInfo",
     props: ['contractModel'],
+    computed: {
+    ...mapGetters({
+        userInformation: 'userInformation'
+      })
+    },
     data() {
         return {
           originals: [],
-          originalTypeList: []
+          originalTypeList: [],
+          disableRadio: false,
         }
     },
     mounted() {
@@ -51,6 +58,9 @@ export default {
           this.originalTypeList = data
       })
       this.contractModel.contractForm.agentCompanyId && this.companyChange(this.contractModel.contractForm.agentCompanyId)
+      if (this.userInformation.userProfile.subjectType === 'agent') {
+        this.disableRadio = true
+      }
     },
     methods: {
         getOriginalTypeName() {
