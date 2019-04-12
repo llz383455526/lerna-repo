@@ -18,7 +18,7 @@
     <div class="box">
       <div>
         <span>组织结构管理</span>
-        <div class="t_right">
+        <div class="t_right" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
           <el-button type="primary" size="mini" @click="section_add">新增</el-button>
           <el-button :class="{disabled : !curr}" type="primary" size="mini" @click="section_edit">编辑</el-button>
           <el-button :class="{disabled : !curr}" type="primary" size="mini" @click="section_delete">删除</el-button>
@@ -373,20 +373,23 @@ export default {
       this.systemList = result
       this.staff_form.adminContextParam.platformType = this.power = result[0].value
       this.staff_form.companyContextParam.platformType = result[1].value
-      result.forEach(e => {
-        get('/api/sysmgr-web/user/role-list', {
-          sourceType: e.value,
-          companyId: this.companyId,
-        }).then(result => {
-          this.roleList[e.value] = result
-        })
-      })
+      this.getRoleList()
     })
     this.staff_query()
     this.section_show = false
     this.staff_show = false
   },
   methods: {
+    getRoleList(type) {
+      this.systemList.forEach(e => {
+        get('/api/sysmgr-web/user/role-list', {
+          sourceType: e.value,
+          companyId: type === 'add' ? '' : this.companyId,
+        }).then(result => {
+          this.roleList[e.value] = result
+        })
+      })
+    },
     getstaffList() {
       post('/api/sysmgr-web/employee/allEmployeeByOrg', {
         companyId: this.companyId
@@ -563,6 +566,7 @@ export default {
     staff_add() {
       this.staff_show = true
       this.getAgentRoot();
+      this.getRoleList('add');
     },
     staff_submit() {
       this.systemList.forEach((e, i) => {
@@ -730,6 +734,7 @@ export default {
         })
         this.companyId = data.companyId
         this.getAgentRoot()
+        this.getRoleList()
       })
     },
     formatList(list, name) {
