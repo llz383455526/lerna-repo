@@ -71,7 +71,8 @@ export default {
   },
   computed: {
       ...mapGetters({
-          permissions: 'permissions'
+          permissions: 'permissions',
+          userInformation: 'userInformation'
       })
   },
   activated() {

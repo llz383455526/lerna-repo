@@ -16,7 +16,7 @@
                 </el-form-item>
             </el-form>
             <router-link to="addAgent">
-                <el-button size="small">新增</el-button>
+                <el-button size="small" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">新增</el-button>
             </router-link>
             <el-button class="ml20" size="small" @click="download">导出</el-button>
             <el-table :data="data.list">
@@ -37,7 +37,7 @@
                         <router-link :to="`agentDetail?id=${scope.row.id}`">
                             <el-button type="text">查看</el-button>
                         </router-link>
-                        <el-button type="text" @click="edit(scope.row)">编辑</el-button>
+                        <el-button type="text" @click="edit(scope.row)" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">编辑</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -55,7 +55,13 @@
 <script>
 import { get, post, postWithErrorCallback } from "../../store/api";
 import {pcaa, pca} from 'area-data'
+import { mapGetters } from 'vuex'
 export default {
+    computed: {
+        ...mapGetters({
+            userInformation: 'userInformation'
+        })
+    },
     data() {
         return {
             form: {

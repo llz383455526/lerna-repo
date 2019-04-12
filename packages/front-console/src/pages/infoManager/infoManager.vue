@@ -11,7 +11,7 @@
       <div class="f_left">
         <!-- <el-button type="primary">导出客户信息</el-button>
         <el-button type="primary">导入客户信息</el-button> -->
-        <router-link to="/main/infoManager/addCustomer">
+        <router-link to="/main/infoManager/addCustomer" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
           <el-button size="small" type="primary">添加客户</el-button>
         </router-link>
       </div>
@@ -97,7 +97,13 @@
 </template>
 <script>
 import { get, post, formPost } from "../../store/api";
+import { mapGetters } from 'vuex'
 export default {
+  computed: {
+      ...mapGetters({
+          userInformation: 'userInformation'
+      })
+  },
   data() {
     return {
       form: {

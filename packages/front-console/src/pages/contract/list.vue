@@ -29,7 +29,7 @@
                 <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
             </el-form-item>
         </el-form>
-        <el-button size="small" @click="routerPush('/main/contract/create')">新增</el-button>
+        <el-button size="small" @click="routerPush('/main/contract/create')" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">新增</el-button>
         <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
             <el-table-column prop="customerName" label="企业名称" width="200"></el-table-column>
             <el-table-column prop="serviceCompanyName" label="服务商名称" width="220"></el-table-column>
@@ -89,195 +89,201 @@
 </style>
 
 <script>
-    import {post, get} from '../../store/api';
+import {post, get} from '../../store/api';
 import { setTimeout } from 'timers';
+import { mapGetters } from 'vuex'
 
-    export default {
-        data() {
-            return {
-                pageSize: 10,
-                currentPage: parseInt(this.$route.query.page) || 1,
-                tableList: [],
-                options: [],
-                formSearch: {
-                    customerName: '',
-                    serviceCompanyName: '',
-                    settleType: '',
-                    startAt: '',
-                    endAt: ''
-                },
-                dateValue: '',
-                show: false,
-                customerCompaniesList: [],
-                serviceCompaniesList: [],
-                source: '',
-                copyRules: {
-                    customerId: [
-                        {
-                            required: true,
-                            message: '请选择企业',
-                            trigger: 'change'
-                        }
-                    ],
-                    serviceCompanyId: [
-                        {
-                            required: true,
-                            message: '请选择服务商',
-                            trigger: 'change'
-                        }
-                    ]
-                },
-                copyForm: {
-                    contractId: '',
-                    customerId: '',
-                    customerName: '',
-                    serviceCompanyId: ''
-                }
+export default {
+    computed: {
+        ...mapGetters({
+            userInformation: 'userInformation'
+        })
+    },
+    data() {
+        return {
+            pageSize: 10,
+            currentPage: parseInt(this.$route.query.page) || 1,
+            tableList: [],
+            options: [],
+            formSearch: {
+                customerName: '',
+                serviceCompanyName: '',
+                settleType: '',
+                startAt: '',
+                endAt: ''
+            },
+            dateValue: '',
+            show: false,
+            customerCompaniesList: [],
+            serviceCompaniesList: [],
+            source: '',
+            copyRules: {
+                customerId: [
+                    {
+                        required: true,
+                        message: '请选择企业',
+                        trigger: 'change'
+                    }
+                ],
+                serviceCompanyId: [
+                    {
+                        required: true,
+                        message: '请选择服务商',
+                        trigger: 'change'
+                    }
+                ]
+            },
+            copyForm: {
+                contractId: '',
+                customerId: '',
+                customerName: '',
+                serviceCompanyId: ''
             }
-        },
-        methods: {
-            resetForm(formName) {
-                this.$refs[formName].resetFields();
-                this.dateValue = '';
-            },
-            search() {
-                this.currentPage = 1;
-                this.requestAction({
-                    page: 1,
-                    pageSize: this.pageSize,
-                });
-            },
-            handleSizeChange(value) {
-                this.pageSize = value;
-                this.currentPage = 1;
-                this.requestAction({
-                    page: this.currentPage,
-                    pageSize: value,
-                });
-            },
-            handleCurrentChange(value) {
-                this.currentPage = value;
-                if (this.currentChangeBySetting) {
-                    this.currentChangeBySetting = false;
-                    return;
-                }
-                this.requestAction({
-                    page: value,
-                    pageSize: this.pageSize,
-                });
-            },
-            requestAction(pageInfo) {
-                let startAt = '';
-                let endAt = '';
-                if (this.dateValue) {
-                    startAt = this.dateValue[0];
-                    endAt = this.dateValue[1];
-                }
-                let param = {
-                    startAt: startAt,
-                    endAt: endAt,
-                    customerName: this.formSearch.customerName,
-                    serviceCompanyName: this.formSearch.serviceCompanyName,
-                    settleType: this.formSearch.settleType,
-                    page: pageInfo.page,
-                    pageSize: pageInfo.pageSize,
-                };
-                post('/api/contract-web/contract/query-contracts', param).then(data => {
-                    this.$router.push({
-                        path: '/main/contract/list',
-                        query: {page: pageInfo.page}
-                    });
-                    this.tableList = data
-                })
-            },
-            routerPush(val) {
-                this.$router.push({path: val});
-            },
-            getSettleType() {
-                let url = '/api/contract-web/commom/option';
-                get(url, {enumType: 'SettleType'}).then(data => {
-                    this.options = data
-                })
-            },
-            handleLook(id) {
-                this.$router.push({
-                    path: '/main/contract/preview',
-                    query: {contractId: id}
-                });
-            },
-            handleEdit(id) {
-                this.$router.push({
-                    path: '/main/contract/create',
-                    query: {
-                        contractId: id,
-                        page: this.$route.query.page
-                    }
-                });
-            },
-            handleCopy(a) {
-                this.source = a
-                this.copyForm.contractId = a.id
-                this.show = true
-                this.copyForm = {
-                    contractId: this.copyForm.contractId,
-                    customerId: '',
-                    customerName: '',
-                    serviceCompanyId: ''
-                }
-                setTimeout(() => {
-                    this.$refs['copyForm'] && this.$refs['copyForm'].clearValidate()
-                }, 30)
-            },
-            getCompanyName() {
-                this.customerCompaniesList.forEach(e => {
-                    if(e.companyId == this.copyForm.customerId) {
-                        this.copyForm.customerName = e.companyName
-                    }
-                })
-            },
-            execute() {
-                this.$refs['copyForm'].validate(valid => {
-                    if(valid) {
-                        post('/api/contract-web/contract/copy-contract', this.copyForm).then(data => {
-                            this.$message({
-                                type: 'success',
-                                message: '复制成功！'
-                            })
-                            this.show = false
-                            this.search()
-                        })
-                    }
-                })
-            },
-            getOptionCustomerCompanies() {
-                let url = '/api/console-dlv/option/get-option-customer-companies';
-                get(url).then(data => {
-                    this.customerCompaniesList = data;
-                })
-            },
-            getOptionServiceCompanies() {
-                let url = '/api/console-dlv/option/get-option-service-companies';
-                get(url).then(data => {
-                    this.serviceCompaniesList = data
-                })
-            }
-        },
-        created() {
-            this.requestAction({
-                page: this.$route.query.page || 1,
-                pageSize: this.pageSize,
-            });
-            this.getSettleType();
-            this.getOptionCustomerCompanies();
-            this.getOptionServiceCompanies();
-        },
-        activated() {
-            this.requestAction({
-                page: this.$route.query.page || 1,
-                pageSize: this.pageSize,
-            });
         }
+    },
+    methods: {
+        resetForm(formName) {
+            this.$refs[formName].resetFields();
+            this.dateValue = '';
+        },
+        search() {
+            this.currentPage = 1;
+            this.requestAction({
+                page: 1,
+                pageSize: this.pageSize,
+            });
+        },
+        handleSizeChange(value) {
+            this.pageSize = value;
+            this.currentPage = 1;
+            this.requestAction({
+                page: this.currentPage,
+                pageSize: value,
+            });
+        },
+        handleCurrentChange(value) {
+            this.currentPage = value;
+            if (this.currentChangeBySetting) {
+                this.currentChangeBySetting = false;
+                return;
+            }
+            this.requestAction({
+                page: value,
+                pageSize: this.pageSize,
+            });
+        },
+        requestAction(pageInfo) {
+            let startAt = '';
+            let endAt = '';
+            if (this.dateValue) {
+                startAt = this.dateValue[0];
+                endAt = this.dateValue[1];
+            }
+            let param = {
+                startAt: startAt,
+                endAt: endAt,
+                customerName: this.formSearch.customerName,
+                serviceCompanyName: this.formSearch.serviceCompanyName,
+                settleType: this.formSearch.settleType,
+                page: pageInfo.page,
+                pageSize: pageInfo.pageSize,
+            };
+            post('/api/contract-web/contract/query-contracts', param).then(data => {
+                this.$router.push({
+                    path: '/main/contract/list',
+                    query: {page: pageInfo.page}
+                });
+                this.tableList = data
+            })
+        },
+        routerPush(val) {
+            this.$router.push({path: val});
+        },
+        getSettleType() {
+            let url = '/api/contract-web/commom/option';
+            get(url, {enumType: 'SettleType'}).then(data => {
+                this.options = data
+            })
+        },
+        handleLook(id) {
+            this.$router.push({
+                path: '/main/contract/preview',
+                query: {contractId: id}
+            });
+        },
+        handleEdit(id) {
+            this.$router.push({
+                path: '/main/contract/create',
+                query: {
+                    contractId: id,
+                    page: this.$route.query.page
+                }
+            });
+        },
+        handleCopy(a) {
+            this.source = a
+            this.copyForm.contractId = a.id
+            this.show = true
+            this.copyForm = {
+                contractId: this.copyForm.contractId,
+                customerId: '',
+                customerName: '',
+                serviceCompanyId: ''
+            }
+            setTimeout(() => {
+                this.$refs['copyForm'] && this.$refs['copyForm'].clearValidate()
+            }, 30)
+        },
+        getCompanyName() {
+            this.customerCompaniesList.forEach(e => {
+                if(e.companyId == this.copyForm.customerId) {
+                    this.copyForm.customerName = e.companyName
+                }
+            })
+        },
+        execute() {
+            this.$refs['copyForm'].validate(valid => {
+                if(valid) {
+                    post('/api/contract-web/contract/copy-contract', this.copyForm).then(data => {
+                        this.$message({
+                            type: 'success',
+                            message: '复制成功！'
+                        })
+                        this.show = false
+                        this.search()
+                    })
+                }
+            })
+        },
+        getOptionCustomerCompanies() {
+            let url = '/api/console-dlv/option/get-option-customer-companies';
+            get(url).then(data => {
+                this.customerCompaniesList = data;
+            })
+        },
+        getOptionServiceCompanies() {
+            let url = '/api/console-dlv/option/get-option-service-companies';
+            get(url).then(data => {
+                this.serviceCompaniesList = data
+            })
+        }
+    },
+    created() {
+        this.requestAction({
+            page: this.$route.query.page || 1,
+            pageSize: this.pageSize,
+        });
+        this.getSettleType();
+        this.getOptionCustomerCompanies();
+        this.getOptionServiceCompanies();
+    },
+    activated() {
+        this.requestAction({
+            page: this.$route.query.page || 1,
+            pageSize: this.pageSize,
+        });
     }
+}
 </script>
 <style lang="scss" scoped>
     .input_full {

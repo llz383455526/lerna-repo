@@ -52,7 +52,7 @@
 
     <div class="t_head">已开发票共计：{{companyData.count}}张，金额共计 {{companyData.amount | formatMoney}}元，税额共计
         {{companyData.taxRateAmount | formatMoney}}元，价税合计 {{companyData.taxRateTotalAmount |formatMoney}}元&#x3000;注：作废或冲红的金额不列入统计
-        <router-link to="invoiceImport">
+        <router-link to="invoiceImport" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
             <el-button class="fr" type="primary" size="small">导入纸票</el-button>
         </router-link>
     </div>
@@ -138,302 +138,304 @@
 </template>
 
 <script>
-    import {post, get} from "../../store/api"
+import {post, get} from "../../store/api"
+import _ from 'lodash'
+import {showNotify} from '../../plugin/utils-notify'
+import {baseUrl} from '../../config/address'
+import {urlEncode} from '../../plugin/utils-functions'
+import { mapGetters } from 'vuex'
 
-    import _ from 'lodash'
+export default {
+    created() {
+        this.getSearchOptions ()
+        this.getInvoiceOptions ()
 
-    import {showNotify} from '../../plugin/utils-notify'
+        this.getList ()
+        this.getCompanyData ()
 
-    import {baseUrl} from '../../config/address'
-
-    import {urlEncode} from '../../plugin/utils-functions'
-
-    export default {
-        created() {
-            this.getSearchOptions ()
-            this.getInvoiceOptions ()
-
-            this.getList ()
-            this.getCompanyData ()
-
-            this.getCompanyList ()
-            this.getServiceCompanyList()
-        },
-        data() {
-            let minus = (rule, value, callback) => {
-                if (isNaN(value)) {
-                    callback(new Error('请输入金额'));
-                } else if (value > 0) {
-                    callback(new Error('金额必须为负数'));
-                } else {
-                    callback();
+        this.getCompanyList ()
+        this.getServiceCompanyList()
+    },
+    computed: {
+        ...mapGetters({
+            userInformation: 'userInformation'
+        })
+    },
+    data() {
+        let minus = (rule, value, callback) => {
+            if (isNaN(value)) {
+                callback(new Error('请输入金额'));
+            } else if (value > 0) {
+                callback(new Error('金额必须为负数'));
+            } else {
+                callback();
+            }
+        }
+        return {
+            searchOptions: {},
+            statusList: [
+                {
+                    value: 'invalid',
+                    text: '已作废'
+                },
+                {
+                    value: 'spillover',
+                    text: '已冲红'
+                },
+                {
+                    value: 'offline_success',
+                    text: '线下开票成功'
+                },
+                {
+                    value: 'success',
+                    text: '成功'
                 }
-            }
-            return {
-                searchOptions: {},
-                statusList: [
-                    {
-                        value: 'invalid',
-                        text: '已作废'
-                    },
-                    {
-                        value: 'spillover',
-                        text: '已冲红'
-                    },
-                    {
-                        value: 'offline_success',
-                        text: '线下开票成功'
-                    },
-                    {
-                        value: 'success',
-                        text: '成功'
-                    }
-                ],
-                formSearch: {
-                  subjectId: '',
-                  invoiceType: '',
-                  serviceComanyTaxIdcd: '',
-                  customCompanyId: '',
-                  /**
-                   * 服务公司IS
-                   */
-                  serviceCompanyId: null,
-                  status: ''
-                },
-                dateValue: '',
-                tableList: [],
-                pageSize: 10,
-                pageIndex: 1,
-                invoiceOptions: {},
-                companyData: {},
-                customCompanyList: [],
-                /**
-                 * 服务公司列表
-                 */
-                serviceCompanyList: [],
-                cancel_show: false,
-                current: {},
-                red_show: false,
-                red_form: {
-                    amount: '',
-                    id: '',
-                    invoiceCode: '',
-                    invoiceNo: '',
-                    type: 2
-                },
-                red_rules: {
-                    invoiceCode: [
-                        { required: true, message: "请填写发票代码", trigger: "blur" }
-                    ],
-                    invoiceNo: [
-                        { required: true, message: "请填写发票号码", trigger: "blur" }
-                    ],
-                    amount: [
-                        { validator: minus, trigger: "blur" }
-                    ]
-                },
-                red_look: false
-            }
-        },
-        methods: {
-            invoiceTypeChange(data) {
-              console.log(data)
+            ],
+            formSearch: {
+              subjectId: '',
+              invoiceType: '',
+              serviceComanyTaxIdcd: '',
+              customCompanyId: '',
+              /**
+               * 服务公司IS
+               */
+              serviceCompanyId: null,
+              status: ''
             },
+            dateValue: '',
+            tableList: [],
+            pageSize: 10,
+            pageIndex: 1,
+            invoiceOptions: {},
+            companyData: {},
+            customCompanyList: [],
             /**
-             * 获取服务公司列表
+             * 服务公司列表
              */
-            getServiceCompanyList() {
-              let url = '/api/invoice-web/invoice/service-company-options';
-              get (url).then (res => {
-                this.serviceCompanyList = res;
-              })
+            serviceCompanyList: [],
+            cancel_show: false,
+            current: {},
+            red_show: false,
+            red_form: {
+                amount: '',
+                id: '',
+                invoiceCode: '',
+                invoiceNo: '',
+                type: 2
             },
-            getCompanyList() {
-              get ('/api/sysmgr-web/commom/company', {
-                companyIdentity: 'custom'
-              }).then (result => {
-                this.customCompanyList = result
-              })
+            red_rules: {
+                invoiceCode: [
+                    { required: true, message: "请填写发票代码", trigger: "blur" }
+                ],
+                invoiceNo: [
+                    { required: true, message: "请填写发票号码", trigger: "blur" }
+                ],
+                amount: [
+                    { validator: minus, trigger: "blur" }
+                ]
             },
-            getSearchOptions() {
-              post ('/api/sysmgr-web/commom/options?enumTypes=InvoiceType', {})
-              .then (result => {
-                this.searchOptions = result
-              })
-            },
-            getInvoiceOptions() {
-              post ('/api/invoice-web/custom-invoice-subject/qry', {
-                name: '',
-                pageSize: 0,
-                page: 0
-              }).then (result => {
-                this.invoiceOptions = result.list
-              })
-            },
-            resetForm() {
-              this.dateValue = ''
-              this.formSearch.subjectId = null
-              this.formSearch.invoiceType = null
-              this.formSearch.serviceComanyTaxIdcd = null
-              this.formSearch.customCompanyId = null
-              this.formSearch.serviceCompanyId = null
-              this.formSearch.status = null
-            },
-            search() {
-              this.pageIndex = 1
-              this.getList ()
-              this.getCompanyData()
-            },
-            handleSizeChange(value) {
-              this.pageSize = value
-              this.pageIndex = 1
-              this.getList ()
-            },
-            handleCurrentChange(value) {
-              this.pageIndex = value
-              this.getList ()
-            },
-            getList() {
-              let startAt = ''
-              let endAt = ''
-              if (this.dateValue) {
-                startAt = this.dateValue[0]
-                endAt = this.dateValue[1]
-              }
+            red_look: false
+        }
+    },
+    methods: {
+        invoiceTypeChange(data) {
+          console.log(data)
+        },
+        /**
+         * 获取服务公司列表
+         */
+        getServiceCompanyList() {
+          let url = '/api/invoice-web/invoice/service-company-options';
+          get (url).then (res => {
+            this.serviceCompanyList = res;
+          })
+        },
+        getCompanyList() {
+          get ('/api/sysmgr-web/commom/company', {
+            companyIdentity: 'custom'
+          }).then (result => {
+            this.customCompanyList = result
+          })
+        },
+        getSearchOptions() {
+          post ('/api/sysmgr-web/commom/options?enumTypes=InvoiceType', {})
+          .then (result => {
+            this.searchOptions = result
+          })
+        },
+        getInvoiceOptions() {
+          post ('/api/invoice-web/custom-invoice-subject/qry', {
+            name: '',
+            pageSize: 0,
+            page: 0
+          }).then (result => {
+            this.invoiceOptions = result.list
+          })
+        },
+        resetForm() {
+          this.dateValue = ''
+          this.formSearch.subjectId = null
+          this.formSearch.invoiceType = null
+          this.formSearch.serviceComanyTaxIdcd = null
+          this.formSearch.customCompanyId = null
+          this.formSearch.serviceCompanyId = null
+          this.formSearch.status = null
+        },
+        search() {
+          this.pageIndex = 1
+          this.getList ()
+          this.getCompanyData()
+        },
+        handleSizeChange(value) {
+          this.pageSize = value
+          this.pageIndex = 1
+          this.getList ()
+        },
+        handleCurrentChange(value) {
+          this.pageIndex = value
+          this.getList ()
+        },
+        getList() {
+          let startAt = ''
+          let endAt = ''
+          if (this.dateValue) {
+            startAt = this.dateValue[0]
+            endAt = this.dateValue[1]
+          }
 
-              let formSearch = _.cloneDeep (this.formSearch)
-              formSearch.issueStartDate = startAt
-              formSearch.issueEndDate = endAt
-              let options = _.assign (formSearch, {
-                page: this.pageIndex,
-                pageSize: this.pageSize,
-                source: 'platform'
-              })
+          let formSearch = _.cloneDeep (this.formSearch)
+          formSearch.issueStartDate = startAt
+          formSearch.issueEndDate = endAt
+          let options = _.assign (formSearch, {
+            page: this.pageIndex,
+            pageSize: this.pageSize,
+            source: 'platform'
+          })
 
-              post ('/api/invoice-web/invoice/custom-company-invoice-list', options).then (result => {
-                    result.list.forEach(e => {
-                        e.disable = false
-                        e.cancelable = false
-                        let date = new Date(e.invoiceDate), now = new Date()
-                        if(date.getFullYear() == now.getFullYear()) {
-                            if(date.getMonth() == now.getMonth()) {
-                                e.disable = true
-                                e.cancelable = true
-                            }
+          post ('/api/invoice-web/invoice/custom-company-invoice-list', options).then (result => {
+                result.list.forEach(e => {
+                    e.disable = false
+                    e.cancelable = false
+                    let date = new Date(e.invoiceDate), now = new Date()
+                    if(date.getFullYear() == now.getFullYear()) {
+                        if(date.getMonth() == now.getMonth()) {
+                            e.disable = true
+                            e.cancelable = true
                         }
-                        else if(date.getFullYear() + 1 == now.getFullYear()) {
-                            if(date.getMonth() < now.getMonth()) {
-                                e.disable = true
-                            }
+                    }
+                    else if(date.getFullYear() + 1 == now.getFullYear()) {
+                        if(date.getMonth() < now.getMonth()) {
+                            e.disable = true
                         }
-                    })
-                    this.tableList = result
-              })
-            },
-            exportFile() {
-              let startAt = ''
-              let endAt = ''
-              if (this.dateValue) {
-                startAt = this.dateValue[0]
-                endAt = this.dateValue[1]
-              }
+                    }
+                })
+                this.tableList = result
+          })
+        },
+        exportFile() {
+          let startAt = ''
+          let endAt = ''
+          if (this.dateValue) {
+            startAt = this.dateValue[0]
+            endAt = this.dateValue[1]
+          }
 
-              let formSearch = _.cloneDeep (this.formSearch)
-              formSearch.issueStartDate = startAt
-              formSearch.issueEndDate = endAt
-              formSearch.source = 'platform'
+          let formSearch = _.cloneDeep (this.formSearch)
+          formSearch.issueStartDate = startAt
+          formSearch.issueEndDate = endAt
+          formSearch.source = 'platform'
 
-              window.location.href = `/api/invoice-web/invoice/export-custom-invoice-details?${urlEncode(formSearch)}`
-            },
-            getCompanyData() {
-              const issueStartDate = this.dateValue[0]
-              const issueEndDate = this.dateValue[1]
-              post('/api/invoice-web/invoice/sum-paper-invoice-list', {
-                ...this.formSearch,
-                issueStartDate,
-                issueEndDate
-              }).then(function (data) {
-                this.companyData = data
-              }.bind(this))
-            },
-            remove(id) {
-                this.$confirm('是否确定进行移除?', '提示', {
-					confirmButtonText: '确定',
-					cancelButtonText: '取消',
-					type: 'warning'
-				}).then(data => {
-                    post(`/api/invoice-web/invoice/invoice-detail-delete?ids=${id}`).then(data => {
-                        this.$message({
-                            type: 'success',
-                            message: '移除成功！' 
-                        })
-                        this.search()
-                    })
-                }).catch(err => {})
-            },
-            cancel(a) {
-                this.current = a
-                this.cancel_show = true
-            },
-            csure(a) {
-                post('/api/invoice-web/invoice/invoice-operate-status', {
-                    id: this.current.id,
-                    invoiceCode: this.current.invoiceCode,
-                    invoiceNo: this.current.invoiceNo,
-                    type: 1
-                }).then(data => {
-                    this.cancel_show = false
+          window.location.href = `/api/invoice-web/invoice/export-custom-invoice-details?${urlEncode(formSearch)}`
+        },
+        getCompanyData() {
+          const issueStartDate = this.dateValue[0]
+          const issueEndDate = this.dateValue[1]
+          post('/api/invoice-web/invoice/sum-paper-invoice-list', {
+            ...this.formSearch,
+            issueStartDate,
+            issueEndDate
+          }).then(function (data) {
+            this.companyData = data
+          }.bind(this))
+        },
+        remove(id) {
+            this.$confirm('是否确定进行移除?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(data => {
+                post(`/api/invoice-web/invoice/invoice-detail-delete?ids=${id}`).then(data => {
                     this.$message({
                         type: 'success',
-                        message: '作废成功！'
+                        message: '移除成功！' 
                     })
-                    this.getList()
+                    this.search()
                 })
-            },
-            red(a) {
+            }).catch(err => {})
+        },
+        cancel(a) {
+            this.current = a
+            this.cancel_show = true
+        },
+        csure(a) {
+            post('/api/invoice-web/invoice/invoice-operate-status', {
+                id: this.current.id,
+                invoiceCode: this.current.invoiceCode,
+                invoiceNo: this.current.invoiceNo,
+                type: 1
+            }).then(data => {
+                this.cancel_show = false
+                this.$message({
+                    type: 'success',
+                    message: '作废成功！'
+                })
+                this.getList()
+            })
+        },
+        red(a) {
+            this.red_form = {
+                amount: -1 * a.amount,
+                id: a.id,
+                invoiceCode: '',
+                invoiceNo: '',
+                type: 2
+            }
+            this.red_show = true
+            this.red_look = false
+        },
+        clearRed(next) {
+            this.$refs.red_form && this.$refs.red_form.clearValidate()
+            typeof next == 'function' && next()
+        },
+        rsure() {
+            this.$refs.red_form.validate(valid => {
+                if(valid) {
+                    post('/api/invoice-web/invoice/invoice-operate-status', this.red_form).then(data => {
+                        this.red_show = false
+                        this.$message({
+                            type: 'success',
+                            message: '冲红成功！'
+                        })
+                        this.getList()
+                    })
+                }
+            })
+        },
+        look(a) {
+            post(`/api/invoice-web/invoice/invoice-spillover-detail?invoiceItemId=${a.id}`).then(data => {
                 this.red_form = {
-                    amount: -1 * a.amount,
+                    amount: -1 * data.amount,
                     id: a.id,
-                    invoiceCode: '',
-                    invoiceNo: '',
+                    invoiceCode: data.invoiceCode,
+                    invoiceNo: data.invoiceNo,
                     type: 2
                 }
                 this.red_show = true
-                this.red_look = false
-            },
-            clearRed(next) {
-                this.$refs.red_form && this.$refs.red_form.clearValidate()
-                typeof next == 'function' && next()
-            },
-            rsure() {
-                this.$refs.red_form.validate(valid => {
-                    if(valid) {
-                        post('/api/invoice-web/invoice/invoice-operate-status', this.red_form).then(data => {
-                            this.red_show = false
-                            this.$message({
-                                type: 'success',
-                                message: '冲红成功！'
-                            })
-                            this.getList()
-                        })
-                    }
-                })
-            },
-            look(a) {
-                post(`/api/invoice-web/invoice/invoice-spillover-detail?invoiceItemId=${a.id}`).then(data => {
-                    this.red_form = {
-                        amount: -1 * data.amount,
-                        id: a.id,
-                        invoiceCode: data.invoiceCode,
-                        invoiceNo: data.invoiceNo,
-                        type: 2
-                    }
-                    this.red_show = true
-                    this.red_look = true
-                })
-            }
+                this.red_look = true
+            })
         }
     }
+}
 </script>
 
 <style lang="scss" scoped>

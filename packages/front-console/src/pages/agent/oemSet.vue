@@ -38,7 +38,7 @@
     </div>
     <div class="bg-white p15 mb15">
       <div class="edit-box">
-        <h3 class="edit-title">短信签名 <a class="edit-btn" href="#" @click="smsVisible=true">修改</a></h3>
+        <h3 class="edit-title">短信签名 <a class="edit-btn" href="#" @click="smsVisible=true" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">修改</a></h3>
         <div>短信签名名称：{{ detail.smsSign || '无' }}</div>
       </div>
     </div>
@@ -111,9 +111,15 @@ import { get, post, formPost } from "../../store/api";
 import upload from './component/upload.vue'
 import { showNotify } from "../../plugin/utils-notify";
 import _ from 'lodash';
+import { mapGetters } from 'vuex'
 
 export default {
   components: { upload },
+  computed: {
+    ...mapGetters({
+      userInformation: 'userInformation'
+    })
+  },
   data() {
     return {
       tableData: [],
