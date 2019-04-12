@@ -380,11 +380,11 @@ export default {
     this.staff_show = false
   },
   methods: {
-    getRoleList(type) {
+    getRoleList() {
       this.systemList.forEach(e => {
         get('/api/sysmgr-web/user/role-list', {
           sourceType: e.value,
-          companyId: type === 'add' ? '' : this.companyId,
+          companyId: this.companyId,
         }).then(result => {
           this.roleList[e.value] = result
         })
@@ -488,7 +488,9 @@ export default {
       } else {
         this.showAll = true
       }
-      this.companyId = arr[0].companyId || ''
+      this.companyId = arr.length ? arr[0].companyId : ''
+      this.staff_form.belongOrgId = arr.length ? arr[0].id : ''
+      this.staff_form.companyId = arr.length ? arr[0].companyId : ''
     },
     setDisabled(a) {
       a = a || this.root
@@ -566,7 +568,8 @@ export default {
     staff_add() {
       this.staff_show = true
       this.getAgentRoot();
-      this.getRoleList('add');
+      this.getRoleList();
+      console.log(this.staff_form)
     },
     staff_submit() {
       this.systemList.forEach((e, i) => {
