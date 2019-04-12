@@ -373,7 +373,7 @@ export default {
       this.systemList = result
       this.staff_form.adminContextParam.platformType = this.power = result[0].value
       this.staff_form.companyContextParam.platformType = result[1].value
-      this.getRoleList()
+      // this.getRoleList()
     })
     this.staff_query()
     this.section_show = false
@@ -387,6 +387,8 @@ export default {
           companyId: this.companyId,
         }).then(result => {
           this.roleList[e.value] = result
+          console.log(this.roleList)
+          this.$forceUpdate()
         })
       })
     },
