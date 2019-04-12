@@ -257,6 +257,11 @@ export default {
       userInformation: 'userInformation'
     })
   },
+  watch: {
+    userInformation() {
+      this.companyId = this.userInformation.userProfile ? (this.userInformation.userProfile.subjectId || '') : ''
+    }
+  },
   data() {
     return {
       list: [],
@@ -490,9 +495,15 @@ export default {
       } else {
         this.showAll = true
       }
-      this.companyId = arr.length ? arr[0].companyId : ''
-      this.staff_form.belongOrgId = arr.length ? arr[0].id : ''
-      this.staff_form.companyId = arr.length ? arr[0].companyId : ''
+      if (arr.length) {
+        this.companyId = arr[0].companyId || ''
+        this.staff_form.belongOrgId = arr[0].id || ''
+        if (arr[0].companyId !== null) {
+          this.staff_form.companyId = arr[0].companyId || ''
+        } else {
+          this.staff_form.companyId = ''
+        }
+      }
     },
     setDisabled(a) {
       a = a || this.root
