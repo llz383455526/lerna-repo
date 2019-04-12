@@ -569,7 +569,7 @@ export default {
       this.staff_show = true
       this.getAgentRoot();
       this.getRoleList();
-      console.log(this.staff_form)
+      this.getstaffList();
     },
     staff_submit() {
       this.systemList.forEach((e, i) => {
