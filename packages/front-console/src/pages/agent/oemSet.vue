@@ -179,6 +179,11 @@ export default {
         }
         get(url, param).then(res => {
             this.detail = res
+            this.platForm.platformName = res.platformName
+            this.platForm.logoCode = res.logoCode
+            this.platForm.homeCode = res.homeCode
+            this.domainForm.domain = res.domain
+            this.domainForm.icp = res.icp
         })
     },
     successLogo(ev, file) {

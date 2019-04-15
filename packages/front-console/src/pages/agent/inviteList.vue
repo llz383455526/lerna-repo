@@ -200,6 +200,8 @@ export default {
       let url = '/api/contract-web/agent-invite/invite-history-info';
       let param = { inviteId: id };
       get(url, param).then(res => {
+        this.inviteForm.companyName = res.companyName
+        this.inviteForm.companyPhone = res.companyPhone
         this.historyList = res.historyList;
       })
     },
