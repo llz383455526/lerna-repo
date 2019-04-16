@@ -130,6 +130,14 @@ export default {
     })
   },
   data() {
+    const validate = (rule, value, callback) => {
+      console.log(value)
+      if (value.indexOf(" ") == -1) {
+          callback();
+      } else {
+          callback(new Error('域名有空格,请正确填写~'));
+      }
+    }
     return {
       tableData: [],
       dialogVisible: false,
@@ -164,6 +172,7 @@ export default {
       domainRules: {
         domain: [
           { required: true, message: '请输入已添加A记录值的域名进行绑定', trigger: 'blur' },
+          { validator: validate, trigger: 'blur' },
         ],
         icp: [
           { required: true, message: '请填写域名备案号', trigger: 'blur' },
