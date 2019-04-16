@@ -17,13 +17,13 @@
         <h3 class="edit-title mb30">系统展示信息 <a class="edit-btn" href="#" @click="dialogVisible=true">修改</a> </h3>
         <div class="edit-content" style="width:100%;">系统名称：{{ detail.platformName || '无' }}</div>
         <div class="edit-content">
-          <span>系统展示logo： <br> 建议尺寸60×60 </span>
-          <span v-if="! detail.logoCode">'无'</span>
+          <p>系统展示logo(建议尺寸60×60)：</p>
+          <p v-if="!detail.logoCode">无</p>
           <img :src="logo_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_logo&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="detail.logoCode" style="width: 200px;">
         </div>
         <div class="edit-content">
-          <span>客户登陆页面： <br> 建议尺寸1920×1080 </span>
-          <span v-if="!detail.homeCode">无</span>
+          <p>客户登陆页面(建议尺寸1920×1080)：</p>
+          <p v-if="!detail.homeCode">无</p>
           <img :src="home_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_home&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="detail.homeCode" style="width: 200px;">
         </div>
       </div>
@@ -49,14 +49,14 @@
           <el-input v-model="platForm.platformName"></el-input>
         </el-form-item>
         <el-form-item label="系统展示logo：(建议尺寸60×60)" prop="logoCode">
-          <upload :targetId="agentId" targetType="oem_logo" :targetExt="detail.domain" @success="successLogo" v-if="!detail.logoCode"></upload>
-          <img :src="logo_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_logo&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="detail.logoCode" style="max-width: 100%;">
-          <el-button type="text" size="small" v-if="detail.logoCode" @click="detail.logoCode=''">删除</el-button>
+          <uploadImg :targetId="agentId" targetType="oem_logo" :targetExt="platForm.domain" @success="successLogo" v-if="!platForm.logoCode"></uploadImg>
+          <img :src="logo_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_logo&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="platForm.logoCode" style="max-width: 100%;">
+          <el-button type="text" size="small" v-if="platForm.logoCode" @click="platForm.logoCode=''">删除</el-button>
         </el-form-item>
         <el-form-item label="客户登陆页面：(建议尺寸1920×1080)" prop="homeCode">
-          <upload :targetId="agentId" targetType="oem_home" :targetExt="detail.domain" @success="successHome" v-if="!detail.homeCode"></upload>
-          <img :src="home_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_home&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="detail.homeCode" style="max-width: 100%;">
-          <el-button type="text" size="small" v-if="detail.homeCode" @click="detail.homeCode=''">删除</el-button>
+          <uploadImg :targetId="agentId" targetType="oem_home" :targetExt="platForm.domain" @success="successHome" v-if="!platForm.homeCode"></uploadImg>
+          <img :src="home_url||`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_home&targetExt=${detail.domain}&targetId=${agentId}&zoomImage=true`" alt="" v-if="platForm.homeCode" style="max-width: 100%;">
+          <el-button type="text" size="small" v-if="platForm.homeCode" @click="platForm.homeCode=''">删除</el-button>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -84,6 +84,14 @@
         <el-form-item label="3. 请填写域名备案号：" prop="icp">
           <el-input v-model="domainForm.icp"></el-input>
         </el-form-item>
+        <el-form-item label="4. 请上传证书Key文件" prop="keyCode">
+            <uploadFile @success="successKey" v-if="!domainForm.keyCode"></uploadFile>
+            <div v-if="domainForm.keyCode">已上传 <a v-if="domainForm.keyCode" @click="domainForm.keyCode=''" href="javascript:;">删除</a></div>
+        </el-form-item>
+        <el-form-item label="5. 请上传证书crt文件" prop="crtCode">
+            <uploadFile @success="successCrt" v-if="!domainForm.crtCode"></uploadFile>
+            <div v-if="domainForm.crtCode">已上传 <a v-if="domainForm.crtCode" @click="domainForm.crtCode=''" href="javascript:;">删除</a></div>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="ipVisible = false">取 消</el-button>
@@ -108,13 +116,14 @@
 
 <script>
 import { get, post, formPost } from "../../store/api";
-import upload from './component/upload.vue'
+import uploadImg from './component/uploadImg.vue'
+import uploadFile from './component/uploadFile.vue'
 import { showNotify } from "../../plugin/utils-notify";
 import _ from 'lodash';
 import { mapGetters } from 'vuex'
 
 export default {
-  components: { upload },
+  components: { uploadImg, uploadFile },
   computed: {
     ...mapGetters({
       userInformation: 'userInformation'
@@ -149,6 +158,8 @@ export default {
         agentId: '',
         domain: '',
         icp: '',
+        keyCode: '',
+        crtCode: '',
       },
       domainRules: {
         domain: [
@@ -156,6 +167,12 @@ export default {
         ],
         icp: [
           { required: true, message: '请填写域名备案号', trigger: 'blur' },
+        ],
+        keyCode: [
+          { required: true, message: '请上传证书Key文件', trigger: 'blur' },
+        ],
+        crtCode: [
+          { required: true, message: '请上传证书crt文件', trigger: 'blur' },
         ],
       },
       smsForm: {
@@ -184,6 +201,8 @@ export default {
             this.platForm.homeCode = res.homeCode
             this.domainForm.domain = res.domain
             this.domainForm.icp = res.icp
+            this.domainForm.keyCode = res.keyCode
+            this.domainForm.crtCode = res.crtCode
         })
     },
     successLogo(ev, file) {
@@ -197,6 +216,12 @@ export default {
       this.detail.homeCode = ev.downloadCode
       this.home_url = URL.createObjectURL(file.raw)
       this.$refs.platForm.validateField('homeCode')
+    },
+    successKey(ev, file) {
+        this.domainForm.keyCode = ev.downloadCode
+    },
+    successCrt(ev, file) {
+        this.domainForm.crtCode = ev.downloadCode
     },
     platSubmit() {
       this.$refs['platForm'].validate(valid => {

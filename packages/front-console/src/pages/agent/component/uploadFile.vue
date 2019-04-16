@@ -7,7 +7,7 @@
       :on-change="upload"
       :multiple="false"
       :show-file-list="false"
-      accept=".png, .jpg, .jpeg">
+      accept=".key, .crt">
       <div class="up_icon">
           <div>点击这里上传</div>
       </div>
@@ -18,28 +18,14 @@
 <script>
 import { get, post, formPost } from "../../../store/api";
 export default {
-  data() {
-    return {
-      referId: '',
-    }
-  },
-  props: {
-    targetId: '',
-    targetType: '',
-    targetExt: '',
-  },
   methods: {
-    upload(a) {
-      var form = new FormData();
-      form.append('fileName', a.name);
-      form.append('file', a.raw);
-      form.append('targetId', this.targetId)
-      form.append('targetType', this.targetType)
-      form.append('targetExt', this.targetExt)
-      formPost('/api/sysmgr-web/file/upload-ext', form).then(data => {
-          this.referId = data.referId
-          this.$emit('success', data, a)
-      });
+    upload(file) {
+        var form = new FormData();
+        form.append('fileName', file.name);
+        form.append('file', file.raw);
+        formPost('/api/sysmgr-web/file/upload-ext', form).then(data => {
+            this.$emit('success', data, file)
+        });
     },
   },
 }
