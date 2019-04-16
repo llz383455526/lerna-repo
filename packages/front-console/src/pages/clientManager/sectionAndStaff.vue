@@ -3,9 +3,9 @@
     <div style="margin:30px 0 0;font-size:20px;">
       <div style="float:left;">部门及员工帐号</div>
       <div style="float:right;">
-        <el-form :inline="true" size="small" :model="staff_query_form" ref="staff_query_form">
+        <el-form :inline="true" size="small" :model="staff_query_form" @submit.native.prevent ref="staff_query_form">
           <el-form-item label="姓名/电话" prop="accountInfo">
-            <el-input v-model="staff_query_form.accountInfo"></el-input>
+            <el-input v-model="staff_query_form.accountInfo" @keyup.enter.native="staff_query"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button @click="staff_query">查询</el-button>
@@ -116,7 +116,7 @@
         </el-form-item>
         <el-form-item label="汇报对象(职员)" prop="leaderEmployeeId">
           <el-select class="form_input" v-model="staff_form.leaderEmployeeId" filterable>
-            <el-option v-for="(e, i) in staff_list" :key="`sta${i}`" :value="e.id" :label="e.name"></el-option>
+            <el-option v-for="(e, i) in staff_list" :key="`sta${i}`" :value="e.id" :label="e.name" :disabled="e.disabled"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="权限配置" v-if="systemList[0]">
@@ -713,6 +713,11 @@ export default {
           e.roles && e.roles.forEach(ev => {
             this.staff_form[k].roleIds.push(ev.id)
           })
+          // 初始化
+          this.isAppAll[type] = false
+          this.isProviderAll[type] = false
+          this.isCompanyAll[type] = false
+
           if(e.userContextCollectionMap) {
             if(e.userContextCollectionMap.app) {
               if(e.userContextCollectionMap.app.isAllSubject) {
@@ -738,6 +743,7 @@ export default {
                 this.selectedCompanyList[type] = this.formatList(e.userContextCollectionMap.company.userContexts, 'Company')
               }
             }
+            this.$forceUpdate()
             if(e.userContextCollectionMap.agent) {
               if(e.userContextCollectionMap.agent.isAllSubject) {
                 this.isAgentAll[type] = true
@@ -751,7 +757,18 @@ export default {
         this.companyId = data.companyId
         this.getAgentRoot()
         this.getRoleList()
+        // 过滤汇报对象(主要禁用当前)
+        this.filterStaffList(data.name)
       })
+    },
+    filterStaffList(name) {
+        this.staff_list.forEach((item) => {
+            if (item.name === name) {
+                item.disabled = true
+            } else {
+                item.disabled = false
+            }
+        })
     },
     formatList(list, name) {
       var arr = []
