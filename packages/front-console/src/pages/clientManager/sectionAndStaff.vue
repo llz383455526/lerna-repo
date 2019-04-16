@@ -31,7 +31,6 @@
         node-key="id"
         :highlight-current="true"
         @check="choose"
-        :check-on-click-node="true"
         :check-strictly="true"
         :expand-on-click-node="false">
       </el-tree>
@@ -471,7 +470,10 @@ export default {
         }
       })
     },
-    choose() {
+    choose(ev) {
+        if (ev.disabled) {
+            return;
+        }
       let arr = this.$refs.tree.getCheckedNodes()
       
       // 强制单选
