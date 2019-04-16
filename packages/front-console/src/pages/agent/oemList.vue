@@ -1,6 +1,6 @@
 <template>
     <div class="bg-white p15">
-        <div class="mb30">邀请客户注册</div>
+        <div class="mb30">代理商OEM管理</div>
         <el-form :inline="true" :model="searchForm" :rules="searchForm" ref="searchForm">
             <el-form-item label="代理商名称" size="small" prop="outOrderNo">
                 <el-input v-model="searchForm.outOrderNo"></el-input>
