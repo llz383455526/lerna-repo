@@ -108,7 +108,14 @@ export default {
         ...mapGetters({
             auth: "auth",
             serviceTypeList: 'serviceTypeList',
+            userInformation: 'userInformation',
         })
+    },
+    watch: {
+        userInformation(ev) {
+            this.contractModel.contractForm.companyId = ev.userProfile.subjectId
+            // console.log(this.contractModel.contractForm)
+        }
     },
     methods: {
         saveContract(isSubmit) {
