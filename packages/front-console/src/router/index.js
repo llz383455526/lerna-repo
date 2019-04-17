@@ -1366,11 +1366,17 @@ export default [{
           children: [
             {
               path: 'oemList',
-              component: () => import('../pages/agent/oemList')
+              component: () => import('../pages/agent/oemList'),
+              meta: {
+                keepAlive: false
+              }
             },
             {
               path: 'oemSet',
-              component: () => import('../pages/agent/oemSet')
+              component: () => import('../pages/agent/oemSet'),
+              meta: {
+                keepAlive: false
+              }
             },
             {
               path: 'inviteList',

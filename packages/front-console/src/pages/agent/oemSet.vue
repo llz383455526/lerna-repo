@@ -30,7 +30,7 @@
     </div>
     <div class="bg-white p15 mb15">
       <div class="edit-box">
-        <h3 class="edit-title">专属域名 <a class="edit-btn" href="#" @click="ipVisible=true">修改</a> </h3>
+        <h3 class="edit-title">专属域名 <a class="edit-btn" href="#" @click="ipVisible=true" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">修改</a> </h3>
         <div class="edit-content">类型：客户登陆</div>
         <div class="edit-content">专属域名：{{ detail.domain || '无' }}</div>
         <div class="edit-content">备案号：{{ detail.icp || '无' }}</div>

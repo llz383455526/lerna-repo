@@ -25,14 +25,14 @@
             <el-table-column prop="platformName" label="平台名称"></el-table-column>
             <el-table-column label="logo">
               <template slot-scope="scope">
-                <img :src="`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_logo&targetExt=${scope.row.domain}&zoomImage=true`" alt="" v-if="scope.row.domain" style="max-width: 100%;">
+                <img :src="`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_logo&targetExt=${scope.row.domain}&targetId=${scope.row.agentId}&zoomImage=true`" alt="" v-if="scope.row.domain" style="max-width: 100%;">
                 <span v-if="!scope.row.domain">暂无缩略图</span>
               </template>
             </el-table-column>
             <el-table-column label="客户登录页">
               <template slot-scope="scope">
                 <!-- <el-button size="small" type="text" @click="getVModal(scope.row.id)">查看图片</el-button> -->
-                <img :src="`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_home&targetExt=${scope.row.domain}&zoomImage=true`" alt="" v-if="scope.row.domain" style="max-width: 100%;">
+                <img :src="`/api/sysmgr-web/file/oem-agent-scan?targetType=oem_home&targetExt=${scope.row.domain}&targetId=${scope.row.agentId}&zoomImage=true`" alt="" v-if="scope.row.domain" style="max-width: 100%;">
                 <span v-if="!scope.row.domain">暂无缩略图</span>
               </template>
             </el-table-column>
