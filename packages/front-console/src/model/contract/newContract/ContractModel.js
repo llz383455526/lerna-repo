@@ -44,13 +44,13 @@ class ContractModel extends BaseModel {
             customCollectorAddr: '',
             // 相关商户信息
             companyApps: [{
-                companyId: '{{companyId}}',
-                appId: 'app{{companyId}}',
+                // companyId: '{{companyId}}',
+                // appId: 'app{{companyId}}',
                 appName: '',
                 chargeByName: '',
                 chargeByPhone: '',
                 chargeByMail: '',
-                isFromOutApp: '{{isFromOutApp}}'
+                // isFromOutApp: '{{isFromOutApp}}'
             }],
             // 企业开票信息
             invoiceCompanyName: '',
