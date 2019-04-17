@@ -19,7 +19,7 @@
                 <el-button @click="$refs['form'].resetFields()">清除</el-button>
             </el-form-item>
         </el-form>
-        <router-link to="agentCompactCreate">
+        <router-link to="agentCompactCreate" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
             <el-button size="small">创建代理商合同</el-button>
         </router-link>
         <el-table class="table" :data="data.list">
@@ -56,7 +56,13 @@
 </template>
 <script>
 import { get, post, postWithErrorCallback, formPost } from "../../store/api";
+import { mapGetters } from 'vuex'
 export default {
+    computed: {
+        ...mapGetters({
+            userInformation: 'userInformation'
+        })
+    },
     data() {
         return {
             form: {
