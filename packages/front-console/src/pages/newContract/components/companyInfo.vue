@@ -245,9 +245,9 @@ export default {
             contract.referIds = referArr;
         },
         deleteForm(i) {
-            this.ruleForm.serviceCompanyList.splice(i, 1);
+            this.ruleForm.serviceCompanyList && this.ruleForm.serviceCompanyList.splice(i, 1);
             this.ruleForm.contracts.splice(i, 1);
-            this.serviceFeeList.splice(i, 1);
+            this.serviceFeeList && this.serviceFeeList.splice(i, 1);
         },
         setServiceCompany(o, serviceCompanyId) {
             let serviceCompany = _.find(this.serviceCompaniesList, o => {
