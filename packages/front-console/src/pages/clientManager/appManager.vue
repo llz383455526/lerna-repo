@@ -202,6 +202,13 @@
             {{e.text}}
           </el-radio>
         </el-form-item>
+        <template v-if="cform.originalType == 20">
+          <el-form-item label="代理商名称" prop="agentCompanyId">
+            <el-select v-model="cform.agentCompanyId" style="width:400px;" filterable @change="companyChange">
+                <el-option v-for="e in agentList" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
+            </el-select>
+          </el-form-item>
+        </template>
         <el-form-item label="客户归属" prop="original">
           <el-radio
             v-for="e in originals"
@@ -363,8 +370,14 @@ import {
 // import {mapGetters} from 'vuex'
 import { createUser } from "../../service/userApi";
 import { setTimeout } from "timers";
+import { mapGetters } from 'vuex'
 var baseUrl = require("../../config/address.js").baseUrl;
 export default {
+  computed: {
+    ...mapGetters({
+        agentList: 'agentList',
+      })
+  },
   data() {
     var reviewMemo = (rule, value, callback) => {
       if (!value && this.reviewForm.approve == false) {
@@ -392,7 +405,8 @@ export default {
         original: '',
         originalType: '',
         originalTypeName: '',
-        companyAuditor: ''
+        companyAuditor: '',
+        agentCompanyId: ''
       },
       show: false,
       queryForm: {
@@ -469,7 +483,10 @@ export default {
             message: "请选择客户归属",
             trigger: "change"
           }
-        ]
+        ],
+        agentCompanyId: [
+            { required: true, message: '请选择代理商', trigger: 'change' }
+        ],
       },
       coshow: false,
       form: {
@@ -570,6 +587,9 @@ export default {
       originalTypeList: []
     };
   },
+  created() {
+    this.$store.dispatch('getAgentList')
+  },
   activated() {
     this.form.companyId = localStorage.getItem("appId");
     this.aform.companyId = localStorage.getItem("appId");
@@ -594,6 +614,13 @@ export default {
     })
   },
   methods: {
+    companyChange(companyId) {
+      if (!companyId || !this.agentList.length) return;
+      let obj = this.agentList.find(element => {
+          return element.companyId === companyId;
+      });
+      // this.chargeByName = obj.chargeByName;
+    },
     getOriginalTypeName() {
       this.originalTypeList.forEach(e => {
         if(this.cform.originalType == e.value) {

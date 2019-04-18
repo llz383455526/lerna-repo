@@ -44,6 +44,13 @@
             <el-form-item label="客户类型" prop="originalType">
               <el-radio v-for="e in originalTypeList" v-model="form.originalType" :key="e.value" :label="e.value" @change="getOriginalTypeName">{{e.text}}</el-radio>
             </el-form-item>
+            <template v-if="form.originalType == 20">
+              <el-form-item label="代理商名称" prop="agentCompanyId">
+                <el-select v-model="form.agentCompanyId" style="width:500px;" filterable @change="companyChange">
+                    <el-option v-for="e in agentList" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
+                </el-select>
+              </el-form-item>
+            </template>
             <el-form-item label="客户归属" prop="original">
               <el-radio v-for="e in originals" v-model="form.original" :key="e.value" :label="e.value" @change="getOriginalName">{{e.text}}</el-radio>
             </el-form-item>
@@ -100,7 +107,13 @@
 </template>
 <script>
 import { get, post } from "../../store/api";
+import { mapGetters } from 'vuex'
 export default {
+    computed: {
+      ...mapGetters({
+          agentList: 'agentList',
+        })
+    },
     data() {
       return {
         form: {
@@ -117,7 +130,8 @@ export default {
           salesList: [],
           originalType: '',
           originalTypeName: '',
-          companyAuditor: ''
+          companyAuditor: '',
+          agentCompanyId: ''
         },
         queryForm: {
           accountInfo: '',
@@ -195,7 +209,10 @@ export default {
               message: "请选择客户归属",
               trigger: "change"
             }
-          ]
+          ],
+          agentCompanyId: [
+            { required: true, message: '请选择代理商', trigger: 'change' }
+          ],
         },
         types: [
             {
@@ -219,8 +236,16 @@ export default {
       get('/api/sysmgr-web/commom/option?enumType=OriginalType').then(data => {
           this.originalTypeList = data
       })
+      this.$store.dispatch('getAgentList')
     },
     methods: {
+        companyChange(companyId) {
+          if (!companyId || !this.agentList.length) return;
+          let obj = this.agentList.find(element => {
+              return element.companyId === companyId;
+          });
+          // this.chargeByName = obj.chargeByName;
+        },
         getOriginalTypeName() {
           this.originalTypeList.forEach(e => {
             if(this.form.originalType == e.value) {
