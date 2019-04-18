@@ -360,13 +360,7 @@
   </div>
 </template>
 <script>
-import {
-  get,
-  post,
-  formPost,
-  postButNoErrorToast,
-  postWithErrorCallback
-} from "../../store/api";
+import { get, post, formPost, postButNoErrorToast, postWithErrorCallback } from "../../store/api";
 // import {mapGetters} from 'vuex'
 import { createUser } from "../../service/userApi";
 import { setTimeout } from "timers";
