@@ -46,8 +46,8 @@
             <el-table-column label="操作" width="150">
                 <template slot-scope="scope">
                     <el-button @click="handleLook(scope.row.id)" type="text">查看</el-button>
-                    <el-button @click="handleEdit(scope.row.id)" type="text">编辑</el-button>
-                    <el-button @click="handleCopy(scope.row)" type="text">复制</el-button>
+                    <el-button @click="handleEdit(scope.row.id)" type="text" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">编辑</el-button>
+                    <el-button @click="handleCopy(scope.row)" type="text" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">复制</el-button>
                 </template>
             </el-table-column>
         </el-table>
