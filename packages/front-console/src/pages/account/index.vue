@@ -136,7 +136,7 @@
                 </ayg-pagination>
             </el-tab-pane>
             <!-- v-loading="load" -->
-            <el-tab-pane label="服务商账户余额" name="service">
+            <el-tab-pane label="服务商账户余额" name="service" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
                 <el-form :inline="true" :model="serviceForm" ref="serviceForm">
                     <el-form-item label="服务商" prop="serviceCompanyId">
                         <el-select size="small" filterable v-model="serviceForm.serviceCompanyId">
@@ -294,7 +294,7 @@
                     v-on:handleCurrentChange="assignBalance">
                 </ayg-pagination>
             </el-tab-pane> -->
-            <el-tab-pane label="渠道账户余额" name="old" v-loading="load">
+            <el-tab-pane label="渠道账户余额" name="old" v-loading="load" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
                 <div style="padding: 30px;">
                     <img src="../../image/money.png" style="width: 120px;height: 120px;float: left; margin-right: 50px;"/>
                     <p>账户总余额（元）： </p>
@@ -391,7 +391,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      account: "account"
+      account: "account",
+      userInformation: 'userInformation'
     })
   },
   watch: {

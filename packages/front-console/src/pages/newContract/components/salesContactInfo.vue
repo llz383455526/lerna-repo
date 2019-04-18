@@ -62,6 +62,7 @@ export default {
         this.disableRadio = true
         this.contractModel.contractForm.originalType = '20'
         this.contractModel.contractForm.original = '20'
+        this.contractModel.contractForm.originalTypeName = '代理商客户'
       }
     },
     methods: {
