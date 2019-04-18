@@ -397,10 +397,13 @@ export default {
       })
     },
     getstaffList() {
-      post('/api/sysmgr-web/employee/allEmployeeByOrg', {
-        companyId: this.companyId
-      }).then(data => {
-        this.staff_list = data
+      return new Promise((resolve) => {
+        post('/api/sysmgr-web/employee/allEmployeeByOrg', {
+          companyId: this.companyId
+        }).then(data => {
+          this.staff_list = data
+          resolve(data)
+        })
       })
     },
     getRoot() {
@@ -759,8 +762,10 @@ export default {
         this.companyId = data.companyId
         this.getAgentRoot()
         this.getRoleList()
-        // 过滤汇报对象(主要禁用当前)
-        this.filterStaffList(data.name)
+        this.getstaffList().then((data) => {
+          // 过滤汇报对象(主要禁用当前)
+          this.filterStaffList(data.name)
+        })
       })
     },
     filterStaffList(name) {

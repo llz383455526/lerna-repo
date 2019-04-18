@@ -20,7 +20,7 @@
      <el-table-column label="操作" width="100">
         <template slot-scope="scope">
           <el-button @click="modification(scope.row)" size="small" type="text">修改</el-button>
-          <el-button @click="delet(scope.row)" size="small" type="text">删除</el-button>
+          <el-button @click="delet(scope.row)" size="small" type="text" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">删除</el-button>
         </template>
       </el-table-column>
       <el-table-column prop="name" label="商户名称"></el-table-column>
