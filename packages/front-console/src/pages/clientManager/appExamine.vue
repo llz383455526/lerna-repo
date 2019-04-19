@@ -137,7 +137,7 @@
                 <el-table-column label="对接方式" prop="accessTypeDesc"></el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="scope">
-                        <el-button type="text" @click="prevFile(scope.row)">预览协议原件</el-button>
+                        <el-button type="text" @click="prevFile(scope.row)">预览协议原件</el-button> 
                         <router-link :to="`/main/eContract/index?templateName=${scope.row.name}`" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
                             <el-button type="text">查看签约记录</el-button>
                         </router-link>
