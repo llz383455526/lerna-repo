@@ -165,9 +165,10 @@ export default {
         formAdd() {
             let info = _.cloneDeep(this.info);
             let quoteFeeContent = _.cloneDeep(this.quoteFeeContent);
-            console.log(quoteFeeContent)
-            quoteFeeContent.serviceCompanyRateList[0].serviceCompanyId = info.serviceCompanyId
-            quoteFeeContent.serviceCompanyRateList[0].serviceCompanyName = info.serviceCompanyName
+            if (quoteFeeContent.serviceCompanyRateList[0]) {
+                quoteFeeContent.serviceCompanyRateList[0].serviceCompanyId = info.serviceCompanyId
+                quoteFeeContent.serviceCompanyRateList[0].serviceCompanyName = info.serviceCompanyName
+            }
             this.ruleForm.serviceCompanyList && this.ruleForm.serviceCompanyList.push({
                 serviceCompanyName: info.serviceCompanyName,
                 serviceCompanyId: info.serviceCompanyId
