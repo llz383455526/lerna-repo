@@ -171,7 +171,7 @@ var baseUrl = require("../../config/address.js").baseUrl;
 export default {
     computed: {
         ...mapGetters({
-            userInformation: 'userInformation',
+            userInformation: 'userInformation', 
         })
     },
     data() {
