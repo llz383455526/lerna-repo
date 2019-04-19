@@ -127,7 +127,7 @@
                     <el-checkbox v-for="item in roleList[power]" :key="item.roleId" :label="item.roleId">{{item.roleName}}</el-checkbox>
                   </el-checkbox-group>
                 </el-tab-pane>
-                <el-tab-pane label="配置客户" name="fourth">
+                <el-tab-pane label="配置客户" name="fourth" v-if="companyId<=0">
                   <el-button @click="openDialog('新增客户', 'company')">新增</el-button>
                   <el-checkbox v-model="isCompanyAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="companyId<=0">全部</el-checkbox>
                   <div class="table-container" v-if="!isCompanyAll[power]">
@@ -170,8 +170,8 @@
                     </el-table>
                   </div>
                 </el-tab-pane>
-                <el-tab-pane label="配置代理商" v-if="power == systemList[0].value">
-                  <el-button @click="openDialog('新增代理商', 'agent')">新增</el-button>
+                <el-tab-pane label="配置代理商" v-if="power == systemList[0].value && companyId<=0">
+                  <el-button @click="openDialog('新增代理商', 'agent')">新增 {{companyId}}</el-button>
                   <el-checkbox v-model="isAgentAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="companyId<=0">全部</el-checkbox>
                   <div class="table-container">
                     <el-table :data="selectedAgentList[power]">
