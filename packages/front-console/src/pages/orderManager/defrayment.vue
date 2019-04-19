@@ -84,7 +84,7 @@
                     <el-button size="small" @click="reset('query')">清空所有条件</el-button>
                 </el-form-item>
             </el-form>
-            <a target="_bank" :href="`${baseUrl}/api/console-dlv/company/salary-online-order/download-pay-item-details${term}`"><el-button type="primary" size="small" style="float: right;">导出数据</el-button></a>
+            <a target="_bank" :href="`/api/console-dlv/company/salary-online-order/download-pay-item-details${term}`"><el-button type="primary" size="small" style="float: right;">导出数据</el-button></a>
             <el-table :data="detail" >
                 <el-table-column label="收款方账号名称" prop="accountName"></el-table-column>
                 <el-table-column label="身份证" prop="idCard"></el-table-column>
@@ -143,28 +143,7 @@
                 <el-button size="small" @click="show = false">取消</el-button>
             </span>
         </el-dialog> -->
-        <!-- <el-dialog title="获取验证码" :visible.sync="cshow" width="70%">
-          <span class="tip">为了保障您的账号安全，请完成一下身份验证。</span>
-          <el-form label-width="150px">
-              <el-form-item label="手机号码：">
-                  {{phone}}
-              </el-form-item>
-              <el-form-item >
-                  <img :src="`${baseUrl}/api/sysmgr-web/verify-codes/gen-captcha?req_id=${req_id}`">
-                  <el-button type="text" style="margin-left: 30px;" @click="createId">刷新</el-button>
-              </el-form-item>
-              <el-form-item label="请输入图形中字符：">
-                  <el-input v-model="chars" style="width: 300px;"></el-input>
-              </el-form-item>
-              <el-form-item label="短信验证码：">
-                  <el-input v-model="phoneCode" style="width: 300px;"></el-input><el-button type="text" style="margin-left: 30px;" @click="getCode">获取验证码</el-button>
-              </el-form-item>
-          </el-form>
-          <span class="form_footer" slot="footer">
-              <el-button @click="submit" type="primary">提交</el-button>
-              <el-button @click="cshow = false" type="warning">关闭</el-button>
-          </span>
-      </el-dialog> -->
+        <auth-code @result="getAuthCode" ref="authCode"></auth-code>
     </div>
 </template>
 <script>
@@ -177,269 +156,178 @@ import {
 } from "../../store/api";
 import { mapGetters } from "vuex"
 import { setTimeout } from 'timers';
-var baseUrl = require("../../config/address.js").baseUrl;
-if (!baseUrl) {
-  baseUrl = "";
-}
+import authCode from '../../pageComponent/authCode'
 export default {
-  data() {
-    return {
-      data: '',
-      msg: '',
-      form: {
-          accountName: '',
-          idCard: '',
-          accountNo: '',
-          phone: '',
-          orderId: '',
-          page: 1,
-          pageSize: 10
-      },
-      cost: [],
-      detail: [],
-      total: 5,
-      client: {},
-      show: false,
-      term: '',
-      req_id: '',
-      phone: '',
-      cshow: false,
-      currEvent: '',
-      authCode: '',
-      balance: {},
-      baseUrl: baseUrl,
-      chars: ''
-    };
-  },
-  computed: {
-      ...mapGetters({
-          userInformation: 'userInformation',
-        //   clientList: 'clientList'
-      })
-  },
-  watch: {
-      form: {
-          handler() {
-              this.term = ''
-              for(var k in this.form) {
-                  if(this.form[k]){
-                      if(this.term) {
-                          this.term += `&${k}=${this.form[k]}`
-                      }
-                      else {
-                          this.term += `?${k}=${this.form[k]}`
-                      }
-                  }
-              }
-              console.log(this.term)
-          },
-          deep: true
-      },
-      // userInformation() {
-      //   if(this.cost.length){
-      //     this.getBalance()
-      //   }
-      // }
-  },
-  mounted() {
-    this.createId();
-    this.authCode = localStorage.getItem("authCode");
-    this.data = JSON.parse(sessionStorage.getItem('data'))
-    this.form.orderId = this.data.id
-    get('/api/console-dlv/company/salary-online-order/salary-order-step-detail', {
-        orderId: this.data.id
-    }).then(data => {
-        this.msg = data
-    })
-    get('/api/console-dlv/company/salary-online-order/salary-order-fee-info', {
-        orderId: this.data.id
-    }).then(data => {
-        this.cost = [data]
-        // if(this.userInformation) {
-        //   this.getBalance()
+    components: {
+        authCode
+    },
+    data() {
+      return {
+        data: '',
+        msg: '',
+        form: {
+            accountName: '',
+            idCard: '',
+            accountNo: '',
+            phone: '',
+            orderId: '',
+            page: 1,
+            pageSize: 10
+        },
+        cost: [],
+        detail: [],
+        total: 5,
+        client: {},
+        show: false,
+        term: '',
+        authCode: '',
+        balance: {},
+      };
+    },
+    computed: {
+        ...mapGetters({
+            userInformation: 'userInformation',
+          //   clientList: 'clientList'
+        })
+    },
+    watch: {
+        form: {
+            handler() {
+                this.term = ''
+                for(var k in this.form) {
+                    if(this.form[k]){
+                        if(this.term) {
+                            this.term += `&${k}=${this.form[k]}`
+                        }
+                        else {
+                            this.term += `?${k}=${this.form[k]}`
+                        }
+                    }
+                }
+                console.log(this.term)
+            },
+            deep: true
+        },
+        // userInformation() {
+        //   if(this.cost.length){
+        //     this.getBalance()
+        //   }
         // }
-    })
-    // this.getPhone();
-    this.query()
-    // this.$store.dispatch('getClientList', {
-    //   orderId: this.data.id
-    // })
-    // setTimeout(() => {
-    //   console.log(this.clientList)
-    // }, 3000)
-    // console.log(this.userInformation)
-  },
-  methods: {
-    query(a) {
-      if(isNaN(a)){
-            a = 1
+    },
+    mounted() {
+        this.createId();
+        this.authCode = localStorage.getItem("authCode");
+        this.data = JSON.parse(sessionStorage.getItem('data'))
+        this.form.orderId = this.data.id
+        get('/api/console-dlv/company/salary-online-order/salary-order-step-detail', {
+            orderId: this.data.id
+        }).then(data => {
+            this.msg = data
+        })
+        get('/api/console-dlv/company/salary-online-order/salary-order-fee-info', {
+            orderId: this.data.id
+        }).then(data => {
+            this.cost = [data]
+            // if(this.userInformation) {
+            //   this.getBalance()
+            // }
+        })
+        this.query()
+    },
+    methods: {
+        query(a) {
+            if(isNaN(a)){
+                a = 1
+            }
+            this.form.page = a
+            post('/api/console-dlv/company/salary-online-order/query-salary-order-item', this.form).then(data => {
+                this.detail = data.list
+                this.total = data.total
+            })
+        },
+        cancel() {
+            post('/api/console-dlv/company/salary-online-order/cancel-salary-order', {
+                orderId: this.data.id
+            }).then(data => {
+                this.$message({
+                    type: 'success',
+                    message: '已成功取消订单！'
+                })
+                console.log(data)
+            })
+        },
+        // changeClient() {
+        //   console.log(this.client)
+        //   post('/api/console-dlv/company/salary-online-order/update-submited-app-info', {
+        //     appId: this.client,
+        //     orderId: this.data.id
+        //   }).then(data => {
+        //     this.$message({
+        //       type: 'success',
+        //       message: '已成功更改委托方！'
+        //     })
+        //     this.show = false
+        //     this.cost[0].appId = this.client
+        //     this.clientList.forEach(e => {
+        //       if(e.value == this.client) {
+        //         this.cost[0].appName = e.text
+        //       }
+        //     })
+        //     this.getBalance()
+        //   })
+        // },
+        downList() {
+            get('/api/console-dlv/company/salary-online-order/download-pay-item-details', {
+                orderId: this.form.orderId
+            }).then(data => {
+                console.log(data)
+            })
+        },
+        setSize(a) {
+            this.form.pageSize = a;
+            this.query()
+        },
+        reset(name) {
+            this.$refs[name].resetFields();
+        },
+        getBalance() {
+            post('/api/balance-web/balance-account/query-app-account', {
+                appId: this.cost[0].appId
+            }).then(data => {
+                this.balance = data
+            })
+        },
+        recharge() {
+            this.$router.push('/main/reconciliationCenter/rechargeApplication')
+        },
+        // pay() {
+        //   if (this.authCode) { 
+        //     console.log(this.curr);
+        //     postWithErrorCallback("/api/sysmgr-web/company-app/del-payment-user", {
+        //       appId: this.appId,
+        //       paymentThirdType: this.curr.thirdPaymentType,
+        //       paymentUserId: this.curr.payUserId,
+        //       authCode: this.authCode
+        //     }).then(data => {
+        //         this.dshow = false;
+        //         this.$message({
+        //           type: "success",
+        //           message: "删除成功"
+        //         });
+        //         this.query();
+        //       }).catch(err => {
+        //         if (err.message == "无效的授权码！") {
+        //           this.$refs.authCode.getAccredit(this.pay);
+        //         }
+        //       });
+        //   } else {
+        //     this.$refs.authCode.getAccredit(this.pay);
+        //   }
+        // },
+        getAuthCode(a) {
+            this.authCode = a
         }
-        this.form.page = a
-        post('/api/console-dlv/company/salary-online-order/query-salary-order-item', this.form).then(data => {
-            this.detail = data.list
-            this.total = data.total
-        })
-    },
-    cancel() {
-      post('/api/console-dlv/company/salary-online-order/cancel-salary-order', {
-          orderId: this.data.id
-      }).then(data => {
-          this.$message({
-              type: 'success',
-              message: '已成功取消订单！'
-          })
-          console.log(data)
-      })
-    },
-    // changeClient() {
-    //   console.log(this.client)
-    //   post('/api/console-dlv/company/salary-online-order/update-submited-app-info', {
-    //     appId: this.client,
-    //     orderId: this.data.id
-    //   }).then(data => {
-    //     this.$message({
-    //       type: 'success',
-    //       message: '已成功更改委托方！'
-    //     })
-    //     this.show = false
-    //     this.cost[0].appId = this.client
-    //     this.clientList.forEach(e => {
-    //       if(e.value == this.client) {
-    //         this.cost[0].appName = e.text
-    //       }
-    //     })
-    //     this.getBalance()
-    //   })
-    // },
-    downList() {
-      get('/api/console-dlv/company/salary-online-order/download-pay-item-details', {
-        orderId: this.form.orderId
-      }).then(data => {
-        console.log(data)
-      })
-    },
-    setSize(a) {
-      this.form.pageSize = a;
-      this.query()
-    },
-    reset(name) {
-      this.$refs[name].resetFields();
-    },
-    getBalance() {
-      post('/api/balance-web/balance-account/query-app-account', {
-        appId: this.cost[0].appId
-      }).then(data => {
-        console.log(data)
-        this.balance = data
-      })
-    },
-    recharge() {
-      this.$router.push('/main/reconciliationCenter/rechargeApplication')
-    },
-    // pay() {
-    //   if (this.authCode) { 
-    //     console.log(this.curr);
-    //     postWithErrorCallback("/api/sysmgr-web/company-app/del-payment-user", {
-    //       appId: this.appId,
-    //       paymentThirdType: this.curr.thirdPaymentType,
-    //       paymentUserId: this.curr.payUserId,
-    //       authCode: this.authCode
-    //     })
-    //       .then(data => {
-    //         this.dshow = false;
-    //         this.$message({
-    //           type: "success",
-    //           message: "删除成功"
-    //         });
-    //         this.query();
-    //       })
-    //       .catch(err => {
-    //         if (err.message == "无效的授权码！") {
-    //           this.getAccredit(this.sure);
-    //         }
-    //       });
-    //   } else {
-    //     this.getAccredit(this.pay);
-    //   }
-    // },
-    getPhone() {
-      getButNoErrorToast("/api/console-dlv/company/salary-online-order/get-two-step-phone", {
-        orderId: this.data.id
-      }).then(data => {
-        this.phone = data;
-      });
-    },
-    guid() {
-      function S4() {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-      }
-      return `${S4()}${S4()}-${S4()}-${S4()}-${S4()}-${S4()}${S4()}${S4()}`;
-    },
-    createId() {
-      this.req_id = this.guid();
-      console.log(this.req_id);
-    },
-    getCode() {
-      if (this.chars) {
-        postWithErrorCallback("/api/console-dlv/company/salary-online-order/get-pay-msgcode", {
-          captcha: this.chars,
-          orderId: this.data.id,
-          reqId: this.req_id
-        }).then(data => {
-            console.log(data);
-            this.$message({
-              type: "success",
-              message: "验证码已发送，请注意查收"
-            });
-          })
-          .catch(err => {
-            this.createId();
-          });
-      } else {
-        this.$message({
-          type: "info",
-          message: "请正确输入图片中的字符"
-        });
-      }
-    },
-    getAccredit(a) {
-      if(this.phone){
-        this.cshow = true;
-        // this.currEvent = a;
-      }
-      else{
-        this.$message({
-          type: 'error',
-          message: '未绑定手机号码，无法获取权限！'
-        })
-      }
-    },
-    submit() {
-      if (this.phoneCode) {
-        post("/api/console-dlv/company/salary-online-order/pay", {
-          orderId: this.data.id,
-          verifyCode: this.phoneCode
-        }).then(data => {
-          this.$message({
-            type: "success",
-            message: "受理成功"
-          })
-          this.cshow = false;
-          // console.log(data);
-          // this.authCode = data;
-          // localStorage.setItem("authCode", data);
-          // if (this.currEvent && typeof this.currEvent == "function") {
-          //   this.currEvent();
-          // }
-        });
-      } else {
-        this.$message({
-          type: "info",
-          message: "请填写验证码后提交"
-        });
-      }
     }
-  }
 };
 </script>
 <style scoped>

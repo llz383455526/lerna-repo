@@ -291,7 +291,7 @@ export default {
     },
     getDetail(id) {
       this.accountId = id;
-      get("/api/sysmgr-web/user/detail", {
+      get("/api/sysmgr-web/commom/user-detail", {
         userId: id
       }).then(result => {
         this.userDetail = result;

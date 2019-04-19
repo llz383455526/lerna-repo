@@ -73,9 +73,13 @@
                 </template>
             </el-table-column>
         </el-table>
-        <ayg-pagination v-if="tableData.total" :total="tableData.total"
-                        v-on:handleSizeChange="handleSizeChange"
-                        v-on:handleCurrentChange="handleCurrentChange" :currentPage="currentPage"></ayg-pagination>
+        <ayg-pagination
+            v-if="tableData.total"
+            :total="tableData.total"
+            v-on:handleSizeChange="handleSizeChange"
+            v-on:handleCurrentChange="handleCurrentChange"
+            :currentPage="currentPage">
+        </ayg-pagination>
     </div>
 </template>
 

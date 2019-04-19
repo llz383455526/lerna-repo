@@ -155,10 +155,10 @@
                 <el-radio v-model="form.passportType" label="1">是</el-radio>
                 <el-radio v-model="form.passportType" label="2">否</el-radio>
             </el-form-item>
-            <el-form-item label="存储方式" prop="storeType">
+            <!-- <el-form-item label="存储方式" prop="storeType">
                 <el-radio v-model="form.storeType" label="1" :disabled="form.enable ? true : false">硬盘存储</el-radio>
                 <el-radio v-model="form.storeType" label="2" :disabled="form.enable ? true : false">OSS存储</el-radio>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="是否需要绑定银行卡" prop="bindBank" v-if="form.signModel && form.signModel == 2 && bindBank">
                 <el-radio v-model="form.bindBank" label="1">是</el-radio>
                 <el-radio v-model="form.bindBank" label="2">否</el-radio>

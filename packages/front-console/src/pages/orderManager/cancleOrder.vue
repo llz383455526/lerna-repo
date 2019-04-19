@@ -38,7 +38,7 @@
                     <el-button size="small" @click="reset('query')">清空所有条件</el-button>
                 </el-form-item>
             </el-form>
-            <a target="_bank" :href="`${baseUrl}/api/console-dlv/company/salary-online-order/download-pay-item-details${term}`"><el-button type="primary" size="small" style="float: right;">导出数据</el-button></a>
+            <a target="_bank" :href="`/api/console-dlv/company/salary-online-order/download-pay-item-details${term}`"><el-button type="primary" size="small" style="float: right;">导出数据</el-button></a>
             <!-- <el-button type="primary" size="small" class="btn">批量删除</el-button>
             <el-button type="primary" size="small" class="btn">增加收款方</el-button> -->
             <el-tabs style="clear: both;">
@@ -123,305 +123,196 @@ import {
   postButNoErrorToast,
   postWithErrorCallback
 } from "../../store/api";
-var baseUrl = require("../../config/address.js").baseUrl;
-if (!baseUrl) {
-  baseUrl = "";
-}
 export default {
-  data() {
-    return {
-      data: '',
-      form: {
-          accountName: '',
-          idCard: '',
-          accountNo: '',
-          phone: '',
-          orderId: '',
-          page: 1,
-          pageSize: 10
-      },
-      msg: '',
-      detail: [],
-      total: 0,
-      baseUrl: baseUrl,
-      term: ''
-      // clientId: 1,
-      // show: false,
-      // req_id: '',
-      // phone: '',
-      // cshow: '',
-      // currEvent: '',
-      // authCode: ''
-    };
-  },
-  watch: {
-      form: {
-          handler() {
-              this.term = ''
-              for(var k in this.form) {
-                  if(this.form[k]){
-                      if(this.term) {
-                          this.term += `&${k}=${this.form[k]}`
-                      }
-                      else {
-                          this.term += `?${k}=${this.form[k]}`
-                      }
-                  }
-              }
-              console.log(this.term)
-          },
-          deep: true
-      }
-  },
-  mounted() {
-    this.data = JSON.parse(sessionStorage.getItem('data'))
-    this.form.orderId = this.data.id
-    get('/api/console-dlv/company/salary-online-order/salary-order-step-detail', {
-        orderId: this.data.id
-    }).then(data => {
-        this.msg = data
-    })
-    this.query()
-  },
-  methods: {
-    query(a) {
-      if(isNaN(a)){
-          a = 1
-      }
-      this.form.page = a
-      post('/api/console-dlv/company/salary-online-order/query-salary-order-item', this.form).then(data => {
-          this.detail = data.list
-          this.total = data.total
-      })
+    data() {
+        return {
+            data: '',
+            form: {
+                accountName: '',
+                idCard: '',
+                accountNo: '',
+                phone: '',
+                orderId: '',
+                page: 1,
+                pageSize: 10
+            },
+            msg: '',
+            detail: [],
+            total: 0,
+            term: ''
+        };
     },
-    setSize(a) {
-      this.form.pageSize = a;
-      this.query()
+    watch: {
+        form: {
+            handler() {
+                this.term = ''
+                for(var k in this.form) {
+                    if(this.form[k]){
+                        if(this.term) {
+                            this.term += `&${k}=${this.form[k]}`
+                        }
+                        else {
+                            this.term += `?${k}=${this.form[k]}`
+                        }
+                    }
+                }
+            },
+            deep: true
+        }
     },
-    reset(name) {
-      this.$refs[name].resetFields();
-    },
-    pay() {
-      if (this.authCode) {
-        // console.log(this.curr);
-        // postWithErrorCallback("/api/sysmgr-web/company-app/del-payment-user", {
-        //   appId: this.appId,
-        //   paymentThirdType: this.curr.thirdPaymentType,
-        //   paymentUserId: this.curr.payUserId,
-        //   authCode: this.authCode
-        // })
-        //   .then(data => {
-        //     this.dshow = false;
-        //     this.$message({
-        //       type: "success",
-        //       message: "删除成功"
-        //     });
-        //     this.query();
-        //   })
-        //   .catch(err => {
-        //     if (err.message == "无效的授权码！") {
-        //       this.getAccredit(this.sure);
-        //     }
-        //   });
-      } else {
-        this.getAccredit(this.pay);
-      }
-    },
-    getPhone() {
-      postButNoErrorToast("/api/sysmgr-web/company-app/get-two-step-phone").then(data => {
-        this.phone = data;
-      });
-    },
-    guid() {
-      function S4() {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-      }
-      return `${S4()}${S4()}-${S4()}-${S4()}-${S4()}-${S4()}${S4()}${S4()}`;
-    },
-    createId() {
-      this.req_id = this.guid();
-      console.log(this.req_id);
-    },
-    getCode() {
-      if (this.chars) {
-        postWithErrorCallback("/api/sysmgr-web/company-app/send-phone-code", {
-          captcha: this.chars,
-          reqId: this.req_id
-        })
-          .then(data => {
-            console.log(data);
-            this.$message({
-              type: "success",
-              message: "验证码已发送，请注意查收"
-            });
-          })
-          .catch(err => {
-            this.createId();
-          });
-      } else {
-        this.$message({
-          type: "info",
-          message: "请正确输入图片中的字符"
-        });
-      }
-    },
-    getAccredit(a) {
-      if(this.phone){
-        this.cshow = true;
-        this.currEvent = a;
-      }
-      else{
-        this.$message({
-          type: 'error',
-          message: '未绑定手机号码，无法获取权限！'
-        })
-      }
-    },
-    submit() {
-      if (this.phoneCode) {
-        post("/api/sysmgr-web/company-app/get-auth-code-by-phone-code", {
-          phoneCode: this.phoneCode
+    mounted() {
+        this.data = JSON.parse(sessionStorage.getItem('data'))
+        this.form.orderId = this.data.id
+        get('/api/console-dlv/company/salary-online-order/salary-order-step-detail', {
+            orderId: this.data.id
         }).then(data => {
-          console.log(data);
-          this.cshow = false;
-          this.authCode = data;
-          localStorage.setItem("authCode", data);
-          if (this.currEvent && typeof this.currEvent == "function") {
-            this.currEvent();
-          }
-        });
-      } else {
-        this.$message({
-          type: "info",
-          message: "请填写验证码后提交"
-        });
-      }
+            this.msg = data
+        })
+        this.query()
+    },
+    methods: {
+        query(a) {
+            if(isNaN(a)){
+                a = 1
+            }
+            this.form.page = a
+            post('/api/console-dlv/company/salary-online-order/query-salary-order-item', this.form).then(data => {
+                this.detail = data.list
+                this.total = data.total
+            })
+        },
+        setSize(a) {
+            this.form.pageSize = a;
+            this.query()
+        },
+        reset(name) {
+            this.$refs[name].resetFields();
+        }
     }
-  }
 };
 </script>
 <style scoped>
 .plan {
-  width: 300px;
-  padding: 20px 15px 35px;
-  box-sizing: border-box;
-  border: 1px solid rgba(234, 234, 234, 1);
-  margin-top: 10px;
+    width: 300px;
+    padding: 20px 15px 35px;
+    box-sizing: border-box;
+    border: 1px solid rgba(234, 234, 234, 1);
+    margin-top: 10px;
 }
 .phend {
-  font-size: 12px;
-  color: #666;
+    font-size: 12px;
+    color: #666;
 }
 .phend > span:nth-child(2) {
-  float: right;
-  cursor: pointer;
+    float: right;
+    cursor: pointer;
 }
 .pstatus {
-  color: #ef5187;
-  font-size: 24px;
-  margin-top: 35px;
-  text-align: center;
+    color: #ef5187;
+    font-size: 24px;
+    margin-top: 35px;
+    text-align: center;
 }
 .ptip {
-  font-size: 14px;
-  color: #333;
-  text-align: center;
-  margin-top: 20px;
+    font-size: 14px;
+    color: #333;
+    text-align: center;
+    margin-top: 20px;
 }
 .pcreate {
-  font-size: 12px;
-  color: #999;
-  text-align: center;
-  margin-top: 10px;
+    font-size: 12px;
+    color: #999;
+    text-align: center;
+    margin-top: 10px;
 }
 #steps {
-  position: absolute;
-  top: 110px;
-  right: 15px;
-  width: calc(100% - 345px);
+    position: absolute;
+    top: 110px;
+    right: 15px;
+    width: calc(100% - 345px);
 }
 /* #orderCost {
-  padding: 30px 0px;
-  box-sizing: border-box;
-  // background-color: #f2f2f2;
+    padding: 30px 0px;
+    box-sizing: border-box;
+    // background-color: #f2f2f2;
 } */
 #detail {
     margin-top: 20px;
 }
 .mtitle {
-  font-size: 13px;
-  color: #333;
-  border-left: 4px solid #0283fb;
-  height: 16px;
-  text-indent: 10px;
+    font-size: 13px;
+    color: #333;
+    border-left: 4px solid #0283fb;
+    height: 16px;
+    text-indent: 10px;
 }
 .dtitle {
-  font-size: 16px;
-  color: #333;
-  margin-bottom: 20px;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 20px;
 }
 /* #pay {
-  // background-color: #999;
+    // background-color: #999;
 }
 #pay > :nth-child(1) {
-  height: 80px;
-  line-height: 80px;
-  background-color: #f2f2f2;
-  padding: 0px 30px;
-  box-sizing: border-box;
+    height: 80px;
+    line-height: 80px;
+    background-color: #f2f2f2;
+    padding: 0px 30px;
+    box-sizing: border-box;
 }
 #pay > :nth-child(1) > span:nth-child(1){
-  color: #333;
-  font-size: 18px;
-  margin-right: 15px;
+    color: #333;
+    font-size: 18px;
+    margin-right: 15px;
 } */
 .red {
-  font-size: 28px;
-  color: #FF0000;
+    font-size: 28px;
+    color: #FF0000;
 }
 .client {
-  float: right;
-  padding: 0px 80px;
-  box-sizing: border-box;
+    float: right;
+    padding: 0px 80px;
+    box-sizing: border-box;
 }
 .client::before {
-  position: relative;
-  top: 15px;
-  right: 80px;
-  content: '';
-  display: inline-block;
-  height: 45px;
-  border-left: 1px solid #666;
+    position: relative;
+    top: 15px;
+    right: 80px;
+    content: '';
+    display: inline-block;
+    height: 45px;
+    border-left: 1px solid #666;
 }
 #pay > :nth-child(2) {
-  background-color: #999;
-  padding: 20px 30px;
-  box-sizing: border-box;
+    background-color: #999;
+    padding: 20px 30px;
+    box-sizing: border-box;
 }
 #explain {
     overflow: hidden;
     padding: 30px 0px;
 }
 #explain > div {
-  float: left;
-  font-size: 14px;
+    float: left;
+    font-size: 14px;
 }
 #explain > div:nth-child(1) {
-  color: #999;
-  text-align: right;
-  width: 100px;
+    color: #999;
+    text-align: right;
+    width: 100px;
 }
 #explain > div:nth-child(2) {
-  color: #333;
-  width: calc(100% - 100px);
+    color: #333;
+    width: calc(100% - 100px);
 }
 #explain > div:nth-child(2) > span {
-  display: block;
-  margin-bottom: 20px;
+    display: block;
+    margin-bottom: 20px;
 }
 #explain > div:nth-child(2) > span:last-child {
-  color: #999;
-  margin-bottom: 0px;
+    color: #999;
+    margin-bottom: 0px;
 }
 .btn {
     position: relative;

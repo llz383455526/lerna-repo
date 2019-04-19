@@ -1,148 +1,125 @@
 <template> 
     <div class="r_main">
         <el-breadcrumb>
-          <el-breadcrumb-item to="/main/clientManager/clientManager">
-            客户管理
-          </el-breadcrumb-item>
-          <el-breadcrumb-item to="/main/clientManager/appManager">
-              应用管理
-          </el-breadcrumb-item>
-          <el-breadcrumb-item>
-              应用详情
-          </el-breadcrumb-item>
-          </el-breadcrumb>
-      <div class="content">
+            <el-breadcrumb-item to="/main/clientManager/clientManager">
+                客户管理
+            </el-breadcrumb-item>
+            <el-breadcrumb-item to="/main/clientManager/appManager">
+                应用管理
+            </el-breadcrumb-item>
+            <el-breadcrumb-item>
+                应用详情
+            </el-breadcrumb-item>
+        </el-breadcrumb>
+        <div class="content">
             <div class="title">基本信息</div>
-    <el-button type="primary" style="margin-left: 120px;" size="small" @click="open">编辑</el-button>
-    <div class="box">
-        <el-row :gutter="20">
-            <el-col :span="10">
-                <el-col :span="8" class="right">商户名称</el-col>
-                <el-col :span="16">
-                  {{data.appName}}
-                  <el-switch
-                    class="ml20"
-                    v-if="data.isEnable == 1 && data.isOld == 1"
-                    v-model="toggle"
-                    :disabled="toggle"
-                    active-text="参数同步"
-                    inactive-text="旧App"
-                    @change="messageSync">
-                  </el-switch>
-                </el-col>
-            </el-col>
-            <el-col :span="10">
-                <el-col :span="8" class="right">Company ID</el-col>
-                <el-col :span="10">{{data.companyId}}</el-col>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="10">
-                <el-col :span="8" class="right">appId</el-col>
-                <el-col :span="10">{{data.appId}}</el-col>
-            </el-col>
-            <el-col :span="10">
-                <el-col :span="8" class="right">商户负责人</el-col>
-                <el-col :span="10">{{data.chargeByName}}</el-col>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="20">
-                <el-col :span="4" class="right">异步通知appid</el-col>
-                <el-col :span="10" style="word-wrap: break-word;">{{data.notifyAppId}}</el-col>
-            </el-col>
-            <el-col :span="10">
-                <el-col :span="8" class="right">负责人电话</el-col>
-                <el-col :span="10">{{data.chargeMobile}}</el-col>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="10">
-                <el-col :span="8" class="right">更新人</el-col>
-                <el-col :span="10">{{data.updateByName}}</el-col>
-            </el-col>
-            <el-col :span="10">
-                <el-col :span="8" class="right">更新时间</el-col>
-                <el-col :span="10">{{data.updateTime}}</el-col>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="20">
-                <el-col :span="4" class="right">服务商</el-col>
-                <el-col :span="10">
-                    <div v-for="e in data.serviceCompanyList">
-                        {{e.serviceCompanyName}}
-                        <template v-if="e.subServiceList && e.subServiceList.length">
-                            <span style="color: red;">业务转包</span> {{`${e.subServiceList[0].subServiceCompanyName}`}}
-                        </template>
-                    </div>
-                </el-col>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="20">
-                <el-col :span="4" class="right">IP白名单（固定IP）</el-col>
-                <el-col :span="10" style="word-wrap: break-word;">{{data.allowIp}}</el-col>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="20">
-                <el-col :span="4" class="right">异步通知接口</el-col>
-                <el-col :span="10" style="word-wrap: break-word;">{{data.notifyUrl}}</el-col>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="20">
-                <el-col :span="4" class="right">RSA公钥</el-col>
-                <el-col :span="10" style="word-wrap: break-word;">{{data.appRsaPublickKey}}</el-col>
-            </el-col>
-        </el-row>
-    </div>
-    <div class="title">系统配置</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="eshow = true">编辑</el-button>
-    <div class="box">
-        <el-row :gutter="20">
-            <el-col :span="20">
-                <el-col :span="6" class="right">C端银行卡绑定（C端签约时）</el-col>
-                <el-col :span="10" style="word-wrap: break-word;">{{!data.clientAccountBind ? '关闭' : '开启'}}</el-col>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="20">
-                <el-col :span="6" class="right">安心记直充模式</el-col>
-                <el-col :span="10" style="word-wrap: break-word;">{{!data.apiRecharge ? '关闭' : '开启'}}</el-col>
-            </el-col>
-        </el-row>
-        <el-row :gutter="20">
-            <el-col :span="20">
-                <el-col :span="6" class="right">退汇回调地址</el-col>
-                <el-col :span="10" style="word-wrap: break-word;">{{data.reexchangeCallbackUrl}}</el-col>
-            </el-col>
-        </el-row>
-    </div>
-          <div class="title">支付渠道</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="addChannel">添加支付渠道</el-button>
-          <el-table :data="data.payUsers">
-              <el-table-column prop="payUserId" label="支付用户ID"></el-table-column>
-              <el-table-column prop="thirdPaymentTypeName" label="渠道名称"></el-table-column>
-              <el-table-column prop="serviceCompanyName" label="关联服务商" width=280>
-                  <template slot-scope="scope">
-                      <template v-if="scope.row.subServiceCompanyName">
-                          {{scope.row.subServiceCompanyName}} <br>
-                          <span style="color: red;">（{{scope.row.serviceCompanyName}} 业务转包）</span>
-                      </template>
-                      <template v-else>
-                          {{scope.row.serviceCompanyName}}
-                      </template>
-                  </template>
-              </el-table-column>
-              <el-table-column prop="payUserName" label="支付账号"></el-table-column>
-              <el-table-column label="操作">
-                  <template slot-scope="scope">
-                      <el-button type="text" @click="deleteRow(scope.row)">删除</el-button>
-                      <el-button type="text" @click="setDefault(scope.row)" v-if="!scope.row.isDefault">设为默认</el-button>
-                      <el-button type="text" v-else disabled>已设为默认渠道</el-button>
-                  </template>
-              </el-table-column>
-          </el-table>
+            <el-button type="primary" style="margin-left: 120px;" size="small" @click="open">编辑</el-button>
+            <div class="box">
+                <el-row :gutter="20">
+                    <el-col :span="10">
+                        <el-col :span="8" class="right">商户名称</el-col>
+                        <el-col :span="16">
+                        {{data.appName}}
+                        <el-switch
+                            class="ml20"
+                            v-if="data.isEnable == 1 && data.isOld == 1"
+                            v-model="toggle"
+                            :disabled="toggle"
+                            active-text="参数同步"
+                            inactive-text="旧App"
+                            @change="messageSync">
+                        </el-switch>
+                        </el-col>
+                    </el-col>
+                    <el-col :span="10">
+                        <el-col :span="8" class="right">Company ID</el-col>
+                        <el-col :span="10">{{data.companyId}}</el-col>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="10">
+                        <el-col :span="8" class="right">appId</el-col>
+                        <el-col :span="10">{{data.appId}}</el-col>
+                    </el-col>
+                    <el-col :span="10">
+                        <el-col :span="8" class="right">商户负责人</el-col>
+                        <el-col :span="10">{{data.chargeByName}}</el-col>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="20">
+                        <el-col :span="4" class="right">异步通知appid</el-col>
+                        <el-col :span="10" style="word-wrap: break-word;">{{data.notifyAppId}}</el-col>
+                    </el-col>
+                    <el-col :span="10">
+                        <el-col :span="8" class="right">负责人电话</el-col>
+                        <el-col :span="10">{{data.chargeMobile}}</el-col>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="10">
+                        <el-col :span="8" class="right">更新人</el-col>
+                        <el-col :span="10">{{data.updateByName}}</el-col>
+                    </el-col>
+                    <el-col :span="10">
+                        <el-col :span="8" class="right">更新时间</el-col>
+                        <el-col :span="10">{{data.updateTime}}</el-col>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="20">
+                        <el-col :span="4" class="right">服务商</el-col>
+                        <el-col :span="10">
+                            <div v-for="e in data.serviceCompanyList">
+                                {{e.serviceCompanyName}}
+                                <template v-if="e.subServiceList && e.subServiceList.length">
+                                    <span style="color: red;">业务转包</span> {{`${e.subServiceList[0].subServiceCompanyName}`}}
+                                </template>
+                            </div>
+                        </el-col>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="20">
+                        <el-col :span="4" class="right">IP白名单（固定IP）</el-col>
+                        <el-col :span="10" style="word-wrap: break-word;">{{data.allowIp}}</el-col>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="20">
+                        <el-col :span="4" class="right">异步通知接口</el-col>
+                        <el-col :span="10" style="word-wrap: break-word;">{{data.notifyUrl}}</el-col>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="20">
+                        <el-col :span="4" class="right">RSA公钥</el-col>
+                        <el-col :span="10" style="word-wrap: break-word;">{{data.appRsaPublickKey}}</el-col>
+                    </el-col>
+                </el-row>
+            </div>
+            <div class="title">系统配置</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="eshow = true">编辑</el-button>
+            <div class="box">
+                <el-row :gutter="20">
+                    <el-col :span="20">
+                        <el-col :span="6" class="right">C端银行卡绑定（C端签约时）</el-col>
+                        <el-col :span="10" style="word-wrap: break-word;">{{!data.clientAccountBind ? '关闭' : '开启'}}</el-col>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="20">
+                        <el-col :span="6" class="right">安心记直充模式</el-col>
+                        <el-col :span="10" style="word-wrap: break-word;">{{!data.apiRecharge ? '关闭' : '开启'}}</el-col>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="20">
+                        <el-col :span="6" class="right">退汇回调地址</el-col>
+                        <el-col :span="10" style="word-wrap: break-word;">{{data.reexchangeCallbackUrl}}</el-col>
+                    </el-col>
+                </el-row>
+            </div>
+            <payment-channel :data="data" :appId="appId" :query="query" ref="paymentChannel"></payment-channel>
             <div class="title" v-if="data.isFromOutApp">开发者信息</div>
             <div class="box" v-if="data.isFromOutApp">
                 <el-row :gutter="20"><el-col :span="10"><el-col :span="8" class="rightHead">商户服务信息</el-col></el-col></el-row>
@@ -160,9 +137,9 @@
                     <el-col :span="10">
                         <el-col :span="8" class="right">开通服务</el-col>
                         <el-col :span="16">
-                          <el-checkbox-group v-model="services">
+                            <el-checkbox-group v-model="services">
                             <el-checkbox v-for="e in serviceList" :key="e.value" :label="e.value" @change="setService(e.value)">{{e.text}}</el-checkbox>
-                          </el-checkbox-group>
+                            </el-checkbox-group>
                         </el-col>
                     </el-col>
                 </el-row>
@@ -207,188 +184,118 @@
                     </el-col>
                 </el-row>
                 <div v-if="appinfo.prodConfig">
-                  <el-row :gutter="20"><el-col :span="10"><el-col :span="8" class="rightHead">线上环境配置</el-col></el-col></el-row>
-                  <el-row :gutter="20">
-                      <el-col :span="10">
-                          <el-col :span="8" class="right">回调地址</el-col>
-                          <el-col :span="16">{{appinfo.prodConfig.notifyUrl}}</el-col>
-                      </el-col>
-                      <el-col :span="10">
-                          <el-col :span="8" class="right">每日调用限制</el-col>
-                          <el-col :span="10">{{appinfo.prodConfig.dailyLimit}}</el-col>
-                      </el-col>
-                  </el-row>
-                  <el-row :gutter="20">
-                      <el-col :span="10" v-for="e in appinfo.prodConfig.services" :key="e.code">
-                          <el-col :span="8" class="right">{{e.name}}</el-col>
-                          <el-col :span="16">
-                              <span class="usable" v-if="e.configured">可用</span>
-                              <span class="disable" v-else>配置中</span>
-                          </el-col>
-                      </el-col>
-                  </el-row>
-                  <el-row :gutter="20">
-                      <el-col :span="20">
-                          <el-col :span="4" class="right">应用公钥</el-col>
-                          <el-col :span="20" style="word-wrap: break-word;">{{appinfo.prodConfig.appPubKey}}</el-col>
-                      </el-col>
-                      <el-col :span="20">
-                          <el-col :span="4" class="right">爱员工公钥</el-col>
-                          <el-col :span="20" style="word-wrap: break-word;">{{appinfo.prodConfig.aygPubKey}}</el-col>
-                      </el-col>
-                      <el-col :span="20">
-                          <el-col :span="4" class="right">IP白名单</el-col>
-                          <el-col :span="20" style="word-wrap: break-word;">{{appinfo.prodConfig.whiteIp}}</el-col>
-                      </el-col>
-                  </el-row>
+                    <el-row :gutter="20"><el-col :span="10"><el-col :span="8" class="rightHead">线上环境配置</el-col></el-col></el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="10">
+                            <el-col :span="8" class="right">回调地址</el-col>
+                            <el-col :span="16">{{appinfo.prodConfig.notifyUrl}}</el-col>
+                        </el-col>
+                        <el-col :span="10">
+                            <el-col :span="8" class="right">每日调用限制</el-col>
+                            <el-col :span="10">{{appinfo.prodConfig.dailyLimit}}</el-col>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="10" v-for="e in appinfo.prodConfig.services" :key="e.code">
+                            <el-col :span="8" class="right">{{e.name}}</el-col>
+                            <el-col :span="16">
+                                <span class="usable" v-if="e.configured">可用</span>
+                                <span class="disable" v-else>配置中</span>
+                            </el-col>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="20">
+                            <el-col :span="4" class="right">应用公钥</el-col>
+                            <el-col :span="20" style="word-wrap: break-word;">{{appinfo.prodConfig.appPubKey}}</el-col>
+                        </el-col>
+                        <el-col :span="20">
+                            <el-col :span="4" class="right">爱员工公钥</el-col>
+                            <el-col :span="20" style="word-wrap: break-word;">{{appinfo.prodConfig.aygPubKey}}</el-col>
+                        </el-col>
+                        <el-col :span="20">
+                            <el-col :span="4" class="right">IP白名单</el-col>
+                            <el-col :span="20" style="word-wrap: break-word;">{{appinfo.prodConfig.whiteIp}}</el-col>
+                        </el-col>
+                    </el-row>
                 </div>
             </div>
-      </div>
-      <el-dialog title="appid配置信息" :before-close="listInit" :visible.sync="ashow" width="940px">
-          <el-form label-width="200px" :model="aform" :rules="arule" ref="aform" size="small">
-              <!-- <el-form-item label="商户负责人：" prop="chargeBy">
-                <el-select v-model="aform.chargeBy" class="form_input" @change="getName">
-                  <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
-                </el-select>
-              </el-form-item> -->
-              <el-form-item label="商户负责人电话" prop="mobilePhone">
-                <el-input class="form_input" v-model="aform.mobilePhone" @change="getSelect"></el-input>
-              </el-form-item>
-              <el-form-item label="商户负责人姓名" prop="chargeByName">
-                <el-input class="form_input" v-model="aform.chargeByName" :disabled="aform.chargeBy ? true : false"></el-input>
-              </el-form-item>
-              <el-form-item label="商户负责人邮箱" prop="chargeEmail">
-                <el-input class="form_input" v-model="aform.chargeEmail" :disabled="aform.chargeBy ? true : false"></el-input>
-              </el-form-item>
-              <template v-if="data.isFromOutApp">
-                <el-form-item label="异步通知appId：" prop="notifyAppId">
-                    <el-input class="f_input" v-model="aform.notifyAppId"></el-input>
+        </div>
+        <el-dialog title="appid配置信息" :before-close="listInit" :visible.sync="ashow" width="940px">
+            <el-form label-width="200px" :model="aform" :rules="arule" ref="aform" size="small">
+                <!-- <el-form-item label="商户负责人：" prop="chargeBy">
+                    <el-select v-model="aform.chargeBy" class="form_input" @change="getName">
+                    <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
+                    </el-select>
+                </el-form-item> -->
+                <el-form-item label="商户负责人电话" prop="mobilePhone">
+                    <el-input class="form_input" v-model="aform.mobilePhone" @change="getSelect"></el-input>
                 </el-form-item>
-                <el-form-item label="Rsa公钥：" prop="appRsaPublickKey">
-                    <el-input class="f_input" v-model="aform.appRsaPublickKey"></el-input>
+                <el-form-item label="商户负责人姓名" prop="chargeByName">
+                    <el-input class="form_input" v-model="aform.chargeByName" :disabled="aform.chargeBy ? true : false"></el-input>
                 </el-form-item>
-                <el-form-item label="IP白名单（固定IP）：" prop="allowIp">
-                    <el-input class="f_input" v-model="aform.allowIp"></el-input>
+                <el-form-item label="商户负责人邮箱" prop="chargeEmail">
+                    <el-input class="form_input" v-model="aform.chargeEmail" :disabled="aform.chargeBy ? true : false"></el-input>
                 </el-form-item>
-                <el-form-item label="工资单笔异步通知接口：" prop="notifyUrl">
-                    <el-input class="f_input" v-model="aform.notifyUrl"></el-input>
+                <template v-if="data.isFromOutApp">
+                    <el-form-item label="异步通知appId：" prop="notifyAppId">
+                        <el-input class="f_input" v-model="aform.notifyAppId"></el-input>
+                    </el-form-item>
+                    <el-form-item label="Rsa公钥：" prop="appRsaPublickKey">
+                        <el-input class="f_input" v-model="aform.appRsaPublickKey"></el-input>
+                    </el-form-item>
+                    <el-form-item label="IP白名单（固定IP）：" prop="allowIp">
+                        <el-input class="f_input" v-model="aform.allowIp"></el-input>
+                    </el-form-item>
+                    <el-form-item label="工资单笔异步通知接口：" prop="notifyUrl">
+                        <el-input class="f_input" v-model="aform.notifyUrl"></el-input>
+                    </el-form-item>
+                </template>
+                <template v-else>
+                    <el-form-item label="手机号码(发放短信验证)" prop="phone">
+                        <el-input class="f_input" v-model="aform.phone"></el-input>
+                    </el-form-item>
+                </template>
+                <el-form-item label="服务商">
+                    <el-checkbox-group v-model="aform.serviceCompanyList" @change="change">
+                        <el-checkbox v-for="(item, i) in company" :label="item.value" :key="item.value" class="block">
+                            <span class="mr10">{{item.text}}</span>
+                            <!-- <el-select v-model="assign[i].subcontractType" v-if="aform.serviceCompanyList.indexOf(item.value) > -1">
+                                <el-option label="非转包" value="0"></el-option>
+                                <el-option label="业务转包" value="1"></el-option>
+                            </el-select> -->
+                            <el-select v-model="assign[i].subServiceList[0].subServiceCompanyId" filterable v-if="aform.serviceCompanyList.indexOf(item.value) > -1 && assign[i].subcontractType - 0" @change="getassignCompanyName(i)">
+                                <el-option v-for="e in filterAssignCompany(item.value)" :key="e.id" :label="e.name" :value="e.id"></el-option>
+                            </el-select>
+                        </el-checkbox>
+                    </el-checkbox-group>
                 </el-form-item>
-              </template>
-              <template v-else>
-                <el-form-item label="手机号码(发放短信验证)" prop="phone">
-                    <el-input class="f_input" v-model="aform.phone"></el-input>
-                </el-form-item>
-              </template>
-              <el-form-item label="服务商">
-                  <el-checkbox-group v-model="aform.serviceCompanyList" @change="change">
-                      <el-checkbox v-for="(item, i) in company" :label="item.value" :key="item.value" class="block">
-                          <span class="mr10">{{item.text}}</span>
-                          <!-- <el-select v-model="assign[i].subcontractType" v-if="aform.serviceCompanyList.indexOf(item.value) > -1">
-							<el-option label="非转包" value="0"></el-option>
-                            <el-option label="业务转包" value="1"></el-option>
-                        </el-select> -->
-                        <el-select v-model="assign[i].subServiceList[0].subServiceCompanyId" filterable v-if="aform.serviceCompanyList.indexOf(item.value) > -1 && assign[i].subcontractType - 0" @change="getassignCompanyName(i)">
-                            <el-option v-for="e in filterAssignCompany(item.value)" :key="e.id" :label="e.name" :value="e.id"></el-option>
-                        </el-select>
-                      </el-checkbox>
-                  </el-checkbox-group>
-              </el-form-item>
-          </el-form>
-          <span class="form_footer" slot="footer">
-              <el-button @click="update" type="primary">保存</el-button>
-              <el-button @click="close">关闭</el-button>
-          </span>
-      </el-dialog>
-      <el-dialog title="添加支付渠道" :visible.sync="addShow" @open="clearForm" width="70%">
-          <el-form label-width="180px">
-              <el-form-item label="接入应用：">
-                  <template>{{data.appName}}</template>
-              </el-form-item>
-              <el-form-item label="服务商">
-                  <el-select class="f_input" v-model="serviceCompanyId" @change="clear" filterable>
-                      <el-option v-for="e in data.serviceCompanyList" :key="e.serviceCompanyId" :value="e.serviceCompanyId" :label="e.serviceCompanyName"></el-option>
-                  </el-select>
-              </el-form-item>
-              <el-form-item label="转包服务商" v-if="subServiceList.length">
-                  <el-select class="f_input" v-model="subServiceCompanyId" @change="getSubServiceCompanyName" filterable>
-                      <el-option v-for="e in subServiceList" :key="e.subServiceCompanyId" :value="e.subServiceCompanyId" :label="e.subServiceCompanyName"></el-option>
-                  </el-select>
-              </el-form-item>
-              <el-form-item label="支付渠道">
-                  <el-select class="f_input" v-model="paymentThirdType" @change="getList" filterable>
-                      <el-option v-for="e in types" :key="e.value" :value="e.value" :label="e.text"></el-option>
-                  </el-select>
-              </el-form-item>
-              <el-form-item label="子账号名称">
-                  <el-select class="f_input" v-model="payeruserName" @change="pick" filterable>
-                      <el-option v-for="(e, i) in others" :key="i" :value="e.payeruserName" :label="e.payeruserName"></el-option>
-                  </el-select>
-              </el-form-item>
-              <el-form-item v-show="result" label="支付账户" style="color: red;">
-                  <template>{{result.userId}}</template>
-              </el-form-item>
-              <el-form-item v-show="result" label="子账号" style="color: red;">
-                  <template>{{result.thirdpayUserId}}</template>
-              </el-form-item>
-              <el-form-item label="是否默认">
-                  <el-checkbox checked @change="defa"></el-checkbox>
-              </el-form-item>
-          </el-form>
-          <span class="form_footer" slot="footer">
-              <el-button size="small" @click="addRow" type="primary">保存</el-button>
-              <el-button size="small" @click="addShow = false">关闭</el-button>
-          </span>
-      </el-dialog>
-      <el-dialog title="支付渠道" :visible.sync="dshow" width="50%">
-          <el-form label-width="120px">
-            <div class="center">确定 删除 {{curr.payUserName}}？</div>
-          </el-form>
-          <span class="form_footer" slot="footer">
-              <el-button size="small" @click="sure" type="primary">确定</el-button>
-              <el-button size="small" @click="dshow = false">取消</el-button>
-          </span>
-      </el-dialog>
-      <el-dialog title="获取验证码" :visible.sync="cshow" width="70%">
-          <span class="tip">为了保障您的账号安全，请完成一下身份验证。</span>
-          <el-form label-width="150px">
-              <el-form-item label="手机号码：">
-                  {{phone}}
-              </el-form-item>
-              <el-form-item >
-                  <img :src="`${baseUrl}/api/sysmgr-web/verify-codes/gen-captcha?req_id=${req_id}`">
-                  <el-button type="text" style="margin-left: 30px;" @click="createId">刷新</el-button>
-              </el-form-item>
-              <el-form-item label="请输入图形中字符：">
-                  <el-input v-model="chars" style="width: 300px;"></el-input>
-              </el-form-item>
-              <el-form-item label="短信验证码：">
-                  <el-input v-model="phoneCode" style="width: 300px;"></el-input><el-button type="text" style="margin-left: 30px;" @click="getCode">获取验证码</el-button>
-              </el-form-item>
-          </el-form>
-          <span class="form_footer" slot="footer">
-              <el-button size="small" @click="submit" type="primary">提交</el-button>
-              <el-button size="small" @click="cshow = false">关闭</el-button>
-          </span>
-      </el-dialog>
-      <el-dialog title="编辑" :visible.sync="eshow" @open="initSetForm" width="50%">
-          <el-form :model="setForm" label-width="220px" ref="setForm">
-              <el-form-item label="C端银行卡绑定（C端签约时）" prop="clientAccountBind">
+            </el-form>
+            <span class="form_footer" slot="footer">
+                <el-button @click="update" type="primary">保存</el-button>
+                <el-button @click="close">关闭</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog title="编辑" :visible.sync="eshow" @open="initSetForm" width="50%">
+            <el-form :model="setForm" label-width="220px" ref="setForm">
+                <el-form-item label="C端银行卡绑定（C端签约时）" prop="clientAccountBind">
                     <el-radio v-model="setForm.clientAccountBind" :label="1">开启</el-radio>
                     <el-radio v-model="setForm.clientAccountBind" :label="0">关闭</el-radio>
-              </el-form-item>
-              <el-form-item label="安心记直充模式" prop="apiRecharge">
+                </el-form-item>
+                <el-form-item label="安心记直充模式" prop="apiRecharge">
                     <el-radio v-model="setForm.apiRecharge" :label="1">开启</el-radio>
                     <el-radio v-model="setForm.apiRecharge" :label="0">关闭</el-radio>
-              </el-form-item>
-              <el-form-item label="退汇回调地址" prop="reexchangeCallbackUrl">
-                  <el-input v-model="setForm.reexchangeCallbackUrl"></el-input>
-              </el-form-item>
-          </el-form>
-          <span class="form_footer" slot="footer">
-              <el-button size="small" @click="changeStatus" type="primary">确定</el-button>
-              <el-button size="small" @click="eshow = false">取消</el-button>
-          </span>
-      </el-dialog>
+                </el-form-item>
+                <el-form-item label="退汇回调地址" prop="reexchangeCallbackUrl">
+                    <el-input v-model="setForm.reexchangeCallbackUrl"></el-input>
+                </el-form-item>
+            </el-form>
+            <span class="form_footer" slot="footer">
+                <el-button size="small" @click="changeStatus" type="primary">确定</el-button>
+                <el-button size="small" @click="eshow = false">取消</el-button>
+            </span>
+        </el-dialog>
+        <auth-code @result="getAuthCode" ref="authCode"></auth-code>
     </div>
 </template>
 <script>
@@ -399,558 +306,307 @@ import {
   postButNoErrorToast,
   postWithErrorCallback
 } from "../../store/api";
-var baseUrl = require("../../config/address.js").baseUrl;
-if (!baseUrl) {
-  baseUrl = "";
-}
+import paymentChannel from '../../pageComponent/paymentChannel'
+import authCode from '../../pageComponent/authCode'
 export default {
-  data() {
-    return {
-      appId: "",
-      ashow: false,
-      aform: {
-        allowIp: "",
-        appId: "",
-        chargeBy: '',
-        chargeByName: '',
-        appRsaPublickKey: "",
-        notifyAppId: "",
-        notifyUrl: "",
-        phone: "",
-        authCode: "",
-        mobilePhone: '',
-        chargeEmail: '',
-        serviceCompanyList: {}
-      },
-      arule: {
-        // chargeBy: [
-        //     {
-        //     required: true,
-        //     message: "请选择商户负责人",
-        //     trigger: "change"
-        //   }
-        // ],
-        mobilePhone: [
-          {
-            required: true,
-            message: "请填写手机号码",
-            trigger: "change"
-          },
-          {pattern: /^(1\d{10})$/, message: '请正确输入手机号码', trigger: 'blur'}
-        ],
-        chargeByName: [
-          {
-            required: true,
-            message: "请填写姓名",
-            trigger: "change"
-          }
-        ],
-        chargeEmail: [
-          {
-            required: true,
-            message: "请填写邮箱",
-            trigger: "change"
-          }
-        ],
-        notifyAppId: [
-          { required: true, message: "请输入应用ID", trigger: "blur" }
-        ],
-        appRsaPublickKey: [
-          { required: true, message: "请输入Rsa公钥", trigger: "blur" }
-        ],
-        // allowIp: [],
-        notifyUrl: [
-          { required: true, message: "请输入异步通知接口", trigger: "blur" }
-        ],
-        phone: [
-          { required: true, message: "手机号不能为空", trigger: "blur" },
-          { pattern: /^(1[3-9]{1}\d{9})$/, message: '手机号格式不正确', trigger: 'blur' }
-        ]
-      },
-      baseUrl: baseUrl,
-      addShow: false,
-      dshow: false,
-      data: '',
-      result: "",
-      types: [],
-      paymentThirdType: "",
-      payeruserName: "",
-      others: [],
-      curr: {},
-      cshow: false,
-      authCode: "",
-      phone: "",
-      req_id: "",
-      chars: "",
-      phoneCode: "",
-      currEvent: "",
-      isDefault: 1,
-      serviceCompanyId: '',
-      charges: [],
-      company: [],
-      appinfo:{
-        sandboxConfig:{
-          notifyUrl:""
-        }
-      },
-      assign: [],
-      assignCompany: [],
-      subServiceCompanyId: "",
-      subServiceCompanyName: "",
-      subServiceList: [],
-      services: [],
-      serviceList: [],
-      toggle: false,
-      eshow: false,
-      setForm: {
-          appId: '',
-          clientAccountBind: '',
-          apiRecharge: '',
-          reexchangeCallbackUrl: ''
-      }
-    };
-  },
-  mounted() {
-    this.appId = sessionStorage.getItem("appId");
-    this.aform.appId = this.appId;
-    this.query();
-    this.getMsg();
-    this.getPhone();
-    this.createId();
-    this.authCode = localStorage.getItem("authCode")
-    get(`/api/sysmgr-web/user/get-platform-users?platformType=console-company`).then(data => {
-      this.charges = data;
-    });
-    get("/api/openapi/developer/appinfo/" + this.appId).then(data => {
-      this.appinfo = data;
-      this.getServiceList()
-    });
-    get('/api/sysmgr-web/commom/company?companyIdentity=service').then(data => {
-      this.assignCompany = data
-    })
-    get('/api/sysmgr-web/commom/service-config').then(data => {
-      this.serviceList = data
-      this.getServiceList()
-    })
-    this.arule.chargeByName = ''
-    this.arule.chargeEmail = ''
-  },
-  methods: {
-    getServiceList() {
-      this.serviceList.length && this.appinfo.services && this.appinfo.services.forEach(e => {
-        this.serviceList.forEach(ev => {
-          if(e == ev.text) {
-            this.services.push(ev.value)
-          }
+    components: {
+        paymentChannel,
+        authCode
+    },
+    data() {
+        return {
+            appId: "",
+            ashow: false,
+            aform: {
+            allowIp: "",
+            chargeBy: '',
+            chargeByName: '',
+            appRsaPublickKey: "",
+            notifyAppId: "",
+            notifyUrl: "",
+            phone: "",
+            authCode: "",
+            mobilePhone: '',
+            chargeEmail: '',
+            serviceCompanyList: {}
+            },
+            arule: {
+            // chargeBy: [
+            //     {
+            //     required: true,
+            //     message: "请选择商户负责人",
+            //     trigger: "change"
+            //   }
+            // ],
+            mobilePhone: [
+                {
+                required: true,
+                message: "请填写手机号码",
+                trigger: "change"
+                },
+                {pattern: /^(1\d{10})$/, message: '请正确输入手机号码', trigger: 'blur'}
+            ],
+            chargeByName: [
+                {
+                required: true,
+                message: "请填写姓名",
+                trigger: "change"
+                }
+            ],
+            chargeEmail: [
+                {
+                required: true,
+                message: "请填写邮箱",
+                trigger: "change"
+                }
+            ],
+            notifyAppId: [
+                { required: true, message: "请输入应用ID", trigger: "blur" }
+            ],
+            appRsaPublickKey: [
+                { required: true, message: "请输入Rsa公钥", trigger: "blur" }
+            ],
+            notifyUrl: [
+                { required: true, message: "请输入异步通知接口", trigger: "blur" }
+            ],
+            phone: [
+                { required: true, message: "手机号不能为空", trigger: "blur" },
+                { pattern: /^(1[3-9]{1}\d{9})$/, message: '手机号格式不正确', trigger: 'blur' }
+            ]
+            },
+            data: {},
+            authCode: "",
+            currEvent: "",
+            isDefault: 1,
+            charges: [],
+            company: [],
+            appinfo:{
+                sandboxConfig:{
+                    notifyUrl:""
+                }
+            },
+            assign: [],
+            assignCompany: [],
+            subServiceCompanyName: "",
+            services: [],
+            serviceList: [],
+            toggle: false,
+            eshow: false,
+            setForm: {
+                appId: '',
+                clientAccountBind: '',
+                apiRecharge: '',
+                reexchangeCallbackUrl: ''
+            }
+        };
+    },
+    mounted() {
+        console.log(this.$refs)
+        this.appId = sessionStorage.getItem("appId");
+        this.aform.appId = this.appId;
+        this.query();
+        this.authCode = localStorage.getItem("authCode")
+        get(`/api/sysmgr-web/user/get-platform-users?platformType=console-company`).then(data => {
+            this.charges = data;
+        });
+        get("/api/openapi/developer/appinfo/" + this.appId).then(data => {
+            this.appinfo = data;
+            this.getServiceList()
+        });
+        get('/api/sysmgr-web/commom/company?companyIdentity=service').then(data => {
+            this.assignCompany = data
         })
-      })
-    },
-    getMsg() {
-      get("/api/console-dlv/option/get-by-type?type=ThirdPaymentType").then(
-        data => {
-          this.types = data;
-        }
-      );
-    },
-    query() {
-      post("/api/sysmgr-web/company-app/detail", {
-        appId: this.appId
-      }).then(data => {
-        data.clientAccountBind = data.clientAccountBind || 0
-        data.apiRecharge = data.apiRecharge || 0
-        this.data = data;
-        !this.data.payUsers && (this.data.payUsers = []);
-        for(let k in this.aform) {
-          if(data[k]) {
-            this.aform[k] = data[k]
-          }
-        }
-        this.listInit()
-        this.aform.mobilePhone = data.chargeMobile
-      });
-    },
-    listInit(next) {
-        this.aform.serviceCompanyList = []
-        this.data.serviceCompanyList.forEach(e => {
-            this.aform.serviceCompanyList.push(e.serviceCompanyId.toString())
+        get('/api/sysmgr-web/commom/service-config').then(data => {
+            this.serviceList = data
+            this.getServiceList()
         })
-        if(next) {
-            next()
-        }
-        this.getService()
+        this.arule.chargeByName = ''
+        this.arule.chargeEmail = ''
     },
-    close() {
-      this.ashow = false
-      this.$refs.aform.clearValidate()
-    },
-    getService() {
-        get(`/api/sysmgr-web/commom/contract-service-company-options?customCompanyId=${this.data.companyId}`).then(data => {
-            this.company = data;
-            this.company.forEach(e => {
-                var arr = this.data.serviceCompanyList.filter(ev =>{
-                    return ev.serviceCompanyId == e.value
-                })
-			    this.assign.push({
-		    		subcontractType: arr[0] && arr[0].subcontractType ? arr[0].subcontractType : '0',
-		    		subServiceList: [{
-		    			isDefault: 1,
-		    			subServiceCompanyId: arr[0] && arr[0].subServiceList ? arr[0].subServiceList[0].subServiceCompanyId : '',
-		    			subServiceCompanyName: arr[0] && arr[0].subServiceList ? arr[0].subServiceList[0].subServiceCompanyName : ''
-		    		}]
-                })
-            })
-        })
-    },
-    getSelect() {
-      if(/^(1\d{10})$/.test(this.aform.mobilePhone)) {
-        get('/api/sysmgr-web/user/get-user-by-mobile', {
-          mobile: this.aform.mobilePhone
-        }, true).then(data => {
-          this.aform.chargeBy = data.id || ''
-          this.aform.chargeByName = data.name || ''
-          this.aform.chargeEmail = data.email || ''
-          if(this.aform.chargeBy) {
-            this.arule.chargeByName = ''
-            this.arule.chargeEmail = ''
-          }
-          else {
-            this.arule.chargeByName = [{ required: true, message: "请填写姓名", trigger: "change" }]
-            this.arule.chargeEmail = [{ required: true, message: "请填写邮箱", trigger: "change" }]
-          }
-          this.$nextTick(() => {
-            this.$refs.aform.clearValidate(['chargeByName', 'chargeEmail'])
-          })
-        })
-      }
-    },
-    getName() {
-      this.charges.forEach(e => {
-        if (e.id == this.aform.chargeBy) {
-          this.aform.chargeByName = e.name;
-        }
-      });
-    },
-    filterAssignCompany(a) {
-		return this.assignCompany.filter(e => {
-			return a != e.id
-		})
-	},
-	getassignCompanyName(a) {
-		this.assignCompany.forEach(e => {
-			if(e.id == this.assign[a].subServiceList[0].subServiceCompanyId) {
-				this.assign[a].subServiceList[0].subServiceCompanyName = e.name
-			}
-		})
-	},
-    change() {
-        // console.log(this.aform.serviceCompanyList)
-    },
-    open() {
-      this.ashow = true;
-      Object.assign(this.aform, {
-        allowIp: this.data.allowIp,
-        appId: this.appId,
-        appRsaPublickKey: this.data.appRsaPublickKey,
-        notifyAppId: this.data.notifyAppId,
-        notifyUrl: this.data.notifyUrl,
-        phone: this.data.phone
-      })
-      this.$forceUpdate()
-    },
-    update() {
-      console.log(this.aform)
-      this.$refs["aform"].validate(valid => {
-        if (valid) {
-          if (this.authCode) {
-            this.aform.authCode = this.authCode;
-            var arr = [], form = {}
-            this.company.forEach((e, i) => {
-                if(this.aform.serviceCompanyList.indexOf(e.value.toString()) > -1) {
-                    arr[arr.length] = {
-                        serviceCompanyId: e.value,
-                        serviceCompanyName: e.text
+    methods: {
+        getServiceList() {
+            this.serviceList.length && this.appinfo.services && this.appinfo.services.forEach(e => {
+                this.serviceList.forEach(ev => {
+                    if(e == ev.text) {
+                        this.services.push(ev.value)
                     }
-                    Object.assign(arr[arr.length - 1], this.assign[i])
-                }
+                })
             })
-            for(var k in this.aform) {
-                form[k] = this.aform[k]
-            }
-            form.serviceCompanyList = arr
-            postWithErrorCallback("/api/sysmgr-web/company-app/update-app", form).then(data => {
-                this.ashow = false;
-                this.$message({
-                  type: "success",
-                  message: "操作成功"
-                });
-                this.query()
-                this.getMsg()
-              })
-              .catch(err => {
-                if (err.message == "无效的授权码！") {
-                  this.getAccredit(this.update);
-                }
-              })
-          } else {
-            this.getAccredit(this.update);
-          }
-        }
-      });
-    },
-    clear() {
-        this.paymentThirdType = ''
-        this.others = [];
-        this.result = "";
-        this.payeruserName = "";
-        this.subServiceCompanyId = ""
-        this.data.serviceCompanyList.forEach(e => {
-            if(e.serviceCompanyId == this.serviceCompanyId) {
-                this.subServiceList = e.subServiceList || []
-            }
-        })
-    },
-    getSubServiceCompanyName() {
-        this.paymentThirdType = ''
-        this.others = [];
-        this.result = "";
-        this.payeruserName = "";
-        this.subServiceCompanyName = this.subServiceList[0].subServiceCompanyName
-        console.log(this.paymentThirdType)
-    },
-    getList() {
-      this.others = [];
-      this.result = "";
-      this.payeruserName = "";
-      let paymentThirdType = this.paymentThirdType
-      if(paymentThirdType == 'alibank-bank' || paymentThirdType == 'alibank-alipay') {
-          paymentThirdType = 'alibank'
-      }
-      post("/api/paymentmgt/front/payuser/qrybycompany", {
-        companyId: this.subServiceCompanyId || this.serviceCompanyId,
-        thirdpaySystemId: paymentThirdType
-      }).then(data => {
-        this.others = data;
-      });
-    },
-    pick() {
-      var arr = this.others.filter(e => {
-        return e.payeruserName == this.payeruserName;
-      });
-      this.result = arr[0];
-    },
-    addChannel() {
-      this.addShow = true;
-      this.paymentThirdType = "";
-      this.payeruserName = "";
-      this.others = [];
-      this.result = "";
-    },
-    clearForm() {
-        this.serviceCompanyId = ''
-        this.subServiceList = ''
-        this.subServiceCompanyId = ''
-        this.subServiceCompanyName = ''
-    },
-    addRow() {
-      if (this.authCode) {
-        post(`/api/paymentmgt/front/channel/qrydetail?channelId=${this.result.channelId}`).then(data => {
-            postWithErrorCallback("/api/sysmgr-web/company-app/add-payment-user", {
-              appId: this.appId,
-              payUserNo: this.result.thirdpayUserId,
-              paymentThirdType: this.paymentThirdType,
-              payUserName: this.result.payeruserName,
-              paymentUserId: this.result.userId,
-              authCode: this.authCode,
-              isDefault: this.isDefault,
-              channelAlias: data.channelAlias,
-              channelLoginAcctNo: data.loginAcctno,
-              channelMerCustId: data['cj.merchant_id'] || data['wx.mchid'] || data['partner_id'] || data['mer_id'] || data['alipay.appid'] || data['pingan.mainacct.no'] || data['cmb.nteckopr.eacNbr'] || data['hxb.merchId'] || '',
-              serviceCompanyId: this.serviceCompanyId,
-              subServiceCompanyId: this.subServiceCompanyId,
-              subServiceCompanyName: this.subServiceCompanyName
+        },
+        query() {
+            post("/api/sysmgr-web/company-app/detail", {
+                appId: this.appId
             }).then(data => {
-              this.addShow = false;
-              this.$message({
-                type: "success",
-                message: "添加成功"
-              });
-              this.query();
+                this.data = data;
+                !this.data.payUsers && (this.data.payUsers = []);
+                for(let k in this.aform) {
+                if(data[k]) {
+                    this.aform[k] = data[k]
+                }
+                }
+                this.listInit()
+                this.aform.mobilePhone = data.chargeMobile
+            });
+        },
+        listInit(next) {
+            this.aform.serviceCompanyList = []
+            this.data.serviceCompanyList.forEach(e => {
+                this.aform.serviceCompanyList.push(e.serviceCompanyId.toString())
             })
-            .catch(err => {
-              if (err.message == "无效的授权码！") {
-                this.getAccredit(this.addRow);
-              }
-            });
-        })
-      } else {
-        this.getAccredit(this.addRow);
-      }
-    },
-    deleteRow(e) {
-      this.curr = e;
-      this.dshow = true;
-    },
-    sure() {
-      if (this.authCode) {
-        postWithErrorCallback("/api/sysmgr-web/company-app/del-payment-user", {
-          appId: this.appId,
-          paymentThirdType: this.curr.thirdPaymentType,
-          paymentUserId: this.curr.payUserId,
-          authCode: this.authCode,
-          serviceCompanyId: this.curr.serviceCompanyId,
-          subServiceCompanyId: this.curr.subServiceCompanyId,
-          subServiceCompanyName:this.curr.subServiceCompanyName
-        })
-          .then(data => {
-            this.dshow = false;
-            this.$message({
-              type: "success",
-              message: "删除成功"
-            });
-            this.query();
-          })
-          .catch(err => {
-            if (err.message == "无效的授权码！") {
-              this.getAccredit(this.sure);
+            if(next) {
+                next()
             }
-          });
-      } else {
-        this.getAccredit(this.sure);
-      }
-    },
-    getPhone() {
-      post("/api/sysmgr-web/company-app/get-two-step-phone").then(data => {
-        this.phone = data;
-      });
-    },
-    guid() {
-      function S4() {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-      }
-      return `${S4()}${S4()}-${S4()}-${S4()}-${S4()}-${S4()}${S4()}${S4()}`;
-    },
-    createId() {
-      this.req_id = this.guid();
-    },
-    getCode() {
-      if (this.chars) {
-        postWithErrorCallback("/api/sysmgr-web/company-app/send-phone-code", {
-          captcha: this.chars,
-          reqId: this.req_id
-        })
-        .then(data => {
-            this.$message({
-              type: "success",
-              message: "验证码已发送，请注意查收"
+            this.getService()
+        },
+        close() {
+            this.ashow = false
+            this.$refs.aform.clearValidate()
+        },
+        getService() {
+            get(`/api/sysmgr-web/commom/contract-service-company-options?customCompanyId=${this.data.companyId}`).then(data => {
+                this.company = data;
+                this.company.forEach(e => {
+                    var arr = this.data.serviceCompanyList.filter(ev =>{
+                        return ev.serviceCompanyId == e.value
+                    })
+                    this.assign.push({
+                        subcontractType: arr[0] && arr[0].subcontractType ? arr[0].subcontractType : '0',
+                        subServiceList: [{
+                            isDefault: 1,
+                            subServiceCompanyId: arr[0] && arr[0].subServiceList ? arr[0].subServiceList[0].subServiceCompanyId : '',
+                            subServiceCompanyName: arr[0] && arr[0].subServiceList ? arr[0].subServiceList[0].subServiceCompanyName : ''
+                        }]
+                    })
+                })
+            })
+        },
+        getSelect() {
+            if(/^(1\d{10})$/.test(this.aform.mobilePhone)) {
+                get('/api/sysmgr-web/user/get-user-by-mobile', {
+                    mobile: this.aform.mobilePhone
+                }, true).then(data => {
+                    this.aform.chargeBy = data.id || ''
+                    this.aform.chargeByName = data.name || ''
+                    this.aform.chargeEmail = data.email || ''
+                    if(this.aform.chargeBy) {
+                        this.arule.chargeByName = ''
+                        this.arule.chargeEmail = ''
+                    }
+                    else {
+                        this.arule.chargeByName = [{ required: true, message: "请填写姓名", trigger: "change" }]
+                        this.arule.chargeEmail = [{ required: true, message: "请填写邮箱", trigger: "change" }]
+                    }
+                    this.$nextTick(() => {
+                        this.$refs.aform.clearValidate(['chargeByName', 'chargeEmail'])
+                    })
+                })
+            }
+        },
+        getName() {
+            this.charges.forEach(e => {
+                if (e.id == this.aform.chargeBy) {
+                this.aform.chargeByName = e.name;
+                }
             });
-          })
-          .catch(err => {
-            this.createId();
-          });
-      } else {
-        this.$message({
-          type: "info",
-          message: "请正确输入图片中的字符"
-        });
-      }
-    },
-    getAccredit(a) {
-      if (this.phone) {
-        this.cshow = true;
-        this.currEvent = a;
-      } else {
-        this.$message({
-          type: "error",
-          message: "未绑定手机号码，无法获取权限！"
-        });
-      }
-    },
-    submit() {
-      if (this.phoneCode) {
-        post("/api/sysmgr-web/company-app/get-auth-code-by-phone-code", {
-          phoneCode: this.phoneCode
-        }).then(data => {
-          this.cshow = false;
-          this.authCode = data;
-          localStorage.setItem("authCode", data);
-          if (this.currEvent && typeof this.currEvent == "function") {
-            this.currEvent();
-          }
-        });
-      } else {
-        this.$message({
-          type: "info",
-          message: "请填写验证码后提交"
-        });
-      }
-    },
-    defa(a) {
-        if(a) {
-            this.isDefault = 1
-        }
-        else {
-            this.isDefault = 0
-        }
-    },
-    setDefault(a) {
-      if(a) {
-          this.curr = a
-      }
-      if (this.authCode) {
-          postWithErrorCallback('/api/sysmgr-web/company-app/set-default-payment-user', {
-              appId: this.appId,
-              authCode: this.authCode,
-              paymentThirdType: this.curr.thirdPaymentType,
-              paymentUserId: this.curr.payUserId,
-              serviceCompanyId: this.curr.serviceCompanyId,
-              subServiceCompanyId: this.curr.subServiceCompanyId
-          }).then(data => {
-              this.$message({
-                type: "success",
-                message: "设置成功"
-              });
-              this.query()
-          }).catch(err => {
-              if (err.message == "无效的授权码！") {
-                this.getAccredit(this.setDefault);
-              }
-          })
-      }
-      else {
-        this.getAccredit(this.setDefault);
-      }
-    },
-    setService(a) {
-      post('/api/sysmgr-web/company-app/update-service-checked-status', {
-        appId: this.data.appId,
-        appName: this.data.appName,
-        serviceCode: a,
-        isChecked: this.services.indexOf(a) > -1 ? 1 : 0
-      })
-    },
-    messageSync() {
-      post('/api/sysmgr-web/company-app/disabled-old', {
-        appId: this.data.appId
-      }).then(data => {
-        this.$message({
-          type: 'success',
-          message: '切换成功'
-        })
-      })
-    },
-    changeStatus() {
-        // clientAccountBind
-        post('/api/sysmgr-web/company-app/update-app-sys-config', this.setForm).then(data => {
-            this.eshow = false
-            this.query()
-        })
-    },
-    initSetForm() {
-        for(let k in this.setForm) {
-            this.setForm[k] = this.data[k]
+        },
+        filterAssignCompany(a) {
+            return this.assignCompany.filter(e => {
+                return a != e.id
+            })
+        },
+        getassignCompanyName(a) {
+            this.assignCompany.forEach(e => {
+                if(e.id == this.assign[a].subServiceList[0].subServiceCompanyId) {
+                    this.assign[a].subServiceList[0].subServiceCompanyName = e.name
+                }
+            })
+        },
+        change() {
+            // console.log(this.aform.serviceCompanyList)
+        },
+        open() {
+            this.ashow = true;
+            Object.assign(this.aform, {
+                allowIp: this.data.allowIp,
+                appId: this.appId,
+                appRsaPublickKey: this.data.appRsaPublickKey,
+                notifyAppId: this.data.notifyAppId,
+                notifyUrl: this.data.notifyUrl,
+                phone: this.data.phone
+            })
+            this.$forceUpdate()
+        },
+        update() {
+            this.$refs["aform"].validate(valid => {
+                if (valid) {
+                    if (this.authCode) {
+                        this.aform.authCode = this.authCode;
+                        var arr = [], form = {}
+                        this.company.forEach((e, i) => {
+                            if(this.aform.serviceCompanyList.indexOf(e.value.toString()) > -1) {
+                                arr[arr.length] = {
+                                    serviceCompanyId: e.value,
+                                    serviceCompanyName: e.text
+                                }
+                                Object.assign(arr[arr.length - 1], this.assign[i])
+                            }
+                        })
+                        for(var k in this.aform) {
+                            form[k] = this.aform[k]
+                        }
+                        form.serviceCompanyList = arr
+                        postWithErrorCallback("/api/sysmgr-web/company-app/update-app", form).then(data => {
+                            this.ashow = false;
+                            this.$message({
+                                type: "success",
+                                message: "操作成功"
+                            });
+                            this.query()
+                            this.$refs.paymentChannel.getMsg()
+                        }).catch(err => {
+                            if (err.message == "无效的授权码！") {
+                                this.$refs.authCode.getAccredit(this.update);
+                            }
+                        })
+                    } else {
+                        this.$refs.authCode.getAccredit(this.update);
+                    }
+                }
+            });
+        },
+        setService(a) {
+            post('/api/sysmgr-web/company-app/update-service-checked-status', {
+                appId: this.data.appId,
+                appName: this.data.appName,
+                serviceCode: a,
+                isChecked: this.services.indexOf(a) > -1 ? 1 : 0
+            })
+        },
+        messageSync() {
+            post('/api/sysmgr-web/company-app/disabled-old', {
+                appId: this.data.appId
+            }).then(data => {
+                this.$message({
+                    type: 'success',
+                    message: '切换成功'
+                })
+            })
+        },
+        changeStatus() {
+            post('/api/sysmgr-web/company-app/update-app-sys-config', this.setForm).then(data => {
+                this.eshow = false
+                this.query()
+            })
+        },
+        initSetForm() {
+            for(let k in this.setForm) {
+                this.setForm[k] = this.data[k]
+            }
+        },
+        getAuthCode(a) {
+            this.authCode = a
         }
     }
-  }
 };
 </script>
 <style scoped>
@@ -966,7 +622,7 @@ export default {
 }
 .title {
   display: block;
-  margin-top: 30px;
+  margin: 20px 0px;
   font-weight: bold;
 }
 .f_input {

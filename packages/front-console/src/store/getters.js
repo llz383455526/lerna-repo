@@ -62,7 +62,7 @@ const getters = {
 	},
 	userTaskList: state => state.userTaskList,
 	fundCompanyList: state => state.fundCompanyList,
-	userTaskCount: state => state.userTaskCount
+    userTaskCount: state => state.userTaskCount
 }
 
 export default getters

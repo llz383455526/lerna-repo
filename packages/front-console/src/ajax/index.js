@@ -49,7 +49,7 @@ class Ajax {
 				reject(err)
 			})
 		})
-	}
+    }
 }
 
 export default Ajax

@@ -515,7 +515,7 @@
                 })
             },
             getCompanyList() {
-                let url = '/api/invoice-web/invoice/service-company-options';
+                let url = '/api/invoice-web/commom/service-company-options';
                 get(url).then(res => {
                     this.companyList = res;
                 })

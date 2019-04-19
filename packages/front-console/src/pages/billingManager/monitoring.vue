@@ -95,7 +95,7 @@
             </el-table-column>
             <el-table-column prop="address" align="center" header-align="center" label="操作" width="160px">
                 <div class="table-cell-item option" slot-scope="scope">
-                    <router-link :to="`clientInvoiceDetail?serviceCompanyId=${scope.row.serviceCompanyId}`" tag="span">查看客户开票明细</router-link>
+                    <router-link :to="`clientInvoiceDetail?serviceCompanyId=${scope.row.serviceCompanyId}&time=${form.time - 0}`" tag="span">查看客户开票明细</router-link>
                     <span @click="addPiaoClick(scope.row)">添加票量</span>
                     <span @click="lingQuJiLuBtnClick(scope.row)">领取记录</span>
                 </div>

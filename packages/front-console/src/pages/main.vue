@@ -283,11 +283,12 @@ export default {
   height: 60px;
   background-color: $basic-green;
   position: relative;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
   .menu-container {
     // position: absolute;
     right: 0;
-    min-width: 1400px;
+    min-width: 1460px;
     overflow: auto;
 
     .login-menu-wrap {

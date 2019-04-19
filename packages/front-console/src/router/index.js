@@ -53,6 +53,7 @@ let offlineManager = r => require.ensure([], () => r(require('../pages/eContract
 let userManager = r => require.ensure([], () => r(require('../pages/eContract/userManager.vue')), 'userManager');
 let consumerManager = r => require.ensure([], () => r(require('../pages/eContract/consumerManager.vue')), 'consumerManager');
 let addConsumer = r => require.ensure([], () => r(require('../pages/eContract/addConsumer.vue')), 'addConsumer');
+let downList = r => require.ensure([], () => r(require('../pages/eContract/downList.vue')), 'downList');
 
 let rechargeIndex = r => require.ensure([], () => r(require('../pages/recharge/index.vue')), 'rechargeIndex');
 let balanceAdjust = r => require.ensure([], () => r(require('../pages/recharge/balanceAdjust/list.vue')), 'balanceAdjust');
@@ -181,6 +182,8 @@ const personTax = () => import('../pages/iframe/personTax')
 const addedValue = () => import('../pages/iframe/addedValue')
 const incomeTax = () => import('../pages/iframe/incomeTax')
 
+// 工单系统路由
+import workOrder from './workOrder'
 export default [{
   path: '/',
   component: App,
@@ -809,6 +812,13 @@ export default [{
                 meta: {
                   keepAlive: false
                 }
+            },
+            {
+                path: 'downList',
+                component: downList,
+                meta: {
+                  keepAlive: false
+                }
             }
           ]
         },
@@ -1361,30 +1371,32 @@ export default [{
           ]
         },
         {
-          path: 'agent',
-          component: index,
-          children: [
-            {
-              path: 'oemList',
-              component: () => import('../pages/agent/oemList'),
-              meta: {
-                keepAlive: false
-              }
-            },
-            {
-              path: 'oemSet',
-              component: () => import('../pages/agent/oemSet'),
-              meta: {
-                keepAlive: false
-              }
-            },
-            {
-              path: 'inviteList',
-              component: () => import('../pages/agent/inviteList')
-            },
-          ],
-        },
-      ]},
+            path: 'agent',
+            component: index,
+            children: [
+              {
+                path: 'oemList',
+                component: () => import('../pages/agent/oemList'),
+                meta: {
+                  keepAlive: false
+                }
+              },
+              {
+                path: 'oemSet',
+                component: () => import('../pages/agent/oemSet'),
+                meta: {
+                  keepAlive: false
+                }
+              },
+              {
+                path: 'inviteList',
+                component: () => import('../pages/agent/inviteList')
+              },
+            ],
+          },
+        ...workOrder
+      ],
+    },
     {
       path: '/login',
       component: login

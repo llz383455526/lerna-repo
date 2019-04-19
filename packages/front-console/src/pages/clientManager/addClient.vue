@@ -301,7 +301,7 @@ export default {
                 a = 1
             }
             this.queryForm.page = a
-            post('/api/sysmgr-web/user/list', this.queryForm).then(data => {
+            post('/api/sysmgr-web/commom/user-list', this.queryForm).then(data => {
                 this.result = data
             })
         },

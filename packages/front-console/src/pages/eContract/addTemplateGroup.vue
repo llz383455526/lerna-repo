@@ -64,7 +64,7 @@
                 </el-radio-group>
             </el-form-item>
             <el-form-item label="是否需要绑定银行卡" prop="bindBank" v-if="bindBank">
-                <el-radio-group v-model="form.bindBank">
+                <el-radio-group v-model="form.bindBank" @change="settingChangeConfirm('bindBank', '签约方式', ['1', '2'])">
                     <el-radio label="1">是</el-radio>
                     <el-radio label="2">否</el-radio>
                 </el-radio-group>

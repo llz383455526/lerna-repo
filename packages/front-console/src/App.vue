@@ -18,7 +18,8 @@ export default {
     principalMenu(menu) {
       if(menu && menu.length && this.$route.fullPath == '/main'){
         // console.log(menu[0].children[0].action)
-        this.$router.push(menu[0].children[0].action)
+        // this.$router.push(menu[0].children[0].action)
+        this.$router.push('/main/workOrder/workOrderIndex')
       }
     }
   }

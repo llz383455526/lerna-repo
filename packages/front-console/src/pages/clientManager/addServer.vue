@@ -279,33 +279,10 @@
                 <el-input class="form_input" v-model="form.memo"></el-input>
             </el-form-item>
       </el-form>
-      <el-dialog title="获取验证码" :visible.sync="cshow" width="70%">
-          <span class="tip">为了保障您的账号安全，请完成一下身份验证。</span>
-          <el-form label-width="150px">
-              <el-form-item label="手机号码：">
-                  {{phone}}
-              </el-form-item>
-              <el-form-item >
-                  <img :src="`${baseUrl}/api/sysmgr-web/verify-codes/gen-captcha?req_id=${req_id}`">
-                  <el-button type="text" style="margin-left: 30px;" @click="createId">刷新</el-button>
-              </el-form-item>
-              <el-form-item label="请输入图形中字符：">
-                  <el-input v-model="chars" style="width: 300px;"></el-input>
-              </el-form-item>
-              <el-form-item label="短信验证码：">
-                  <el-input v-model="phoneCode" style="width: 300px;"></el-input><el-button type="text" style="margin-left: 30px;" @click="getCode">获取验证码</el-button>
-              </el-form-item>
-          </el-form>
-          <span class="form_footer" slot="footer">
-              <el-button @click="submit" type="primary">提交</el-button>
-              <el-button @click="cshow = false" type="warning">关闭</el-button>
-          </span>
-      </el-dialog>
     </div>
 </template>
 <script>
 import { get, post, postWithErrorCallback } from "../../store/api"
-import { baseUrl } from "../../config/address.js"
 import rule from '../../rule/channel.js'
 export default {
   data() {
@@ -321,32 +298,10 @@ export default {
         memo: '',
         loginAcctno: ''
       },
-      rule,
-      types: [
-        {
-          text: "客户",
-          value: "company"
-        },
-        {
-          text: "服务商",
-          value: "provider"
-        }
-      ],
-      company: [],
-      cshow: false,
-      curr: "",
-      authCode: "",
-      phone: "",
-      req_id: "",
-      chars: "",
-      phoneCode: "",
-	  currEvent: "",
-      msg: '',
-      baseUrl
+      rule
     };
   },
   mounted() {
-    console.log(this.form)
     Object.assign(this.form, this.$route.query)
     if(this.form.thirdpaySystemId == 'changjie'){
         Object.assign(this.form, {
@@ -480,13 +435,6 @@ export default {
             'alibank$deposit$account': ''
         })
     }
-    post("/api/sysmgr-web/company-app/get-two-step-phone").then(data => {
-        this.phone = data;
-    });
-    this.createId();
-    get("/api/console-dlv/option/get-option-service-companies").then(data => {
-      this.company = data;
-    });
   },
   methods: {
     back() {
@@ -511,88 +459,6 @@ export default {
                 })
             }
         })
-    },
-    getAccredit(a) {
-      if(this.phone){
-        this.cshow = true;
-        this.currEvent = a;
-      }
-      else{
-        this.$message({
-          type: 'error',
-          message: '未绑定手机号码，无法获取权限！'
-        })
-      }
-    },
-    getPhone() {
-      post("/api/sysmgr-web/company-app/get-two-step-phone").then(data => {
-        this.phone = data;
-      });
-    },
-    guid() {
-      function S4() {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-      }
-      return `${S4()}${S4()}-${S4()}-${S4()}-${S4()}-${S4()}${S4()}${S4()}`;
-    },
-    createId() {
-      this.req_id = this.guid();
-      console.log(this.req_id);
-    },
-    getCode() {
-        if (this.chars) {
-          postWithErrorCallback("/api/sysmgr-web/company-app/send-phone-code", {
-            captcha: this.chars,
-            reqId: this.req_id
-          })
-            .then(data => {
-              console.log(data);
-              this.$message({
-                type: "success",
-                message: "验证码已发送，请注意查收"
-              });
-            })
-            .catch(err => {
-              this.createId();
-            });
-        } else {
-          this.$message({
-            type: "info",
-            message: "请正确输入图片中的字符"
-          });
-        }
-    },
-    getAccredit(a) {
-      if(this.phone){
-        this.cshow = true;
-        this.currEvent = a;
-      }
-      else{
-        this.$message({
-          type: 'error',
-          message: '未绑定手机号码，无法获取权限！'
-        })
-      }
-    },
-    submit() {
-      if (this.phoneCode) {
-        post("/api/sysmgr-web/company-app/get-auth-code-by-phone-code", {
-          phoneCode: this.phoneCode
-        }).then(data => {
-          console.log(data);
-          this.cshow = false;
-          this.authCode = data;
-          localStorage.setItem("authCode", data);
-          if (this.currEvent && typeof this.currEvent == "function") {
-            this.currEvent();
-          }
-        });
-      } else {
-        this.$message({
-          type: "info",
-          message: "请填写验证码后提交"
-        });
-      }
     }
   }
 };

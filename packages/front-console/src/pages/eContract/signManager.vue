@@ -6,6 +6,24 @@
             <el-tab-pane label="合同模板组" name="contractArr"></el-tab-pane>
         </el-tabs>
         <el-form :model="form" :inline="true" ref="form" size="small">
+            <el-form-item label="商户名称" prop="platformName">
+                <el-select
+                    class="form_input_short"
+                    v-model="form.platformName"
+                    filterable
+                    remote
+                    placeholder="请输入关键词"
+                    :remote-method="remoteMethod"
+                    :loading="loading">
+                    <el-option
+                        v-for="e in appList"
+                        :key="e"
+                        :label="e"
+                        :value="e">
+                    </el-option>
+                </el-select>
+                <!-- <el-input class="form_input_short" v-model="form.name" placeholder="请输入关键词"></el-input> -->
+            </el-form-item>
             <el-form-item :label="tabName === 'contract' ? '合同模板ID' : '合同模板组ID'" :prop="tabName === 'contract' ? 'templateId' : 'templateGroupId'">
                 <el-input class="form_input_short" v-model="form[`${tabName === 'contract' ? 'templateId' : 'templateGroupId'}`]"></el-input>
             </el-form-item>
@@ -22,12 +40,13 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" size="small" @click="query">查询</el-button>
-                <el-button type="text" size="small" @click="reset('form')">清空所有条件</el-button>
+                <el-button size="small" @click="reset('form')">清空所有条件</el-button>
             </el-form-item>
         </el-form>
         <el-table :data="list">
             <el-table-column :label="tabName == 'contract' ? '合同模板ID' : '合同模板组ID'" :prop="tabName === 'contract' ? 'templateId' : 'groupId'"></el-table-column>
             <el-table-column :label="tabName == 'contract' ? '合同模板名称' : '合同模板组名称'" :prop="tabName === 'contract' ? 'name' : 'groupName'"></el-table-column>
+            <el-table-column label="商户名称" prop="platformName"></el-table-column>
             <el-table-column label="服务商公司">
                 <template slot-scope="scope">
                     <div v-if="scope.row.templateId">
@@ -43,6 +62,7 @@
                 </template>
             </el-table-column>
             <el-table-column label="对接方式" prop="accessTypeDesc"></el-table-column>
+            <el-table-column label="是否需要上传证件照" prop="passportTypeDesc"></el-table-column>
             <el-table-column label="发起时间" prop="lastLaunchTimeDesc"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
@@ -68,6 +88,7 @@ export default {
     data() {
         return {
             form: {
+                platformName: '',
                 templateId: '',
                 templateGroupId: '',
                 name: '',
@@ -99,7 +120,9 @@ export default {
             range: [],
             partys: ['甲方', '乙方', '丙方'],
             tabName: 'contract',
-            activeData: ''
+            activeData: '',
+            loading: false,
+            appList: []
         }
     },
     activated() {
@@ -109,9 +132,19 @@ export default {
         else {
             Object.assign(this.form, this.$route.query)
         }
+        this.form.accessType = '1'
         this.query(this.form.pageNo)
     },
     methods: {
+        remoteMethod(platformName) {
+            if(platformName) {
+                this.loading = true
+                get('/api/econtract/template/qey-platformName', { platformName }, true).then(data => {
+                    this.loading = false
+                    this.appList = data
+                })
+            }
+        },
         getName(a) {
             if(a !== '') {
                 post('/api/econtract/template/qrylist', {

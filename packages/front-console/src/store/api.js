@@ -1,7 +1,7 @@
 import {ajax} from '../service'
-import {baseUrl} from '../config/address'
 import {showNotify} from '../plugin/utils-notify'
 import {showLoading, hideLoading} from '../plugin/utils-loading'
+import { waitByTaskId } from '../lib/wait'
 
 function requestBefore(param = {}, withLoading = false) {
     if (param.noLoading) {
@@ -149,6 +149,25 @@ function importPost(url, param, withLoading = false) {
     });
 }
 
+function postWaitbyTaskId (url, param = {}, withLoading = false) {
+    return new Promise((resolve, reject) => {
+        post(url, param, withLoading).then((data) => {
+            console.log(param)
+            if(param.taskId) {
+                console.log(waitByTaskId)
+                waitByTaskId(param.taskId).finally(() => {
+                    resolve(data)
+                })
+            }
+            else {
+                resolve(data)
+            }
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+
 export {
     post,
     get,
@@ -157,7 +176,8 @@ export {
     getWithErrorCallback,
     getButNoErrorToast,
     formPost,
-    importPost
+    importPost,
+    postWaitbyTaskId
 }
 
 

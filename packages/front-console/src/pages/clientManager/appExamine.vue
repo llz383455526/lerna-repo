@@ -154,48 +154,6 @@
             </ayg-pagination>
         </div>
         <el-button class="back" type="primary" size="small" @click="$router.back()">返回</el-button>
-        <el-dialog title="修改信息" :visible.sync="coshow" width="70%">
-            <el-form label-width="120px" :rules="crules" :model="cform" ref="cform">
-                <el-form-item label="企业名称" prop="fullName" size="small">
-                    <el-input v-model="cform.fullName" class="f_input"></el-input>
-                </el-form-item>
-                <el-form-item label="企业简称" prop="name" size="small">
-                    <el-input v-model="cform.name" class="f_input"></el-input>
-                </el-form-item>
-                <el-form-item label="企业负责人" prop="chargeBy" size="small">
-                    <el-select v-model="cform.chargeBy" class="f_input" @change="getName">
-                        <el-option v-for="e in charges" :value="e.id" :label="e.name" :key="e.id"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="企业地址" prop="areaName" size="small">
-                    <el-input v-model="cform.areaName" class="f_input"></el-input>
-                </el-form-item>
-                <el-form-item label="注册日期" prop="registerDate" size="small">
-                    <el-date-picker
-                        class="f_input"
-                        v-model="cform.registerDate"
-                        type="date"
-                        value-format="yyyy-MM-dd">
-                    </el-date-picker>
-                </el-form-item>
-                <el-form-item label="关联销售" prop="salesList">
-                    <el-button type="primary" @click="show = true">添加</el-button>
-                    <el-table :data="cform.salesList" class="form_input">
-                        <el-table-column label="姓名" prop="name"></el-table-column>
-                        <el-table-column label="手机号" prop="mobilephone"></el-table-column>
-                        <el-table-column label="操作">
-                            <template slot-scope="scope">
-                                <el-button type="text" @click="deleteSale(scope.$index)">删除</el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-              </el-form-item>
-            </el-form>
-            <span class="form_footer" slot="footer">
-                <el-button @click="upDate" type="primary" size="small">保存</el-button>
-                <el-button @click="coshow = false" size="small">关闭</el-button>
-            </span>
-        </el-dialog>
     </div>
 </template>
 <script>
@@ -275,14 +233,6 @@ export default {
           page: 1,
           pageSize: 5
         },
-        aform: {
-          isFromOutApp: "",
-          companyId: "",
-          appId: "",
-          appName: "",
-          serviceCompanyId: "",
-          authCode: ""
-        },
         rules: {
           appName: [
             {
@@ -318,7 +268,6 @@ export default {
             }
           ]
         },
-        company: [],
         tableData: [],
         total: 0,
         invoiceData: {},
@@ -327,16 +276,6 @@ export default {
           invoiceIds: [],
           orderNo: ""
         },
-        eshow: false,
-        sshow: false,
-        cshow: false,
-        curr: "",
-        authCode: "",
-        phone: "",
-        req_id: "",
-        chars: "",
-        phoneCode: "",
-    	  currEvent: "",
         msg: '',
         contractForm: {
             customerId: '',
@@ -366,30 +305,13 @@ export default {
     },
     activated() {
       this.form.companyId = localStorage.getItem("appId");
-      this.aform.companyId = localStorage.getItem("appId");
       this.msgForm.companyId = localStorage.getItem("appId");
       this.fullName = localStorage.getItem('fullName')
       this.query();
-      get("/api/console-dlv/option/get-option-service-companies").then(data => {
-        this.company = data;
-      });
       this.getDetail()
-    //   this.getPhone();
-      this.createId();
-    //   this.cquery();
-      this.authCode = localStorage.getItem("authCode");
       this.msgQuery()
     },
     methods: {
-    //   cquery(a) {
-    //       if(isNaN(a)) {
-    //           a = 1
-    //       }
-    //       this.queryForm.page = a
-    //       post('/api/sysmgr-web/user/list', this.queryForm).then(data => {
-    //           this.result = data
-    //       })
-    //   },
       addSale(a) {
           this.cform.salesList.push(a)
       },
@@ -436,182 +358,6 @@ export default {
           this.form.pageSize = a
           this.query()
       },
-      editCompany() {
-          this.coshow = true
-          this.cform = {
-              id: this.msg.id,
-              fullName: this.msg.fullName,
-              name: this.msg.name,
-              taxLandingId: this.msg.taxLandingId,
-              chargeBy: this.msg.chargeBy,
-              chargeByName: this.msg.chargeByName,
-              legalPerson: this.msg.legalPerson,
-              areaName: this.msg.areaName,
-              registerDate: this.msg.registerDate,
-              salesList: this.msg.salesList || []
-          }
-      },
-      upDate() {
-          this.$refs['cform'].validate((valid) => {
-              if(valid) {
-                  var cform = JSON.parse(JSON.stringify(this.cform))
-                  if(cform.salesList) {
-                      var salesList = []
-                      cform.salesList.forEach(e => {
-                          salesList.push({
-                              id: e.id,
-                              name: e.name,
-                              mobilephone: e.mobilephone
-                          })
-                      })
-                      cform.salesList = salesList
-                  }
-                  post('/api/sysmgr-web/company/edit-company', cform).then(data => {
-                      this.$message({
-                          type: 'success',
-                          message: '更改成功！'
-                      })
-                      this.getDetail()
-                      this.coshow = false
-                  })
-              }
-          })
-      },
-      getName() {
-          this.charges.forEach(e => {
-              if(e.id == this.cform.chargeBy) {
-                  this.cform.chargeByName = e.name
-              }
-          })
-      },
-      add(a) {
-    		this.$router.push(`addApp?companyId=${this.msg.id}`)
-      },
-      sure(e) {
-        if (this.authCode) {
-          this.aform.authCode = this.authCode;
-          postWithErrorCallback("/api/sysmgr-web/company-app/add-app", this.aform)
-            .then(data => {
-              this.eshow = false;
-              this.$message({
-                type: "success",
-                message: "添加成功！"
-              });
-              this.query()
-            })
-            .catch(err => {
-              if (err.message == "无效的授权码！") {
-                this.getAccredit(this.sure);
-              }
-            });
-        } else {
-          this.getAccredit(this.sure);
-        }
-      },
-      edit(e) {
-        sessionStorage.setItem("appId", e.appId);
-        this.$router.push("/main/clientManager/appDetail");
-      },
-      set(e) {
-        this.sshow = true;
-        this.curr = e;
-      },
-      sureSet() {
-        if (this.authCode) {
-          postWithErrorCallback("/api/sysmgr-web/company-app/enable-switch", {
-            appId: this.curr.appId,
-            isEnable: this.curr.isEnable ? 0 : 1,
-            authCode: this.authCode
-          })
-            .then(data => {
-              this.sshow = false;
-              this.$message({
-                type: "success",
-                message: "操作成功"
-              });
-              this.query();
-            })
-            .catch(err => {
-              if (err.message == "无效的授权码！") {
-                this.getAccredit(this.sureSet);
-              }
-            });
-        } else {
-          this.getAccredit(this.sureSet);
-        }
-      },
-      isOut() {
-        if(this.aform.isFromOutApp == 0){
-          this.aform.appId = localStorage.getItem("appId")
-        }
-      },
-    //   getPhone() {
-    //     post("/api/sysmgr-web/company-app/get-two-step-phone").then(data => {
-    //       this.phone = data;
-    //     });
-    //   },
-      guid() {
-        function S4() {
-          return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-        }
-        return `${S4()}${S4()}-${S4()}-${S4()}-${S4()}-${S4()}${S4()}${S4()}`;
-      },
-      createId() {
-        this.req_id = this.guid();
-      },
-      getCode() {
-        if (this.chars) {
-          postWithErrorCallback("/api/sysmgr-web/company-app/send-phone-code", {
-            captcha: this.chars,
-            reqId: this.req_id
-          })
-            .then(data => {
-              this.$message({
-                type: "success",
-                message: "验证码已发送，请注意查收"
-              });
-            })
-            .catch(err => {
-              this.createId();
-            });
-        } else {
-          this.$message({
-            type: "info",
-            message: "请正确输入图片中的字符"
-          });
-        }
-      },
-      getAccredit(a) {
-        if(this.phone){
-          this.cshow = true;
-          this.currEvent = a;
-        }
-        else{
-          this.$message({
-            type: 'error',
-            message: '未绑定手机号码，无法获取权限！'
-          })
-        }
-      },
-      submit() {
-        if (this.phoneCode) {
-          post("/api/sysmgr-web/company-app/get-auth-code-by-phone-code", {
-            phoneCode: this.phoneCode
-          }).then(data => {
-            this.cshow = false;
-            this.authCode = data;
-            localStorage.setItem("authCode", data);
-            if (this.currEvent && typeof this.currEvent == "function") {
-              this.currEvent();
-            }
-          });
-        } else {
-          this.$message({
-            type: "info",
-            message: "请填写验证码后提交"
-          });
-        }
-      },
       contractQuery(a) {
           if(isNaN(a)) {
               a = 1
@@ -624,29 +370,6 @@ export default {
       contractSizeChange(a) {
           this.contractForm.pageSize = a
           this.contractQuery()
-      },
-      review(formName){
-          let self = this;
-          this.$refs[formName].validate(valid => {
-              if (valid) {
-                  let param = this.reviewForm;
-                  post('/api/sysmgr-web/company-app/online-approve', param).then(data => {
-                      if(data == 'OK'){
-                          this.$message({
-                            type: "success",
-                            message: '审核成功'
-                          });
-                          this.reviewDialog = false;
-                          this.query();
-                      }else{
-                          this.$message({
-                            type: 'error',
-                            message: data
-                          })
-                      }
-                  })
-              }
-          })
       },
       //   -----------------------------------
       msgQuery(a) {
@@ -663,8 +386,6 @@ export default {
           this.msgQuery()
       },
       prevFile(a) {
-        //   /api/econtract/template/download?fileName=${}
-        console.log(a.templateFileName)
         a.templateFileName.forEach(e => {
             window.open(`/api/econtract/template/preview?templateId=${e.templateId}`)
         })

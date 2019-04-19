@@ -66,6 +66,7 @@
                     :unlink-panels="true"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
+                    @change="getTime"
                     value-format="yyyy-MM-dd">
                 </el-date-picker>
             </el-form-item>
@@ -93,20 +94,31 @@
                 <el-button size="small" @click="download" class="btn">导出xls</el-button>
             </el-form-item>
         </el-form>
-        <el-button type="primary" size="small" @click="handle(1)">{{isHandle && ableType == 1 ? '取消批量重发通知' : '批量重发通知' }}</el-button>
-        <el-button type="primary" size="small" @click="handle(2)">{{isHandle && ableType == 2 ? '取消批量取消' : '批量取消' }}</el-button>
+        <div class="flex">
+            <div>
+                <el-button type="primary" size="small" @click="handle(1)">{{isHandle && ableType == 1 ? '取消批量重发通知' : '批量重发通知' }}</el-button>
+                <el-button type="primary" size="small" @click="handle(2)">{{isHandle && ableType == 2 ? '取消批量取消' : '批量取消' }}</el-button>
+            </div>
+            <div>
+                <el-button type="primary" size="small" @click="derive(0)">导出当前报税列表</el-button>
+                <el-button type="primary" size="small" @click="derive(1)">导出当前报税证照</el-button>
+                <el-button type="primary" size="small" @click="derive(2)">导出当前报税合同</el-button>
+                <el-button type="primary" size="small" @click="$router.push('downList')">下载列表</el-button>
+            </div>
+        </div>
         <div class="table-container">
             <el-table :data="tableList.data" @selection-change="getRow" ref="table">
                 <el-table-column type="selection" :selectable="isAble" v-if="isHandle" fixed></el-table-column>
                 <el-table-column label="操作" align="center" fixed>
                     <template slot-scope="scope">
-						            <el-button class="ml0" v-if="scope.row.orderState === 'SIGNING' || scope.row.orderState === 'AUTHING'" type="text" size="small" @click="cancleOrder(scope.row)">取消签约</el-button>
-						            <el-button class="ml0" v-if="isRe.indexOf(scope.row.orderState) > -1" type="text" size="small" @click="reCall(scope.row)">
-                            重发通知
-						            </el-button>
+                        <a v-if="scope.row.orderState === 'CLOSED' && scope.row.certState === '2'" target="_blank" :href="`${econtract.usercertDownloadSingle}?orderId=${scope.row.orderId}&extrSystemId=${scope.row.extrSystemId}`">
+							<el-button class="ml0" type="text" size="small">证照下载</el-button>
+						</a>
+						<el-button class="ml0" v-if="scope.row.orderState === 'SIGNING' || scope.row.orderState === 'AUTHING'" type="text" size="small" @click="cancleOrder(scope.row)">取消签约</el-button>
+						<el-button class="ml0" v-if="isRe.indexOf(scope.row.orderState) > -1" type="text" size="small" @click="reCall(scope.row)">重发通知</el-button>
                         <a v-if="scope.row.downloadUrl" target="_blank" :href="`${baseUrl}/api/econtract/contract/download?orderId=${scope.row.orderId}`">
-							              <el-button class="ml0" type="text" size="small">合同下载</el-button>
-						            </a>
+							<el-button class="ml0" type="text" size="small">合同下载</el-button>
+						</a>
                     </template>
                 </el-table-column>
                 <el-table-column prop="orderStateDesc" label="订单状态" fixed></el-table-column>
@@ -134,20 +146,12 @@
                 :total="tableList.total"
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
-                :current-page="pageIndex"
+                :current-page="formSearch.pageNo"
                 :page-sizes="[10, 20, 30, 40, 500, 1000]"
-                :page-size="pageSize"
+                :page-size="formSearch.pageSize"
                 layout="total, prev, pager, next, sizes, jumper">
             </el-pagination>
         </div>
-        <!-- <ayg-pagination
-            v-if="!isHandle && tableList.total"
-            :total="tableList.total"
-            v-on:handleSizeChange="handleSizeChange"
-            :currentSize="pageSize"
-            v-on:handleCurrentChange="handleCurrentChange"
-            :currentPage="pageIndex">
-        </ayg-pagination> -->
         <div class="tip" v-if="isHandle">
             <div class="center">
                 已选 <span class="c66B1FF">{{selection.length}}</span> 条，是否确认批量{{ableType == 1 ? '重发' : '取消'}}？
@@ -165,6 +169,7 @@
 	import { showNotify } from '../../plugin/utils-notify'
     import { baseUrl } from "../../config/address.js"
     import {formatTime} from '../../plugin/utils-functions'
+    import { econtract } from 'src/api'
 	export default {
 		created() {
 			this.getOrderStateList()
@@ -185,15 +190,17 @@
 					partyaUserId: '',
 					signState: '',
 					orderState: '',
-					certState: ''
+                    certState: '',
+                    startTime: '',
+                    endTime: '',
+                    pageNo: 1,
+                    pageSize: 10
 				},
 				orderStateList: [],
 				sighStateList: [],
 				extrSystemOptions: [],
 				dateValue: [t, t],
 				tableList: [],
-				pageSize: 10,
-				pageIndex: 1,
 				activeTab: 'first',
 				isRe: ['SIGNING', 'CREATE_ERR', 'AUTH_ERR', 'NOTIFY_ERR', 'SIGN_ERR', 'CLOSE_ERR', 'EXPIRED', 'REJECTED', 'AUTHING'],
 				certStates: [
@@ -221,14 +228,26 @@
                 selection: [],
                 isHandle: false,
                 ableType: '',
-                objects: []
+                objects: [],
+                econtract
 			}
 		},
 		mounted() {
-			Object.assign(this.formSearch, this.$route.query)
+            Object.assign(this.formSearch, this.$route.query)
+            this.getTime()
 			this.getList()
 		},
 		methods: {
+            getTime() {
+                if(this.dateValue && this.dateValue.length) {
+                    this.formSearch.startTime = this.dateValue[0]
+                    this.formSearch.endTime = this.dateValue[1]
+                }
+                else {
+                    this.formSearch.startTime = ''
+                    this.formSearch.endTime = ''
+                }
+            },
             remoteObject(a) {
                 if(a !== '') {
                     post('/api/econtract/user/company/qrylist', {
@@ -240,34 +259,55 @@
                     })
                 }
             },
-            download() {
-				let startAt = ''
-				let endAt = ''
-				if (this.dateValue && this.dateValue[0]) {
-					startAt = this.dateValue[0]
-					endAt = this.dateValue[1]
-				}
-
-				let formSearch = _.cloneDeep(this.formSearch)
-				formSearch.startTime = startAt
-				formSearch.endTime = endAt
-				let options = _.assign(formSearch, {
-					pageNo: this.pageIndex,
-					pageSize: this.pageSize
-				})
-                options.manufacturer = 0
+            toStr(a) {
                 var url = '', isFirst = true
-                for(var k in options) {
+                for(var k in a) {
                     if(isFirst) {
                         isFirst = false
-                        url += `?${k}=${options[k]}`
+                        url += `?${k}=${a[k]}`
                     }
                     else {
-                        url += `&${k}=${options[k]}`
+                        url += `&${k}=${a[k]}`
                     }
                 }
-                window.open(`/api/econtract/inner/export${url}`)
-	        },
+                return url
+            },
+            download() {
+                let formSearch = JSON.parse(JSON.stringify(this.formSearch))
+                formSearch.manufacturer = 0
+                window.open(`${econtract.innerExport}${this.toStr(formSearch)}`)      
+            },
+            derive(a) {
+                let formSearch = JSON.parse(JSON.stringify(this.formSearch)), url
+                formSearch.manufacturer = 0
+                switch (a) {
+                    case 0:
+                        url = 'usercertExport'
+                        break;
+                    case 1:
+                        url = 'usercertDownloadBatches'
+                        break;
+                    case 2:
+                        url = 'contractDownloadBatches'
+                        break;
+                    default:
+                        break;
+                }
+                if(a == 0) {
+                    window.open(`${econtract[url]}${this.toStr(formSearch)}`)
+                }
+                else {
+                    get(`${econtract[url]}${this.toStr(formSearch)}`).then(data => {
+                        this.$confirm('生成中，请进入“下载列表”中进行下载', '提示', {
+                            confirmButtonText: '进入下载列表',
+                            cancelButtonText: '关闭',
+                            type: 'success'
+                        }).then(() => {
+                            this.$router.push('downList')
+                        }).catch(() => {})
+                    })
+                }
+            },
 			getOrderStateList() {
 				get('/api/econtract/order/statelist', {})
 					.then(result => {
@@ -288,42 +328,28 @@
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields()
-				this.dateValue = ''
+                this.dateValue = []
+                this.getTime()
 				if(this.activeTab === 'first') this.formSearch.orderState = ''
 			},
 			search() {
                 if(this.isHandle) {
                     return
                 }
-				this.pageIndex = 1
+				this.formSearch.pageNo = 1
 				this.getList()
 			},
 			handleSizeChange(value) {
-				this.pageSize = value
-				this.pageIndex = 1
+				this.formSearch.pageSize = value
+				this.formSearch.pageNo = 1
 				this.getList()
 			},
 			handleCurrentChange(value) {
-				this.pageIndex = value
+				this.formSearch.pageNo = value
 				this.getList()
 			},
 			getList() {
-				let startAt = ''
-				let endAt = ''
-				if (this.dateValue) {
-					startAt = this.dateValue[0]
-					endAt = this.dateValue[1]
-				}
-
-				let formSearch = _.cloneDeep(this.formSearch)
-				formSearch.startTime = startAt
-				formSearch.endTime = endAt
-				let options = _.assign(formSearch, {
-					pageNo: this.pageIndex,
-					pageSize: this.pageSize
-				})
-                // this.isReady = true
-				post('/api/econtract/inner/qry', options)
+				post('/api/econtract/inner/qry', this.formSearch)
 					.then(result => {
                         this.tableList = result
                         this.isReady = false
@@ -368,7 +394,7 @@
 							message: '已重发通知！'
                         })
                         if(a.orderState == 'EXPIRED') {
-                            this.pageIndex = 1
+                            this.formSearch.pageNo = 1
                         }
                         this.getList()
                     })
@@ -479,5 +505,9 @@
     .right {
         display: flex;
         justify-content: flex-end;
+    }
+    .flex {
+        display: flex;
+        justify-content: space-between;
     }
 </style>

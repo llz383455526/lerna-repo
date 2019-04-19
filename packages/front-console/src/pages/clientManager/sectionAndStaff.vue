@@ -749,14 +749,6 @@ export default {
               }
             }
             this.$forceUpdate()
-            if(e.userContextCollectionMap.agent) {
-              if(e.userContextCollectionMap.agent.isAllSubject) {
-                this.isAgentAll[type] = true
-              }
-              else {
-                this.selectedAgentList[type] = this.formatList(e.userContextCollectionMap.agent.userContexts, 'Agent')
-              }
-            }
           }
         })
         this.companyId = data.companyId

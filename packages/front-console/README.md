@@ -27,3 +27,6 @@ console-admin 123456
 >## 代码风格统一
 
 在 package.js 中 eslintConfig 配置
+
+### 92账号密码
+console-admin 123456

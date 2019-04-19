@@ -212,16 +212,24 @@ export default {
             /**
              * 服务公司列表
              */
-            serviceCompanyList: [],
-            cancel_show: false,
-            current: {},
-            red_show: false,
-            red_form: {
-                amount: '',
-                id: '',
-                invoiceCode: '',
-                invoiceNo: '',
-                type: 2
+            getServiceCompanyList() {
+              let url = '/api/invoice-web/commom/service-company-options';
+              get (url).then (res => {
+                this.serviceCompanyList = res;
+              })
+            },
+            getCompanyList() {
+              get ('/api/sysmgr-web/commom/company', {
+                companyIdentity: 'custom'
+              }).then (result => {
+                this.customCompanyList = result
+              })
+            },
+            getSearchOptions() {
+              post ('/api/sysmgr-web/commom/options?enumTypes=InvoiceType', {})
+              .then (result => {
+                this.searchOptions = result
+              })
             },
             red_rules: {
                 invoiceCode: [

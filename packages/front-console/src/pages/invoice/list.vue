@@ -64,15 +64,15 @@
         </el-form>
 
         <div class="title">发票申请列表</div>
-        <el-button type="primary" size="small" @click="dialogClientVisible = true;">单张申请</el-button>
-        <router-link to="batchApply">
-            <el-button type="primary" size="small" @click="dialogClientVisible = true;">批量申请</el-button>
+        <el-button type="primary" size="small" v-if="checkRight(this.permissions, 'invoice-web:/workflow/invoice-add')" @click="$refs.makeInvoice.transmit(true)">单张申请</el-button>
+        <router-link to="batchApply" v-if="checkRight(this.permissions, 'invoice-web:/workflow/invoice-import-submit')">
+            <el-button type="primary" size="small">批量申请</el-button>
         </router-link>
         <el-button size="small" style="margin-left: 240px" @click="isWait">待审批：{{wait}}</el-button>
         <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
          	<el-table-column label="操作" width="120">
                 <template slot-scope="scope">
-                    <el-button v-if="scope.row.cancelFlag == 0" @click="showDetail(scope.row.id, true)" type="text" size="medium" style="padding:0;">作废</el-button>
+                    <el-button v-if="scope.row.cancelFlag == 0 && scope.row.isOperate" @click="showDetail(scope.row.id, true)" type="text" size="medium" style="padding:0;">作废</el-button>
                 </template>
             </el-table-column>
             <el-table-column prop="orderNo" label="申请编号" width="100">
@@ -220,14 +220,16 @@
                 <el-table-column prop="statusName" label="状态"></el-table-column>
             </el-table>
 
-            <div slot="footer" class="dialog-footer" v-if="formDetail.status == '1' || isCancel">
+            <div slot="footer" class="dialog-footer"> <!-- v-if="formDetail.status == '1' || isCancel" -->
             	<el-button size="small" @click="dialogDetailVisible = false">关闭</el-button>
-                <template v-if="!isCancel">
-                    <el-button size="small" @click="dialogDetailVisible = false;dialogRejectVisible = true" v-if="isCan">整单拒开</el-button>
-                    <el-button size="small" type="primary" @click="showOpenDialog" v-if="isCan">审核通过</el-button>
-                </template>
-                <template v-else>
-                    <el-button size="small" type="primary" @click="cancel">申请作废</el-button>
+                <template v-if="formDetail.isOperate">
+                    <template v-if="formDetail.status == '1' || !isCancel">
+                        <el-button size="small" @click="dialogDetailVisible = false;dialogRejectVisible = true" v-if="isCan">整单拒开</el-button>
+                        <el-button size="small" type="primary" @click="showOpenDialog" v-if="isCan">审核通过</el-button>
+                    </template>
+                    <template v-else>
+                        <el-button size="small" type="primary" @click="cancel">申请作废</el-button>
+                    </template>
                 </template>
             </div>
         </el-dialog>
@@ -244,8 +246,7 @@
                 </div>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="formInvoice.allReject=true;dialogRejectVisible=false;submitInvoice()">确认拒开
-                </el-button>
+                <el-button @click="formInvoice.memo = '';formInvoice.allReject=true;dialogRejectVisible=false;submitInvoice()">确认拒开</el-button>
             </div>
         </el-dialog>
 
@@ -256,9 +257,10 @@
             </p>
             <h3>提交开票后，未勾选的部分将做欠票处理</h3>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogOpenVisible=false;submitInvoice();">确认提交</el-button>
+                <el-button @click="formInvoice.allReject=false;dialogOpenVisible=false;submitInvoice();">确认提交</el-button>
             </div>
         </el-dialog>
+        <make-invoice ref="makeInvoice"></make-invoice>
     </div>
 </template>
 
@@ -266,8 +268,12 @@
     import _ from 'lodash';
     import {post, get} from '../../store/api';
     import {mapGetters} from 'vuex';
+    import makeInvoice from '../workOrder/dialog/makeInvoice'
     export default {
         name: "list",
+        components: {
+            makeInvoice
+        },
         data() {
             return {
                 serviceCompanyId: '',
@@ -384,7 +390,7 @@
                 })
             },
             getCompanyList() {
-                let url = '/api/invoice-web/invoice/service-company-options';
+                let url = '/api/invoice-web/commom/service-company-options';
                 get(url).then(res => {
                     this.companyList = res;
                 })

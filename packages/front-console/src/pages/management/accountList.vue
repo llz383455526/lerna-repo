@@ -120,7 +120,7 @@ export default {
         pageSize: this.pageSize
       });
       this.activeData = JSON.stringify(this.formSearch);
-      post("/api/sysmgr-web/user/list", options).then(result => {
+      post("/api/sysmgr-web/commom/user-list", options).then(result => {
         this.tableList = result;
       });
     },

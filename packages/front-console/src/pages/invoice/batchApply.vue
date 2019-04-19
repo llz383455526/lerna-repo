@@ -211,7 +211,8 @@ export default {
         this.query()
     },
     back() {
-      this.$router.push("list");
+        sessionStorage.setItem('isCreate', 1)
+        this.$router.back();
     },
     myConfirm() {
 		if(this.total != this.successCount) {
@@ -223,14 +224,15 @@ export default {
       	  type: "warning"
       	})
         .then(() => {
-			post('/api/invoice-web/invoice/invoice-import-submit', {
+			post('/api/invoice-web/workflow/invoice-import-submit', {
 				importTaskId: this.form.importTaskId
 			}).then((data) => {
 				this.$message({
-					type: "success",
-					message: "提交成功！"
-				});
-				this.$router.push('list')
+                    type: 'success',
+                    message: '提交成功！'
+                })
+                sessionStorage.setItem('isCreate', 1)
+                this.$router.back()
 			})
         }).catch(() => {});
     }

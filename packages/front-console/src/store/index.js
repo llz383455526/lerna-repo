@@ -31,6 +31,7 @@ import options from './modules/options'
 
 import saleContract from './modules/form/saleContract'
 
+import confirmSalary from './modules/confirmSalary'
 Vue.use(Vuex);
 
 let state = {
@@ -63,6 +64,7 @@ export default new Vuex.Store({
 		offlineSalaryManager,
         taxDiscount,
         status,
+        confirmSalary,
         options,
         saleContract,
     }

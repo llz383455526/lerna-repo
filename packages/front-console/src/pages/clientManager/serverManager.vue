@@ -405,7 +405,7 @@
         <el-dialog title="添加票量" :visible.sync="dialogAddInvoiceVisible" width="40%">
             <el-form :rules="rulesAdd" :model="formAdd" ref="formAdd">
                 <div class="input-container">
-                    <div class="label dialog-label text-label">发票类型<span>*</span>
+                    <div class="label dialog-label text-label">月份<span>*</span>
                     </div>
                     <div class="input">
                         <el-form-item prop="selectInvoiceType" size="small">
@@ -595,14 +595,6 @@ export default {
                 pageNo: 1,
                 pageSize: 10
             },
-            //   aform: {
-            //     isFromOutApp: "",
-            //     companyId: "",
-            //     appId: "",
-            //     appName: "",
-            //     serviceCompanyId: "",
-            //     authCode: ""
-            //   },
             rules: {
                 appName: [{
                     required: true,

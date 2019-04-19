@@ -70,6 +70,10 @@
         <!-- <el-button size="small" @click="download" class="btn">导出xls</el-button> -->
       </el-form-item>
     </el-form>
+    <el-button type="primary" size="small" @click="derive(0)">导出当前报税列表</el-button>
+    <el-button type="primary" size="small" @click="derive(1)">导出当前报税证照</el-button>
+    <el-button type="primary" size="small" @click="derive(2)">导出当前报税合同</el-button>
+    <el-button type="primary" size="small" @click="$router.push('downList')">下载列表</el-button>
     <div class="table-container">
       <el-table :data="data.data" ref="table">
         <el-table-column label="生成时间">
@@ -85,9 +89,16 @@
         <el-table-column prop="personalIdentity" label="证件号"></el-table-column>
         <!-- <el-table-column prop="personalMobile" label="手机号"></el-table-column> -->
         <el-table-column prop="signStateDesc" label="状态"></el-table-column>
+        <el-table-column prop="manufacturerDesc" label="签约来源"></el-table-column>
+        <el-table-column label="身份证照片">
+            <template slot-scope="scope">
+                <a :href="`/api/econtract/contract/download-identity-pdf?orderId=${scope.row.orderId}`" v-if="scope.row.certState == 2" target="_bank">证件照下载</a>
+                <span v-else>暂无数据</span>
+            </template>
+        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <template v-if="scope.row.manufacturer == '0'">
+            <template v-if="scope.row.manufacturer != 1">
               <el-button class="ml0" v-if="scope.row.orderState === 'SIGNING' || scope.row.orderState === 'AUTHING'" type="text" size="small" @click="cancleOrder(scope.row)">取消签约</el-button>
                 <el-button class="ml0" v-if="isRe.indexOf(scope.row.orderState) > -1" type="text" size="small" @click="reCall(scope.row)">
                     重发通知
@@ -136,6 +147,7 @@
 <script>
 import { post, get, importPost } from '../../store/api';
 import { baseUrl } from "../../config/address.js"
+import { econtract } from 'src/api'
 export default {
   data() {
     var time = new Date()
@@ -211,7 +223,7 @@ export default {
         a = 1
       }
       this.form.pageNo = a
-      post('/api/econtract/inner/qry', this.form).then(data => {
+      post('/api/econtract/inner/user-sign-qry', this.form).then(data => {
         this.data = data
       })
     },
@@ -224,18 +236,51 @@ export default {
       this.range = []
       this.getTime()
     },
-    download() {
-      let url = ''
-      for(let k in this.form) {
-        if(!url) {
-          url += `?${k}=${this.form[k]}`
+    toStr(a) {
+        var url = '', isFirst = true
+        for(var k in a) {
+            if(isFirst) {
+                isFirst = false
+                url += `?${k}=${a[k]}`
+            }
+            else {
+                url += `&${k}=${a[k]}`
+            }
+        }
+        return url
+    },
+    derive(a) {
+        let url
+        switch (a) {
+            case 0:
+                url = 'usercertExport'
+                break;
+            case 1:
+                url = 'usercertDownloadBatches'
+                break;
+            case 2:
+                url = 'contractDownloadBatches'
+                break;
+            default:
+                break;
+        }
+        if(a == 0) {
+            window.open(`${econtract[url]}${this.toStr(this.form)}`)
         }
         else {
-          url += `&${k}=${this.form[k]}`
+            get(`${econtract[url]}${this.toStr(this.form)}`).then(data => {
+                this.$confirm('生成中，请进入“下载列表”中进行下载', '提示', {
+                    confirmButtonText: '进入下载列表',
+                    cancelButtonText: '关闭',
+                    type: 'success'
+                }).then(() => {
+                    this.$router.push('downList')
+                }).catch(() => {})
+            })
         }
-      }
-      console.log(`/api/econtract/inner/export${url}`)
-      window.open(`/api/econtract/inner/export${url}`)
+    },
+    download() {
+      window.open(`/api/econtract/inner/export${this.toStr(this.form)}`)
     },
     upload(a) {
       this.fileList.shift()

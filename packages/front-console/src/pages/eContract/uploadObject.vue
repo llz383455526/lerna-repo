@@ -90,7 +90,7 @@
                 <div class="ditem">
                     <div>下载模板文件</div>
                     <div>请按照模板填写签约对象信息。</div>
-                    <a href="/assets/合同名单模板.xlsx" download="合同名单模板.xlsx" target="_blank">点击下载模板文件</a>
+                    <a href="/assets/批量签约名单上传模板.xlsx" download="批量签约名单上传模板.xlsx" target="_blank">点击下载模板文件</a>
                 </div>
                 <div class="ditem">
                     <div>上传文件导入</div>
@@ -121,7 +121,7 @@
                     <el-input v-model="editor.name" class="form_input"></el-input>
                 </el-form-item>
                 <el-form-item label="证件类型：" prop="identityType">
-                    <el-select v-model="editor.identityType" class="form_input">
+                    <el-select v-model="editor.identityType" class="form_input" disabled>
                         <el-option v-for="e in type" :key="e.value" :label="e.text" :value="e.value"></el-option>
                     </el-select>
                 </el-form-item>

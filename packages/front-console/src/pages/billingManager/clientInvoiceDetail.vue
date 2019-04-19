@@ -125,6 +125,7 @@ export default {
             this.customList = data
         })
         Object.assign(this.form, this.$route.query)
+        this.form.time = parseInt(this.form.time)
         this.query()
     },
     methods: {

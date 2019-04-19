@@ -135,7 +135,7 @@
             </template>
             <template v-else>
                 <div class="mtitle">概况</div>
-                <p class="detil">签约合同数量：{{trueT}}</p>
+                <p class="detil">签约合同数量：{{total}}</p>
                 <div style="text-align: center; padding-top: 20px">
                     <el-button size="small" @click="step = 1">上一步</el-button>
                     <el-button type="primary" size="small" @click="ensure">确认发起</el-button>
@@ -147,7 +147,7 @@
                     <div class="ditem">
                         <div>下载模板文件：</div>
                         <div>
-                            <a class="abtn" href="/assets/合同名单模板.xlsx" download="合同名单模板.xlsx" target="_blank">下载模板</a>
+                            <a class="abtn" href="/assets/批量签约名单上传模板.xlsx" download="批量签约名单上传模板.xlsx" target="_blank">下载模板</a>
                             <div>请按照模板填写签约对象信息</div>
                         </div>
                     </div>
@@ -182,7 +182,7 @@
                         <el-input v-model="editor.name" class="form_input" size="small"></el-input>
                     </el-form-item>
                     <el-form-item label="证件类型：" prop="identityType">
-                        <el-select v-model="editor.identityType" class="form_input" size="small">
+                        <el-select v-model="editor.identityType" class="form_input" size="small" disabled>
                             <el-option v-for="e in type" :label="e.text" :value="e.value" :key="e.value"></el-option>
                         </el-select>
                     </el-form-item>
@@ -461,7 +461,7 @@
 				// this.editor.identityType = a.personalIdentityType
 				// this.editor.name = a.personalName
                 // this.editor.personalMobile = a.personalMobile
-                this.$refs['editor'].clearValidate()
+                this.$refs['editor'] && this.$refs['editor'].clearValidate()
 			},
 			save() {
 				this.$refs['editor'].validate(valid => {

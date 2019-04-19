@@ -30,7 +30,7 @@ const mutations = {
     [types.LOGOUT_PRINCIPAL](state, payload) {
         payload.user.scrutator = false
         payload.user.userProfile.roles.forEach(e => {
-            if(e.id == 10112) payload.user.scrutator = true
+            if(e.id == 10112) payload.user.scrutator = true //税局角色
         })
         state.userInformation = payload.user;
         state.permissions = payload.permissions;

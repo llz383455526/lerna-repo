@@ -482,7 +482,7 @@ export default {
     //     get('/api/sysmgr-web/commom/app-service-company-list').then(data => {
     //         this.serviceOption = data
     //     })
-    //     // get('/api/invoice-web/invoice/service-company-options').then(data => {
+    //     // get('/api/invoice-web/commom/service-company-options').then(data => {
     //     //     this.serviceOption = data
     //     // })
     // },

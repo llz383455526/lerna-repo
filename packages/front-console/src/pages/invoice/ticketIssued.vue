@@ -89,7 +89,7 @@
         </template>
       </el-table-column>
       <!-- <el-table-column prop="totalNum" label="申请开票数"></el-table-column> -->
-      <el-table-column prop="subjectName" label="发票类目"></el-table-column>
+      <el-table-column prop="fullName" label="发票类目"></el-table-column>
       <el-table-column prop="customerInvoiceType" label="客户开票类型"></el-table-column>
       <el-table-column label="审批通过时间">
         <template slot-scope="scope">
@@ -198,14 +198,13 @@
         <el-table-column prop="statusMsg" label="状态"></el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <el-button v-if="scope.row.status === 'fail' || scope.row.status === 'dealing'" type="text" @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
+            <el-button v-if="(scope.row.status === 'fail' || scope.row.status === 'dealing') && invoiceData.isOperate" type="text" @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
           </template>
         </el-table-column>
       </el-table>
       <span slot="footer">
-        	<el-button @click="preview" type="primary">预览</el-button>
-        <!-- make -->
-            <el-button @click="needSure" type="primary">开票</el-button>
+        	<!-- <el-button @click="preview" type="primary">预览</el-button> -->
+            <el-button @click="needSure" v-if="invoiceData.isOperate" type="primary">开票</el-button>
         </span>
     </el-dialog>
     <el-dialog title="申请中" :visible.sync="oshow" width="1000px">
@@ -237,13 +236,13 @@
         <el-table-column prop="statusMsg" label="状态"></el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <el-button v-if="scope.row.status === 'fail' || scope.row.status === 'dealing'" type="text" @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
+            <el-button v-if="(scope.row.status === 'fail' || scope.row.status === 'dealing') && invoiceData.isOperate" type="text" @click="changeInvoiceStatus(scope.row)">线下已开票，修改状态</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <span slot="footer">
-            <!--<el-button @click="oshow = false" type="primary">确定</el-button>-->
-        </span>
+      <!-- <span slot="footer">
+            <el-button @click="oshow = false" type="primary">确定</el-button>
+        </span> -->
     </el-dialog>
     <el-dialog title="开票确认" :visible.sync="sureShow" width="35%">
       <p v-if="invoiceData.items">申请发票数：<span class="red">{{invoiceData.items.length}}</span>张</p>
@@ -274,15 +273,15 @@
         </el-table-column>
         <el-table-column label="物流公司" prop="expressCompany"></el-table-column>
         <el-table-column label="物流单号" prop="expressNo"></el-table-column>
-        <el-table-column label="操作">
+        <!-- <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="eshow = true">{{scope.row.addExpressTime ? '编辑' : '添加'}}
             </el-button>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <div class="title">发票扫描件</div>
-      <el-button size="small" type="primary" @click="addBill">上传文件</el-button>
+      <!-- <el-button size="small" type="primary" @click="addBill">上传文件</el-button> -->
       <el-table :data="billDatail.attachments">
         <el-table-column label="发票代码" prop="invoiceCode"></el-table-column>
         <el-table-column label="发票号码" prop="invoiceNo"></el-table-column>
