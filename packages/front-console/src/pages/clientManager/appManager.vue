@@ -93,6 +93,12 @@
                     <el-col :span="10">{{msg.deliverName}}</el-col>
                 </el-col>
             </el-row>
+            <el-row :gutter="20">
+                <el-col :span="10">
+                    <el-col :span="5" class="right">代理商名称</el-col>
+                    <el-col :span="10">{{msg.agentCompanyName}}</el-col>
+                </el-col>
+            </el-row>
         </div>
         <app-list :showAdd="true" :companyId="companyId"></app-list>
     </div>
@@ -143,6 +149,13 @@
                     {{e.text}}
                 </el-radio>
             </el-form-item>
+            <template v-if="cform.originalType == 20">
+              <el-form-item label="代理商名称" prop="agentCompanyId">
+                <el-select v-model="cform.agentCompanyId" style="width:400px;" filterable @change="companyChange">
+                    <el-option v-for="e in agentList" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
+                </el-select>
+              </el-form-item>
+            </template>
             <el-form-item label="客户归属" prop="original">
                 <el-radio
                     v-for="e in originals"
@@ -245,7 +258,7 @@
 </template>
 <script>
 import { get, post, formPost, postButNoErrorToast, postWithErrorCallback } from "../../store/api";
-// import {mapGetters} from 'vuex'
+import {mapGetters} from 'vuex'
 import { createUser } from "../../service/userApi";
 import { setTimeout } from "timers";
 import { sysmgr } from "src/api";
@@ -253,6 +266,11 @@ import authCode from '../../pageComponent/authCode'
 import signList from '../../pageComponent/signList'
 import appList from '../../pageComponent/appList'
 export default {
+    computed: {
+      ...mapGetters({
+          agentList: 'agentList',
+        })
+    },
     components: {
         authCode,
         signList,
@@ -279,7 +297,8 @@ export default {
         originalTypeName: '',
         companyAuditor: '',
         deliverId: '',
-        deliverName: ''
+        deliverName: '',
+        agentCompanyId: ''
       },
       show: false,
       queryForm: {
