@@ -138,7 +138,7 @@
                 <el-table-column label="操作">
                     <template slot-scope="scope">
                         <el-button type="text" @click="prevFile(scope.row)">预览协议原件</el-button>
-                        <router-link :to="`/main/eContract/index?templateName=${scope.row.name}`">
+                        <router-link :to="`/main/eContract/index?templateName=${scope.row.name}`" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
                             <el-button type="text">查看签约记录</el-button>
                         </router-link>
                     </template>
@@ -164,11 +164,16 @@ import {
   postButNoErrorToast,
   postWithErrorCallback
 } from "../../store/api";
-// import {mapGetters} from 'vuex'
+import {mapGetters} from 'vuex'
 import { createUser } from "../../service/userApi";
 import { setTimeout } from 'timers';
 var baseUrl = require("../../config/address.js").baseUrl;
 export default {
+    computed: {
+        ...mapGetters({
+            userInformation: 'userInformation',
+        })
+    },
     data() {
       var reviewMemo = (rule, value, callback) => {
           if(!value && this.reviewForm.approve == false){
