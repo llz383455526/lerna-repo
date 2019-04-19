@@ -98,6 +98,12 @@
             <el-col :span="10">{{msg.companyAuditor}}</el-col>
           </el-col>
         </el-row>
+        <el-row :gutter="20">
+          <el-col :span="10">
+            <el-col :span="5" class="right">代理商名称</el-col>
+            <el-col :span="10">{{msg.agentCompanyName}}</el-col>
+          </el-col>
+        </el-row>
       </div>
       <el-button style="margin-top: 30px" type="primary" @click="add">添加商户</el-button>
       <el-table class="table" :data="tableData" border>
