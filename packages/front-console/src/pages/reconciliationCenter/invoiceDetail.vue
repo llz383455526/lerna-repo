@@ -209,27 +209,13 @@ export default {
             invoiceOptions: {},
             companyData: {},
             customCompanyList: [],
-            /**
-             * 服务公司列表
-             */
-            getServiceCompanyList() {
-              let url = '/api/invoice-web/commom/service-company-options';
-              get (url).then (res => {
-                this.serviceCompanyList = res;
-              })
-            },
-            getCompanyList() {
-              get ('/api/sysmgr-web/commom/company', {
-                companyIdentity: 'custom'
-              }).then (result => {
-                this.customCompanyList = result
-              })
-            },
-            getSearchOptions() {
-              post ('/api/sysmgr-web/commom/options?enumTypes=InvoiceType', {})
-              .then (result => {
-                this.searchOptions = result
-              })
+            red_show: false,
+            red_form: {
+                amount: '',
+                id: '',
+                invoiceCode: '',
+                invoiceNo: '',
+                type: 2
             },
             red_rules: {
                 invoiceCode: [
@@ -368,10 +354,10 @@ export default {
         },
         remove(id) {
             this.$confirm('是否确定进行移除?', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then(data => {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(data => {
                 post(`/api/invoice-web/invoice/invoice-detail-delete?ids=${id}`).then(data => {
                     this.$message({
                         type: 'success',
