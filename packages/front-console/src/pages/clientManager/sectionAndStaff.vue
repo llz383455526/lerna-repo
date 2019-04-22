@@ -171,7 +171,7 @@
                   </div>
                 </el-tab-pane>
                 <el-tab-pane label="配置代理商" v-if="power == systemList[0].value && companyId<=0">
-                  <el-button @click="openDialog('新增代理商', 'agent')">新增 {{companyId}}</el-button>
+                  <el-button @click="openDialog('新增代理商', 'agent')">新增</el-button>
                   <el-checkbox v-model="isAgentAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="companyId<=0">全部</el-checkbox>
                   <div class="table-container">
                     <el-table :data="selectedAgentList[power]">

@@ -56,6 +56,14 @@ Vue.filter('formatConcat', (obj, index = '') => {
 	return ''
 })
 
+Vue.filter('formatServer', (arr) => {
+    let str = '';
+    arr.length && arr.forEach((item, key) => {
+        str += key ? `, ${item.serviceCompanyName}` : `${item.serviceCompanyName}`;
+    });
+    return str;
+})
+
 
 
 

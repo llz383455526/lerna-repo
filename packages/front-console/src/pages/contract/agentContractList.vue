@@ -25,7 +25,11 @@
         <el-table class="table" :data="data.list">
             <el-table-column label="合同编号" prop="contractNo"></el-table-column>
             <el-table-column label="代理商名称" prop="companyName"></el-table-column>
-            <el-table-column label="服务商名称" prop="companyName"></el-table-column>
+            <el-table-column label="服务商名称">
+                <template slot-scope="scope">
+                    {{scope.row.serviceCompanyRateList | formatServer()}}
+                </template>
+            </el-table-column>
             <el-table-column label="代理期限" width="200px">
                 <template slot-scope="scope">
                     {{scope.row.agentStart | formatTime('yyyy-MM-dd')}} 至 {{scope.row.agentEnd | formatTime('yyyy-MM-dd')}}
