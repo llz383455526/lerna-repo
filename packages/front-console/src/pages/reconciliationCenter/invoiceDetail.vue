@@ -79,7 +79,7 @@
           <template slot-scope="scope">{{scope.row.amount | formatMoney}}</template>
         </el-table-column>
         <el-table-column prop="remark" label="备注"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
             <template slot-scope="scope">
                 <el-button type="text" @click="remove(scope.row.id)" v-if="scope.row.status == 'offline_success'">移除</el-button>
                 <el-button type="text" @click="cancel(scope.row)" v-if="scope.row.cancelable && (scope.row.status == 'offline_success' || scope.row.status == 'success')">作废</el-button>
