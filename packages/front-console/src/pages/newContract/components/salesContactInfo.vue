@@ -74,7 +74,7 @@ export default {
           })
         },
         companyChange(companyId) {
-            this.contractModel.getChargeByName(companyId);
+            // this.contractModel.getChargeByName(companyId);
             // sessionStorage.setItem('companyChange', '1')
         },
         getOriginalName() {

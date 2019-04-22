@@ -43,15 +43,17 @@ class ContractModel extends BaseModel {
             customMail2: '',
             customCollectorAddr: '',
             // 相关商户信息
-            companyApps: [{
-                // companyId: '{{companyId}}',
-                // appId: 'app{{companyId}}',
-                appName: '',
-                chargeByName: '',
-                chargeByPhone: '',
-                chargeByMail: '',
-                // isFromOutApp: '{{isFromOutApp}}'
-            }],
+            companyApps: [
+                // {
+                //     companyId: '{{companyId}}',
+                //     appId: 'app{{companyId}}',
+                //     appName: '',
+                //     chargeByName: '',
+                //     chargeByPhone: '',
+                //     chargeByMail: '',
+                //     isFromOutApp: '{{isFromOutApp}}'
+                // }
+            ],
             // 企业开票信息
             invoiceCompanyName: '',
             customTaxIdcd: '',
@@ -223,7 +225,7 @@ class ContractModel extends BaseModel {
                 }
                 // 获取渠道经理
                 if (this.contractForm.agentCompanyId) {
-                    this.getChargeByName(this.contractForm.agentCompanyId)
+                    // this.getChargeByName(this.contractForm.agentCompanyId)
                 }
                 // this.changeCheckbox();
                 if (typeof callback === 'function') callback();

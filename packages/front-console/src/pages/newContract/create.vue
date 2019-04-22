@@ -131,7 +131,7 @@ export default {
             // 上传之前处理checkbox
             this.changeCheckbox();
             // 上传之前把客服企业信息填到相关商户那里
-            this.fillRelevant();
+            // this.fillRelevant();
             return new Promise((resolve, reject) => {
                 post(url, _form).then(result => {
                     resolve('save');

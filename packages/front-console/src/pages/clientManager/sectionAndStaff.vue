@@ -426,6 +426,7 @@ export default {
       }).then(data => {
         this.list = data
         this.f_root = []
+        // 组装根节点
         this.list.forEach((e, i) => {
           if(!e.pid) {
             this.f_root.push(this.getChildren(e))
