@@ -670,6 +670,12 @@ export default {
         this.staff_clearn()
         this.staff_query()
         this.getstaffList()
+        // 如果选择负责人，自动更新名字
+        this.curr && this.staff_query_data.list.forEach(e => {
+            if(e.userId == this.curr.leaderEmployeeId) {
+                this.curr.leaderEmployeeName = e.name
+            }
+        })
       })
     },
     staff_clearn(next) {
