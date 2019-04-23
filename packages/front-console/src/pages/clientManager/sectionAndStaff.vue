@@ -105,12 +105,12 @@
         <el-form-item label="邮箱" prop="email">
           <el-input class="form_input" v-model="staff_form.email"></el-input>
         </el-form-item>
-        <el-form-item label="归属部门" prop="belongOrgId" v-if="companyId <= 0">
+        <el-form-item label="归属部门" prop="belongOrgId" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
           <el-select class="form_input" v-model="staff_form.belongOrgId" filterable @change="updata">
             <el-option v-for="(e, i) in list" :key="`st${i}`" :value="e.id" :label="e.name"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="附属部门" prop="attachOrgIds" v-if="companyId<=0"> <!-- v-if="render"  -->
+        <el-form-item label="附属部门" prop="attachOrgIds" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'"> <!-- v-if="render"  -->
           <treeselect class="form_input" v-model="staff_form.attachOrgIds" :key="render ? 1 : 2" :multiple="true" :flat="true" :options="setStaffDisabled()" @select="checkSelect" placeholder="请选择" ref="treeselect"></treeselect>
         </el-form-item>
         <el-form-item label="汇报对象(职员)" prop="leaderEmployeeId">
@@ -127,9 +127,9 @@
                     <el-checkbox v-for="item in roleList[power]" :key="item.roleId" :label="item.roleId">{{item.roleName}}</el-checkbox>
                   </el-checkbox-group>
                 </el-tab-pane>
-                <el-tab-pane label="配置客户" name="fourth" v-if="companyId<=0">
+                <el-tab-pane label="配置客户" name="fourth" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
                   <el-button @click="openDialog('新增客户', 'company')">新增</el-button>
-                  <el-checkbox v-model="isCompanyAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="companyId<=0">全部</el-checkbox>
+                  <el-checkbox v-model="isCompanyAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
                   <div class="table-container" v-if="!isCompanyAll[power]">
                     <el-table :data="selectedCompanyList[power]">
                       <el-table-column prop="fullName" label="名称"></el-table-column>
@@ -143,7 +143,7 @@
                 </el-tab-pane>
                 <el-tab-pane label="配置商户" name="second">
                   <el-button @click="openDialog('新增商户', 'app')">新增</el-button>
-                  <el-checkbox v-model="isAppAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="companyId<=0">全部</el-checkbox>
+                  <el-checkbox v-model="isAppAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
                   <div class="table-container" v-if="!isAppAll[power]">
                     <el-table :data="selectedAppList[power]">
                       <el-table-column prop="appName" label="商户名称"></el-table-column>
@@ -158,7 +158,7 @@
                 </el-tab-pane>
                 <el-tab-pane label="配置服务商" name="third" v-if="power == systemList[0].value">
                   <el-button @click="openDialog('新增服务商', 'service')">新增</el-button>
-                  <el-checkbox v-model="isProviderAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="companyId<=0">全部</el-checkbox>
+                  <el-checkbox v-model="isProviderAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
                   <div class="table-container" v-if="!isProviderAll[power]">
                     <el-table :data="selectedServiceList[power]">
                       <el-table-column prop="fullName" label="名称"></el-table-column>
@@ -170,9 +170,9 @@
                     </el-table>
                   </div>
                 </el-tab-pane>
-                <el-tab-pane label="配置代理商" v-if="power == systemList[0].value && companyId<=0">
+                <el-tab-pane label="配置代理商" v-if="power == systemList[0].value && userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
                   <el-button @click="openDialog('新增代理商', 'agent')">新增</el-button>
-                  <el-checkbox v-model="isAgentAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="companyId<=0">全部</el-checkbox>
+                  <el-checkbox v-model="isAgentAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
                   <div class="table-container">
                     <el-table :data="selectedAgentList[power]">
                       <el-table-column prop="fullName" label="名称"></el-table-column>
