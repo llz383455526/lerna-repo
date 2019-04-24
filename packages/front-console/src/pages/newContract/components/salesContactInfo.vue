@@ -66,16 +66,19 @@ export default {
       }
     },
     methods: {
-        getOriginalTypeName() {
-          this.originalTypeList.forEach(e => {
-            if(this.contractModel.contractForm.originalType == e.value) {
-              this.contractModel.contractForm.originalTypeName = e.text
+        getOriginalTypeName(ev) {
+            if (ev == 10) {
+                this.contractModel.contractForm.agentCompanyId = ''
             }
-          })
+            this.originalTypeList.forEach(e => {
+                if(this.contractModel.contractForm.originalType == e.value) {
+                this.contractModel.contractForm.originalTypeName = e.text
+                }
+            })
         },
         companyChange(companyId) {
-            // this.contractModel.getChargeByName(companyId);
-            // sessionStorage.setItem('companyChange', '1')
+            this.contractModel.getChargeByName(companyId);
+            sessionStorage.setItem('companyChange', '1')
         },
         getOriginalName() {
           var arr = this.originals.filter(e => e.value == this.contractModel.contractForm.original)

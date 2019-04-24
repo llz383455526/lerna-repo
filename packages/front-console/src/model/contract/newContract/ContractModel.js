@@ -225,7 +225,7 @@ class ContractModel extends BaseModel {
                 }
                 // 获取渠道经理
                 if (this.contractForm.agentCompanyId) {
-                    // this.getChargeByName(this.contractForm.agentCompanyId)
+                    this.getChargeByName(this.contractForm.agentCompanyId)
                 }
                 // this.changeCheckbox();
                 if (typeof callback === 'function') callback();
