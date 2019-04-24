@@ -18,8 +18,8 @@
         </el-form>
         <el-table :data="tableData.list">
             <el-table-column prop="agentName" label="代理商名称" width="200"></el-table-column>
-            <el-table-column prop="accountName" label="负责人"></el-table-column>
-            <el-table-column prop="chargeByPhone" label="负责人手机号"></el-table-column>
+            <el-table-column prop="contactName" label="负责人"></el-table-column>
+            <el-table-column prop="contactPhone" label="负责人手机号"></el-table-column>
             <el-table-column prop="domain" label="专属域名" width="200"></el-table-column>
             <el-table-column prop="smsSign" label="短信签名"></el-table-column>
             <el-table-column prop="platformName" label="平台名称"></el-table-column>
