@@ -11,13 +11,13 @@
             </el-form-item>
             <el-form-item label="企业名称" prop="customerId" placeholder="请输入内容">
                 <el-select v-model="contractForm.customerId" filterable placeholder="请选择" style="width:100%;" :disabled="$route.query.contractId ? true : false" @change="getConfig">
-                    <el-option v-for="item in customerCompaniesList" :key="item.companyId" :label="item.companyName" :value="item.companyId"></el-option>
+                    <el-option v-for="item in customerCompaniesList" :key="item.id" :label="item.name" :value="item.id"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="服务商名称" prop="serviceCompanyIds" placeholder="请输入内容">
                 <div :class="{top_24 : i != 0}" v-for="(e, i) in contractForm.serviceCompanyIds">
                     <el-select v-model="contractForm.serviceCompanyIds[i]" filterable placeholder="请选择" style="width:100%;" @change="checkList(i)" :disabled="$route.query.contractId ? true : false">
-                        <el-option v-for="item in filterList(i)" :key="item.companyId" :label="item.companyName" :value="item.companyId"></el-option>
+                        <el-option v-for="item in filterList(i)" :key="item.companyId" :label="item.name" :value="item.companyId"></el-option>
                     </el-select>
                     <!-- <div class="item_right" v-if="!$route.query.contractId">
                         <el-button type="text" @click="addServiceCompany">添加</el-button>
@@ -110,7 +110,7 @@
             </el-form-item>
             <template v-if="contractForm.originalType == 20">
                 <el-form-item label="代理商名称" prop="agentCompanyId"> <!-- .filter(e => e.status == '10') -->
-                    <el-select v-model="contractForm.agentCompanyId" style="width:100%;" @change="companyChange(true)" :disabled="agentDisable" filterable>
+                    <el-select v-model="contractForm.agentCompanyId" style="width:100%;" @change="companyChange(true)" disabled filterable>
                         <el-option v-for="e in agentList" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
                     </el-select>
                 </el-form-item>
@@ -584,12 +584,15 @@
             })
         },
         methods: {
-            getConfig() {
+            getConfig(ev) {
                 this.customerCompaniesList.forEach(e => {
-                    if(e.companyId == this.contractForm.customerId) {
+                    if(e.id == this.contractForm.customerId) {
                         console.log(e)
                         this.contractForm.original = e.original
                         this.contractForm.originalType = e.originalType
+                        this.contractForm.agentCompanyId = e.agentCompanyId
+                        this.contractForm.serviceCompanyIds = [null]
+                        this.getOptionServiceCompanies(this.contractForm.agentCompanyId)
                     }
                 })
             },
@@ -762,7 +765,7 @@
                 }
             },
             getOptionCustomerCompanies() {
-                let url = '/api/console-dlv/option/get-option-customer-companies';
+                let url = '/api/sysmgr-web/commom/company?companyIdentity=custom';
                 let self = this;
                 get(url).then(data => {
                     self.customerCompaniesList = data;
@@ -774,10 +777,13 @@
                     this.getConfig()
                 })
             },
-            getOptionServiceCompanies() {
-                let url = '/api/console-dlv/option/get-option-service-companies';
+            getOptionServiceCompanies(agentCompanyId = '') {
+                let url = '/api/salemgt/common/service-company/list?businessed=true';
+                let param = {
+                    agentCompanyId
+                };
                 let self = this;
-                get(url).then(data => {
+                get(url, param).then(data => {
                     self.serviceCompaniesList = data
                     _.foreach(data, function (value, key) {
                         self.restaurants2[key] = {

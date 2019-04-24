@@ -175,8 +175,11 @@ const store = {
                 commit('setVciPayTypeList', res)
             })
         },
-        getServiceCompaniesList({commit}) {
-            get(url.serviceCompaniesList).then(res => {
+        getServiceCompaniesList({commit}, agentCompanyId) {
+            const param = {
+                agentCompanyId
+            };
+            get(url.serviceCompaniesList, param).then(res => {
                 commit('setServiceCompaniesList', res)
             })
         },

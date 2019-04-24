@@ -267,7 +267,7 @@ export default {
     },
     mounted() {
         this.$store.dispatch('getAgentList')
-        this.$store.dispatch('getServiceCompaniesList')
+        this.$store.dispatch('getServiceCompaniesList', this.ruleForm.agentCompanyId)
         this.$store.dispatch('getSettleTypeList')
         this.agentList.forEach(e => {
             if(e.companyId == this.ruleForm.agentCompanyId) {
