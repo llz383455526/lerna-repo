@@ -755,6 +755,14 @@ export default {
                 this.selectedCompanyList[type] = this.formatList(e.userContextCollectionMap.company.userContexts, 'Company')
               }
             }
+            if(e.userContextCollectionMap.agent) {
+              if(e.userContextCollectionMap.agent.isAllSubject) {
+                this.isAgentAll[type] = true
+              }
+              else {
+                this.selectedAgentList[type] = this.formatList(e.userContextCollectionMap.agent.userContexts, 'Agent')
+              }
+            }
             this.$forceUpdate()
           }
         })
