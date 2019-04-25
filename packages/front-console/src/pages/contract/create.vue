@@ -15,7 +15,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="服务商名称" prop="serviceCompanyIds" placeholder="请输入内容">
-                <div :class="{top_24 : i != 0}" v-for="(e, i) in contractForm.serviceCompanyIds">
+                <div :class="{top_24 : i != 0}" v-for="(e, i) in contractForm.serviceCompanyIds" :key="i">
                     <el-select v-model="contractForm.serviceCompanyIds[i]" filterable placeholder="请选择" style="width:100%;" @change="checkList(i)" :disabled="$route.query.contractId ? true : false">
                         <el-option v-for="item in filterList(i)" :key="item.companyId" :label="item.name" :value="item.companyId"></el-option>
                     </el-select>
@@ -591,7 +591,9 @@
                         this.contractForm.original = e.original
                         this.contractForm.originalType = e.originalType
                         this.contractForm.agentCompanyId = e.agentCompanyId
-                        this.contractForm.serviceCompanyIds = [null]
+                        // 这里有毒 我给代码加点毒 ... 
+                        // 这个有毒的代码不懂可联系我 扣扣 308561157
+                        this.$route.query.contractId ? '' : this.contractForm.serviceCompanyIds = [null]
                         this.getOptionServiceCompanies(this.contractForm.agentCompanyId)
                     }
                 })
@@ -924,7 +926,7 @@
                     this.$forceUpdate()
                     this.agentList && this.companyChange(false)
                     this.getConfig()
-                    // console.log(this.contractForm)
+                    console.log(this.contractForm)
                 })
             },
             queryAttachments(id) {
