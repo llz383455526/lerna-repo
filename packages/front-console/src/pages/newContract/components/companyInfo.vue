@@ -1,7 +1,7 @@
 <template>
     <div>
         <h3 class="green">请添加落地公司
-            <el-button size="small" type="primary" @click="dialogVisible = true" v-if="!showAddBtn"
+            <el-button size="small" type="primary" @click="dialogVisible = true;info.serviceCompanyId = ''" v-if="!showAddBtn"
                 style="margin-left: 20px;">添加</el-button>
         </h3>
         <div class="widget-box" v-for="(formItem,index) in ruleForm.contracts" :key="index" style="margin-bottom: 20px;">
@@ -43,12 +43,12 @@
                     <el-form-item label="渠道经理" required>
                         <el-input v-model="chargeByName" disabled style="width:400px;"></el-input>
                     </el-form-item><br>
-                    <el-form-item label="报价规则">
-                        <el-radio v-for="e in ruleList" :key="e.value" v-model="formItem.quoteRule" :label="e.value" :rules="{required: true, message: '请选择报价规则', trigger: 'blur'}">{{e.text}}</el-radio>
+                    <el-form-item label="报价规则" :rules="{required: true, message: '请选择报价规则', trigger: 'blur'}">
+                        <el-radio v-for="e in ruleList" :key="e.value" v-model="formItem.quoteRule" :label="e.value" :disabled="true">{{e.text}}</el-radio>
                         <i class="el-icon-question ml10" title="结算规则：按高于结算费率的部分结算   返佣规则：按返佣费率直接返佣"></i>
                     </el-form-item><br>
                     <el-form-item label="结算费率" :prop="'contracts.'+index+'.checkC'" :rules="{required: true, message: '请正确填写服务商报价', trigger: 'blur'}">
-                        <contract-close-item :arrIndex="index" :initCheck="true" @result="resultClose" :form="formItem"></contract-close-item>
+                        <contract-close-item :arrIndex="index" :initCheck="true" @result="resultClose" :form="formItem" :disable="true"></contract-close-item>
                     </el-form-item>
                 </template>
             </div>
@@ -58,7 +58,7 @@
             <el-form :inline="true" :model="appForm" label-width="150px" ref="appForm">
                 <el-form-item label="服务商名称">
                     <el-select v-model="info.serviceCompanyId" filterable placeholder="请选择" @change="setServiceCompany" style="width: 450px;">
-                        <el-option v-for="(item,key) in serviceCompaniesList" :key="key" :label="item.name" :value="item.companyId"></el-option>
+                        <el-option v-for="(item,key) in filterList" :key="key" :label="item.name" :value="item.companyId"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item style="margin-left: 150px;">
@@ -79,7 +79,7 @@ import upload from './upload'
 import { mapGetters } from 'vuex'
 export default {
     name: "companyInfo",
-    props: ['ruleForm', 'editType', 'chargeByName', 'serviceFeeList', 'showAddBtn', 'showDelBtn', 'goodsList'],
+    props: ['ruleForm', 'editType', 'serviceFeeList', 'showAddBtn', 'showDelBtn', 'goodsList'],
     components: {
         contractCreateItem,
         contractCloseItem,
@@ -92,6 +92,35 @@ export default {
             settleTypeList: 'settleTypeList',
             payModeList: 'payModeList',
         }),
+        agentCompanyList() {
+            let agentCompanyList = []
+            this.quoteFeeContent.serviceCompanyRateList.forEach(e => {
+                agentCompanyList.push({
+                    name: e.serviceCompanyName,
+                    companyId: e.serviceCompanyId
+                })
+            })
+            return agentCompanyList
+        },
+        filterList() {
+            let list = this.agentCompanyList.length ? this.agentCompanyList : this.serviceCompaniesList
+            // 过滤，已经有的落地公司不再显示
+            return list.filter(e => {
+                return !this.ruleForm.contracts.filter(ev => ev.serviceCompanyId == e.companyId).length
+            })
+        }
+    },
+    watch: {
+        agentList() { // 获取代理商列表并找到当前代理商
+            this.agentList.forEach(e => {
+                if(e.companyId == this.ruleForm.agentCompanyId) {
+                    this.chargeByName = e.chargeByName
+                    Object.assign(this.quoteFeeContent, e.quoteFeeContent)
+                    // this.quoteFeeContent = e.quoteFeeContent
+                    this.quoteRule = e.quoteRule
+                }
+            })
+        }
     },
     data () {
         return {
@@ -137,16 +166,16 @@ export default {
               quoteFeeRate: '',
               quoteFeeType: '',
               serviceCompanyRateList: [
-                  {
-                      feeRateContent: {
-                          containIncomeAmount: '',
-                          incomeAmount: '',
-                          quoteFeeRate: '',
-                          quoteFeeType: ''
-                      },
-                      serviceCompanyId: '',
-                      serviceCompanyName: ''
-                  }
+                //   {
+                //       feeRateContent: {
+                //           containIncomeAmount: '',
+                //           incomeAmount: '',
+                //           quoteFeeRate: '',
+                //           quoteFeeType: ''
+                //       },
+                //       serviceCompanyId: '',
+                //       serviceCompanyName: ''
+                //   }
               ],
               stepwiseList: [
                   {
@@ -158,18 +187,17 @@ export default {
                       startAmount: ''
                   }
               ]
-            },
+            }
         }
     },
     methods: {
         formAdd() {
             let info = _.cloneDeep(this.info);
             let quoteFeeContent = _.cloneDeep(this.quoteFeeContent);
-            if (quoteFeeContent.serviceCompanyRateList[0]) {
-                quoteFeeContent.serviceCompanyRateList[0].serviceCompanyId = info.serviceCompanyId
-                quoteFeeContent.serviceCompanyRateList[0].serviceCompanyName = info.serviceCompanyName
-            }
-            this.ruleForm.serviceCompanyList && this.ruleForm.serviceCompanyList.push({
+            // 只需要当前所选的落地公司
+            let serviceCompanyRateList  = quoteFeeContent.serviceCompanyRateList.filter(e => e.serviceCompanyId == info.serviceCompanyId)
+            quoteFeeContent.serviceCompanyRateList = serviceCompanyRateList || []
+            this.ruleForm.serviceCompanyList.push({
                 serviceCompanyName: info.serviceCompanyName,
                 serviceCompanyId: info.serviceCompanyId
             });
@@ -269,44 +297,43 @@ export default {
         this.$store.dispatch('getAgentList')
         this.$store.dispatch('getServiceCompaniesList', this.ruleForm.agentCompanyId)
         this.$store.dispatch('getSettleTypeList')
-        this.agentList.forEach(e => {
-            if(e.companyId == this.ruleForm.agentCompanyId) {
-                this.quoteFeeContent = e.quoteFeeContent
-                this.quoteRule = e.quoteRule
-            }
-        })
-        this.quoteFeeContent = this.quoteFeeContent || {
-            containIncomeAmount: '',
-            incomeAmount: '',
-            quoteFeeRate: '',
-            quoteFeeType: '',
-            serviceCompanyRateList: [
-                {
-                    feeRateContent: {
-                        containIncomeAmount: '',
-                        incomeAmount: '',
-                        quoteFeeRate: '',
-                        quoteFeeType: ''
-                    },
-                    serviceCompanyId: '',
-                    serviceCompanyName: ''
-                }
-            ],
-            stepwiseList: [
-                {
-                    endAmount: '',
-                    equalsEnd: '',
-                    equalsStart: '',
-                    percent: '',
-                    sequence: '',
-                    startAmount: ''
-                }
-            ]
-        }
+        
+        // this.quoteFeeContent = this.quoteFeeContent || {
+        //     containIncomeAmount: '',
+        //     incomeAmount: '',
+        //     quoteFeeRate: '',
+        //     quoteFeeType: '',
+        //     serviceCompanyRateList: [
+        //         {
+        //             feeRateContent: {
+        //                 containIncomeAmount: '',
+        //                 incomeAmount: '',
+        //                 quoteFeeRate: '',
+        //                 quoteFeeType: ''
+        //             },
+        //             serviceCompanyId: '',
+        //             serviceCompanyName: ''
+        //         }
+        //     ],
+        //     stepwiseList: [
+        //         {
+        //             endAmount: '',
+        //             equalsEnd: '',
+        //             equalsStart: '',
+        //             percent: '',
+        //             sequence: '',
+        //             startAmount: ''
+        //         }
+        //     ]
+        // }
         // let isChange = sessionStorage.getItem('companyChange')
         // sessionStorage.removeItem('companyChange')
         this.ruleForm.contracts.forEach(item => {
             item.showServiceCompanyInfo = item.showServiceCompanyInfo === '1' ? true : false;
+            let serviceCompanyRateList = item.quoteFeeContent.serviceCompanyRateList
+            if(serviceCompanyRateList && serviceCompanyRateList.length) {
+                item.quoteFeeContent.serviceCompanyRateList = serviceCompanyRateList.filter(e => e.serviceCompanyId == item.serviceCompanyId)
+            }
             // if(!item.quoteFeeContent || isChange) {
             // item.quoteFeeContent = this.quoteFeeContent
             // item.quoteRule = this.quoteRule

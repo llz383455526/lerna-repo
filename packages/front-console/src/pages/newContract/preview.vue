@@ -210,6 +210,13 @@ export default {
                     item.showServiceCompanyInfo = item.showServiceCompanyInfo === '1' ? true : false;
                 })
                 res()
+                // 根据服务商id过滤
+                this.contractForm.contracts.forEach(item => {
+                    let serviceCompanyRateList = item.quoteFeeContent.serviceCompanyRateList
+                    if(serviceCompanyRateList && serviceCompanyRateList.length) {
+                        item.quoteFeeContent.serviceCompanyRateList = serviceCompanyRateList.filter(e => e.serviceCompanyId == item.serviceCompanyId)
+                    }
+                })
             });
         })
         Promise.all([first, this.contractModel.getAgentList()]).then(() => {

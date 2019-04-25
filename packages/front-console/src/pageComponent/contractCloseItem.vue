@@ -2,12 +2,12 @@
     <div>
         <el-row class="mb15">
             <el-col :span="6">
-                <el-radio label="ratio" v-model="form.quoteFeeContent.quoteFeeType" @change="calcuServiceFee(0)">固定费率{{(form.quoteRule == '' || form.quoteRule == 'settle') ? '结算' : '返佣'}}</el-radio>
+                <el-radio label="ratio" :disabled="disable" v-model="form.quoteFeeContent.quoteFeeType" @change="calcuServiceFee(0)">固定费率{{(form.quoteRule == '' || form.quoteRule == 'settle') ? '结算' : '返佣'}}</el-radio>
             </el-col>
             <template v-if="showInputRatio == 0">
                 <div class="fl">实发金额 * </div>
                 <el-col :span="10">
-                    <el-input placeholder="请输入内容" v-model="inputStandard" @blur="calcuServiceFee(0)" :disabled="!(showInputRatio == 0)">
+                    <el-input placeholder="请输入内容" v-model="inputStandard" @blur="calcuServiceFee(0)" :disabled="disable || !(showInputRatio == 0)">
                         <template slot="append">%</template>
                     </el-input>
                 </el-col>
@@ -15,17 +15,17 @@
         </el-row>
         <el-row class="mb15">
             <el-col :span="6">
-                <el-radio label="nonflow" v-model="form.quoteFeeContent.quoteFeeType" @change="calcuServiceFee(3)">分{{ ladder_amount || 2.8}}万 - 无流水阶梯{{(form.quoteRule == '' || form.quoteRule == 'settle') ? '结算' : '返佣'}}</el-radio>
+                <el-radio label="nonflow" :disabled="disable" v-model="form.quoteFeeContent.quoteFeeType" @change="calcuServiceFee(3)">分{{ ladder_amount || 2.8}}万 - 无流水阶梯{{(form.quoteRule == '' || form.quoteRule == 'settle') ? '结算' : '返佣'}}</el-radio>
             </el-col><br>
             <el-col :span="24" v-show="showInputRatio == 3">
                 <el-table :data="form.quoteFeeContent.stepwiseList">
                     <el-table-column label="月收入下限" width="240">
                         <template slot-scope="scope">
                             <template v-if="scope.row.sequence">
-                                <el-input v-model="scope.row.startAmount" class="input_100" @change="checkTable(true)">
+                                <el-input :disabled="disable" v-model="scope.row.startAmount" class="input_100" @change="checkTable(true)">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsStart" @change="equals(scope.$index, 0)">含 
+                                <el-checkbox :disabled="disable" v-model="scope.row.equalsStart" @change="equals(scope.$index, 0)">含 
                                     <template v-if="scope.row.sequence == columnIndex - 1">
                                         以上
                                     </template>
@@ -39,10 +39,10 @@
                     <el-table-column label="月收入上限" width="240">
                         <template slot-scope="scope">
                             <template v-if="scope.row.sequence != columnIndex - 1">
-                                <el-input v-model="scope.row.endAmount" class="input_100" @change="checkTable">
+                                <el-input :disabled="disable" v-model="scope.row.endAmount" class="input_100" @change="checkTable">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsEnd" @change="equals(scope.$index, 1)">含 
+                                <el-checkbox :disabled="disable" v-model="scope.row.equalsEnd" @change="equals(scope.$index, 1)">含 
                                     <template v-if="!scope.row.sequence">
                                         以下
                                     </template>
@@ -55,12 +55,12 @@
                     </el-table-column>
                     <el-table-column label="阶梯收费" width="270px">
                         <template slot-scope="scope">
-                            实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 3)" v-model="scope.row.percent" style="width: 100px;"></el-input> %  
+                            实发金额 * <el-input @blur="checkTable" :disabled="disable || !(showInputRatio == 3)" v-model="scope.row.percent" style="width: 100px;"></el-input> %  
                         </template>
                     </el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <el-button type="text" @click="deleteColumn(scope.$index)" v-if="scope.$index > 1 && scope.$index == columnIndex - 1">删除</el-button>
+                            <el-button type="text" :disabled="disable" @click="deleteColumn(scope.$index)" v-if="scope.$index > 1 && scope.$index == columnIndex - 1">删除</el-button>
                             <div class="center" v-else>-</div>
                         </template>
                     </el-table-column>
@@ -69,12 +69,12 @@
         </el-row>
         <el-row class="mb15">
             <el-col :span="6">
-                <el-radio label="flow" v-model="form.quoteFeeContent.quoteFeeType" @change="calcuServiceFee(5)">分{{showInputRatio == 5 ? form.quoteFeeContent.incomeAmount : 2.8}}万 - 按流水分阶梯{{(form.quoteRule == '' || form.quoteRule == 'settle') ? '结算' : '返佣'}}</el-radio>
+                <el-radio label="flow" :disabled="disable" v-model="form.quoteFeeContent.quoteFeeType" @change="calcuServiceFee(5)">分{{showInputRatio == 5 ? form.quoteFeeContent.incomeAmount : 2.8}}万 - 按流水分阶梯{{(form.quoteRule == '' || form.quoteRule == 'settle') ? '结算' : '返佣'}}</el-radio>
             </el-col><br>
             <el-col :span="24" v-show="showInputRatio == 5">
                 <div>
                     月收入
-                    <el-input class="input_100" v-model="form.quoteFeeContent.incomeAmount">
+                    <el-input class="input_100" :disabled="disable" v-model="form.quoteFeeContent.incomeAmount">
                         <template slot="append">万</template>
                     </el-input>
                     （含）以下
@@ -83,10 +83,10 @@
                     <el-table-column label="月总额下限" width="240">
                         <template slot-scope="scope">
                             <template v-if="scope.row.sequence">
-                                <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable(true)">
+                                <el-input v-model="scope.row.startAmount" :disabled="disable || !(showInputRatio == 5)" class="input_100" @change="checkTable(true)">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0)">含 
+                                <el-checkbox v-model="scope.row.equalsStart" :disabled="disable || !(showInputRatio == 5)" @change="equals(scope.$index, 0)">含 
                                     <template v-if="scope.row.sequence == columnIndex - 1">
                                         以上
                                     </template>
@@ -100,10 +100,10 @@
                     <el-table-column label="月总额上限" width="240">
                         <template slot-scope="scope">
                             <template v-if="scope.row.sequence != columnIndex - 1">
-                                <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable">
+                                <el-input v-model="scope.row.endAmount" :disabled="disable || !(showInputRatio == 5)" class="input_100" @change="checkTable">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 1)">含 
+                                <el-checkbox v-model="scope.row.equalsEnd" :disabled="disable || !(showInputRatio == 5)" @change="equals(scope.$index, 1)">含 
                                     <template v-if="!scope.row.sequence">
                                         以下
                                     </template>
@@ -116,20 +116,20 @@
                     </el-table-column>
                     <el-table-column label="阶梯收费" width="270px">
                         <template slot-scope="scope">
-                            实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> %  
+                            实发金额 * <el-input @blur="checkTable" :disabled="disable || !(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> %  
                         </template>
                     </el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <el-button type="text" @click="deleteColumn(scope.$index)" v-if="scope.$index > 1 && scope.$index == columnIndex - 1">删除</el-button>
+                            <el-button type="text" :disabled="disable" @click="deleteColumn(scope.$index)" v-if="scope.$index > 1 && scope.$index == columnIndex - 1">删除</el-button>
                             <div class="center" v-else>-</div>
                         </template>
                     </el-table-column>
                 </el-table>
-                <el-button class="top_24" v-if="form.quoteFeeContent.stepwiseList && form.quoteFeeContent.stepwiseList.length < 10" @click="addColumn" size="small" type="primary">增加阶梯</el-button>
+                <el-button class="top_24" :disabled="disable" v-if="form.quoteFeeContent.stepwiseList && form.quoteFeeContent.stepwiseList.length < 10" @click="addColumn" size="small" type="primary">增加阶梯</el-button>
                 <div class="top_24">
                     月收入
-                    <el-input class="input_100" v-model="form.quoteFeeContent.incomeAmount">
+                    <el-input class="input_100" :disabled="disable" v-model="form.quoteFeeContent.incomeAmount">
                         <template slot="append">万</template>
                     </el-input>
                     以上
@@ -138,7 +138,7 @@
                   <el-table-column label="落地公司" prop="serviceCompanyName"></el-table-column>
                   <el-table-column label="结算费率">
                     <template slot-scope="scope">
-                      <el-input v-if="scope.row.serviceCompanyId" v-model="form.quoteFeeContent.serviceCompanyRateList[scope.$index].feeRateContent.quoteFeeRate" @blur="checkTable">
+                      <el-input v-if="scope.row.serviceCompanyId" :disabled="disable" v-model="form.quoteFeeContent.serviceCompanyRateList[scope.$index].feeRateContent.quoteFeeRate" @blur="checkTable">
                         <template slot="append">%</template>
                       </el-input>
                     </template>
@@ -196,7 +196,8 @@ export default {
         arrIndex: {
             type: Number
         },
-        initCheck: false
+        initCheck: false,
+        disable: false
     },
     data() {
         return {
@@ -210,6 +211,7 @@ export default {
         }
     },
     mounted() {
+        console.log(this.form)
         if(!this.form.quoteFeeContent.stepwiseList || !this.form.quoteFeeContent.stepwiseList.length) {
             this.initColumn()
         }

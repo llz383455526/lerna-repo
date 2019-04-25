@@ -137,6 +137,10 @@
                 let url = '/api/contract-web/contract/contract-detail';
                 get(url, {contractId: id}).then(data => {
                     this.detail = data
+                    // 根据服务公司id过滤
+                    this.detail.quoteFeeContent.serviceCompanyRateList = this.detail.quoteFeeContent.serviceCompanyRateList.filter(e => {
+                        return this.detail.serviceCompanyIds.filter(ev => ev == e.serviceCompanyId).length
+                    })
                     this.getOptionCustomerCompanies()
                 })
             },

@@ -187,7 +187,9 @@ export default {
             if(this.form.quoteRule == 'rakeback') {
                 this.check = 0
             }
-            this.sum = this.form.quoteFeeContent.settleTypeList[0].endAmount
+            if(this.form.quoteFeeContent.settleTypeList[0]) {
+                this.sum = this.form.quoteFeeContent.settleTypeList[0].endAmount
+            }
             this.checkTable()
         },
         transferObj() {

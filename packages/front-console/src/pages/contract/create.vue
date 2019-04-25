@@ -651,7 +651,6 @@
                 });
             },
             result(a) {
-              console.log(a)
               this.contractForm.check = a.check
               this.contractForm.quoteFeeContent = a.quoteFeeContent
             },
@@ -720,7 +719,6 @@
                 }
             },
             createResult(a) {
-                console.log(a)
                 this.contractForm.serviceFeeContent = a.serviceFeeContent
                 this.contractForm.serviceFeeContent2 = a.serviceFeeContent2
             },
@@ -918,6 +916,13 @@
                             serviceFeeType: 'ratio'
                         }
                     }
+                    // 根据服务公司id过滤
+                    let serviceCompanyRateList = this.contractForm.quoteFeeContent.serviceCompanyRateList, serviceCompanyIds = this.contractForm.serviceCompanyIds
+                    if(serviceCompanyRateList && serviceCompanyRateList.length) {
+                        this.contractForm.quoteFeeContent.serviceCompanyRateList = serviceCompanyRateList.filter(e => {
+                            return serviceCompanyIds.filter(ev => ev == e.serviceCompanyId).length
+                        })
+                    }
                     this.getOptionCustomerCompanies()
                     this.calcuServiceFeeReverse();
                     this.handdleChangeReverse();
@@ -926,7 +931,6 @@
                     this.$forceUpdate()
                     this.agentList && this.companyChange(false)
                     this.getConfig()
-                    console.log(this.contractForm)
                 })
             },
             queryAttachments(id) {
@@ -979,7 +983,6 @@
                 }
             },
             setPass(a) {
-                console.log(a)
                 this.contractForm.serviceFeeContent.fixFee = (this.float2.test(a) && a <= 100) ? 0 : ''
             },
             companyChange(isSel) {
@@ -991,7 +994,6 @@
                         this.chargeByName = e.chargeByName
                         this.contractForm.agentCompanyName = e.companyName
                         if(isSel) {
-                            console.log(e)
                             this.contractForm.quoteRule = e.quoteRule
                             this.contractForm.quoteFeeContent = e.quoteFeeContent
                             this.$refs.contract.init(this.contractForm)

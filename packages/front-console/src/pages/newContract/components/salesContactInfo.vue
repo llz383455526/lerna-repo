@@ -18,7 +18,7 @@
     </el-form-item><br>
     <template v-if="contractModel.contractForm.originalType == 20">
       <el-form-item label="代理商名称" prop="agentCompanyId">
-        <el-select v-model="contractModel.contractForm.agentCompanyId" style="width:900px;" filterable @change="companyChange">
+        <el-select v-model="contractModel.contractForm.agentCompanyId" style="width:900px;" filterable @change="agentChange">
             <el-option v-for="e in contractModel.agentList" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
         </el-select>
       </el-form-item><br>
@@ -75,6 +75,10 @@ export default {
                 this.contractModel.contractForm.originalTypeName = e.text
                 }
             })
+        },
+        agentChange() {
+            this.companyChange()
+            this.contractModel.contractForm.contracts = []
         },
         companyChange(companyId) {
             this.contractModel.getChargeByName(companyId);
