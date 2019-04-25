@@ -26,7 +26,7 @@
                         </el-form-item>
                         <template v-if="ruleForm.originalType == 20">
                             <el-form-item label="代理商名称" prop="agentCompanyId" :rules="{ required: true, message: '请选择代理商', trigger: 'change' }">
-                                <el-select v-model="ruleForm.agentCompanyId" style="width:900px;" filterable @change="agentChange">
+                                <el-select v-model="ruleForm.agentCompanyId" style="width:900px;" filterable @change="agentChange" disabled>
                                     <el-option v-for="e in agentList" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
                                 </el-select>
                             </el-form-item>
