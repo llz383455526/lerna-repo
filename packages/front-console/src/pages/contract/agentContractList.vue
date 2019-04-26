@@ -19,7 +19,7 @@
                 <el-button @click="$refs['form'].resetFields()">清除</el-button>
             </el-form-item>
         </el-form>
-        <router-link to="agentContractCreate">
+        <router-link to="agentContractCreate" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
             <el-button size="small">新增</el-button>
         </router-link>
         <el-table class="table" :data="data.list">

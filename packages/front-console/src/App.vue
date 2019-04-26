@@ -11,7 +11,8 @@ import { mapGetters } from 'vuex'
 export default {
   computed: {
     ...mapGetters({
-      principalMenu: 'principalMenu'
+      principalMenu: 'principalMenu',
+      userInformation: 'userInformation',
     })
   },
   watch: {
@@ -19,7 +20,22 @@ export default {
       if(menu && menu.length && this.$route.fullPath == '/main'){
         // console.log(menu[0].children[0].action)
         // this.$router.push(menu[0].children[0].action)
-        this.$router.push('/main/workOrder/workOrderIndex')
+        if(this.userInformation.userProfile && this.userInformation.userProfile.subjectType !== 'agent') {
+            this.$router.push('/main/workOrder/workOrderIndex')
+        } else {
+            // 遍历找到发放流水
+            // menu.forEach((item) => {
+            //     console.log(item.title)
+            //     if (item.title === '流水管理') {
+            //         console.log(item)
+            //     }
+            // })
+            if(menu[0].children && menu[0].children.length) {
+                this.$router.push(menu[0].children[0].action)
+            } else {
+                this.$router.push(menu[0].action)
+            }
+        }
       }
     }
   }
