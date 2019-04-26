@@ -247,6 +247,7 @@ export default {
             this.ruleForm.customerName = obj.name
             this.ruleForm.original = obj.original
             this.ruleForm.originalType = obj.originalType
+            this.ruleForm.agentCompanyId = obj.agentCompanyId
         },
         agentChange() {
             this.getChargeByName()
