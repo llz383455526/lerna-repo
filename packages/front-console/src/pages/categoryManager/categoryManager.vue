@@ -66,7 +66,7 @@ export default {
     },
     activated() {
         this.activeData && (this.form = JSON.parse(this.activeData))
-        get('/api/invoice-web/commom/option?enumType=Status').then(data => {
+        get('/api/invoice-web/commom/option?enumType=SubjectStatus').then(data => {
             this.statusList = data
             this.form.status = data[0].value
             this.query(sessionStorage.getItem('resetPage') ? 1 : this.form.page);
