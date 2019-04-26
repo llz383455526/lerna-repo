@@ -590,7 +590,7 @@
                         console.log(e)
                         this.contractForm.original = e.original
                         this.contractForm.originalType = e.originalType
-                        this.contractForm.agentCompanyId = e.agentCompanyId
+                        this.contractForm.agentCompanyId = this.contractForm.originalType === '20' ? e.agentCompanyId : ''
                         // 这里有毒 我给代码加点毒 ... 
                         // 这个有毒的代码不懂可联系我 扣扣 308561157
                         this.$route.query.contractId ? '' : this.contractForm.serviceCompanyIds = [null]
