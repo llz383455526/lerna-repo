@@ -64,6 +64,11 @@
         },
         watch: {
             ruleForm() {
+                this.fillValue()
+            }
+        },
+        methods: {
+            fillValue() {
                 if (this.ruleForm.contractStartDate) {
                     this.value = [this.ruleForm.contractStartDate, this.ruleForm.contractEndDate]
                 }
@@ -77,9 +82,7 @@
                     this.ruleForm.contractStartDate = this.ruleForm.dataValue[0]
                     this.ruleForm.contractEndDate = this.ruleForm.dataValue[1]
                 }
-            }
-        },
-        methods: {
+            },
             autoFill (val) {
                 if (val) {
                     this.ruleForm.contractStartDate = val[0];
@@ -118,6 +121,7 @@
             this.$store.dispatch('getContractTplList')
             this.$store.dispatch('getIndustryTypeList')
             this.$store.dispatch('getServiceTypeList')
+            this.fillValue()
         }
     }
 </script>

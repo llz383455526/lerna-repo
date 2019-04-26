@@ -285,7 +285,7 @@ export default {
           { required: true, message: "请选择部门负责人", trigger: "blur" }
         ]
       },
-      staff_show: true,
+      staff_show: false,
       staff_form: {
         name: '',
         position: '',
@@ -690,9 +690,11 @@ export default {
       this.selectedAppList = {}
       this.selectedServiceList = {}
       this.selectedCompanyList = {}
+      this.selectedAgentList = {}
       this.isCompanyAll = {}
       this.isAppAll = {}
       this.isProviderAll = {}
+      this.isAgentAll = {}
       this.activeName = 'first'
       this.power = this.systemList[0].value
       typeof next == 'function' && next()
@@ -720,7 +722,7 @@ export default {
           data[k] && (this.staff_form[k] = data[k])
         }
         data.userInfoDetail.userProfiles.forEach((e, i) => {
-          var k = i == 0 ? 'adminContextParam' : 'companyContextParam', type = this.systemList[i].value
+          var k = i == 0 ? 'adminContextParam' : 'companyContextParam', type = this.systemList[i] && this.systemList[i].value
           this.staff_form[k].roleIds = []
           e.roles && e.roles.forEach(ev => {
             this.staff_form[k].roleIds.push(ev.id)
