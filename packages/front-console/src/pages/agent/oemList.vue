@@ -2,14 +2,14 @@
     <div class="bg-white p15">
         <div class="mb30">代理商OEM管理</div>
         <el-form :inline="true" :model="searchForm" :rules="searchForm" ref="searchForm">
-            <el-form-item label="代理商名称" size="small" prop="outOrderNo">
-                <el-input v-model="searchForm.outOrderNo"></el-input>
+            <el-form-item label="代理商名称" size="small" prop="agentName">
+                <el-input v-model="searchForm.agentName"></el-input>
             </el-form-item>
-            <el-form-item label="负责人" size="small" prop="accountName">
-                <el-input v-model="searchForm.accountName"></el-input>
+            <el-form-item label="代理商联系人" size="small" prop="contactName">
+                <el-input v-model="searchForm.contactName"></el-input>
             </el-form-item>
-            <el-form-item label="手机号" size="small" prop="accountNo">
-                <el-input v-model="searchForm.accountNo"></el-input>
+            <el-form-item label="代理商联系人电话" size="small" prop="contactPhone">
+                <el-input v-model="searchForm.contactPhone"></el-input>
             </el-form-item>
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="search" size="small">查询</el-button>
@@ -18,8 +18,8 @@
         </el-form>
         <el-table :data="tableData.list">
             <el-table-column prop="agentName" label="代理商名称" width="200"></el-table-column>
-            <el-table-column prop="contactName" label="负责人"></el-table-column>
-            <el-table-column prop="contactPhone" label="负责人手机号"></el-table-column>
+            <el-table-column prop="contactName" label="代理商联系人"></el-table-column>
+            <el-table-column prop="contactPhone" label="代理商联系人电话"></el-table-column>
             <el-table-column prop="domain" label="专属域名" width="200"></el-table-column>
             <el-table-column prop="smsSign" label="短信签名"></el-table-column>
             <el-table-column prop="platformName" label="平台名称"></el-table-column>
@@ -64,14 +64,9 @@
                 pageSize: 10,
                 tableData: [],
                 searchForm: {
-                    appId: '',
-                    outOrderNo: '',
-                    approveState: '',
-                    createAtBegin: '',
-                    createAtEnd: '',
-                    accountName: '',
-                    accountNo: '',
-                    paymentThirdType: '',
+                    agentName: '',
+                    contactName: '',
+                    contactPhone: '',
                 },
                 options1: [],
                 options2: [],
