@@ -29,30 +29,30 @@
             <!-- <el-button type="info" @click="daoChuClick">导出</el-button> -->
         </div>
         <br>
-        <el-table :data="tableData.list" border style="width: 100%">
+        <el-table :data="tableData.list" border style="width: 100%" height="640" class="custom-table">
             <el-table-column prop="taxLandingName" align="center" header-align="center" label="税优地名称"></el-table-column>
             <el-table-column prop="serviceCompanyName" align="center" header-align="center" label="落地公司名称"></el-table-column>
-            <el-table-column prop="periodInitialIssueAmount" align="center" header-align="center" label="期初待开金额">
+            <el-table-column prop="periodInitialIssueAmount" align="center" header-align="center" label="期初待开金额" width="110px">
                 <template slot-scope="scope">
                     {{scope.row.periodInitialIssueAmount | formatMoney}}
                 </template>
             </el-table-column>
-            <el-table-column prop="payAmount" align="center" header-align="center" label="到款金额">
+            <el-table-column prop="payAmount" align="center" header-align="center" label="到款金额" width="110px">
                 <template slot-scope="scope">
                     {{scope.row.payAmount | formatMoney}}
                 </template>
             </el-table-column>
-            <el-table-column prop="issuedAmount" align="center" header-align="center" label="已开金额">
+            <el-table-column prop="issuedAmount" align="center" header-align="center" label="已开金额" width="110px">
                 <template slot-scope="scope">
                     {{scope.row.issuedAmount | formatMoney}}
                 </template>
             </el-table-column>
-            <el-table-column prop="issueAmount" align="center" header-align="center" label="待开金额">
+            <el-table-column prop="issueAmount" align="center" header-align="center" label="待开金额" width="110px">
                 <template slot-scope="scope">
                     {{scope.row.issueAmount | formatMoney}}
                 </template>
             </el-table-column>
-            <el-table-column prop="periodfinalIssueAmount" align="center" header-align="center" label="期末待开金额">
+            <el-table-column prop="periodfinalIssueAmount" align="center" header-align="center" label="期末待开金额" width="110px">
                 <template slot-scope="scope">
                     {{scope.row.periodfinalIssueAmount | formatMoney}}
                 </template>
@@ -106,7 +106,7 @@
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 :current-page.sync="form.page"
-                :page-sizes="[10, 20]"
+                :page-sizes="[50, 100]"
                 :page-size="form.pageSize"
                 style="float: right"
                 layout="total, sizes, prev, pager, next, jumper"
@@ -273,7 +273,7 @@
                 taxlandingId: '',
                 serviceCompanyId: '',
                 page: 1,
-                pageSize: 10
+                pageSize: 50
             },
             // 查找时间
             // searchDate: new Date(),
@@ -527,5 +527,8 @@
     color: #3582e2;
     cursor: pointer;
   }
+}
+.custom-table {
+    font-size: 12px;
 }
 </style>

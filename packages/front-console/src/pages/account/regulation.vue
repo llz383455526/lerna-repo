@@ -232,7 +232,7 @@ export default {
         //     console.log(data)
         // })
         this.query()
-        this.$store.dispatch("getProductName");
+        this.$store.dispatch("getAppList");
         // get('/api/balance-web/commom/option?enumType=ChannelType').then(data => {
         //     this.channelType = data
         // })

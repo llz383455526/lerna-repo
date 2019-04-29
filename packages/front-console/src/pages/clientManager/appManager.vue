@@ -63,7 +63,7 @@
             <el-col :span="10">
                 <el-col :span="5" class="right">关联销售</el-col>
                 <el-col :span="10">
-                <span v-for="e in msg.salesList" :key="e.id" class="mr8">{{e.name}}</span>
+                    <span v-for="e in msg.salesList" :key="e.id" class="mr8">{{e.name}}</span>
                 </el-col>
             </el-col>
             </el-row>
@@ -90,7 +90,9 @@
             <el-row :gutter="20">
                 <el-col :span="10">
                     <el-col :span="5" class="right">关联交付</el-col>
-                    <el-col :span="10">{{msg.deliverName}}</el-col>
+                    <el-col :span="10">
+                        <span v-for="e in msg.deliverList" :key="e.id" class="mr8">{{e.name}}</span>
+                    </el-col>
                 </el-col>
             </el-row>
             <el-row :gutter="20">
@@ -134,11 +136,6 @@
                     value-format="yyyy-MM-dd">
                 </el-date-picker>
             </el-form-item>
-            <el-form-item label="关联交付" prop="deliverId">
-                <el-select class="f_input" v-model="cform.deliverId" filterable @change="getDeliverName">
-                    <el-option v-for="e in deliverList" :key="e.id" :value="e.id" :label="e.name"></el-option>
-                </el-select>
-            </el-form-item>
             <el-form-item label="客户类型" prop="originalType">
                 <el-radio
                     v-for="e in originalTypeList"
@@ -174,6 +171,21 @@
                     <el-table-column label="操作">
                         <template slot-scope="scope">
                             <el-button type="text" @click="deleteSale(scope.$index)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-form-item>
+            <el-form-item label="关联交付" prop="deliverList">
+                <!-- <el-select class="f_input" v-model="cform.deliverId" filterable @change="getDeliverName">
+                    <el-option v-for="e in deliverList" :key="e.id" :value="e.id" :label="e.name"></el-option>
+                </el-select> -->
+                <el-button type="primary" @click="deliverShow = true">添加</el-button>
+                <el-table :data="cform.deliverList" class="form_input">
+                    <el-table-column label="姓名" prop="name"></el-table-column>
+                    <el-table-column label="手机号" prop="mobilephone"></el-table-column>
+                    <el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button type="text" @click="deleteDeliver(scope.$index)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -220,6 +232,45 @@
         </div>
         <span slot="footer">
             <el-button size="small" type="primary" @click="show = false">关闭</el-button>
+        </span>
+    </el-dialog>
+    <!-- 关联交付 -->
+    <el-dialog title="添加" :visible.sync="deliverShow">
+        <el-form :model="deliverForm" size="small" :inline="true">
+            <el-form-item label="姓名/电话：">
+                <el-input v-model="deliverForm.accountInfo" class="form_input200"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button @click="deliverForm.accountInfo = ''">清除</el-button>
+                <el-button type="primary" @click="deliverQuery">查询</el-button>
+            </el-form-item>
+        </el-form>
+        <el-table :data="deliverResult.list">
+            <el-table-column label="姓名" prop="name"></el-table-column>
+            <el-table-column label="电话" prop="mobilephone"></el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button
+                    type="text"
+                    size="mini"
+                    v-if="isHas_1(scope.row)"
+                    @click="addDeliver(scope.row)"
+                    >添加</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <div class="page" v-show="deliverResult.total / deliverForm.pageSize > 1">
+            <el-pagination
+                background
+                layout="prev, pager, next"
+                :page-size="deliverForm.pageSize"
+                :total="deliverResult.total"
+                @current-change="deliverQuery"
+                :currentPage="deliverForm.page">
+            </el-pagination>
+        </div>
+        <span slot="footer">
+            <el-button size="small" type="primary" @click="deliverShow = false">关闭</el-button>
         </span>
     </el-dialog>
     <el-dialog title="添加应用" :visible.sync="eshow" width="70%">
@@ -298,7 +349,8 @@ export default {
         companyAuditor: '',
         deliverId: '',
         deliverName: '',
-        agentCompanyId: ''
+        agentCompanyId: '',
+        deliverList: []
       },
       show: false,
       queryForm: {
@@ -451,7 +503,15 @@ export default {
       originals: [],
       originalTypeList: [],
       companyId: '',
-      deliverList: []
+      deliverList: [],
+      deliverShow: false,
+      deliverForm: {
+          accountInfo: "",
+          relationKeyList: ['DeliverUserRelation'],
+          page: 1,
+          pageSize: 10
+      },
+      deliverResult: {}
     };
   },
   created() {
@@ -467,6 +527,7 @@ export default {
     });
     this.getDetail();
     this.cquery();
+    this.deliverQuery()
     this.authCode = localStorage.getItem("authCode");
     this.crules.chargeByName = "";
     this.crules.email = "";
@@ -555,6 +616,32 @@ export default {
     deleteSale(a) {
       this.cform.salesList.splice(a, 1);
     },
+    // 关联交付
+    deliverQuery(a) {
+      if (isNaN(a)) {
+        a = 1;
+      }
+      this.deliverForm.page = a;
+      post(sysmgr.relationGroupEmployeeList , this.deliverForm).then(data => {
+        this.deliverResult = data;
+        this.deliverResult.list.forEach(e => {
+            e.id = e.userId
+        })
+      });
+    },
+    addDeliver(a) {
+      this.cform.deliverList.push(a);
+    },
+    isHas_1(a) {
+      var arr = [];
+      arr = this.cform.deliverList.filter(e => {
+        return e.id == a.id;
+      });
+      return !arr.length;
+    },
+    deleteDeliver(a) {
+      this.cform.deliverList.splice(a, 1);
+    },
     // -------------------------------------------------
     getDetail() {
       get("/api/sysmgr-web/company/get-company-detail", {
@@ -596,6 +683,17 @@ export default {
               });
             });
             cform.salesList = salesList;
+          }
+          if (cform.deliverList) {
+            var deliverList = [];
+            cform.deliverList.forEach(e => {
+              deliverList.push({
+                id: e.id,
+                name: e.name,
+                mobilephone: e.mobilephone
+              });
+            });
+            cform.deliverList = deliverList;
           }
           post("/api/sysmgr-web/company/edit-company", cform).then(data => {
             this.$message({

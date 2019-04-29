@@ -81,6 +81,11 @@ export default {
         onSubmit(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
+                    // 去掉前后空格
+                    for(let k in this.mailInfo) {
+                        let val = this.mailInfo[k]
+                        this.mailInfo[k] = (val && val.trim) ? val.trim() : val
+                    }
                     post(invoiceApi.editCustomerInfo,this.mailInfo).then(res => {
                         this.$emit('update:show', false)
                         this.$emit('changeInfo', this.mailInfo)

@@ -53,6 +53,11 @@
         <el-button type="primary" @click="dialogCreateVisible=true" v-if="checkRight(permissions, 'balance-web:/recharge-order/comfirm') && !riskApprove">平账申请</el-button>
 
         <el-table :data="rechargeApplyList.list" style="width: 100%;margin-top: 20px;">
+            <el-table-column label="工单单号" width="160px" fixed>
+                <template slot-scope="scope">
+                    <el-button class="allow" type="text" @click="handle(scope.row, false, false)" :disabled="!scope.row.sourceType">{{scope.row.orderNo}}</el-button>
+                </template>
+            </el-table-column>
             <el-table-column prop="orderNo" label="申请单" width="120px"></el-table-column>
             <el-table-column prop="companyName" label="企业名称"></el-table-column>
             <el-table-column prop="appName" label="商户名称"></el-table-column>
@@ -75,6 +80,7 @@
             <el-table-column prop="bankTypeName" label="业务类型"></el-table-column>
             <el-table-column prop="paymentThirdTypeName" label="发放渠道"></el-table-column>
             <el-table-column prop="adjustTypeName" label="平账操作"></el-table-column>
+            <el-table-column prop="sourceTypeName" label="申请类型"></el-table-column>
             <el-table-column prop="yearMonth" label="所属月份"></el-table-column>
             <el-table-column prop="memo" label="备注"></el-table-column>
             <el-table-column label="查看凭证">
@@ -522,8 +528,8 @@
                 {{proNum}}%
             </div>
         </el-dialog>
-
         <vmodal :prevList="prevList" :showVModal="showVModal" @clickSelf="showVModal = false"></vmodal>
+        <knotty @handle="auditCb" ref="knotty"></knotty>
     </div>
 </template>
 
@@ -538,6 +544,8 @@
     import { get, post, importPost } from "../../../store/api";
     import {showLoading, hideLoading} from '../../../plugin/utils-loading'
     import vmodal from '../../../pageComponent/v-modal.vue'
+    import knotty from '../../workOrder/dialog/knotty'
+    import { workflow } from "src/api"
 
     function minNumber (value) {
         var str = value.toString();
@@ -552,7 +560,10 @@
 
     export default {
         name: "credit-bill",
-        components: {vmodal},
+        components: {
+            vmodal,
+            knotty
+        },
         data() {
             var time = new Date();
             var t = `${time.getFullYear()}-${time.getMonth() + 1 > 9 ? time.getMonth() + 1 : "0" + (time.getMonth() + 1) }-${time.getDate()}`
@@ -681,7 +692,7 @@
         watch: {
             "dialogCreateForm.companyId": function() {
                 if (this.dialogCreateForm.companyId) {
-                    this.$store.dispatch("getProductName", {
+                    this.$store.dispatch("getAppList", {
                         companyId: this.dialogCreateForm.companyId
                     });
                 }
@@ -733,6 +744,34 @@
             cancelAnimationFrame(this.listen)
         },
         methods: {
+            handle(param, look = false, isMe = false) {
+                param.businessType = param.sourceType
+                param.businessId = param.sourceId
+                switch (param.businessType) {
+                    case 'puzzle-customer-flow':
+                    case 'puzzle-service-flow':
+                    case 'puzzle-channel-flow':
+                    case 'puzzle-merchant-flow':
+                    case 'puzzle-others-flow':
+                        get(workflow.queryInstanceId, {
+                            businessType: param.businessType,
+                            businessId: param.businessId
+                        }).then(data => {
+                            param.processInstanceId = data
+                            this.$refs.knotty.transmit({
+                                show: true,
+                                param,
+                                look
+                            })
+                        })
+                        break;
+                    default:
+                        break;
+                }
+            },
+            auditCb() {
+
+            },
             getOptions() {
                 get('/api/balance-web/commom/option?enumType=ChannelType').then(result => {
                     this.ChannelTypeList = result;

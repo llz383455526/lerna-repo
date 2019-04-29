@@ -3,7 +3,7 @@
         <div class="uploadBox" v-for="(e, i) in uploadList" @click.capture="currentIndex = i">
             <!-- mb35 -->
             <el-upload
-                v-show="!uploadList[i].imageUrl"
+                v-show="!uploadList[i].imageUrl && !look"
                 class="det"
                 ref="upload"
                 :show-file-list="false"
@@ -20,8 +20,8 @@
             <div v-if="uploadList[i].imageUrl" class="avatar" :style="{'background-image': `url(${uploadList[i].imageUrl})`}">
                 <div class="magnify" @click="prevImg(uploadList[i].imageUrl)"></div>
             </div>
-            <el-button type="text" v-show="uploadList[i].imageUrl" @click="reUpload()">重新上传</el-button><br v-show="uploadList[i].imageUrl">
-            <el-button type="text" @click="deleteImg()" v-show="(uploadList.length > 1 && uploadList.length -1 != i) || i == 9">删除</el-button>
+            <el-button type="text" v-show="uploadList[i].imageUrl && !look" @click="reUpload()">重新上传</el-button><br v-show="uploadList[i].imageUrl">
+            <el-button type="text" @click="deleteImg()" v-show="((uploadList.length > 1 && uploadList.length -1 != i) || i == 9) && !show && !look">删除</el-button>
         </div>
         <div class="v-modal" v-show="showExa" @click="showExa = false" :style="prevUrl ? {'background-image': `url(${prevUrl})`} : ''"></div>
     </div>
@@ -30,6 +30,16 @@
 import { get, post, importPost } from "../store/api";
 import {showLoading, hideLoading} from '../plugin/utils-loading'
 export default {
+    props: {
+        look: {
+            type: Boolean,
+            default: false
+        },
+        targetType: {
+            type: String,
+            default: 'recharge_voucher_img'
+        }
+    },
     data() {
         return {
             uploadList: [
@@ -71,17 +81,19 @@ export default {
             }
             this.uploadList[this.currentIndex].imageUrl = URL.createObjectURL(a.raw);
             var formData = new FormData()
-            formData.append('targetType', 'recharge_voucher_img')
+            formData.append('targetType', this.targetType)
             formData.append('fileName', a.name)
             formData.append('file', a.raw)
             importPost('/api/sysmgr-web/file/upload', formData, true).then(data => {
                 this.uploadList[this.currentIndex].attachmentId = data.referId
+                this.uploadList[this.currentIndex].downloadCode = data.downloadCode
                 if(this.currentIndex + 1 == this.uploadList.length && this.uploadList.length < 10) {
                     this.uploadList.push({
                         imageUrl: '',
+                        downloadCode: '',
                         attachmentId: ''
                     })
-                    this.$emit('result', this.uploadList)
+                    this.$emit('result', this.uploadList.filter(e => e.attachmentId))
                 }
                 if(!this.isRe) {
                     this.currentIndex++
@@ -100,7 +112,8 @@ export default {
         },
         reUpload() {
             this.isRe = true
-            this.$refs.upload[this.currentIndex].$el.children[0].children[1].click()
+			this.$refs.upload[this.currentIndex].$el.children[0].children[1].click()
+			this.$emit('result', this.uploadList.filter(e => e.attachmentId))
         },
         deleteImg() {
             this.uploadList.splice(this.currentIndex, 1)
@@ -110,7 +123,7 @@ export default {
                     attachmentId: ''
                 })
             }
-            this.$emit('result', this.uploadList)
+            this.$emit('result', this.uploadList.filter(e => e.attachmentId))
         },
         transmit(a) {
             Object.assign(this, a)

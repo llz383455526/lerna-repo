@@ -40,7 +40,8 @@ let state = {
     principalMenu: false,
 	permissions: false,
     userTaskCount: 0,
-    uploadFile:null,
+    uploadFile: null,
+    
 };
 
 export default new Vuex.Store({

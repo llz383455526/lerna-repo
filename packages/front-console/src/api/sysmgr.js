@@ -14,7 +14,9 @@ const sysmgr = {
     companyAppChangeCharge: '/api/sysmgr-web/company-app/company-app-change-charge',
     companyAppDeleteCharge: '/api/sysmgr-web/company-app/company-app-delete-charge',
     adminResetPwd: '/api/sysmgr-web/user/adminResetPwd',
-    appRecheckSubmit: '/api/sysmgr-web/company-app/app-recheck-submit'
+    appRecheckSubmit: '/api/sysmgr-web/company-app/app-recheck-submit',
+    companyDeliverList: '/api/sysmgr-web/company/company-deliver-list',
+    relationGroupEmployeeList: '/api/sysmgr-web/employee/relationGroupEmployeeList'
 }
 
 export {sysmgr}

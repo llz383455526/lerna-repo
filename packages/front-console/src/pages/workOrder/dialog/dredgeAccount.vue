@@ -68,6 +68,7 @@ export default {
                     type: 'success',
                     message: '修改成功！'
                 })
+                this.$emit('change', this.principal)
             })
         },
         deletePrincipal() {

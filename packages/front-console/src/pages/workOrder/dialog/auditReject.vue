@@ -24,7 +24,7 @@ export default {
             },
             rules: {
                 memo: [
-                    { required: true, message: "请填写拒开原因", trigger: "bulr"}
+                    { required: true, message: "请填写拒开原因", trigger: "blur"}
                 ],
             }
         }

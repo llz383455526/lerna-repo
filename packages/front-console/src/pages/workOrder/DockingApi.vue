@@ -35,11 +35,7 @@
             <el-col :span="12">创建人：{{msg.createByName}}</el-col>
         </el-row>
         <el-row>
-            <el-col class="flex" :span="12">代理商名称：
-                <div>
-                    <div v-for="e in agentCompanyList" :key="e.agentCompanyId">{{e.agentCompanyName}}</div>
-                </div>
-            </el-col>
+            <el-col class="flex" :span="12">代理商名称：{{msg.agentCompanyName}}</el-col>
             <el-col :span="12">更新人：{{msg.updateByName}}</el-col>
         </el-row>
         <el-row>
@@ -96,16 +92,16 @@
         <el-row>
             <el-col :span="12">关联交付：<el-button class="mt20" size="small" type="primary" @click="chooseDelivery">添加</el-button></el-col>
         </el-row>
-        <el-table :data="[delivery]">
+        <el-table :data="deliverList">
             <el-table-column label="姓名" prop="name"></el-table-column>
             <el-table-column label="手机号" prop="mobilephone"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" v-if="delivery.name" @click="deleteDelivery">删除</el-button>
+                    <el-button type="text" @click="deleteDelivery(scope.$index)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
-        <div class="red mb20" v-if="!delivery.name">*关联交付未配置</div>
+        <div class="red mb20" v-if="!deliverList.length">*关联交付未配置</div>
         <!-- </template> -->
         <div class="title">申请上线</div>
         <el-row>
@@ -157,9 +153,9 @@
         <div class="red mb20" v-if="!signListLength">*{{msg.fullName}} 合同附件缺失</div>
         <!-- </template> -->
         <div class="footer mt20">
-            <el-button :class="!delivery.name || withoutList.length || (contractList && !contractList.length) || !signListLength ? 'disable' : ''" v-if="active != 3" size="small" type="primary" @click="showDredgeAccount">下一步</el-button>
+            <el-button :class="!deliverList.length || withoutList.length || (contractList && !contractList.length) || !signListLength ? 'disable' : ''" v-if="active != 3" size="small" type="primary" @click="showDredgeAccount">下一步</el-button>
         </div>
-        <dredge-account :row="row" ref="dredgeAccount"></dredge-account>
+        <dredge-account @change="accountChange" :row="row" ref="dredgeAccount"></dredge-account>
         <select-sale @result="saleResult" ref="selectSale"></select-sale>
         <select-delivery @result="deliveryResult" ref="selectDelivery"></select-delivery>
     </div>
@@ -206,7 +202,7 @@ export default {
             },
             stepList: [],
             saleList: [],
-            delivery: {},
+            deliverList: [],
             signListLength: 0,
             withoutList: []
         }
@@ -222,17 +218,17 @@ export default {
             this.getUserDetail(this.msg.chargeBy).then(data => {
                 this.user_0 = data
             })
-            this.delivery = {
-                name: this.msg.deliverName,
-                mobilephone: this.msg.deliverPhone,
-                id: this.msg.deliverId
-            }
         })
-        get(contract.customReferenceAgents, {
+        get(sysmgr.companyDeliverList, {
             customCompanyId: this.row.customerCompanyId
         }).then(data => {
-            this.agentCompanyList = data
+            this.deliverList = data
         })
+        // get(contract.customReferenceAgents, {
+        //     customCompanyId: this.row.customerCompanyId
+        // }).then(data => {
+        //     this.agentCompanyList = data
+        // })
         this.getAppDetail()
         get(sysmgr.onlineCompanyApps, {
             customCompanyId: this.row.customerCompanyId
@@ -261,7 +257,7 @@ export default {
             this.$refs.payOrderList.exportXls()
         },
         showDredgeAccount() {
-            if(!this.delivery.name || this.withoutList.length || this.contractList && !this.contractList.length || !this.signListLength) {
+            if(!this.deliverList.length || this.withoutList.length || this.contractList && !this.contractList.length || !this.signListLength) {
                 return
             }
             this.$refs.dredgeAccount.transmit({
@@ -273,6 +269,12 @@ export default {
                     email: this.appMsg.chargeEmail
                 }
             })
+        },
+        accountChange(principal) {
+            this.appMsg.chargeBy = principal.id
+            this.appMsg.chargeByName = principal.name
+            this.appMsg.chargeMobile = principal.mobilephone
+            this.appMsg.chargeEmail = principal.email
         },
         getUserDetail(userId) {
             return get(sysmgr.getDetail, { userId })
@@ -335,36 +337,28 @@ export default {
         },
         chooseDelivery() {
             this.$refs.selectDelivery.transmit({
-                show: true
+                show: true,
+                deliveryList: this.deliverList
             })
         },
         deliveryResult(a) {
-            this.delivery = a
-            this.editDelivery()
+            this.deliverList = a
+            this.updateDelivery()
         },
-        editDelivery() {
+        updateDelivery() {
             post(sysmgr.changeCompanyDeliver, {
                 customCompanyId: this.row.customerCompanyId,
-                deliverId: this.delivery.id,
-                deliverName: this.delivery.name
+                deliverList: this.deliverList
             }).then(data => {
                 this.$message({
                     type: 'success',
-                    message: '修改成功！'
+                    message: '更新成功！'
                 })
             })
         },
-        deleteDelivery() {
-            post(sysmgr.deleteCompanyDeliver, {
-                customCompanyId: this.row.customerCompanyId,
-                deliverId: this.delivery.id
-            }).then(data => {
-                this.delivery = {}
-                this.$message({
-                    type: 'success',
-                    message: '删除成功！'
-                })
-            })
+        deleteDelivery(i) {
+            this.deliverList.splice(i, 1)
+            this.updateDelivery()
         },
         getSignListLength(a) {
             this.signListLength = a

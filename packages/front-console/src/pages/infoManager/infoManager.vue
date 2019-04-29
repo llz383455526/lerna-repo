@@ -181,6 +181,11 @@ export default {
     sure() {
       this.$refs['dateil'].validate(valid => {
         if(valid){
+           // 去掉前后空格
+            for(let k in this.detail) {
+                let val = this.detail[k]
+                this.detail[k] = (val && val.trim) ? val.trim() : val
+            } 
           post("/api/invoice-web/custom-company/save-update", this.detail).then(
             function(data) {
               console.log(data);

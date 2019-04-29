@@ -1,12 +1,12 @@
 const invoiceApi = {
-    getInvoiceTypeList: '/api/invoice-web/commom/option?enumType=InvoiceType',
+    getInvoiceTypeList: '/api/invoice-web/commom/option?enumType=InvoiceType', // 获取发票类型
     // getInvoiceCategory: '/api/invoice-web/custom-invoice-subject/qry',
-    getInvoiceCategory: '/api/contract-web/commom/companyInvoiceOption',
-    customerDetail: '/api/invoice-web/custom-company/detail/current',
-    serviceDetail: '/api/invoice-web/service-company/detail',
-    editCustomerInfo: '/api/invoice-web/custom-company/save-update',
-    addInvoice: '/api/invoice-web/workflow/invoice-add',
-    getServiceCompany: '/api/invoice-web/commom/service-company-options',
+    getInvoiceCategory: '/api/contract-web/commom/companyInvoiceOption', // 获取发票类目
+    customerDetail: '/api/invoice-web/custom-company/detail/current', // 获取客户信息
+    serviceDetail: '/api/invoice-web/service-company/detail', // 获取服务公司信息
+    editCustomerInfo: '/api/invoice-web/custom-company/save-update', // 编辑客户公司信息
+    addInvoice: '/api/invoice-web/workflow/invoice-add', // 创建发票
+    getServiceCompany: '/api/invoice-web/commom/service-company-options', // 获取服务公司列表
     getCustomCompanyByServiceId: '/api/invoice-web/invoice/custom-company-by-serviceId',
     getCustomCompany: '/api/invoice-web/invoice/custom-company-options',
     getTicketSurplus: '/api/invoice-web/workflow/service-company-ticket-surplus',

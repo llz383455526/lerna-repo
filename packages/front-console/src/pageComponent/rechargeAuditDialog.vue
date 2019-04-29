@@ -8,12 +8,13 @@
                 <span class="mr20">创建人：{{stepList.length ? stepList[0].userName : ''}}</span>
             </div>
             <recharge-step class="m20" v-if="showStep" :stepList="stepList" :active="active" :key="stepList.length"></recharge-step>
-            <div class="title green_0">状态：{{detail.stateName}}
+            <div class="title green_0">状态：{{detail.stateName}}</div>
+            <div class="title red_0" v-if="(detail.isAutoRecharge && detail.state == 21) || detail.submittingFlat == 1">充值异常挂起原因：
                 <template v-if="detail.isAutoRecharge && detail.state == 21">
-                    <span class="red_0">（风险：打款方“{{detail.fromAccountName}}”跟客户企业名称不一致）</span>
+                    <span>（风险：打款方“{{detail.fromAccountName}}”跟客户企业名称不一致）</span>
                 </template>
                 <template v-if="detail.submittingFlat == 1">
-                    <span class="red_0">（流转中）</span>
+                    <span>（流转中）</span>
                 </template>
             </div>
             <div class="title">客户充值凭证</div>

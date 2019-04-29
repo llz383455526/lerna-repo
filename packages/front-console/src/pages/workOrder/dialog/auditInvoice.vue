@@ -286,10 +286,9 @@ export default {
                         }
                         this.stepList.push(Object.assign(data[1][i] ? data[1][i] : {}, e))
                     })
-                    this.active = data[1].length + (this.look && this.param.taskName != '结束' ? 0 : 1)
+                    this.active = data[1].length + ((this.look || this.param.finishedStatus == 'FINISHED') && this.param.currentTaskNodeId != 'endEvent' ? 0 : 1)
                     this.realStep = JSON.parse(JSON.stringify(data[1]))
                     data[1] && (this.currentStpe = data[1].pop())
-                    console.log(this.currentStpe)
                 })
             })
             // get(workflow.getProcessAllProgress, {

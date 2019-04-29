@@ -58,7 +58,7 @@
                 prop="bankAccount"
             >
                 <el-input
-                    v-model="invoiceInfo.bankAccount"
+                    v-model.number="invoiceInfo.bankAccount"
                 ></el-input>
             </el-form-item>
             <el-form-item>
@@ -112,6 +112,11 @@ export default {
         onSubmit(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
+                    // 去掉前后空格
+                    for(let k in this.invoiceInfo) {
+                        let val = this.invoiceInfo[k]
+                        this.invoiceInfo[k] = (val && val.trim) ? val.trim() : val
+                    }
                     post(invoiceApi.editCustomerInfo,this.invoiceInfo).then(res => {
                         this.$emit('update:show', false)
                         this.$emit('changeInfo', this.invoiceInfo)

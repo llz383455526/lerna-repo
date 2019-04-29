@@ -36,7 +36,7 @@
                     <div class="label">服务商名称：<span>*</span></div>
                     <div class="input">
                         <el-form-item prop="serviceCompanyId">
-                            <el-select filterable v-model="dialogCreateForm.serviceCompanyId" :no-data-text="dialogCreateForm.appId ? '无数据' : '请先选择商户'" @change="getChannlType">
+                            <el-select filterable v-model="dialogCreateForm.serviceCompanyId" :no-data-text="dialogCreateForm.appId ? '无数据' : '请先选择商户'" @change="getChannlType" k='getChannlType'>
                                 <el-option v-for="(item, index) in serviceName" :label="item.text" :value="item.value" :key="item.value"></el-option>
                             </el-select>
                         </el-form-item>
@@ -280,13 +280,13 @@ export default {
     watch: {
         "dialogCreateForm.companyId": function() {
             if (this.dialogCreateForm.companyId) {
-                this.$store.dispatch("getProductName", {
+                this.$store.dispatch("getAppList", {
                 companyId: this.dialogCreateForm.companyId
                 });
             }
         },
         productName() {
-            if(this.productName.length == 1) {
+            if(this.productName.length == 1 && this.dialogCreateVisible) {
                 this.dialogCreateForm.appId = this.productName[0].value
                 this.getService()
             }
@@ -322,7 +322,10 @@ export default {
                 }
             ]
             try {
-                this.$refs["dialogCreateForm"] && this.$refs["dialogCreateForm"].resetFields();
+                console.log(this.$refs["dialogCreateForm"])
+                if(this.$refs["dialogCreateForm"]) {
+                    this.$refs["dialogCreateForm"].resetFields();
+                }
             }
             catch(err) {
                 console.log(err)
@@ -437,7 +440,6 @@ export default {
             this.$refs["dialogCreateForm"].validate(valid => {
                 if (valid) {
                     post(`/api/balance-web/recharge-order/${this.isService ? 'serviceFeeConfirm' : 'comfirm'}`, this.dialogCreateForm).then(data => {
-                        this.$refs["dialogCreateForm"] && this.$refs["dialogCreateForm"].resetFields();
                         this.orderInfo = data;
                         this.calcServiceFee = false
                         this.dialogCreateVisible = false;

@@ -66,6 +66,18 @@
                     </el-table-column>
                 </el-table>
             </el-form-item>
+            <el-form-item label="关联交付" prop="deliverList">
+                <el-button type="primary" @click="deliverShow = true">添加</el-button>
+                <el-table :data="form.deliverList" class="form_input">
+                    <el-table-column label="姓名" prop="name"></el-table-column>
+                    <el-table-column label="手机号" prop="mobilephone"></el-table-column>
+                    <el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button type="text" @click="deleteDeliver(scope.$index)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-form-item>
             <el-form-item label="企业审核人" prop="companyAuditor">
                 <el-input class="form_input" v-model="form.companyAuditor"></el-input>
             </el-form-item>
@@ -103,11 +115,46 @@
                 <el-button size="small" type="primary" @click="show = false">关闭</el-button>
             </span>
         </el-dialog>
+        <!-- 添加交付 -->
+        <el-dialog title="添加" :visible.sync="deliverShow">
+            <el-form :model="deliverForm" size="small" :inline="true">
+                <el-form-item label="姓名/电话：">
+                    <el-input v-model="deliverForm.accountInfo" class="form_input200"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button @click="deliverForm.accountInfo = ''">清除</el-button>
+                    <el-button type="primary" @click="deliverQuery">查询</el-button>
+                </el-form-item>
+            </el-form>
+            <el-table :data="deliverResult.list">
+                <el-table-column label="姓名" prop="name"></el-table-column>
+                <el-table-column label="电话" prop="mobilephone"></el-table-column>
+                <el-table-column label="操作">
+                    <template slot-scope="scope">
+                        <el-button type="text" size="mini" v-if="isHas_1(scope.row)" @click="addDeliver(scope.row)">添加</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <div class="page" v-show="deliverResult.total / deliverForm.pageSize > 1">
+                <el-pagination
+                    background
+                    layout="prev, pager, next"
+                    :page-size="deliverForm.pageSize"
+                    :total="deliverResult.total"
+                    @current-change="deliverQuery"
+                    :currentPage="deliverForm.page">
+                </el-pagination>
+            </div>
+            <span slot="footer">
+                <el-button size="small" type="primary" @click="deliverShow = false">关闭</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
 import { get, post } from "../../store/api";
 import { mapGetters } from 'vuex'
+import { sysmgr } from "src/api"
 export default {
     computed: {
       ...mapGetters({
@@ -131,7 +178,8 @@ export default {
           originalType: '',
           originalTypeName: '',
           companyAuditor: '',
-          agentCompanyId: ''
+          agentCompanyId: '',
+          deliverList: []
         },
         queryForm: {
           accountInfo: '',
@@ -224,12 +272,21 @@ export default {
         show: false,
         result: {},
         originals: [],
-        originalTypeList: []
+        originalTypeList: [],
+        deliverShow: false,
+        deliverForm: {
+            accountInfo: '',
+            relationKeyList: ['DeliverUserRelation'],
+            page: 1,
+            pageSize: 5
+        },
+        deliverResult: {}
       };
     },
     mounted() {
       this.getPeople();
       this.query();
+      this.deliverQuery()
       get('/api/sysmgr-web/commom/option?enumType=CustomOriginal').then(data => {
         this.originals = data
       })
@@ -318,6 +375,31 @@ export default {
         deleteSale(a) {
             this.form.salesList.splice(a, 1)
         },
+        deliverQuery(a) {
+            if(isNaN(a)) {
+                a = 1
+            }
+            this.deliverForm.page = a
+            post(sysmgr.relationGroupEmployeeList, this.deliverForm).then(data => {
+                this.deliverResult = data
+                this.deliverResult.list.forEach(e => {
+                    e.id = e.userId
+                })
+            })
+        },
+        addDeliver(a) {
+            this.form.deliverList.push(a)
+        },
+        isHas_1(a) {
+            var arr = []
+            arr = this.form.deliverList.filter(e => {
+                return e.id == a.id
+            })
+            return !arr.length
+        },
+        deleteDeliver(a) {
+            this.form.deliverList.splice(a, 1)
+        },
         submit() {
           this.$refs['form'].validate((valid) => {
             if(valid) {
@@ -332,6 +414,17 @@ export default {
                       })
                   })
                   form.salesList = salesList
+              }
+              if(form.deliverList) {
+                  var deliverList = []
+                  form.deliverList.forEach(e => {
+                      deliverList.push({
+                          id: e.id,
+                          name: e.name,
+                          mobilephone: e.mobilephone
+                      })
+                  })
+                  form.deliverList = deliverList
               }
               post('/api/sysmgr-web/company/add-company', form).then(() => {
                   this.$message({
