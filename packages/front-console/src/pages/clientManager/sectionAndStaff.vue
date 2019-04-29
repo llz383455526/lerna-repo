@@ -642,7 +642,7 @@ export default {
         if(this.isAgentAll[e.value]) {
           userContextList.push({
             isAllSubject: true,
-            subjectType: 'company'
+            subjectType: 'agent'
           })
         }
         else {
