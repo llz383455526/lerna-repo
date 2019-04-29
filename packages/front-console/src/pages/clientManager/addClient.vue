@@ -153,8 +153,8 @@
 </template>
 <script>
 import { get, post } from "../../store/api";
-import { mapGetters } from 'vuex'
 import { sysmgr } from "src/api"
+import { mapGetters } from 'vuex'
 export default {
     computed: {
       ...mapGetters({
@@ -178,8 +178,8 @@ export default {
           originalType: '',
           originalTypeName: '',
           companyAuditor: '',
-          agentCompanyId: '',
-          deliverList: []
+          deliverList: [],
+          agentCompanyId: ''
         },
         queryForm: {
           accountInfo: '',

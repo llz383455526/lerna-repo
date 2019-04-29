@@ -347,10 +347,10 @@ export default {
         originalType: '',
         originalTypeName: '',
         companyAuditor: '',
+        deliverList: [],
         deliverId: '',
         deliverName: '',
-        agentCompanyId: '',
-        deliverList: []
+        agentCompanyId: ''
       },
       show: false,
       queryForm: {
