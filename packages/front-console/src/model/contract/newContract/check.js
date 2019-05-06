@@ -21,6 +21,13 @@ var isMobile = (rule, value, callback) => {
 class Check extends BaseModel {
     constructor() {
         super();
+        var validatePass = (rule, value, callback) => {
+            if (!/^[0-9]+([.][0-9]+){0,1}$/.test(value)) {
+                callback(new Error('请输入数字'));
+            } else {
+                callback();
+            }
+        };
         this.rules = {
             // 合同选项
             contractType: [
@@ -38,10 +45,12 @@ class Check extends BaseModel {
             ],
             // 客户企业评估
             expectedMonthlyFlow: [
-                { required: true, message: '请输入预计月流水', trigger: 'blur' }
+                { required: true, message: '请输入预计月流水', trigger: 'blur' },
+                { validator: validatePass, trigger: 'blur' },
             ],
             expectedProportion: [
-                { required: true, message: '请输入预计3万以上比例', trigger: 'blur' }
+                { required: true, message: '请输入预计3万以上比例', trigger: 'blur' },
+                { validator: validatePass, trigger: 'blur' },
             ],
             // 销售联系信息
             contractPerson: [
