@@ -176,7 +176,7 @@ const store = {
             })
         },
         getServiceCompaniesList({commit}, agentCompanyId) {
-            const param = {
+            const param = agentCompanyId == null ? '' : {
                 agentCompanyId
             };
             get(url.serviceCompaniesList, param).then(res => {
