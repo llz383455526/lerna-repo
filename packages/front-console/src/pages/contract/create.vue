@@ -779,7 +779,7 @@
             },
             getOptionServiceCompanies(agentCompanyId = '') {
                 let url = '/api/salemgt/common/service-company/list?businessed=true';
-                let param = {
+                let param = agentCompanyId == null ? '' : {
                     agentCompanyId
                 };
                 let self = this;
