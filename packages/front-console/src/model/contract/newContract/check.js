@@ -1,4 +1,5 @@
 import BaseModel from '../../base/BaseModel';
+import { get } from '../../../store/api'
 
 // 是否为邮箱
 var isEmail = (rule, value, callback) => {
@@ -16,6 +17,22 @@ var isMobile = (rule, value, callback) => {
     } else {
         callback()
     }
+}
+
+var checkCustomerName = (rule, value, callback) => {
+    const url = '/api/opencrm/workflow/checkCustomerName';
+    const param = {
+        customerName: value
+    }
+    get(url, param).then((res) => {
+        if (res) {
+            callback()
+        } else {
+            callback(new Error(`该公司已被其他销售签署，不支持再次送审`))
+        }
+    }).catch((res) => {
+        callback(new Error(res.msg))
+    })
 }
 
 class Check extends BaseModel {
@@ -80,7 +97,8 @@ class Check extends BaseModel {
                 { required: true, message: '请选择企业对接方式', trigger: 'change' }
             ],
             customerName: [
-                { required: true, message: '请输入企业名称', trigger: 'blur' }
+                { required: true, message: '请输入企业名称', trigger: 'blur' },
+                { validator: checkCustomerName, trigger: 'blur' },
             ],
             areaName: [
                 { required: true, message: '请输入企业地址', trigger: 'blur' }
