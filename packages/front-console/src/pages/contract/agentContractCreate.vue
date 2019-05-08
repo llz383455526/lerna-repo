@@ -96,7 +96,6 @@ export default {
         attachments: [],
         companyId: "",
         companyName: "",
-        chargeBy: "",
         quoteRule: "",
         quoteFeeContent: {
           containIncomeAmount: '',
@@ -248,7 +247,6 @@ export default {
       this.agentList.forEach(e => {
         if (e.companyId == this.form.companyId) {
           this.chargeByName = e.chargeByName;
-          this.form.chargeBy = e.chargeBy
           this.form.companyName = e.companyName;
         }
       });
