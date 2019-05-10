@@ -33,7 +33,7 @@ var checkCustomerName = (rule, value, callback) => {
     }).catch((res) => {
         callback(new Error(res.msg))
     })
-}
+} 
 
 class Check extends BaseModel {
     constructor() {
