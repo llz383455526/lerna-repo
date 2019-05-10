@@ -159,6 +159,14 @@
                 <el-button class="mr20" type="primary" @click="submit">确认</el-button>
             </div>
         </div>
+        <el-dialog title="进度" :visible.sync="showPro" :show-close="false" :close-on-press-escape="false" :close-on-click-modal="false">
+            <div class="pro_box">
+                <div :style="{width: `${pro}%`}"></div>
+            </div>
+            <div class="pro_num">
+                {{pro}}%
+            </div>
+        </el-dialog>
     </div>
 
 </template>
@@ -168,8 +176,8 @@
 	import _ from 'lodash'
 	import { showNotify } from '../../plugin/utils-notify'
     import { baseUrl } from "../../config/address.js"
-    import {formatTime} from '../../plugin/utils-functions'
-    import { econtract } from 'src/api'
+    import { formatTime } from '../../plugin/utils-functions'
+    import { econtract, file } from 'src/api'
 	export default {
 		created() {
 			this.getOrderStateList()
@@ -229,7 +237,12 @@
                 isHandle: false,
                 ableType: '',
                 objects: [],
-                econtract
+                econtract,
+                processId: '',
+                pro: 0,
+                frame: '',
+                date: 0,
+                isEnd: true
 			}
 		},
 		mounted() {
@@ -275,7 +288,38 @@
             download() {
                 let formSearch = JSON.parse(JSON.stringify(this.formSearch))
                 formSearch.manufacturer = 0
-                window.open(`${econtract.innerExport}${this.toStr(formSearch)}`)      
+                post(econtract.innerExport, formSearch, true).then(data => {
+                    this.processId = data
+                    this.showPro = true
+                    this.progress()
+                })
+            },
+            progress() {
+                this.frame = requestAnimationFrame(this.progress)
+                if(this.isEnd && (!this.date || this.date < new Date().getTime() - 1000)) {
+                    this.isEnd = false
+                    get(file.exportStatus, {
+                        processId: this.processId
+                    }, true).then(data => {
+                        this.isEnd = true
+                        this.date = new Date().getTime()
+                        this.pro = data.rate
+                        if(data.status == 'Complated') {
+                            this.$message.success('导出成功!')
+                            cancelAnimationFrame(this.frame)
+                            this.showPro = false
+                            window.open(`${file.download}?processId=${this.processId}`)
+                        }
+                        else if(data.status == 'Failed') {
+                            this.$message({
+                                type: 'error',
+                                message: data.msg
+                            });
+                            cancelAnimationFrame(this.frame)
+                            this.showPro = false
+                        }
+                    })
+                }
             },
             derive(a) {
                 let formSearch = JSON.parse(JSON.stringify(this.formSearch)), url
@@ -509,5 +553,28 @@
     .flex {
         display: flex;
         justify-content: space-between;
+    }
+    .pro_box {
+        display: inline-block;
+        width: calc(100% - 50px);
+        height: 20px;
+        background-color: #ccc;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .pro_box > div {
+        background-color: #0283fb;
+        width: 0%;
+        height: 100%;
+        border-radius: 10px;
+    }
+    .pro_num {
+        position: relative;
+        top: -5px;
+        margin-left: 5px;
+        display: inline-block;
+        width: 36px;
+        font-size: 14px;
+        color: #606266;
     }
 </style>

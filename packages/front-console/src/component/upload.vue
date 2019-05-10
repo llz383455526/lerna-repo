@@ -25,10 +25,12 @@
                                 <div>请上传小于5M的xls或xlsx格式文件</div>
                             </div>
                         </el-upload>
-                         <div class="pro_box">
-					        <div :style="{ 'width': `${pro}%` }"></div>
-				        </div>
-        	            <span>{{pro}}%</span>
+                        <template v-if="pro">
+                            <div class="pro_box">
+                                <div :style="{ 'width': `${pro}%` }"></div>
+                            </div>
+                            <span>{{pro}}%</span>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -112,7 +114,10 @@ export default {
                             }
                         }
                         if(data.state == 40) {
-                            this.$message.error(data.desc)
+                            this.$message({
+                                type: 'error',
+                                message: data.desc
+                            });
                         }
                     }
                 })

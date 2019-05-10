@@ -85,7 +85,7 @@
         </div>
         <el-button type="primary" size="small" @click="next">下一步</el-button>
         <el-button size="small" @click="cancle">取消</el-button>
-        <el-dialog title="批量上传" :visible.sync="show" width="70%">
+        <el-dialog title="批量上传" :visible.sync="show" @open="pro = 0" width="70%">
             <div class="dbox">
                 <div class="ditem">
                     <div>下载模板文件</div>
@@ -94,7 +94,8 @@
                 </div>
                 <div class="ditem">
                     <div>上传文件导入</div>
-                    <div>请上传小于5M的xls或xlsx格式文件。<span class="red">注：Excel表格中实际用户行数不得大于1万条，若超过请手动拆分，若有占位空行请删除。</span></div>
+                    <div>请上传小于5M的xls或xlsx格式文件。</div>
+                    <!-- <span class="red">注：Excel表格中实际用户行数不得大于1万条，若超过请手动拆分，若有占位空行请删除。</span> -->
                     <el-upload
                         class="form_input"
                         drag
@@ -107,8 +108,8 @@
                         accept=".xlsx, .xls">
                         <i class="el-icon-upload"></i>
                         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                        <!-- <div class="el-upload__tip" slot="tip">请上传xlsx格式文件。</div> -->
                     </el-upload>
+                    <el-progress class="w360" v-if="pro" :text-inside="true" :stroke-width="16" :percentage="pro"></el-progress>
                 </div>
             </div>
             <span slot="footer">
@@ -142,6 +143,7 @@
 <script>
 import { post, get, importPost } from "../../store/api"
 import { baseUrl } from "../../config/address.js"
+import { file } from "src/api"
 export default {
     data() {
         return {
@@ -218,7 +220,11 @@ export default {
                 '2.2': '公司'
             },
             isAdd: false,
-            signModel: ''
+            signModel: '',
+            pro: 0,
+            frame: '',
+            date: 0,
+            isEnd: true
         }
     },
     mounted() {
@@ -292,24 +298,56 @@ export default {
         upload(a) {
             this.fileList.shift()
             var formData = new FormData()
+            formData.append('bizKey', 'econtract-batch-import-signer')
+            formData.append('file', a.raw)
             formData.append('batchId', this.form.batchId)
             formData.append('templateId', this.msg.templateId)
             formData.append('templateGroupId', '')
             formData.append('fileName', a.name)
-            formData.append('multipartFile', a.raw)
-            importPost('/api/econtract/contractsigner/addlist', formData).then(data => {
-                this.query()
-                this.$message({
-                    type: 'success',
-                    message: '上传成功！'
-                })
-                this.show = false
-                this.isSuccess = true
-                this.fileList.push({
-                    name: a.name,
-                    url: this.msg.templateId
-                })
+            // formData.append('multipartFile', a.raw)
+            importPost(file.upload, formData).then(data => {
+                // this.form.batchId = data
+                this.progress()
+                // this.query()
+                // this.$message({
+                //     type: 'success',
+                //     message: '上传成功！'
+                // })
+                // this.show = false
+                // this.isSuccess = true
+                // this.fileList.push({
+                //     name: a.name,
+                //     url: this.msg.templateId
+                // })
             })
+        },
+        progress() {
+            this.frame = requestAnimationFrame(this.progress)
+            if(this.isEnd && (!this.date || this.date < new Date().getTime() - 1000)) {
+                this.isEnd = false
+                get(file.uploadStatus, {
+                    processId: this.form.batchId
+                }, true).then(data => {
+                    this.isEnd = true
+                    this.date = new Date().getTime()
+                    this.pro = data.rate
+                    if(data.status == 'Complated') {
+                        this.$message.success('上传成功!')
+                        this.query()
+                        cancelAnimationFrame(this.frame)
+                        this.show = false
+                        this.isSuccess = true
+                    }
+                    else if(data.status == 'Failed') {
+                        cancelAnimationFrame(this.frame)
+                        this.$message({
+                            type: 'error',
+                            message: data.msg
+                        })
+                        this.show = false
+                    }
+                })
+            }
         },
         handleSelectionChange(a) {
             this.downList = a
@@ -515,5 +553,8 @@ a {
 .red {
     color: red;
     font-weight: bold;
+}
+.w360 {
+    width: 360px;
 }
 </style>

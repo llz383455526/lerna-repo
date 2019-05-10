@@ -22,6 +22,9 @@
             <el-form-item label="公司简称：" prop="abbrName">
                 <el-input v-model="form.abbrName" class="form_input" size="small"></el-input><i class="el-icon-question" title="公司简称作为发送给签约对象时短信所显示的公司名称"></i>
             </el-form-item>
+            <!-- <el-form-item label="注册账号：" prop="account">
+                <el-input v-model="form.account" class="form_input" size="small"></el-input>
+            </el-form-item> -->
             <el-form-item label="工商注册号：" prop="regCode">
                 <el-input v-model="form.regCode" class="form_input" size="small"></el-input>
                 <span class="info">如果是三证合一，则填写统一社会信用代码</span>
@@ -64,6 +67,7 @@ export default {
                 name: '',
                 companyId: '',
                 abbrName: '',
+                // account: '',
                 regCode: '',
                 taxCode: '',
                 orgCode: '',

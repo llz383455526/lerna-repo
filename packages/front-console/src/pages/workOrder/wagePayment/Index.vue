@@ -43,10 +43,12 @@
                   	      <div>请上传小于5M的xls或xlsx格式文件</div>
                   	  </div>
                 </el-upload>
-				<div class="pro_box">
-					<div :style="{ 'width': `${pro}%` }"></div>
-				</div>
-				<span>{{pro}}%</span>
+				<template v-if="pro">
+                    <div class="pro_box">
+                        <div :style="{ 'width': `${pro}%` }"></div>
+                    </div>
+                    <span>{{pro}}%</span>
+                </template>
 			</div>
             <div class="mtitle" v-if="template">收款方短信通知</div>
             <div class="mcontent" v-if="template">

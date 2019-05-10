@@ -3,7 +3,7 @@
         <el-dialog title="渠道余额不足" :visible.sync="show" width="800px">
             <el-form :model="form" :rules="rules" label-width="80px" size="small" ref="form">
                 <el-form-item label="挂起原因">
-                    <span class="red">渠道手续费余额不足</span>
+                    <span class="red">渠道余额不足</span>
                 </el-form-item>
                 <el-form-item label="客户公司">{{msg.companyName}}</el-form-item>
                 <el-form-item label="商户名称">{{msg.appName}}</el-form-item>
