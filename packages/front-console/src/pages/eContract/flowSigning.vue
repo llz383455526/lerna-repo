@@ -90,7 +90,7 @@
                     <br><br>
                     <el-alert
                             v-if="isSuccess && errCount"
-                            title=""
+                            title=" "
                             class="w-info"
                             type="warning">
                         <i class="el-icon-warning"></i>
@@ -142,7 +142,7 @@
                 </div>
             </template>
 
-            <el-dialog title="批量添加" :visible.sync="show" :width="addWidth">
+            <el-dialog title="批量添加" :visible.sync="show" @open="pro = 0" :width="addWidth">
                 <div class="dbox">
                     <div class="ditem">
                         <div>下载模板文件：</div>
@@ -168,6 +168,12 @@
                                     <div>请上传小于5M的xls或xlsx格式文件</div>
                                 </div>
                             </el-upload>
+                            <template v-if="pro">
+                                <div class="pro_box">
+                                    <div :style="{ 'width': `${pro}%` }"></div>
+                                </div>
+                                <span>{{pro}}%</span>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -292,7 +298,12 @@
 				geRenType: '乙方',
                 templateName: '',
                 isAdd: false,
-                signModel: '2'
+                signModel: '2',
+                pro: 0,
+                frame: null,
+                date: 0,
+                referId: '',
+                isEnd: true,
 			}
 		},
 		mounted() {
@@ -405,22 +416,53 @@
 			},
 			upload(a) {
 				var formData = new FormData()
+                formData.append('bizKey', 'econtract-batch-import-signer')
+                formData.append('file', a.raw)
 				formData.append('batchId', this.form.batchId)
 				formData.append('templateGroup', this.templateGroup)
 				formData.append('fileName', a.name)
-				formData.append('multipartFile', a.raw)
+				// formData.append('multipartFile', a.raw)
 				formData.append('templateGroupId', this.templateId)
 				formData.append('templateId', '')
-				Ajax.importPost('/api/econtract/contractsigner/addlist', formData).then(data => {
-					this.query()
-					this.$message({
-						type: 'success',
-						message: '上传成功！'
-					})
-					this.show = false
-					this.isSuccess = true
+				Ajax.importPost('/api/file/async/upload', formData).then(data => {
+                    this.progress()
+					// this.query()
+					// this.$message({
+					// 	type: 'success',
+					// 	message: '上传成功！'
+					// })
+					// this.show = false
+                    // this.isSuccess = true
 				})
-			},
+            },
+            progress() {
+                this.frame = requestAnimationFrame(this.progress)
+                if(this.isEnd && (!this.date || this.date < new Date().getTime() - 1000)) {
+                    this.isEnd = false
+                    Ajax.get('/api/file/async/upload/status', {
+                        processId: this.form.batchId
+                    }, true).then(data => {
+                        this.isEnd = true
+                        this.date = new Date().getTime()
+                        this.pro = data.rate
+                        if(data.status == 'Complated') {
+                            this.$message.success('上传成功!')
+                            this.query()
+                            cancelAnimationFrame(this.frame)
+                            this.show = false
+                            this.isSuccess = true
+                        }
+                        else if(data.status == 'Failed') {
+                            cancelAnimationFrame(this.frame)
+                            this.$message({
+                                type: 'error',
+                                message: data.msg
+                            })
+                            this.show = false
+                        }
+                    })
+                }
+            },
 			handleSelectionChange(a) {
 				this.downList = a
 			},
@@ -710,5 +752,27 @@
         font-size: 12px;
         color: #999;
         margin-top: 5px;
+    }
+    .pro_box {
+        position: relative;
+        display: inline-block;
+        width: 263px;
+        height: 10px;
+        border: 1px solid #E9E9E9;
+        border-radius: 5px;
+        margin-top: 6px;
+    }
+    .pro_box > div {
+        position: absolute;
+        top: 1px;
+        left: 0;
+        height: 8px;
+        border-radius: 4px;
+        background-color: #108EE9;
+    }
+    .pro_box + span {
+        margin-top: 6px;
+        font-size: 12px;
+        color: #999999;
     }
 </style>

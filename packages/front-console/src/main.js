@@ -63,7 +63,8 @@ import {
 	Tree,
 	Message,
     Cascader,
-    Card
+    Card,
+    Alert
 } from 'element-ui'
 
 Vue.use(Menu)
@@ -114,6 +115,7 @@ Vue.use(Cascader)
 Vue.use(Card)
 Vue.use(Collapse)
 Vue.use(CollapseItem)
+Vue.use(Alert)
 
 Vue.use(Loading.directive)
 Vue.prototype.$loading = Loading.service
