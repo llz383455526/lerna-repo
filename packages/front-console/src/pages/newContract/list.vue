@@ -125,6 +125,9 @@ export default {
                 create_sale_contract: '标准合同',
                 add_sale_contract: '标准合同',
                 update_sale_contract: '标准合同',
+                agent_create_sale_contract: '标准合同',
+                agent_add_sale_contract: '标准合同',
+                agent_update_sale_contract: '标准合同',
             },
         }
     },
