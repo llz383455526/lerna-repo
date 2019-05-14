@@ -196,6 +196,9 @@ export default {
                 add_ns_sale_contract: 'create_add',
                 update_sale_contract: 'create_update',
                 update_ns_sale_contract: 'create_update',
+                agent_create_sale_contract: 'create',
+                agent_add_sale_contract: 'create_add',
+                agent_update_sale_contract: 'create_update',
             }
             this.$router.push({
                 path: editType[type],
