@@ -182,6 +182,19 @@ export default {
             if (this.contractModel.workflowType === 'update_sale_contract') {
                 workflowType = 'update_sale_contract'
             }
+            // 代理商新增
+            if (this.contractModel.workflowType === 'agent_add_ns_sale_contract') {
+                workflowType = 'agent_add_sale_contract'
+            }
+            if (this.contractModel.workflowType === 'agent_add_sale_contract') {
+                workflowType = 'agent_add_sale_contract'
+            }
+            if (this.contractModel.workflowType === 'agent_update_ns_sale_contract') {
+                workflowType = 'agent_update_sale_contract'
+            }
+            if (this.contractModel.workflowType === 'agent_update_sale_contract') {
+                workflowType = 'agent_update_sale_contract'
+            }
             // this.submitContract(this.contractModel.workflowType)
             this.submitContract(workflowType)
         }
@@ -199,6 +212,19 @@ export default {
             }
             if (this.contractModel.workflowType === 'update_ns_sale_contract') {
                 workflowType = 'update_ns_sale_contract'
+            }
+            // 代理商新增
+            if (this.contractModel.workflowType === 'agent_update_sale_contract') {
+                workflowType = 'agent_update_ns_sale_contract'
+            }
+            if (this.contractModel.workflowType === 'agent_add_sale_contract') {
+                workflowType = 'agent_add_ns_sale_contract'
+            }
+            if (this.contractModel.workflowType === 'agent_add_ns_sale_contract') {
+                workflowType = 'agent_add_ns_sale_contract'
+            }
+            if (this.contractModel.workflowType === 'agent_update_ns_sale_contract') {
+                workflowType = 'agent_update_ns_sale_contract'
             }
             this.submitContract(workflowType);
         }
