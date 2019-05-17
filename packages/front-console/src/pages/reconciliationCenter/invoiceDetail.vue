@@ -209,6 +209,12 @@ export default {
             invoiceOptions: {},
             companyData: {},
             customCompanyList: [],
+            /**
+             * 服务公司列表
+             */
+            serviceCompanyList: [],
+            cancel_show: false,
+            current: {},
             red_show: false,
             red_form: {
                 amount: '',
@@ -370,6 +376,7 @@ export default {
         cancel(a) {
             this.current = a
             this.cancel_show = true
+            console.log(this.cancel_show)
         },
         csure(a) {
             post('/api/invoice-web/invoice/invoice-operate-status', {
