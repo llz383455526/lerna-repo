@@ -24,7 +24,6 @@
                         <div class="col-xs-6">客户从事：{{ contractForm.customIndustry }}</div>
                         <div class="col-xs-6">合同期限：{{ contractForm.contractStartDate + ' - ' +
                             contractForm.contractEndDate }}</div>
-                        <div class="col-xs-12">服务类型：{{ getCheckText(contractForm.serviceType, serviceTypeList) }}</div>
                     </div>
                     <div class="row" style="margin-bottom: 15px;">
                         <div class="col-xs-12">
@@ -87,6 +86,11 @@
                             <div class="col-xs-12">
                                 <show-service :detail="{serviceFeeContent:formItem.serviceFeeContent,serviceFeeContent2:formItem.serviceFeeContent2}">
                                 </show-service>
+                            </div>
+                            <div class="col-xs-12">服务类型：
+                                <span v-for="(v, k) in formItem.serviceTypeList" :key="k">
+                                    {{ v.serviceName }}&nbsp;&nbsp;
+                                </span>
                             </div>
                             <template v-if="contractForm.originalType == 20">
                               <div class="col-xs-12">代理商名称：{{ getText(contractForm.agentCompanyId, contractModel.agentList, 'companyId', 'companyName') }}</div>
@@ -228,16 +232,13 @@ export default {
     },
     methods: {
         hasInsurance() {
-            if (!this.contractForm.serviceType) return
-            var isHas = false;
-            this.contractForm.serviceType.forEach(item => {
-                this.serviceTypeList.forEach(el => {
-                    if (el.serviceId == (item.serviceId || item) && el.vciStatus == 1) {
-                        isHas = true
-                    }
+            if (!this.contractForm.contracts) return false
+            return  this.contractForm.contracts.some((gongSi) => {
+                console.log(gongSi.serviceTypeList)
+                return  gongSi.serviceTypeList.some((serverType) => {
+                    return serverType.vciStatus === '1'
                 })
-            });
-            return isHas;
+            })
         },
         getText(value, list, inputKey = 'value', outputKey = 'text') {
             if (!list.length) return;

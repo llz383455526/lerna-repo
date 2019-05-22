@@ -1,6 +1,6 @@
 <template>
     <div>
-        <contract-info :contractModel="contractModel"></contract-info>
+        <contract-info :contractModel="contractModel" @jieSuanBiaoZhunChange="jieSuanBiaoZhunChange"></contract-info>
         <div class="widget-box bg-white">
             <div class="widget-header">
                 <h4 class="widget-title">合同附件管理</h4>
@@ -112,9 +112,13 @@ export default {
     this.contractModel.contractId = id;
     this.contractModel.getContractDetail(id, () => {
       this.contractForm = this.contractModel.contractForm
+        this.contractModel.contractForm.cUserStandardAttachmentModels = []
     })
   },
   methods: {
+      jieSuanBiaoZhunChange(data) {
+          this.contractModel.contractForm.cUserStandardAttachmentModels.push(data)
+      },
     backToList (path) {
       this.$router.replace({
         path: path

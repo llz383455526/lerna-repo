@@ -31,16 +31,6 @@
                             @change="autoFill">
             </el-date-picker>
         </el-form-item>
-        <el-form-item label="服务类型" prop="serviceType">
-            <template slot="label">
-                <i class="el-icon-question" title="请参考《服务内容确认书》"></i>服务类型
-            </template>
-            <el-checkbox-group v-model="ruleForm.serviceType" @change="setSettleType" style="width:1100px;">
-                <el-checkbox v-for="(item, key) in serviceTypeList"
-                             :key="key" :label="item.serviceId">{{item.serviceName}}
-                </el-checkbox>
-            </el-checkbox-group>
-        </el-form-item>
     </div>
 </template>
 
@@ -120,7 +110,6 @@
         mounted() {
             this.$store.dispatch('getContractTplList')
             this.$store.dispatch('getIndustryTypeList')
-            this.$store.dispatch('getServiceTypeList')
             this.fillValue()
         }
     }

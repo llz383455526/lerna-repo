@@ -32,6 +32,18 @@
                             </el-table>
                         </div>
                         <div class="col-xs-12">
+                            <h4 class="block green">企业结算标准</h4>
+                            <template v-if="contractModel.contractForm.cUserStandardAttachmentModels">
+                                <div v-for="(v, k) in contractModel.contractForm.cUserStandardAttachmentModels">
+                                    <span>{{ v.displayname }}</span>
+                                    <a
+                                        href="javascript:;"
+                                        @click="jieSuanFileDown(v.downloadCode)"
+                                        style="margin-left:10px;">下载</a>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="col-xs-12">
                             <h4 class="block green">合同备注</h4>
                         </div>
                         <div class="col-xs-12">{{ contractModel.contractForm.receiveMemo }}</div>
@@ -67,6 +79,11 @@ export default {
             window.location.href = baseUrl + '/api/contract-web/file/download' +
             '?downloadCode=' + downloadCode;
         },
+        jieSuanFileDown (downloadCode) {
+            window.location.href = '/api/sysmgr-web/file/download' +
+                '?downloadCode=' + downloadCode;
+        }
+
     }
 }
 </script>

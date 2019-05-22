@@ -367,7 +367,7 @@ export default {
                 post(`/api/invoice-web/invoice/invoice-detail-delete?ids=${id}`).then(data => {
                     this.$message({
                         type: 'success',
-                        message: '移除成功！' 
+                        message: '移除成功！'
                     })
                     this.search()
                 })

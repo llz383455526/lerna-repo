@@ -103,7 +103,7 @@ function ajaxAction(requestType, url, param, resolve, reject, showToast, needCal
                 showErrorToast(showToast, res, needCallback, reject);
                 return false
             }
-            if (res.status === 401) {
+            if (res.status === 401 || res.code === 401) {
                 showLoading({
                     text: '页面正在跳转'
                 });

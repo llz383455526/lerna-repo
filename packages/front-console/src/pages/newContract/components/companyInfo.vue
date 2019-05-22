@@ -6,7 +6,7 @@
         </h3>
         <div class="widget-box" v-for="(formItem,index) in ruleForm.contracts" :key="index" style="margin-bottom: 20px;">
             <div class="widget-header">
-                <h4 class="widget-title" style="margin-right: 25px;">{{ formItem.serviceCompanyName || '落地公司名称' }}</h4>
+                <h4 class="widget-title" style="margin-right: 25px;">{{formItem.taxLandingName}} / {{ formItem.serviceCompanyName || '落地公司名称' }}</h4>
                 <div class="widget-title">
                     <el-checkbox v-model="formItem.showServiceCompanyInfo" label="1">合同中显示服务商收款账户信息</el-checkbox>
                 </div>
@@ -38,7 +38,15 @@
                 <el-form-item label="服务商报价" :prop="`contracts[${index}].serviceFeeContent.fixFee`" :rules="{required: true, message: '请正确填写服务商报价', trigger: 'blur'}">
                     <contract-create-item :arrIndex="index" @result="result" :showSettledRate="true" :contractForm="formItem"></contract-create-item>
                     <!-- <contractItem label-width="0" :arrIndex="index" @result="result" :initCheck="true" :contractForm="{serviceFeeContent:formItem.serviceFeeContent,serviceFeeContent2:formItem.serviceFeeContent2}"></contractItem> -->
-                </el-form-item><br>
+                </el-form-item>
+                <el-form-item style="display: flex; padding-left: 100px;" :prop="'contracts.'+index+'.serviceTypeList'" label="服务类型" :rules="{required: true, message: '请选择服务类型', trigger: 'blur'}">
+                    <el-checkbox-group @change="serverTypeChangeChange" v-model="formItem.serviceTypeList">
+                        <el-checkbox v-for="v in formItem.optionServiceTypeList" :label="v" :key="v.serviceId">
+                            {{ v.serviceName }}
+                        </el-checkbox>
+                    </el-checkbox-group>
+                </el-form-item>
+                <br>
                 <template v-if="ruleForm.originalType == 20">
                     <el-form-item label="渠道经理" required>
                         <el-input v-model="chargeByName" disabled style="width:400px;"></el-input>
@@ -91,6 +99,7 @@ export default {
             serviceCompaniesList: 'serviceCompaniesList',
             settleTypeList: 'settleTypeList',
             payModeList: 'payModeList',
+            allServiceTypeList: 'serviceTypeList',
         }),
         agentCompanyList() {
             let agentCompanyList = []
@@ -120,6 +129,12 @@ export default {
                     this.quoteRule = e.quoteRule
                 }
             })
+        },
+        ruleForm() {
+            this.initData()
+        },
+        serviceCompaniesList() {
+            this.initData()
         }
     },
     data () {
@@ -131,7 +146,8 @@ export default {
                 goodsList: [],
                 corporateName: '',
                 address: '',
-                telephone: ''
+                telephone: '',
+                taxLandingId: ''
             },
             customerInvoiceTypes: {
                 '10': {
@@ -187,11 +203,94 @@ export default {
                       startAmount: ''
                   }
               ]
-            }
+            },
+            // 服务类型集合
+            serverTypeMap: new Map(),
         }
     },
     methods: {
+        initData() {
+            this.ruleForm.contracts.forEach((item) => {
+                // 设置落地公司ID
+                this.serviceCompaniesList.some((item1) => {
+                    if (item1.companyId === item.serviceCompanyId) {
+                        item.taxLandingId = item1.taxLandingId
+                        item.taxLandingName = item1.taxLandingName
+                        return true
+                    }
+                })
+                item.serviceTypeList = item.serviceTypeList.map((item) => {
+                    return this.getServerTypeWithId(item.serviceId)
+                })
+            })
+            this.upDataServerType()
+        },
+        // 根据ID获取服务类型
+        getServerTypeWithId(id) {
+            let itemx = null
+            this.allServiceTypeList.some((item) => {
+                if (id === item.serviceId) {
+                    itemx = item
+                }
+            })
+            return itemx
+        },
+        // 更新选择的服务类型
+        upDataServerType() {
+            this.serverTypeMap = new Map()
+            this.ruleForm.contracts.forEach((item) => {
+                let set = null
+                // 设置已经选择的服务类型集合
+                if (this.serverTypeMap.has(item.taxLandingId)) {
+                    set = this.serverTypeMap.get(item.taxLandingId)
+                } else {
+                    set = new Set()
+                    this.serverTypeMap.set(item.taxLandingId, set)
+                }
+                // 添加已经选中的
+                item.serviceTypeList.forEach((item2) => {
+                    if (item2.serviceId) {
+                        set.add(item2.serviceId)
+                    }
+                })
+            })
+            this.ruleForm.contracts.forEach((item) => {
+                let set = this.serverTypeMap.get(item.taxLandingId)
+                // 已经选中的数据
+                const selArr = Array.from(set)
+                // 获取当前选中的数组集合
+                const serviceTypeListSet = new Set(item.serviceTypeList.map((item) => {
+                    return item.serviceId
+                }))
+                // 排除掉当前选中的数组
+                const otherSelArr = selArr.filter((item1) => {
+                    return !serviceTypeListSet.has(item1)
+                })
+                // 获取其他已经选中数据的集合
+                const otherSelSet = new Set(otherSelArr)
+                // 排除掉已经选中的
+                let arr = this.allServiceTypeList.filter((item1) => {
+                    return !otherSelSet.has(item1.serviceId)
+                })
+                item.optionServiceTypeList = arr
+            })
+            this.$forceUpdate()
+        },
+        /**
+         * 服务类型改变的时候调用
+         */
+        serverTypeChangeChange(arr) {
+            if (arr.length > 5) {
+                arr.pop()
+                this.$message({
+                    message: '最多选择5条服务类型',
+                    type: 'warning'
+                });
+            }
+            this.upDataServerType()
+        },
         formAdd() {
+
             let info = _.cloneDeep(this.info);
             let quoteFeeContent = _.cloneDeep(this.quoteFeeContent);
             // 只需要当前所选的落地公司
@@ -207,6 +306,8 @@ export default {
                 serviceRegisterAddr: info.address,
                 servicePhone: info.telephone,
                 showServiceCompanyInfo: true,
+                taxLandingId: info.taxLandingId,
+                taxLandingName: info.taxLandingName,
                 serviceCompanyId: info.serviceCompanyId,
                 goodsId: '',
                 goodsList: info.goodsList,
@@ -246,11 +347,15 @@ export default {
                     serviceFeeType: 'ratio'
                 },
                 quoteRule: this.quoteRule,
-                quoteFeeContent: quoteFeeContent
+                quoteFeeContent: quoteFeeContent,
+                // 服务类型数组
+                serviceTypeList: []
             });
             this.dialogVisible = false;
+            this.upDataServerType()
         },
         result({
+
             serviceFeeContent,
             serviceFeeContent2,
             arrIndex,
@@ -277,6 +382,7 @@ export default {
             this.ruleForm.serviceCompanyList && this.ruleForm.serviceCompanyList.splice(i, 1);
             this.ruleForm.contracts.splice(i, 1);
             this.serviceFeeList && this.serviceFeeList.splice(i, 1);
+            this.upDataServerType()
         },
         setServiceCompany(o, serviceCompanyId) {
             let serviceCompany = _.find(this.serviceCompaniesList, o => {
@@ -286,6 +392,8 @@ export default {
             this.info.corporateName = serviceCompany.corporateName;
             this.info.address = serviceCompany.address;
             this.info.telephone = serviceCompany.telephone;
+            this.info.taxLandingId = serviceCompany.taxLandingId
+            this.info.taxLandingName = serviceCompany.taxLandingName
             get('/api/salemgt/common/service-company/goods', {
                 serviceCompanyId: serviceCompanyId || serviceCompany.companyId
             }).then(result => {
@@ -293,51 +401,19 @@ export default {
             })
         }
     },
-    mounted() {
+    async mounted() {
+        await this.$store.dispatch('getServiceTypeList')
         this.$store.dispatch('getAgentList')
         this.$store.dispatch('getServiceCompaniesList', this.ruleForm.agentCompanyId)
         this.$store.dispatch('getSettleTypeList')
-        
-        // this.quoteFeeContent = this.quoteFeeContent || {
-        //     containIncomeAmount: '',
-        //     incomeAmount: '',
-        //     quoteFeeRate: '',
-        //     quoteFeeType: '',
-        //     serviceCompanyRateList: [
-        //         {
-        //             feeRateContent: {
-        //                 containIncomeAmount: '',
-        //                 incomeAmount: '',
-        //                 quoteFeeRate: '',
-        //                 quoteFeeType: ''
-        //             },
-        //             serviceCompanyId: '',
-        //             serviceCompanyName: ''
-        //         }
-        //     ],
-        //     stepwiseList: [
-        //         {
-        //             endAmount: '',
-        //             equalsEnd: '',
-        //             equalsStart: '',
-        //             percent: '',
-        //             sequence: '',
-        //             startAmount: ''
-        //         }
-        //     ]
-        // }
-        // let isChange = sessionStorage.getItem('companyChange')
-        // sessionStorage.removeItem('companyChange')
+
+
         this.ruleForm.contracts.forEach(item => {
             item.showServiceCompanyInfo = item.showServiceCompanyInfo === '1' ? true : false;
             let serviceCompanyRateList = item.quoteFeeContent.serviceCompanyRateList
             if(serviceCompanyRateList && serviceCompanyRateList.length) {
                 item.quoteFeeContent.serviceCompanyRateList = serviceCompanyRateList.filter(e => e.serviceCompanyId == item.serviceCompanyId)
             }
-            // if(!item.quoteFeeContent || isChange) {
-            // item.quoteFeeContent = this.quoteFeeContent
-            // item.quoteRule = this.quoteRule
-            // }
         })
     }
 }

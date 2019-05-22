@@ -37,6 +37,14 @@ let missionList = r => require.ensure([], () => r(require('../pages/orderManager
 let addMission = r => require.ensure([], () => r(require('../pages/orderManager/addMission.vue')), 'addMission');
 let auditMission = r => require.ensure([], () => r(require('../pages/orderManager/auditMission.vue')), 'auditMission');
 let checkMission = r => require.ensure([], () => r(require('../pages/orderManager/checkMission.vue')), 'checkMission');
+let levelDetail = r => require.ensure([], () => r(require('../pages/orderManager/levelDetail.vue')), 'levelDetail');
+let ruleEdit = r => require.ensure([], () => r(require('../pages/orderManager/ruleEdit/index.vue')), 'ruleEdit');
+let starManagement = r => require.ensure([], () => r(require('../pages/orderManager/starManagement.vue')), 'starManagement');
+let costLimit = r => require.ensure([], () => r(require('../pages/orderManager/costLimit/index.vue')), 'costLimit');
+let costLimitDetail = r => require.ensure([], () => r(require('../pages/orderManager/costLimit/detail.vue')), 'costLimitDetail');
+let costLimitAddRule = r => require.ensure([], () => r(require('../pages/orderManager/costLimit/addRule.vue')), 'costLimitAddRule');
+let addEnterprise = r => require.ensure([], () => r(require('../pages/orderManager/costLimit/addEnterprise.vue')), 'addEnterprise');
+
 
 let eContractIndex = r => require.ensure([], () => r(require('../pages/eContract/index.vue')), 'eContractIndex');
 let contractManager = r => require.ensure([], () => r(require('../pages/eContract/contractManager.vue')), 'contractManager');
@@ -106,6 +114,8 @@ let sectionAndStaff = r => require.ensure([], () => r(require('../pages/clientMa
 let agentCompactList = r => require.ensure([], () => r(require('../pages/clientManager/agentCompactList')), 'agentCompactList')
 let agentCompactCreate = r => require.ensure([], () => r(require('../pages/clientManager/agentCompactCreate')), 'agentCompactCreate')
 let agentCompactLook = r => require.ensure([], () => r(require('../pages/clientManager/agentCompactLook')), 'agentCompactLook')
+let dropList = r => require.ensure([], () => r(require('../pages/clientManager/dropList')), 'dropList')
+let dropDetail = r => require.ensure([], () => r(require('../pages/clientManager/dropDetail')), 'dropDetail')
 
 let advertisingList = r => require.ensure([], () => r(require('../pages/management/advertisingList')), 'advertisingList')
 let advertisingCreate = r => require.ensure([], () => r(require('../pages/management/advertisingCreate')), 'advertisingCreate')
@@ -426,6 +436,55 @@ export default [{
                 meta: {
                     keepAlive: false
                 }
+            },
+            {
+              path: 'levelDetail',
+              component: levelDetail,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'ruleEdit',
+              component: ruleEdit,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'starManagement',
+              component: starManagement,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'costLimit',
+              component: costLimit,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'costLimitDetail',
+              component: costLimitDetail,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'costLimitAddRule',
+              component: costLimitAddRule,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'addEnterprise',
+              component: addEnterprise,
+              meta: {
+                keepAlive: false
+              }
             }
           ]
         },
@@ -1098,6 +1157,20 @@ export default [{
               meta: {
                 keepAlive: false
               }
+            },
+            {
+              path: 'dropList',
+              component: dropList,
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'dropDetail',
+              component: dropDetail,
+              meta: {
+                keepAlive: false
+              }
             }
           ]
         },
@@ -1379,31 +1452,31 @@ export default [{
           ]
         },
         {
-            path: 'agent',
-            component: index,
-            children: [
-              {
-                path: 'oemList',
-                component: () => import('../pages/agent/oemList'),
-                meta: {
-                  keepAlive: false
-                }
-              },
-              {
-                path: 'oemSet',
-                component: () => import('../pages/agent/oemSet'),
-                meta: {
-                  keepAlive: false
-                }
-              },
-              {
-                path: 'inviteList',
-                component: () => import('../pages/agent/inviteList')
-              },
-            ],
-          },
+          path: 'agent',
+          component: index,
+          children: [
+            {
+              path: 'oemList',
+              component: () => import('../pages/agent/oemList'),
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'oemSet',
+              component: () => import('../pages/agent/oemSet'),
+              meta: {
+                keepAlive: false
+              }
+            },
+            {
+              path: 'inviteList',
+              component: () => import('../pages/agent/inviteList')
+            },
+          ],
+        },
         ...workOrder
-      ],
+      ]
     },
     {
       path: '/login',

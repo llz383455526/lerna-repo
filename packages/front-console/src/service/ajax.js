@@ -4,7 +4,7 @@
 
 export default (type = 'GET', url, param = {}, callback, async=true) => {
 	type = type.toUpperCase();
-	
+
 	let requestObj;
 	if (window.XMLHttpRequest) {
 		requestObj = new XMLHttpRequest();
@@ -15,7 +15,7 @@ export default (type = 'GET', url, param = {}, callback, async=true) => {
 	//console.log('requestObj', requestObj);
 	let userProfiles = window.localStorage.getItem('userProfiles')
 	if(userProfiles === 'undefined') userProfiles= false
-	
+
 	if(type === 'GET') {
 		let dataStr = '' //数据拼接字符串
 		let link = '?'	//处理如果url本身带?的情况
@@ -32,7 +32,7 @@ export default (type = 'GET', url, param = {}, callback, async=true) => {
 		dataStr = dataStr.substr(0, dataStr.lastIndexOf('&'))
 		if(dataStr) url += `${link}${dataStr}&t=${parseInt(Math.random() * 100000)}`
 		else url += `${link}t=${parseInt(Math.random() * 100000)}`
-		
+
 		requestObj.open(type, url, async)
 		requestObj.timeout = 30000
 		requestObj.setRequestHeader('If-Modified-Since', '0')
@@ -57,7 +57,7 @@ export default (type = 'GET', url, param = {}, callback, async=true) => {
 	}else {
 		callback({error: 'error type'});
 	}
-	
+
 	requestObj.onreadystatechange = () => {
 		if (requestObj.readyState === 4) {
 			/*if(requestObj.responseURL !== url){
@@ -65,7 +65,6 @@ export default (type = 'GET', url, param = {}, callback, async=true) => {
 				reject(false)
 			}*/
 			//console.log(requestObj)
-			
 			if (requestObj.status === 200) {
 				let obj = requestObj.response || requestObj.responseText
 				if(type === 'FORM' && !obj) {
@@ -79,7 +78,7 @@ export default (type = 'GET', url, param = {}, callback, async=true) => {
 						}
 					}
 				}
-				
+
 				if (obj && typeof obj !== 'object') {
 					try {
                         obj = JSON.parse(obj);
@@ -93,8 +92,6 @@ export default (type = 'GET', url, param = {}, callback, async=true) => {
 			}
 		}
 	}
-	
-	
 }
 
 

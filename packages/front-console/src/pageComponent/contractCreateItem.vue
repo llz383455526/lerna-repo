@@ -553,7 +553,8 @@ export default {
                 stepwiseList[a - 1] && (type === true ? stepwiseList[a].startAmount = stepwiseList[a - 1].endAmount : stepwiseList[a - 1].endAmount = stepwiseList[a].startAmount)
                 amount = stepwiseList[a].startAmount
             }
-            if(this.float2.test(amount) && stepwiseList[a].startAmount - 0 < stepwiseList[a].endAmount) {
+            // 出现过 stepwiseList[0].startAmount 字段丢失导致前端验证无法通过，暂时给一个默认值（可能原因：序列化时值为undefined的键会被丢弃）
+            if(this.float2.test(amount) && (stepwiseList[a].startAmount || 0) - 0 < stepwiseList[a].endAmount) {
                 result = 0
             }
             // this.contractForm.serviceFeeContent.fixFee = result

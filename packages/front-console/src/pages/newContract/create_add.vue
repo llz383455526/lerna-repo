@@ -8,6 +8,7 @@
                 <el-steps :active="active" simple>
                     <el-step title="选择已有企业"></el-step>
                     <el-step title="选择落地公司"></el-step>
+                    <el-step title="附加条款"></el-step>
                 </el-steps>
                 <el-form label-width="200px" :inline="true" :model="ruleForm" ref="contractForm" :rules="rules">
                     <div v-if="active === 1">
@@ -16,6 +17,12 @@
                             <el-select style="width:450px;" v-model="ruleForm.customerId" filterable @change="companyChange">
                                 <el-option v-for="(item, key) in companyIdentityList" :key="key" :label="item.name" :value="item.id"></el-option>
                             </el-select>
+                        </el-form-item>
+                        <el-form-item label="客户性质" prop="customNature">
+                            <el-radio v-model="ruleForm.customNature"
+                                    v-for="(item, key) in optionModel.customNatureList"
+                                    :key="key" :label="item.value">{{item.text}}</el-radio>
+                            <i class="el-icon-question ml10" title="非直接用工企业：人力资源公司、服务外包公司、城市合伙人公司、第三方平台等"></i>
                         </el-form-item>
                         <hr>
                         <contractOption :contractModel="saleContract" :ruleForm="ruleForm"></contractOption>
@@ -57,16 +64,15 @@
                             </el-input>
                         </el-form-item>
                     </div>
-                    <div v-if="active === 2">
-                        <companyInfo :ruleForm="ruleForm" :serviceFeeList="serviceFeeList" :chargeByName="chargeByName"></companyInfo>
-                    </div>
+                    <companyInfo :ruleForm="ruleForm" :serviceFeeList="serviceFeeList" :chargeByName="chargeByName" v-if="active === 2"></companyInfo>
+                    <additionalClause :ruleForm="ruleForm" v-if="active === 3"></additionalClause>
                 </el-form>
                 <hr>
                 <div class="wizard-actions">
-                    <el-button @click="prev" v-if="active === 2">上一步</el-button>
+                    <el-button @click="prev" v-if="active !== 0">上一步</el-button>
                     <el-button type="primary" @click="backToList('save')">保存并返回</el-button>
-                    <el-button type="success" @click="next" v-if="active === 1">下一步</el-button>
-                    <el-button type="success" @click="submit" v-if="active === 2">提交</el-button>
+                    <el-button type="success" @click="next" v-if="active !== 3">下一步</el-button>
+                    <el-button type="success" @click="submit" v-if="active === 3">提交</el-button>
                 </div>
             </div>
         </div>
@@ -83,8 +89,10 @@ import { mapGetters } from 'vuex';
 import { get, post, postWithErrorCallback } from "../../store/api"
 import { showNotify } from "../../plugin/utils-notify";
 import _ from 'lodash'
+import optionModel from '../../model/option/optionModel'
+import additionalClause from './components/additionalClause.vue' // 合同附加条款
 export default {
-    components: { companyInfo, options, checkboxs, radios, contractOption },
+    components: { companyInfo, options, checkboxs, radios, contractOption, additionalClause },
     data() {
         return {
             active: 1,
@@ -105,6 +113,9 @@ export default {
                 serviceCompanyList: [],
                 contracts: [],
                 receiveAttachments: [],
+                customNature: '', // 客户性质
+                payAndInvoiceSame: '',
+                customUnderAttachList: []
             },
             instanceId: '',
             value: '', // 合同期限
@@ -112,6 +123,9 @@ export default {
             rules: {
                 customerId: [
                     { required: true, message: '请选择客户企业信息', trigger: 'change' }
+                ],
+                customNature: [
+                    { required: true, message: '请选择客户性质', trigger: 'change' }
                 ],
                 contractTplId: [
                     { required: true, message: '请选择合同模板', trigger: 'change' }
@@ -142,6 +156,7 @@ export default {
                     { required: true, message: '请选择付款方式', trigger: 'change' }
                 ],
             },
+            optionModel: new optionModel()
         }
     },
     computed: {
@@ -166,7 +181,7 @@ export default {
         },
         next() {
             this.$refs['contractForm'].validate(valid => {
-                if(valid && this.active !== 2) {
+                if(valid && this.active !== 3) {
                     this.active++
                     this.save()
                 }
@@ -193,6 +208,13 @@ export default {
             }
             this.$refs['contractForm'].validate(valid => {
                 if (valid) {
+
+                    // 请选择合同附件那一步 需要上传清单的判断
+                    if (this.ruleForm.payAndInvoiceSame === '0' && this.ruleForm.customUnderAttachList.length  === 0) {
+                        showNotify('error', '请上传清单');
+                        return;
+                    }
+
                     this.save().then(result => {
 
                         // 上传之前帮巨懒的后端处理一下数据
@@ -306,6 +328,7 @@ export default {
         if (this.ruleForm.instanceId) {
             this.getDetail()
         }
+        this.optionModel.getCustomNatureList()
     }
 }
 </script>

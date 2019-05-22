@@ -11,6 +11,12 @@ class optionModel extends BaseModel {
 		this.bypassAccountList = []; // 子账户列表
         this.clearingStateList = []; // 清分状态下拉列表
         this.withdrawInfo = {}
+        this.customNatureList = []; // 客户性质
+        this.vciPayTypeList = []; // 付款方式
+        this.customCompanyUnderTypeList = [
+            { text: '甲方分公司', value: 'branch' },
+            { text: '甲方子公司', value: 'sub' }
+        ]; // 甲方下属公司类型
 	}
 	getJson (list, key, value) {
 		return list.find(function(element) {
@@ -70,6 +76,20 @@ class optionModel extends BaseModel {
         get('/api/balance-web/commom/option', {enumType: 'ReconciliationSourceType'}).then(result => {
             this.sourceTypeList = result;
         })
+    }
+    getCustomNatureList() {
+        get('/api/sysmgr-web/commom/option?enumType=CustomNature').then(data => {
+            this.customNatureList = data;
+        })
+    }
+    getVciPayTypeList() {
+        return new Promise((resolve) => {
+            get('/api/sysmgr-web/commom/option?enumType=VciPayType').then(data => {
+                this.vciPayTypeList = data;
+                resolve(data)
+            })
+        })
+        
     }
 }
 

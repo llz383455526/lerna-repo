@@ -14,15 +14,15 @@
                     </el-table-column>
                     <el-table-column label="预警提示">
                         <template slot-scope="scope">
-                            <el-input class="w100" v-model="scope.row.warnLimit" :disabled="!scope.row.disable" @change="setHaveRule"></el-input> 
-                            <el-checkbox v-model="scope.row.warnExpression" :disabled="!scope.row.disable">含</el-checkbox> 
+                            <el-input class="w100" v-model="scope.row.warnLimit" :disabled="!scope.row.disable" @change="setHaveRule"></el-input>
+                            <el-checkbox v-model="scope.row.warnExpression" :disabled="!scope.row.disable">含</el-checkbox>
                             万
                         </template>
                     </el-table-column>
                     <el-table-column label="拒绝发放">
                         <template slot-scope="scope">
-                            <el-input class="w100" v-model="scope.row.refuseLimit" :disabled="!scope.row.disable" @change="setHaveRule"></el-input> 
-                            <el-checkbox v-model="scope.row.refuseExpression" :disabled="!scope.row.disable">含</el-checkbox> 
+                            <el-input class="w100" v-model="scope.row.refuseLimit" :disabled="!scope.row.disable" @change="setHaveRule"></el-input>
+                            <el-checkbox v-model="scope.row.refuseExpression" :disabled="!scope.row.disable">含</el-checkbox>
                             万
                         </template>
                     </el-table-column>
@@ -163,21 +163,37 @@ export default {
             this.status = data.RiskRulePackState
             this.form.state = this.form.state || this.status[0].value
         })
-        get('/api/console-dlv/option/get-by-types?type=RiskRuleType').then(data => {
-            this.ruleType = data.RiskRuleType
-            this.ruleType.forEach(e => {
-                this.form.riskRuleAddParamList.push({
-                    refuseExpression: '',
-                    refuseLimit: '',
-                    riskRuleType: e.value,
-                    warnExpression: '',
-                    warnLimit: '',
-                    text: e.text,
-                    disable: false
-                })
+        const RiskRuleType = [
+            {
+                "value": "unit_limit",
+                "text": "单笔收入限额"
+            },
+            {
+                "value": "month_limit",
+                "text": "单人月收入限额"
+            },
+            {
+                "value": "year_limit",
+                "text": "单人年收入限额"
+            },
+            {
+                "value": "day_limit",
+                "text": "单人日收入限额"
+            }
+        ]
+        this.ruleType = RiskRuleType
+        this.ruleType.forEach(e => {
+            this.form.riskRuleAddParamList.push({
+                refuseExpression: '',
+                refuseLimit: '',
+                riskRuleType: e.value,
+                warnExpression: '',
+                warnLimit: '',
+                text: e.text,
+                disable: false
             })
-            this.detail && this.initForm()
         })
+        this.detail && this.initForm()
         get('/api/console-dlv/tax-landing/all-tax-landing').then(data => {
             this.list = data
             this.query()
@@ -238,7 +254,7 @@ export default {
                         !e.warnLimit && !e.refuseLimit && result.push(false)
                     }
                 })
-                this.form.haveRule = result.indexOf(false) == -1 ? '1' : '' 
+                this.form.haveRule = result.indexOf(false) == -1 ? '1' : ''
             }
             else {
                 this.form.haveRule = ''

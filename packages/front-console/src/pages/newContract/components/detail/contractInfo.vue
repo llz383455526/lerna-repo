@@ -23,6 +23,30 @@
                     <hr>
                     <h4 class="h4">合同证据链</h4>
                     <upload :list="contractModel.contractForm.receiveAttachments" style="width: 1100px;" @remove="handleRemove" @uploadSuccess="uploadSuccess"></upload>
+                    <h4 class="h4">企业结算标准</h4>
+                    <div class="jie-suan-biao-zhun-box">
+                        <el-upload class="form_input" :action="`/api/econtract/template/parsefile`" :auto-upload="false" :on-change="jieSuanBiaoZhunUpload" multiple :show-file-list="false">
+                            <el-button style="margin-left: 20px" size="small" type="primary" @click="index = key">上传附件</el-button>
+                        </el-upload>
+                        <el-table
+                            :data="contractModel.contractForm.cUserStandardAttachmentModels"
+                            style="margin-left: 275px"
+                        >
+                            <el-table-column
+                                prop="displayname"
+                                label="名称">
+                            </el-table-column>
+                            <el-table-column
+                                prop="address"
+                                width="100px"
+                                label="操作">
+                                <template slot-scope="scope">
+                                    <el-button type="text" size="small" @click="jieSuanFileRemove(scope)">删除</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </div>
+                    <br>
                     <h4 class="h4">合同备注</h4>
                     <el-form-item>
                         <el-input style="width:1140px;" type="textarea" v-model="contractModel.contractForm.receiveMemo" maxlength="200"></el-input>
@@ -36,13 +60,14 @@
 <script>
 import {pcaa, pca} from 'area-data'
 import upload from './upload.vue'
+import { importPost } from "../../../../store/api"
 export default {
     props: ['contractModel'],
     components: { upload },
     data() {
         return {
              // 地区
-            pcaa: pcaa,
+            pcaa: pcaa
         }
     },
     methods: {
@@ -50,12 +75,44 @@ export default {
             this.contractModel.contractForm.receiveAttachments.splice(index, 1)
         },
         uploadSuccess(obj) {
-            console.log(this.contractModel.contractForm)
             this.contractModel.contractForm.receiveAttachments.push(obj)
+        },
+        /**
+         * 结算标准文件改变的时候
+         */
+        jieSuanBiaoZhunUpload(file) {
+            let formData = new FormData();
+            formData.append('targetType', 'vci_attach');
+            formData.append('fileName', file.name);
+            formData.append('file', file.raw);
+            importPost('/api/sysmgr-web/file/upload', formData, true).then(data => {
+                this.$message({
+                    type: 'success',
+                    message: '上传成功！'
+                })
+                this.$emit('jieSuanBiaoZhunChange', {
+                    displayname: data.fileName,
+                    refId: data.referId,
+                    downloadCode: data.downloadCode
+                })
+            })
+        },
+        /**
+         * 结算标准删除
+         */
+        jieSuanFileRemove(row) {
+            this.contractModel.contractForm.cUserStandardAttachmentModels.splice(row.$index, 1)
         }
+
     }
 }
 </script>
+<style lang="scss">
+    .jie-suan-biao-zhun-box {
+        display: flex;
+        padding-right: 245px;
+    }
+</style>
 
 <style>
 .h4 {

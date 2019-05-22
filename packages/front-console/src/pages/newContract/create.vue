@@ -23,7 +23,7 @@
                     <relevantMerchantInfo :contractModel="contractModel" v-if="false"></relevantMerchantInfo>
                     <businessBillingInfo :contractModel="contractModel" v-if="active === 2"></businessBillingInfo>
                     <companyInfo :ruleForm="contractModel.contractForm" :serviceFeeList="contractModel.serviceFeeList" v-if="active === 3"></companyInfo>
-                    <additionalClause :contractModel="contractModel" :editType="editType" :files="contractModel.files"
+                    <additionalClause :ruleForm="contractModel.contractForm" :editType="editType" :files="contractModel.files"
                         v-if="active === 4"></additionalClause>
                     <el-form-item v-if="editType != 'watch' && editType!='workflow' && false">
                         <el-button type="primary" @click="saveContract(false)">保存</el-button>
@@ -119,12 +119,17 @@ export default {
     },
     methods: {
         saveContract(isSubmit) {
+            console.log('save 2')
             // 上传之前处理服务商报价数据
             this.contractModel.changeServiceFeeList();
             // let url = this.editType === 'edit' ? '/api/opencrm/workflow/save_data' : '/api/opencrm/workflow/create';
             let url = '/api/opencrm/workflow/save_draft';
+            const datas = JSON.parse(JSON.stringify(this.contractModel.contractForm))
+            datas.contracts.forEach((item) => {
+                delete item.optionServiceTypeList
+            })
             let _form = {
-                datas: this.contractModel.contractForm,
+                datas,
                 instanceId: this.contractModel.contractId,
                 workflowType: this.contractModel.workflowType
             };
@@ -161,19 +166,23 @@ export default {
                     }
 
                     // 请选择合同附件那一步 需要上传清单的判断
-                    if (this.active === 4 
-                        && this.contractModel.contractForm.payAndInvoiceSame === '0' 
+                    if (this.active === 4
+                        && this.contractModel.contractForm.payAndInvoiceSame === '0'
                         && this.contractModel.contractForm.customUnderAttachList.length  === 0) {
                         showNotify('error', '请上传清单');
                         return;
                     }
 
                     // 上传之前处理服务类型数据
-                    this.setServiceType()
+                    // this.setServiceType()
 
                     let url = '/api/contract-web/contract/create-flow-contracts';
+                    const datas = JSON.parse(JSON.stringify(this.contractModel.contractForm))
+                    datas.contracts.forEach((item) => {
+                        delete item.optionServiceTypeList
+                    })
                     let param = {
-                        datas: this.contractModel.contractForm,
+                        datas,
                         instanceId: this.contractModel.contractId,
                         workflowType: this.contractModel.workflowType
                     };
@@ -201,11 +210,6 @@ export default {
             })
         },
         fillRelevant() {
-            // this.contractModel.contractForm.companyApps[0]['appName'] = this.contractModel.contractForm.customerName // 商户名称            this.contractModel.contractForm.companyApps[0]['appName'] = this.contractModel.contractForm.customerName // 商户名称
-            // this.contractModel.contractForm.companyApps[0]['chargeByName'] = this.contractModel.contractForm.customLegalPerson // 商户负责人姓名
-            // this.contractModel.contractForm.companyApps[0]['chargeByPhone'] = this.contractModel.contractForm.customCollectorPhone // 商户负责人手机
-            // this.contractModel.contractForm.companyApps[0]['chargeByMail'] = this.contractModel.contractForm.customMail1 // 商户负责人邮箱
-
             this.contractModel.contractForm.companyApps[0] = {
                 'appName': this.contractModel.contractForm.customerName,
                 'chargeByName': this.contractModel.contractForm.customLegalPerson,

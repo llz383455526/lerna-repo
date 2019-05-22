@@ -202,6 +202,11 @@ class ContractModel extends BaseModel {
     getContractDetail(id, callback, type) {
         return new Promise((resolve, reject) => {
             get(`/api/opencrm/workflow/details/${id}`).then(result => {
+                result.datas.contracts.forEach((e) => {
+                    if (!e.serviceTypeList) {
+                        e.serviceTypeList = []
+                    }
+                })
                 this.contractForm = _.assign({}, result.datas);
                 this.actions = result.actions;
                 this.processLogs = result.processLogs;
@@ -216,6 +221,9 @@ class ContractModel extends BaseModel {
                             serviceFeeRate: '',
                             serviceFeeType: 'ratio'
                         }
+                    }
+                    if (!e.serviceTypeList) {
+                        e.serviceTypeList = []
                     }
                 })
                 this.getContractDate();

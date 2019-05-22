@@ -150,10 +150,9 @@ const store = {
                 commit('setIndustryTypeList', res)
             })
         },
-        getServiceTypeList({commit}) {
-            get(url.serviceTypeList).then(res => {
-                commit('setServiceTypeList', res)
-            })
+        async getServiceTypeList({commit}) {
+            const data = await get(url.serviceTypeList)
+            commit('setServiceTypeList', data)
         },
         getOriginalTypeList({commit}) {
             get(url.originalTypeList).then(res => {
@@ -176,7 +175,7 @@ const store = {
             })
         },
         getServiceCompaniesList({commit}, agentCompanyId) {
-            const param = agentCompanyId == null ? '' : {
+            const param = agentCompanyId == null ? {} : {
                 agentCompanyId
             };
             get(url.serviceCompaniesList, param).then(res => {

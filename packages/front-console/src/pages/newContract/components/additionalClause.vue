@@ -3,26 +3,26 @@
     <h3 class="green">请选择合同附加条款</h3>
     <template v-if="hasInsurance()">
         <el-form-item label="商业保险" prop="vciBuyType" :rules="{required: true, message: '请选择商业保险', trigger: 'change'}">
-            <el-radio-group v-model="contractModel.contractForm.vciBuyType" style="width:900px;">
+            <el-radio-group v-model="ruleForm.vciBuyType" style="width:900px;">
                 <el-radio label="10">由客户自行购买</el-radio>
                 <el-radio label="20">我方购买保险的情况，无论保费是否我方承担均适用</el-radio>
             </el-radio-group>
         </el-form-item>
         <el-form-item label="保险计划名称" prop="vciPlanName" :rules="{required: true, message: '请输入保险计划名称', trigger: 'blur'}">
-            <el-input v-model="contractModel.contractForm.vciPlanName" style="width:900px;"></el-input>
+            <el-input v-model="ruleForm.vciPlanName" style="width:900px;"></el-input>
         </el-form-item>
         <!--<el-form-item label="商业保险服务名称" prop="vciServiceName"-->
         <!--:rules="{required: true, message: '请输入商业保险服务名称', trigger: 'blur'}">-->
-        <!--<el-input v-model="contractModel.contractForm.vciServiceName"></el-input>-->
+        <!--<el-input v-model="ruleForm.vciServiceName"></el-input>-->
         <!--</el-form-item>-->
     </template>
     <el-form-item label="付款方式" prop="vciPayType" :rules="{required: true, message: '请输入付款方式', trigger: 'change'}">
-        <el-select v-model="contractModel.contractForm.vciPayType" placeholder="请选择" style="width:900px;" @change="changeVciPayType">
-            <el-option v-for="(item,key) in contractModel.VciPayTypeList" :key="key" :label="item.text" :value="item.value"></el-option>
+        <el-select v-model="ruleForm.vciPayType" placeholder="请选择" style="width:900px;" @change="changeVciPayType">
+            <el-option v-for="(item,key) in optionModel.vciPayTypeList" :key="key" :label="item.text" :value="item.value"></el-option>
         </el-select>
     </el-form-item>
-    <el-form-item prop="vciSettleExp" v-if="contractModel.contractForm.vciPayType == 30" :rules="{required: true, message: '请输入结算日期', trigger: 'blur'}">
-        <el-input v-model="contractModel.contractForm.vciSettleExp" style="width:900px;margin-left:200px;">
+    <el-form-item prop="vciSettleExp" v-if="ruleForm.vciPayType == 30" :rules="{required: true, message: '请输入结算日期', trigger: 'blur'}">
+        <el-input v-model="ruleForm.vciSettleExp" style="width:900px;margin-left:200px;">
             <template slot="prepend">
                 甲乙双方确认以每月
             </template>
@@ -33,22 +33,22 @@
     </el-form-item>
     <el-form-item label="付款方与收票方一致" prop="payAndInvoiceSame" :rules="{required: true, message: '请选择付款方与收票方一致', trigger: 'change'}">
         <div style="width:900px;">
-            <el-radio-group v-model="contractModel.contractForm.payAndInvoiceSame">
+            <el-radio-group v-model="ruleForm.payAndInvoiceSame">
                 <el-radio label="1">是</el-radio>
                 <el-radio label="0">否</el-radio>
             </el-radio-group>
-            <span v-if="contractModel.contractForm.payAndInvoiceSame === '0'&&contractModel.contractForm.referIds&&!contractModel.contractForm.referIds.length"
+            <span v-if="ruleForm.payAndInvoiceSame === '0'&&ruleForm.referIds&&!ruleForm.referIds.length"
                   style="color:red;" class="ml10">(请上传清单)</span>
         </div>
     </el-form-item>
-    <el-form-item v-if="contractModel.contractForm.payAndInvoiceSame === '0'" label="甲方下属公司类型" prop="customCompanyUnderType" :rules="{required: true, message: '请选择甲方下属公司类型', trigger: 'change'}">
+    <el-form-item v-if="ruleForm.payAndInvoiceSame === '0'" label="甲方下属公司类型" prop="customCompanyUnderType" :rules="{required: true, message: '请选择甲方下属公司类型', trigger: 'change'}">
         <div style="width:900px;">
-            <el-radio-group v-model="contractModel.contractForm.customCompanyUnderType">
-                <el-radio v-for="(e, key) in contractModel.customCompanyUnderTypeList" :key="key" :label="e.value">{{e.text}}</el-radio>
+            <el-radio-group v-model="ruleForm.customCompanyUnderType">
+                <el-radio v-for="(e, key) in optionModel.customCompanyUnderTypeList" :key="key" :label="e.value">{{e.text}}</el-radio>
             </el-radio-group>
         </div>
     </el-form-item>
-    <el-form-item v-show="contractModel.contractForm.payAndInvoiceSame === '0'" label="上传甲方下属公司清单">
+    <el-form-item v-show="ruleForm.payAndInvoiceSame === '0'" label="上传甲方下属公司清单">
         <a class="btn" href="/assets/甲方公司下属公司名单.xlsx"
                download="甲方公司下属公司名单.xlsx" target="_blank">下载模板</a>
         <span>请先下载《甲方下属公司清单》模板</span>
@@ -66,9 +66,10 @@
 import { importPost } from "../../../store/api";
 import { baseUrl } from '../../../config/address';
 import { mapGetters } from 'vuex'
+import optionModel from '../../../model/option/optionModel'
 export default {
     name: "additionalClause",
-    props: ['contractModel', 'editType', 'referNames', 'files'],
+    props: ['ruleForm'],
     computed: {
         ...mapGetters({
             serviceTypeList: 'serviceTypeList',
@@ -89,21 +90,18 @@ export default {
                     value: '甲方要求按预充金额开票',
                     key: 3
                 }
-            ]
+            ],
+            optionModel: new optionModel(),
+            files: []
         }
     },
     methods: {
         hasInsurance() {
-            var isHas = false;
-            var ruleForm = this.contractModel.contractForm
-            this.serviceTypeList.forEach(item => {
-                ruleForm.serviceType.forEach(el => {
-                    if (item.serviceId === el && item.vciStatus === '1') {
-                        isHas = true
-                    }
+            return  this.ruleForm.contracts.some((gongSi) => {
+                return gongSi.serviceTypeList.some((serverType) => {
+                    return serverType.vciStatus === '1'
                 })
             })
-            return isHas;
         },
         upload(file) {
             let formData = new FormData();
@@ -111,7 +109,7 @@ export default {
             formData.append('fileName', file.name);
             formData.append('file', file.raw);
             importPost('/api/contract-web/file/upload', formData, true).then(data => {
-                this.contractModel.contractForm.customUnderAttachList.push({
+                this.ruleForm.customUnderAttachList.push({
                     refId: data.referId,
                     downloadCode: data.downloadCode,
                     displayname: data.fileName
@@ -128,7 +126,7 @@ export default {
         },
         remove() {
             this.files.pop();
-            this.contractModel.contractForm.customUnderAttachList.pop();
+            this.ruleForm.customUnderAttachList.pop();
         },
         handlePreview(file) {
             this.handleDownload(file.url);
@@ -139,11 +137,26 @@ export default {
         },
         changeVciPayType(e) {
             if(e === 10) {
-                this.contractModel.contractForm.openInvoiceType = '账单开票';
+                this.ruleForm.openInvoiceType = '账单开票';
             } else {
-                this.contractModel.contractForm.openInvoiceType = '预开票';
+                this.ruleForm.openInvoiceType = '预开票';
             }
+        },
+        getFileList() {
+            if (!this.ruleForm.customUnderAttachList || !this.ruleForm.customUnderAttachList.length) {
+                return 
+            }
+            this.ruleForm.customUnderAttachList.forEach((el) => {
+                this.files.push({
+                    name: el.displayname,
+                    url: el.downloadCode
+                })
+            })
         }
+    },
+    created() {
+        this.optionModel.getVciPayTypeList()
+        this.getFileList()
     }
 }
 </script>

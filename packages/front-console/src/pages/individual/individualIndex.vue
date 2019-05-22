@@ -157,7 +157,7 @@ export default {
     float: right;
 }
 .bottom {
-    margin-top: 20px 25px 0px;
+    margin: 20px 25px 0px;
 }
 .waitDeal {
     width: 70%;
