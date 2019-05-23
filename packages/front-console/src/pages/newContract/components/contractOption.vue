@@ -39,7 +39,7 @@
     import { mapGetters } from 'vuex'
     export default {
         name: "contractOption",
-        props: ['contractModel', 'ruleForm'],
+        props: ['ruleForm'],
         data() {
             return {
                 value: '',
@@ -50,44 +50,37 @@
                 contractTplList: 'contractTplList',
                 industryTypeList: 'industryTypeList',
                 serviceTypeList: 'serviceTypeList',
-            })
+            }),
         },
         watch: {
             ruleForm() {
+                this.fillValue()
+            },
+            'ruleForm.contractStartDate'(contractStartDate) {
                 this.fillValue()
             }
         },
         methods: {
             fillValue() {
-                if (this.ruleForm.contractStartDate) {
+                if (this.ruleForm.contractStartDate || this.ruleForm.contractStartDate === '') {
                     this.value = [this.ruleForm.contractStartDate, this.ruleForm.contractEndDate]
-                }
-                if (this.ruleForm.startDate) {
+                } else if (this.ruleForm.startDate) {
                     this.value = [this.ruleForm.startDate, this.ruleForm.endDate]
                     this.ruleForm.contractStartDate = this.ruleForm.startDate
                     this.ruleForm.contractEndDate = this.ruleForm.endDate
-                }
-                if (this.ruleForm.dataValue) {
+                } else if (this.ruleForm.dataValue) {
                     this.value = this.ruleForm.dataValue
                     this.ruleForm.contractStartDate = this.ruleForm.dataValue[0]
                     this.ruleForm.contractEndDate = this.ruleForm.dataValue[1]
                 }
             },
-            autoFill (val) {
+            autoFill(val) {
                 if (val) {
                     this.ruleForm.contractStartDate = val[0];
                     this.ruleForm.contractEndDate = val[1];
                 }
             },
-            setSettleType (e) {
-                // let arr = [];
-                // _.forEach(this.contractModel.serviceTypes, item => {
-                //     let serviceId = _.find(e, o => {
-                //         return o === item.serviceId
-                //     });
-                //     if(serviceId) arr.push(item);
-                // });
-                // this.contractModel.contractForm.serviceType = arr;
+            setSettleType(e) {
                 this.$emit('setSettleType');
                 if (!this.hasInsurance()) {
                     this.ruleForm.vciBuyType = '';

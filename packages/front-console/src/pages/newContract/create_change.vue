@@ -16,7 +16,7 @@
 
                 <el-form :inline="true" :model="contractModel.contractForm" :rules="check.rules" ref="contractForm"
                     label-width="200px" class="contractForm" :disabled="editType === 'watch'||editType ==='workflow'">
-                    <applicationChange v-if="active === 0"></applicationChange>
+                    <applicationChange :contractModel="contractModel" v-if="active === 0"></applicationChange>
                     <contractOption :ruleForm="contractModel.contractForm" @setSettleType="setSettleType" v-if="active === 0"></contractOption>
                     <customerEva :contractModel="contractModel" v-if="active === 1"></customerEva>
                     <salesContactInfo :contractModel="contractModel" v-if="active === 1"></salesContactInfo>

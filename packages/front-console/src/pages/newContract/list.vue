@@ -195,14 +195,14 @@ export default {
                 create_ns_sale_contract: 'create',
                 add_sale_contract: 'create_add',
                 add_ns_sale_contract: 'create_add',
-                update_sale_contract: 'create_update',
-                update_ns_sale_contract: 'create_update',
+                update_sale_contract: 'create_change',
+                update_ns_sale_contract: 'create_change',
                 agent_create_sale_contract: 'create',
                 agent_add_sale_contract: 'create_add',
-                agent_update_sale_contract: 'create_update',
+                agent_update_sale_contract: 'create_change',
                 agent_create_ns_sale_contract: 'create',
                 agent_add_ns_sale_contract: 'create_add',
-                agent_update_ns_sale_contract: 'create_update',
+                agent_update_ns_sale_contract: 'create_change',
             }
             this.$router.push({
                 path: editType[type],

@@ -17,6 +17,7 @@ class optionModel extends BaseModel {
             { text: '甲方分公司', value: 'branch' },
             { text: '甲方子公司', value: 'sub' }
         ]; // 甲方下属公司类型
+        this.companyIdentityList = []; // 已有客户
 	}
 	getJson (list, key, value) {
 		return list.find(function(element) {
@@ -89,7 +90,11 @@ class optionModel extends BaseModel {
                 resolve(data)
             })
         })
-        
+    }
+    getCompanyIdentityList() {
+        get('/api/contract-web/contract/custom-company-options').then(data => {
+            this.companyIdentityList = data;
+        })
     }
 }
 

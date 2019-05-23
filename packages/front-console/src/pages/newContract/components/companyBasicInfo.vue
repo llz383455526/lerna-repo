@@ -7,7 +7,7 @@
                       :key="key" :label="item.value">{{item.text}}</el-radio>
             <i class="el-icon-question ml10" title="非直接用工企业：人力资源公司、服务外包公司、城市合伙人公司、第三方平台等"></i>
         </el-form-item>
-        <el-form-item label="企业对接方式" style="width:100%;" prop="isFromOutApp">
+        <el-form-item label="企业对接方式" style="width:100%;" prop="isFromOutApp" v-if="contractModel.workflowType !== 'update_sale_contract'">
             <el-select style="width:450px;" v-model="contractModel.contractForm.isFromOutApp" @change="handleOutAppChange">
                 <el-option v-for="(item, key) in list" :key="key" :label="item.label" :value="item.value"></el-option>
             </el-select>

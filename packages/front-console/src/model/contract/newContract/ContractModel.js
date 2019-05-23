@@ -10,6 +10,10 @@ class ContractModel extends BaseModel {
         super();
         this.contractId = '';
         this.contractForm = {
+            // 企业入驻申请变更
+            customerId: '',
+            flowMemo: '',
+            versionStartDate: '',
             // 合同选项
             contractTplId: '',
             contractType: '',

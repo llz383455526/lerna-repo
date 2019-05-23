@@ -46,6 +46,16 @@ class Check extends BaseModel {
             }
         };
         this.rules = {
+            // 企业入驻申请变更
+            customerId: [
+                { required: true, message: '请选择已有客户信息', trigger: 'change' }
+            ],
+            flowMemo: [
+                { required: true, message: '请输入变更版本说明', trigger: 'blur' }
+            ],
+            versionStartDate: [
+                { required: true, message: '请选择版本生效时间', trigger: 'change' }
+            ],
             // 合同选项
             contractType: [
                 { required: true, message: '请选择合同类型', trigger: 'change' }
