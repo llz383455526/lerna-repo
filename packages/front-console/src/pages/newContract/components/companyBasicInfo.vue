@@ -12,7 +12,7 @@
                 <el-option v-for="(item, key) in list" :key="key" :label="item.label" :value="item.value"></el-option>
             </el-select>
         </el-form-item>
-        <el-form-item label="企业名称" prop="customerName">
+        <el-form-item label="企业名称" prop="customerName" :rules="customerNameRules">
             <el-select 
                 v-if="checkRight(permissions, 'sysmgr-web:/data-permission-tag/sales-contract-interim-company-flag')" 
                 v-model="contractModel.contractForm.customerName" 
@@ -71,10 +71,37 @@ export default {
         }
     },
     computed: {
-      ...mapGetters({
-          permissions: 'permissions',
-          serverConfigList: 'serverConfigList',
-      })
+        ...mapGetters({
+            permissions: 'permissions',
+            serverConfigList: 'serverConfigList',
+        }),
+        customerNameRules() {
+            const checkCustomerName = (rule, value, callback) => {
+                const url = '/api/opencrm/workflow/checkCustomerName';
+                const param = {
+                    customerName: value
+                }
+                get(url, param).then((res) => {
+                    if (res) {
+                        callback()
+                    } else {
+                        callback(new Error(`该公司已被其他销售签署，不支持再次送审`))
+                    }
+                }).catch((res) => {
+                    callback(new Error(res.msg))
+                })
+            } 
+            if (this.contractModel.workflowType === 'update_sale_contract') {
+                return [
+                    { required: true, message: '请输入企业名称', trigger: 'blur' },
+                    { validator: checkCustomerName, trigger: 'blur' },
+                ]
+            } else {
+                return [
+                    { required: true, message: '请输入企业名称', trigger: 'blur' }
+                ]
+            }
+        }
     },
     mounted() {
         get('/api/sysmgr-web/interim-company/interim-company-options').then(data => {
