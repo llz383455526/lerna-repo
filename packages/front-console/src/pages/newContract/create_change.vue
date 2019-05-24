@@ -23,7 +23,7 @@
                     <companyBasicInfo :contractModel="contractModel" v-if="active === 2"></companyBasicInfo>
                     <relevantMerchantInfo :contractModel="contractModel" v-if="false"></relevantMerchantInfo>
                     <businessBillingInfo :contractModel="contractModel" v-if="active === 2"></businessBillingInfo>
-                    <companyInfo :ruleForm="contractModel.contractForm" :serviceFeeList="contractModel.serviceFeeList" v-if="active === 3"></companyInfo>
+                    <contracts :ruleForm="contractModel.contractForm" :serviceFeeList="contractModel.serviceFeeList" v-if="active === 3"></contracts>
                     <additionalClause :contractModel="contractModel" :editType="editType" :files="contractModel.files"
                         v-if="active === 4"></additionalClause>
                     <el-form-item v-if="editType != 'watch' && editType!='workflow' && false">
@@ -57,7 +57,7 @@ import salesContactInfo from './components/salesContactInfo.vue' // 销售联系
 import companyBasicInfo from './components/companyBasicInfo.vue' // 企业基本信息
 import relevantMerchantInfo from './components/relevantMerchantInfo.vue' // 相关商户信息
 import businessBillingInfo from './components/businessBillingInfo.vue' // 企业开票信息
-import companyInfo from './components/companyInfo.vue' // 落地公司信息
+import contracts from './components/contracts.vue' // 落地公司信息
 import additionalClause from './components/additionalClause.vue' // 合同附加条款
 import generateContract from './components/generateContract.vue' // 生成合同
 import upload from './components/upload' // 上传组建
@@ -72,7 +72,7 @@ export default {
         companyBasicInfo,
         relevantMerchantInfo,
         businessBillingInfo,
-        companyInfo,
+        contracts,
         additionalClause,
         generateContract,
         upload
