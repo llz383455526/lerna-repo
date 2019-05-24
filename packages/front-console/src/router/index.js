@@ -524,6 +524,13 @@ export default [{
               }
             },
             {
+                path: 'historyList',
+                component: r => require.ensure([], () => r(require('../pages/contract/historyList.vue')), 'historyList'),
+                meta: {
+                    keepAlive: false
+                }
+            },
+            {
               path: 'templateList',
               component: templateList,
               meta: {

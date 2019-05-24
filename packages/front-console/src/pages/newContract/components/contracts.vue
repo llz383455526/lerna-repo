@@ -227,7 +227,7 @@ export default {
             })
             return itemx
         },
-        // 更新每个落地公司的服务类型
+        // 更新每个落地公司选择的服务类型
         updateServiceTypeList() {
             this.ruleForm.contracts.forEach((item) => {
                 item.serviceTypeList = item.serviceTypeList.map((item) => {
@@ -235,7 +235,7 @@ export default {
                 })
             })
         },
-        // 更新总的选择的服务类型
+        // 更新当前显示的服务类型
         upDataServerType() {
             this.serverTypeMap = new Map()
             this.ruleForm.contracts.forEach((item) => {

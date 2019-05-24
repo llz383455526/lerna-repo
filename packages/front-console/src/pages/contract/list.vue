@@ -38,6 +38,8 @@
             <el-table-column prop="prePayFeeName" label="服务费是否预收" width="140"></el-table-column>
             <el-table-column prop="contractStartDate" label="合同开始时间"></el-table-column>
             <el-table-column prop="contractEndDate" label="合同结束时间"></el-table-column>
+            <el-table-column prop="versionSeq" label="合同版本"></el-table-column>
+            <el-table-column prop="versionStartDate" label="版本有效期"></el-table-column>
             <el-table-column prop="lastUpdateAt" label="更新时间" width="180">
                 <template slot-scope="scope">
                     <span>{{scope.row.lastUpdateAt | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
@@ -48,6 +50,7 @@
                     <el-button @click="handleLook(scope.row.id)" type="text">查看</el-button>
                     <el-button @click="handleEdit(scope.row.id)" type="text" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">编辑</el-button>
                     <el-button @click="handleCopy(scope.row)" type="text" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">复制</el-button>
+                    <el-button @click="handleView(scope.row.id)" type="text" v-if="scope.row.containVerson">历史版本</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -233,6 +236,14 @@ export default {
             setTimeout(() => {
                 this.$refs['copyForm'] && this.$refs['copyForm'].clearValidate()
             }, 30)
+        },
+        handleView(id) {
+            this.$router.push({
+                path: '/main/contract/historyList',
+                query: {
+                    contractId: id,
+                }
+            })
         },
         getCompanyName() {
             this.customerCompaniesList.forEach(e => {
