@@ -91,7 +91,7 @@ export default {
                     callback(new Error(res.msg))
                 })
             } 
-            if (this.contractModel.workflowType === 'update_sale_contract') {
+            if (this.contractModel.workflowType !== 'update_sale_contract') {
                 return [
                     { required: true, message: '请输入企业名称', trigger: 'blur' },
                     { validator: checkCustomerName, trigger: 'blur' },
