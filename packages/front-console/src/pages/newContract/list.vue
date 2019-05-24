@@ -44,7 +44,7 @@
 
         <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_sale_contract'}})">创建合同</el-button>
         <el-button size="small" @click="$router.push({path:'create_add'})" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">补签合同</el-button>
-        <el-button size="small" @click="$router.push({path:'create_update'})">修改已有合同</el-button>
+        <!-- <el-button size="small" @click="$router.push({path:'create_update'})">修改已有合同</el-button> -->
         <!-- <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_ns_sale_contract'}})">新客户非标准合同</el-button> -->
         <el-button size="small" @click="$router.push({path:'create_change'})">合同变更</el-button>
 

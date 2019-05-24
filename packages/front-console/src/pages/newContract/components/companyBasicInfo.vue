@@ -13,10 +13,14 @@
             </el-select>
         </el-form-item>
         <el-form-item label="企业名称" prop="customerName">
-            <el-select v-if="checkRight(permissions, 'sysmgr-web:/data-permission-tag/sales-contract-interim-company-flag')" v-model="contractModel.contractForm.customerName" filterable style="width:450px;">
+            <el-select 
+                v-if="checkRight(permissions, 'sysmgr-web:/data-permission-tag/sales-contract-interim-company-flag')" 
+                v-model="contractModel.contractForm.customerName" 
+                filterable 
+                style="width:450px;">
                 <el-option v-for="e in companyList" :key="e.value" :value="e.text" :label="e.text"></el-option>
             </el-select>
-            <el-input v-else v-model="contractModel.contractForm.customerName" style="width:450px;"></el-input>
+            <el-input v-else v-model="contractModel.contractForm.customerName" style="width:450px;" :disabled="contractModel.workflowType === 'update_sale_contract'"></el-input>
         </el-form-item>
         <el-form-item label="企业地址" prop="areaName">
             <el-input v-model="contractModel.contractForm.areaName" style="width:450px;"></el-input>
@@ -25,10 +29,10 @@
             <el-input v-model="contractModel.contractForm.customLegalPerson" style="width:450px;"></el-input>
         </el-form-item>
         <el-form-item label="系统操作人" prop="customCollector">
-            <el-input v-model="contractModel.contractForm.customCollector" style="width:450px;"></el-input>
+            <el-input v-model="contractModel.contractForm.customCollector" style="width:450px;" :disabled="contractModel.workflowType === 'update_sale_contract'"></el-input>
         </el-form-item>
         <el-form-item label="操作人手机" prop="customCollectorPhone">
-            <el-input v-model="contractModel.contractForm.customCollectorPhone" style="width:450px;" maxlength="11"></el-input>
+            <el-input v-model="contractModel.contractForm.customCollectorPhone" style="width:450px;" maxlength="11" :disabled="contractModel.workflowType === 'update_sale_contract'"></el-input>
         </el-form-item>
         <el-form-item label="操作人邮箱" prop="customMail1">
             <el-input v-model="contractModel.contractForm.customMail1" style="width:450px;"></el-input>
