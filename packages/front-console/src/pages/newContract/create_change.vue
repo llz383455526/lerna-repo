@@ -24,8 +24,7 @@
                     <relevantMerchantInfo :contractModel="contractModel" v-if="false"></relevantMerchantInfo>
                     <businessBillingInfo :contractModel="contractModel" v-if="active === 2"></businessBillingInfo>
                     <contracts :ruleForm="contractModel.contractForm" :serviceFeeList="contractModel.serviceFeeList" v-if="active === 3"></contracts>
-                    <additionalClause :contractModel="contractModel" :editType="editType" :files="contractModel.files"
-                        v-if="active === 4"></additionalClause>
+                    <additionalClause :ruleForm="contractModel.contractForm" :editType="editType" :files="contractModel.files" v-if="active === 4"></additionalClause>
                     <el-form-item v-if="editType != 'watch' && editType!='workflow' && false">
                         <el-button type="primary" @click="saveContract(false)">保存</el-button>
                     </el-form-item>

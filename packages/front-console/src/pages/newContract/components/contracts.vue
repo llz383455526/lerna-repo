@@ -288,69 +288,14 @@ export default {
             const serviceCompanyId = this.info.serviceCompanyId
             const param = { customCompanyId, serviceCompanyId }
             post('/api/contract-web/commom/custom-form-contract', param).then((res) => {
-                console.log(res)
+                this.ruleForm.contracts.push(res)
+                this.ruleForm.serviceCompanyList.push({
+                    serviceCompanyName: this.info.serviceCompanyName,
+                    serviceCompanyId: this.info.serviceCompanyId
+                });
+                this.dialogVisible = false
+                this.upDataServerType()
             })
-            // let info = _.cloneDeep(this.info);
-            // let quoteFeeContent = _.cloneDeep(this.quoteFeeContent);
-            // // 只需要当前所选的落地公司
-            // let serviceCompanyRateList  = quoteFeeContent.serviceCompanyRateList.filter(e => e.serviceCompanyId == info.serviceCompanyId)
-            // quoteFeeContent.serviceCompanyRateList = serviceCompanyRateList || []
-            // this.ruleForm.serviceCompanyList.push({
-            //     serviceCompanyName: info.serviceCompanyName,
-            //     serviceCompanyId: info.serviceCompanyId
-            // });
-            // this.ruleForm.contracts.push({
-            //     serviceCompanyName: info.serviceCompanyName,
-            //     serviceLegalPerson: info.corporateName,
-            //     serviceRegisterAddr: info.address,
-            //     servicePhone: info.telephone,
-            //     showServiceCompanyInfo: true,
-            //     taxLandingId: info.taxLandingId,
-            //     taxLandingName: info.taxLandingName,
-            //     serviceCompanyId: info.serviceCompanyId,
-            //     goodsId: '',
-            //     goodsList: info.goodsList,
-            //     channelTypeList: [],
-            //     settleType: '',
-            //     prePayType: '1',
-            //     prePayContent: {
-            //         secondType: 'should',
-            //         serviceFeeRate: '',
-            //         serviceFeeType: ''
-            //     },
-            //     serviceFeeContent: {
-            //         discountRate: '',
-            //         secondType: 'real',
-            //         fixFee: 0,
-            //         monthIncomeAmount: '',
-            //         serviceFeeRate: '',
-            //         serviceFeeType: 'ratio',
-            //         containMonthAmount: true,
-            //         stepwiseList: []
-            //     },
-            //     serviceFeeContent2: {
-            //         containMonthAmount: false,
-            //         monthIncomeAmount: '',
-            //         stepwiseList: []
-            //     },
-            //     referIds: [],
-            //     referNames: [],
-            //     check: '',
-            //     agentCompanyName: '',
-            //     agentFeeContent: {
-            //         discountRate: '',
-            //         fixFee: '',
-            //         secondType: 'real',
-            //         serviceFeeRate: '',
-            //         serviceFeeType: 'ratio'
-            //     },
-            //     quoteRule: this.quoteRule,
-            //     quoteFeeContent: quoteFeeContent,
-            //     // 服务类型数组
-            //     serviceTypeList: []
-            // });
-            // this.dialogVisible = false;
-            // this.upDataServerType()
         },
         result({
             serviceFeeContent,
