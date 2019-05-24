@@ -213,10 +213,8 @@ export default {
                         return true
                     }
                 })
-                item.serviceTypeList = item.serviceTypeList.map((item) => {
-                    return this.getServerTypeWithId(item.serviceId)
-                })
             })
+            this.updateServiceTypeList()
             this.upDataServerType()
         },
         // 根据ID获取服务类型
@@ -229,7 +227,15 @@ export default {
             })
             return itemx
         },
-        // 更新选择的服务类型
+        // 更新每个落地公司的服务类型
+        updateServiceTypeList() {
+            this.ruleForm.contracts.forEach((item) => {
+                item.serviceTypeList = item.serviceTypeList.map((item) => {
+                    return this.getServerTypeWithId(item.serviceId)
+                })
+            })
+        },
+        // 更新总的选择的服务类型
         upDataServerType() {
             this.serverTypeMap = new Map()
             this.ruleForm.contracts.forEach((item) => {
@@ -294,6 +300,7 @@ export default {
                     serviceCompanyId: this.info.serviceCompanyId
                 });
                 this.dialogVisible = false
+                this.updateServiceTypeList()
                 this.upDataServerType()
             })
         },
