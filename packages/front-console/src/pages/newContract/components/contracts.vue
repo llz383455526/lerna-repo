@@ -70,7 +70,7 @@
             <el-form :inline="true" :model="appForm" label-width="150px" ref="appForm">
                 <el-form-item label="服务商名称">
                     <el-select v-model="info.serviceCompanyId" filterable placeholder="请选择" @change="setServiceCompany" style="width: 450px;">
-                        <el-option v-for="(item,key) in customerServiceCompanyList" :key="key" :label="item.text" :value="item.value"></el-option>
+                        <el-option v-for="(item,key) in customerServiceCompanyList" :key="key" :label="item.name" :value="item.companyId"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item style="margin-left: 150px;">
@@ -379,14 +379,14 @@ export default {
         },
         setServiceCompany(serviceCompanyId) {
             const serviceCompany = this.customerServiceCompanyList.find((o) => {
-                return o.value === serviceCompanyId
+                return o.companyId === serviceCompanyId
             });
-            this.info.serviceCompanyName = serviceCompany.text;
-            // this.info.corporateName = serviceCompany.corporateName;
-            // this.info.address = serviceCompany.address;
-            // this.info.telephone = serviceCompany.telephone;
-            // this.info.taxLandingId = serviceCompany.taxLandingId
-            // this.info.taxLandingName = serviceCompany.taxLandingName
+            this.info.serviceCompanyName = serviceCompany.name;
+            this.info.corporateName = serviceCompany.corporateName;
+            this.info.address = serviceCompany.address;
+            this.info.telephone = serviceCompany.telephone;
+            this.info.taxLandingId = serviceCompany.taxLandingId
+            this.info.taxLandingName = serviceCompany.taxLandingName
             get('/api/salemgt/common/service-company/goods', {
                 serviceCompanyId
             }).then(result => {
