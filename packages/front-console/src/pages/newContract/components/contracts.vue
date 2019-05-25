@@ -19,6 +19,14 @@
                 </div>
             </div>
             <div class="widget-main">
+                <el-form-item label="合同期限" :prop="'contracts.'+index+'.contractDate'" :rules="{ required: true, message: '请选择合同期限', trigger: 'blur' }"> 
+                    <el-date-picker type="daterange" style="width:450px;"
+                                    v-model="formItem.contractDate"
+                                    start-placeholder="开始日期"
+                                    end-placeholder="结束日期"
+                                    value-format="yyyy-MM-dd">
+                    </el-date-picker>
+                </el-form-item>
                 <!-- <el-form-item label="业务方案" :prop="'contracts.'+index+'.goodsId'" :rules="{required: true, message: '请选择业务方案', trigger: 'change'}">
                     <el-select v-model="formItem.goodsId" placeholder="请选择" style="width:400px;">
                         <el-option v-for="(item, key) in (formItem.goodsList.length ? formItem.goodsList : goodsList)" :key="key" :label="item.name" :value="item.id"></el-option>

@@ -127,11 +127,13 @@
             }
         },
         methods: {
-            getAttachments(id) {
-              let url = '/api/contract-web/contract/contract-attachments';
-              get(url, {contractId: id}).then(data => {
-                  this.tableList = data
-              })
+            getAttachments() {
+                const id = this.$route.query.contractId || this.$route.query.historyId
+                const url = this.$route.query.contractId ? '/api/contract-web/contract/contract-attachments' : '/api/contract-web/contract/attachment-infos';
+                const param = this.$route.query.contractId ? { contractId: id } : { historyId: id }
+                get(url, param).then(data => {
+                    this.tableList = data
+                })
             },
             getDetail() {
                 const id = this.$route.query.contractId || this.$route.query.historyId
@@ -159,7 +161,7 @@
             }
         },
         created() {
-            this.getAttachments(this.$route.query.contractId);
+            this.getAttachments();
             this.getDetail()
             this.isExamine = this.$route.query.examine ? true : false
         }
