@@ -133,9 +133,11 @@
                   this.tableList = data
               })
             },
-            getDetail(id) {
-                let url = '/api/contract-web/contract/contract-detail';
-                get(url, {contractId: id}).then(data => {
+            getDetail() {
+                const id = this.$route.query.contractId || this.$route.query.historyId
+                const url = this.$route.query.contractId ? '/api/contract-web/contract/contract-detail' : '/api/contract-web/contract/contract-history-detail'
+                const param = this.$route.query.contractId ? { contractId: id } : { historyId: id }
+                get(url, param).then(data => {
                     this.detail = data
                     // 根据服务公司id过滤
                     this.detail.quoteFeeContent.serviceCompanyRateList = this.detail.quoteFeeContent.serviceCompanyRateList.filter(e => {
@@ -158,7 +160,7 @@
         },
         created() {
             this.getAttachments(this.$route.query.contractId);
-            this.getDetail(this.$route.query.contractId)
+            this.getDetail()
             this.isExamine = this.$route.query.examine ? true : false
         }
     }

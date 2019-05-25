@@ -9,7 +9,7 @@
             <el-table-column prop="createByName" label="创建人"></el-table-column>
             <el-table-column label="操作" width="150">
                 <template slot-scope="scope">
-                    <el-button @click="handleLook(scope.row.id)" type="text">查看</el-button>
+                    <el-button @click="handleLook(scope.row.historyId)" type="text">查看</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -68,7 +68,9 @@ export default {
         handleLook(id) {
             this.$router.push({
                 path: '/main/contract/preview',
-                query: {contractId: id}
+                query: {
+                    historyId: id,
+                }
             });
         },
     },
