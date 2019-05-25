@@ -324,15 +324,11 @@ export default {
             const serviceCompanyId = this.info.serviceCompanyId
             const param = { customCompanyId, serviceCompanyId }
             post('/api/contract-web/commom/custom-form-contract', param).then((res) => {
-                this.ruleForm.contracts.push(res)
+                this.ruleForm.contracts.push(Object.assign(res,{
+                    contractDate: [res.startDate, res.endDate]
+                }))
                 this.setTaxLanding()
                 const index = this.ruleForm.contracts.length - 1
-                // 合同期限拼接
-                if (res.startDate) {
-                    const contractDate = [res.startDate, res.endDate]
-                    // this.ruleForm.contracts[index].contractDate = contractDate
-                    this.$emit('dateChange', {index, contractDate})
-                }
                 // 把goodList也存到contracts里面去
                 this.ruleForm.contracts[index].goodsList = this.info.goodsList
                 this.ruleForm.serviceCompanyList.push({
