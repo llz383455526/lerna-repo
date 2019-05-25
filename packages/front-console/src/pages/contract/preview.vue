@@ -1,7 +1,11 @@
 <template>
     <div class="bg-white p15">
         <div style="margin-bottom:30px;">查看合同</div>
-        <h4 class="ml50">基本信息</h4>
+            <h4 class="ml50">基本信息
+                <el-select v-model="historyId" size="small ml10" @change="handleChange">
+                    <el-option v-for="(e, k) in historyVer" :key="k" :label="e.versionMemo" :value="e.historyId"></el-option>
+                </el-select>
+            </h4>
         <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">版本生效月份：</el-col>
             <el-col :span="8">{{detail.versionStartDate}}</el-col>
@@ -120,15 +124,16 @@
     import showCloseService from '../../pageComponent/showCloseService'
     export default {
         components: {
-          showService,
-          showCloseService
+            showService,
+            showCloseService
         },
         data() {
             return {
                 tableList: [],
                 detail: {},
                 isExamine: false,
-                historyId: ''
+                historyId: '',
+                historyVer: []
             }
         },
         methods: {
@@ -165,13 +170,39 @@
                 get(url).then(data => {
                     self.customerCompaniesList = data;
                 })
+            },
+            getOptionHistory() {
+                const url = '/api/contract-web/contract/query-contracts-history-simple'
+                const id = this.$route.query.contractId || this.$route.query.originId
+                const param = {
+                    contractId: id
+                }
+                get(url, param).then(data => {
+                    this.historyVer = data
+                })
+            },
+            handleChange(ev) {
+                const obj = this.historyVer.find(el => {
+                    return el.historyId === ev
+                })
+                this.$router.push({
+                    path: '/main/contract/preview',
+                    query: {
+                        historyId: obj.historyId,
+                        versionSeq: obj.versionSeq,
+                        originId: obj.originId
+                    }
+                });
+                this.getAttachments()
+                this.getDetail()
             }
         },
         created() {
-            this.getAttachments();
+            this.getAttachments()
             this.getDetail()
+            this.getOptionHistory()
             this.isExamine = this.$route.query.examine ? true : false
-            this.historyId = this.$route.query.historyId
+            this.historyId = this.$route.query.historyId ? parseInt(this.$route.query.historyId) : ''
         }
     }
 </script>
