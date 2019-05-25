@@ -3,6 +3,10 @@
         <div style="margin-bottom:30px;">查看合同</div>
         <h4 class="ml50">基本信息</h4>
         <el-row class="mb15" style="font-weight: normal;">
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">版本生效月份：</el-col>
+            <el-col :span="8">{{detail.versionStartDate}}</el-col>
+        </el-row>
+        <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">企业名称：</el-col>
             <el-col :span="8">{{detail.customerName}}</el-col>
         </el-row>
@@ -17,7 +21,7 @@
         <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">服务类型：</el-col>
             <el-col :span="8">
-                <span v-for="(e, i) in detail.serviceTypeList">
+                <span v-for="(e, i) in detail.serviceTypeList" :key="i">
                     {{e.serviceName}}<template v-if="i + 1 != detail.serviceTypeList.length">，</template>
                 </span>
             </el-col>
@@ -32,7 +36,7 @@
         </el-row> -->
         <el-row class="mb15" style="font-weight: normal;" v-if="!isExamine">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">服务费是否预开：</el-col>
-            <el-col :span="8">{{detail.prePayType == 1 ? `是（${detail.prePayContent.secondType == 'real' ? '实发金额' : '应发金额'} * ${detail.prePayContent.serviceFeeRate}%）` : '否'}}</el-col>
+            <el-col :span="8">{{detail.prePayType == 1 ? `是（${detail.prePayContent.serviceFeeType === 'real' ? '实发金额' : '应发金额'} * ${detail.prePayContent.serviceFeeRate}%）` : '否'}}</el-col>
         </el-row>
         <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">发票类型：</el-col>
@@ -59,7 +63,7 @@
             <el-col :span="8">{{detail.agentClient ? '是' : '否'}}</el-col>
         </el-row> -->
         <template v-if="detail.originalType == 20">
-          <el-row class="mb15" style="font-weight: normal;">
+          <el-row class="mb15" style="font-weight: normal;" v-if="!historyId">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">代理商名称：</el-col>
             <el-col :span="8">{{detail.agentCompanyName}}</el-col>
           </el-row>
@@ -71,14 +75,14 @@
             <el-col :span="4" style="text-align: right; margin-right: 20px;">渠道经理：</el-col>
             <el-col :span="8">{{detail.angentChargeByName}}</el-col>
           </el-row>
-          <el-row class="mb15" style="font-weight: normal;">
+          <el-row class="mb15" style="font-weight: normal;" v-if="!historyId">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">代理推广费率：</el-col>
             <el-col :span="16">
               <show-close-service :detail="detail"></show-close-service>
             </el-col>
           </el-row>
         </template>
-        <el-row class="mb15" style="font-weight: normal;">
+        <el-row class="mb15" style="font-weight: normal;" v-if="!historyId">
           <el-col :span="4" style="text-align: right; margin-right: 20px;">客户归属：</el-col>
           <el-col :span="8">{{detail.originalName}}</el-col>
         </el-row>
@@ -123,22 +127,25 @@
             return {
                 tableList: [],
                 detail: {},
-                isExamine: false
+                isExamine: false,
+                historyId: ''
             }
         },
         methods: {
             getAttachments() {
-                const id = this.$route.query.contractId || this.$route.query.historyId
+                const id = this.$route.query.contractId || this.$route.query.originId
+                const versionSeq = this.$route.query.versionSeq
                 const url = this.$route.query.contractId ? '/api/contract-web/contract/contract-attachments' : '/api/contract-web/contract/attachment-infos';
-                const param = this.$route.query.contractId ? { contractId: id } : { historyId: id }
+                const param = this.$route.query.contractId ? { contractId: id } : { contractId: id, versionSeq }
                 get(url, param).then(data => {
                     this.tableList = data
                 })
             },
             getDetail() {
                 const id = this.$route.query.contractId || this.$route.query.historyId
+                const versionSeq = this.$route.query.versionSeq
                 const url = this.$route.query.contractId ? '/api/contract-web/contract/contract-detail' : '/api/contract-web/contract/contract-history-detail'
-                const param = this.$route.query.contractId ? { contractId: id } : { historyId: id }
+                const param = this.$route.query.contractId ? { contractId: id } : { historyId: id, versionSeq }
                 get(url, param).then(data => {
                     this.detail = data
                     // 根据服务公司id过滤
@@ -164,6 +171,7 @@
             this.getAttachments();
             this.getDetail()
             this.isExamine = this.$route.query.examine ? true : false
+            this.historyId = this.$route.query.historyId
         }
     }
 </script>

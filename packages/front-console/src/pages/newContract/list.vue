@@ -1,9 +1,9 @@
 <template>
     <div class="main-container">
         <el-tabs v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane label="我的合同" name="first"></el-tab-pane>
-            <el-tab-pane label="待处理合同" name="second"></el-tab-pane>
-            <el-tab-pane label="全部合同" name="third"></el-tab-pane>
+            <el-tab-pane label="我的入驻申请" name="first"></el-tab-pane>
+            <el-tab-pane label="待处理入驻申请" name="second"></el-tab-pane>
+            <el-tab-pane label="全部入驻申请" name="third"></el-tab-pane>
         </el-tabs>
 
         <div style="margin-bottom:30px;">合同申请审核管理</div>

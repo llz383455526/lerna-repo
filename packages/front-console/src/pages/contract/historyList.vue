@@ -5,11 +5,11 @@
             <el-table-column prop="versionSeq" label="版本号"></el-table-column>
             <el-table-column prop="statusName" label="状态"></el-table-column>
             <el-table-column prop="flowMemo" label="版本说明"></el-table-column>
-            <el-table-column prop="versonTimeMemo" label="创建时间"></el-table-column>
+            <el-table-column prop="createAt" label="创建时间"></el-table-column>
             <el-table-column prop="createByName" label="创建人"></el-table-column>
             <el-table-column label="操作" width="150">
                 <template slot-scope="scope">
-                    <el-button @click="handleLook(scope.row.historyId)" type="text">查看</el-button>
+                    <el-button @click="handleLook(scope.row)" type="text">查看</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -65,11 +65,13 @@ export default {
                 pageSize: this.pageSize,
             });
         },
-        handleLook(id) {
+        handleLook(obj) {
             this.$router.push({
                 path: '/main/contract/preview',
                 query: {
-                    historyId: id,
+                    historyId: obj.historyId,
+                    versionSeq: obj.versionSeq,
+                    originId: obj.originId
                 }
             });
         },

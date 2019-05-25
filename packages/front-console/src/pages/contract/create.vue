@@ -48,7 +48,7 @@
             <el-form-item label="预收服务费" prop="prePayContent.fixFee" v-if="contractForm.prePayType == 1">
                 <el-row class="mb15">
                     <el-col :span="6">
-                        <el-radio label="ratio" v-model="contractForm.prePayContent.serviceFeeType" @change="prveFee(1)">实发金额</el-radio>
+                        <el-radio label="real" v-model="contractForm.prePayContent.serviceFeeType" @change="prveFee(1)">实发金额</el-radio>
                     </el-col>
                     <el-col :span="15">
                         <div style="float: left; width: 70px; color: #606266;">实发金额 * </div>
@@ -63,7 +63,7 @@
                 </el-row>
                 <el-row>
                     <el-col :span="6">
-                        <el-radio label="ratio_1" v-model="contractForm.prePayContent.serviceFeeType" @change="prveFee(2)">应发金额</el-radio>
+                        <el-radio label="should" v-model="contractForm.prePayContent.serviceFeeType" @change="prveFee(2)">应发金额</el-radio>
                     </el-col>
                     <el-col :span="15">
                         <div style="display: inline-block; width: 110px; color: #606266;">实发金额 / ( 1 -  </div>
@@ -723,17 +723,12 @@
                 this.contractForm.serviceFeeContent2 = a.serviceFeeContent2
             },
             prveFee(a) {
-                if (this.contractForm.prePayContent.serviceFeeType == 'ratio') {
-                    this.contractForm.prePayContent.secondType = 'real'
+                if (this.contractForm.prePayContent.serviceFeeType == 'real') {
                     this.contractForm.prePayContent.serviceFeeRate = this.Fixed(this.prevRatio);
-                    this.contractForm.prePayContent.fixFee = (this.float2.test(this.prevRatio) && this.prevRatio <= 100) ? 0 : ''
                     this.showPrev = a;
                 }
-                if (this.contractForm.prePayContent.serviceFeeType == 'ratio_1') {
-                    this.contractForm.prePayContent.secondType = 'should'
-                    this.contractForm.prePayContent.discountRate = this.Fixed(this.prevRatio_1);
+                if (this.contractForm.prePayContent.serviceFeeType == 'should') {
                     this.contractForm.prePayContent.serviceFeeRate = this.Fixed(this.prevRatio_1);
-                    this.contractForm.prePayContent.fixFee = (this.float2.test(this.prevRatio_1) && this.prevRatio_1 <= 100) ? 0 : ''
                     this.showPrev = a;
                 }
                 this.$refs['contractForm'].validateField('prePayContent.fixFee')
