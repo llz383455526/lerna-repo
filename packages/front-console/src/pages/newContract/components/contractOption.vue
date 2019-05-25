@@ -62,7 +62,7 @@
         },
         methods: {
             fillValue() {
-                if (this.ruleForm.contractStartDate || this.ruleForm.contractStartDate === '') {
+                if (this.ruleForm.contractStartDate) {
                     this.value = [this.ruleForm.contractStartDate, this.ruleForm.contractEndDate]
                 } else if (this.ruleForm.startDate) {
                     this.value = [this.ruleForm.startDate, this.ruleForm.endDate]
