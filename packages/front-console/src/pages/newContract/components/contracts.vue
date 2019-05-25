@@ -209,11 +209,12 @@ export default {
             },
             // 服务类型集合
             serverTypeMap: new Map(),
+            contractDate: []
         }
     },
     methods: {
         autoFill(index, val) {
-            if (val[0]) {
+            if (val) {
                 this.ruleForm.contracts[index].startDate = val[0];
                 this.ruleForm.contracts[index].endDate = val[1];
             }
@@ -325,10 +326,15 @@ export default {
             post('/api/contract-web/commom/custom-form-contract', param).then((res) => {
                 this.ruleForm.contracts.push(res)
                 this.setTaxLanding()
+                const index = this.ruleForm.contracts.length - 1
                 // 合同期限拼接
                 if (res.startDate) {
-                    this.ruleForm.contracts[this.ruleForm.contracts.length - 1].contractDate = [res.startDate, res.endDate]
+                    const contractDate = [res.startDate, res.endDate]
+                    // this.ruleForm.contracts[index].contractDate = contractDate
+                    this.$emit('dateChange', {index, contractDate})
                 }
+                // 把goodList也存到contracts里面去
+                this.ruleForm.contracts[index].goodsList = this.info.goodsList
                 this.ruleForm.serviceCompanyList.push({
                     serviceCompanyName: this.info.serviceCompanyName,
                     serviceCompanyId: this.info.serviceCompanyId

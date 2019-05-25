@@ -23,7 +23,7 @@
                     <companyBasicInfo :contractModel="contractModel" v-if="active === 2"></companyBasicInfo>
                     <relevantMerchantInfo :contractModel="contractModel" v-if="false"></relevantMerchantInfo>
                     <businessBillingInfo :contractModel="contractModel" v-if="active === 2"></businessBillingInfo>
-                    <contracts :ruleForm="contractModel.contractForm" :serviceFeeList="contractModel.serviceFeeList" v-if="active === 3"></contracts>
+                    <contracts :ruleForm="contractModel.contractForm" :serviceFeeList="contractModel.serviceFeeList" v-if="active === 3" @dateChange="dateChange"></contracts>
                     <additionalClause :ruleForm="contractModel.contractForm" :editType="editType" :files="contractModel.files" v-if="active === 4"></additionalClause>
                     <el-form-item v-if="editType != 'watch' && editType!='workflow' && false">
                         <el-button type="primary" @click="saveContract(false)">保存</el-button>
@@ -120,6 +120,10 @@ export default {
         }
     },
     methods: {
+        dateChange(obj) {
+            const { index, contractDate } = obj
+            this.contractModel.contractForm.contracts[index].contractDate = contractDate
+        },
         saveContract(isSubmit) {
             // 上传之前处理服务商报价数据
             this.contractModel.changeServiceFeeList();
