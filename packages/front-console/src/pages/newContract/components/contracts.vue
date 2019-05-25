@@ -24,7 +24,8 @@
                                     v-model="formItem.contractDate"
                                     start-placeholder="开始日期"
                                     end-placeholder="结束日期"
-                                    value-format="yyyy-MM-dd">
+                                    value-format="yyyy-MM-dd"
+                                    @change="autoFill(index, formItem.contractDate)">
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item label="业务方案" :prop="'contracts.'+index+'.goodsId'" :rules="{required: true, message: '请选择业务方案', trigger: 'change'}">
@@ -211,6 +212,12 @@ export default {
         }
     },
     methods: {
+        autoFill(index, val) {
+            if (val[0]) {
+                this.ruleForm.contracts[index].startDate = val[0];
+                this.ruleForm.contracts[index].endDate = val[1];
+            }
+        },
         initData() {
             this.ruleForm.contracts.forEach((item) => {
                 // 设置落地公司ID
@@ -314,6 +321,10 @@ export default {
             const param = { customCompanyId, serviceCompanyId }
             post('/api/contract-web/commom/custom-form-contract', param).then((res) => {
                 this.ruleForm.contracts.push(res)
+                // 合同期限拼接
+                if (res.startDate) {
+                    this.ruleForm.contracts[this.ruleForm.contracts.length - 1].contractDate = [res.startDate, res.endDate]
+                }
                 this.ruleForm.serviceCompanyList.push({
                     serviceCompanyName: this.info.serviceCompanyName,
                     serviceCompanyId: this.info.serviceCompanyId

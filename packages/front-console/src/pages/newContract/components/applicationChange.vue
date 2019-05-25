@@ -26,10 +26,10 @@ export default {
             pickerOptions:{
                 disabledDate(time){
                     let curDate = (new Date()).getTime();
-                    let two = 60 * 24 * 3600 * 1000;
-                    let twoMonthsAgo = curDate - two;
-                    let twoMonthsLater = curDate + two;
-                    return time.getTime() > twoMonthsLater || time.getTime() < twoMonthsAgo;
+                    let limit = 30 * 24 * 3600 * 1000;
+                    let monthsAgo = curDate - limit;
+                    let monthsLater = curDate + limit;
+                    return time.getTime() > monthsLater || time.getTime() < monthsAgo;
                 }
             }
         }
