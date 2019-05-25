@@ -218,7 +218,7 @@ export default {
                 this.ruleForm.contracts[index].endDate = val[1];
             }
         },
-        initData() {
+        setTaxLanding() {
             this.ruleForm.contracts.forEach((item) => {
                 // 设置落地公司ID
                 this.serviceCompaniesList.some((item1) => {
@@ -229,6 +229,9 @@ export default {
                     }
                 })
             })
+        },
+        initData() {
+            this.setTaxLanding()
             this.updateServiceTypeList()
             this.upDataServerType()
         },
@@ -321,6 +324,7 @@ export default {
             const param = { customCompanyId, serviceCompanyId }
             post('/api/contract-web/commom/custom-form-contract', param).then((res) => {
                 this.ruleForm.contracts.push(res)
+                this.setTaxLanding()
                 // 合同期限拼接
                 if (res.startDate) {
                     this.ruleForm.contracts[this.ruleForm.contracts.length - 1].contractDate = [res.startDate, res.endDate]

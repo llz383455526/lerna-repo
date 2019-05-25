@@ -49,6 +49,7 @@
 <script>
 import {post, get, formPost} from '../../store/api';
 import {showNotify} from '../../plugin/utils-notify';
+import {baseUrl} from '../../config/address';
 export default {
     data() {
         return {
@@ -66,18 +67,22 @@ export default {
                 this.fileList = data;
             });
         },
+        handleDownload(downloadCode) {
+            window.location.href = baseUrl + '/api/contract-web/file/download'
+                + '?downloadCode=' + downloadCode;
+        },
         handleDelete() {
-                if (this.downloadCode) {
-                    post('/api/contract-web/file/delete', {downloadCode: this.downloadCode}).then(data => {
-                        // showNotify('success', data);
-                        //this.queryAttachments(this.$route.query.contractId);
-                        showNotify('success', '删除成功')
-                        this.fileList.splice(this.deleteKey, 1)
-                        this.referArr.splice(this.deleteKey, 1)
-                        this.dialogVisible = false;
-                    });
-                }
-            },
+            if (this.downloadCode) {
+                post('/api/contract-web/file/delete', {downloadCode: this.downloadCode}).then(data => {
+                    // showNotify('success', data);
+                    //this.queryAttachments(this.$route.query.contractId);
+                    showNotify('success', '删除成功')
+                    this.fileList.splice(this.deleteKey, 1)
+                    this.referArr.splice(this.deleteKey, 1)
+                    this.dialogVisible = false;
+                });
+            }
+        },
         handleBeforeUpload(file) {
             var AllImgExt = ".doc|.docx|.pdf|.jpg|.png|.gif|.jpeg";
             var extName = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();//（把路径中的所有字母全部转换为小写）
