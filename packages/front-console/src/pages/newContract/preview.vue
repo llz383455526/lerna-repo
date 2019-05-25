@@ -234,7 +234,6 @@ export default {
         hasInsurance() {
             if (!this.contractForm.contracts) return false
             return  this.contractForm.contracts.some((gongSi) => {
-                console.log(gongSi.serviceTypeList)
                 return  gongSi.serviceTypeList.some((serverType) => {
                     return serverType.vciStatus === '1'
                 })

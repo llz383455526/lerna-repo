@@ -72,7 +72,7 @@
                     </div>
                 </div>
                 {{`（2） 月收入大于${detail.serviceFeeContent2.monthIncomeAmount}万：`}}
-                <div v-for="(e, i) in detail.serviceFeeContent2.stepwiseList">
+                <div v-for="(e, i) in detail.serviceFeeContent2.stepwiseList" :key="i + 'v'">
                     <div class="indent">
                         <span class="inline">
                             <template v-if="!e.startAmount && !i">
@@ -89,6 +89,9 @@
                     </div>
                 </div>
             </div>
+        </template>
+        <template v-if="detail.serviceFeeContent.settledRate">
+            {{ `结算费率：${detail.serviceFeeContent.settledRate}%` }}
         </template>
     </el-col>
   </div>

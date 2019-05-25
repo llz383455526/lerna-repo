@@ -3,7 +3,7 @@
     <el-form-item :label="title" prop="selArr">
       <span style="color: #999">全选：</span><el-switch v-model="optionFrom.allSel" @change="allSelChange"></el-switch>
       <el-checkbox-group v-model="optionFrom.selArr">
-        <el-checkbox v-for="(v, k) in optionArr" :label="v">{{v[name]}}</el-checkbox>
+        <el-checkbox v-for="(v, k) in optionArr" :label="v" :key="k">{{v[name]}}</el-checkbox>
       </el-checkbox-group>
     </el-form-item>
   </el-form>

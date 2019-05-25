@@ -7,7 +7,7 @@
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" size="mini" class="demo-ruleForm">
       <el-form-item label="选择对应企业" prop="enterprise">
         <el-select filterable v-model="ruleForm.enterprise" placeholder="请选择对应企业">
-          <el-option :label="v.name" :value="v.id" v-for="(v, k) in customList"></el-option>
+          <el-option :label="v.name" :value="v.id" v-for="(v, k) in customList" :key="k"></el-option>
         </el-select>
       </el-form-item>
     </el-form>
