@@ -91,7 +91,7 @@
             </div>
         </template>
         <template v-if="detail.serviceFeeContent.settledRate">
-            {{ `结算费率：${detail.serviceFeeContent.settledRate}%` }}
+            {{ `充值服务费预收：${detail.serviceFeeContent.settledRate}%` }}
         </template>
     </el-col>
   </div>
