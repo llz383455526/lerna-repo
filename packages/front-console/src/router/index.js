@@ -531,6 +531,13 @@ export default [{
                 }
             },
             {
+                path: 'fileList',
+                component: r => require.ensure([], () => r(require('../pages/contract/fileList.vue')), 'fileList'),
+                meta: {
+                    keepAlive: false
+                }
+            },
+            {
               path: 'templateList',
               component: templateList,
               meta: {

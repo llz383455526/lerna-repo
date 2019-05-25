@@ -1,7 +1,7 @@
 <template>
     <div style="background-color:#fff;padding:15px;">
         <div style="margin-bottom:30px;">查看历史版本</div>
-        <el-table :data="tableList" style="width: 100%;margin-top: 20px;">
+        <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
             <el-table-column prop="versionSeq" label="版本号"></el-table-column>
             <el-table-column prop="statusName" label="状态"></el-table-column>
             <el-table-column prop="flowMemo" label="版本说明"></el-table-column>
@@ -42,7 +42,7 @@ export default {
                 page: pageInfo.page,
                 pageSize: pageInfo.pageSize,
             };
-            get('/api/contract-web/contract/query-contracts-history', param).then(data => {
+            post('/api/contract-web/contract/query-contracts-history', param).then(data => {
                 this.tableList = data
             })
         },
