@@ -597,7 +597,7 @@ export default {
                     results.push((this.float2.test(a) && a <= 100) ? 0 : '')
                 }
                 var s = this.contractForm.serviceFeeContent.settledRate
-                this.showSettledRate && results.push((this.float2.test(s) && s <= 100 || s == 0) ? 0 : '')
+                this.showSettledRate && results.push((s != '' && this.float2.test(s) && s <= 100 || s === '0') ? 0 : '')
             }
             if(this.showInputRatio == 5) {
                 var m = this.contractForm.serviceFeeContent.monthIncomeAmount

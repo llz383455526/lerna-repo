@@ -10,7 +10,7 @@
             <el-input style="width:450px;" v-model="contractModel.contractForm.flowMemo"></el-input>
         </el-form-item>
         <el-form-item label="版本生效时间" prop="versionStartDate">
-            <el-date-picker style="width:450px;" v-model="contractModel.contractForm.versionStartDate" type="month"></el-date-picker>
+            <el-date-picker style="width:450px;" v-model="contractModel.contractForm.versionStartDate" type="month" :picker-options="pickerOptions"></el-date-picker>
         </el-form-item>
     </div>
 </template>
@@ -22,7 +22,16 @@ export default {
     props: ['contractModel'],
     data() {
         return {
-            optionModel: new optionModel()
+            optionModel: new optionModel(),
+            pickerOptions:{
+                disabledDate(time){
+                    let curDate = (new Date()).getTime();
+                    let two = 60 * 24 * 3600 * 1000;
+                    let twoMonthsAgo = curDate - two;
+                    let twoMonthsLater = curDate + two;
+                    return time.getTime() > twoMonthsLater || time.getTime() < twoMonthsAgo;
+                }
+            }
         }
     },
     methods: {

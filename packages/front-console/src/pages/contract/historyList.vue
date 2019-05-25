@@ -8,7 +8,8 @@
                 </template>
             </el-table-column>
             <el-table-column prop="statusName" label="状态"></el-table-column>
-            <el-table-column prop="flowMemo" label="版本说明"></el-table-column>
+            <el-table-column prop="flowMemo" label="变更版本说明"></el-table-column>
+            <el-table-column prop="versonTimeMemo" label="版本生效时间"></el-table-column>
             <el-table-column prop="createAt" label="创建时间"></el-table-column>
             <el-table-column prop="createByName" label="创建人"></el-table-column>
             <el-table-column label="操作" width="150">

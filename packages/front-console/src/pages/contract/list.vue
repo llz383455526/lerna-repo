@@ -43,7 +43,7 @@
                     <span>V{{scope.row.versionSeq}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="versionStartDate" label="版本有效期"></el-table-column>
+            <el-table-column prop="versionStartDate" label="版本生效时间"></el-table-column>
             <el-table-column prop="lastUpdateAt" label="更新时间" width="180">
                 <template slot-scope="scope">
                     <span>{{scope.row.lastUpdateAt | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>

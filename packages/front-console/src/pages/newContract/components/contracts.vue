@@ -27,11 +27,11 @@
                                     value-format="yyyy-MM-dd">
                     </el-date-picker>
                 </el-form-item>
-                <!-- <el-form-item label="业务方案" :prop="'contracts.'+index+'.goodsId'" :rules="{required: true, message: '请选择业务方案', trigger: 'change'}">
+                <el-form-item label="业务方案" :prop="'contracts.'+index+'.goodsId'" :rules="{required: true, message: '请选择业务方案', trigger: 'change'}">
                     <el-select v-model="formItem.goodsId" placeholder="请选择" style="width:400px;">
-                        <el-option v-for="(item, key) in (formItem.goodsList.length ? formItem.goodsList : goodsList)" :key="key" :label="item.name" :value="item.id"></el-option>
+                        <el-option v-for="(item, key) in (formItem.goodsList.length ? formItem.goodsList : info.goodsList)" :key="key" :label="item.name" :value="item.id"></el-option>
                     </el-select>
-                </el-form-item> -->
+                </el-form-item>
                 <el-form-item label="结算方式" :prop="'contracts.'+index+'.settleType'" :rules="{required: true, message: '请选择结算方式', trigger: 'change'}">
                     <el-select v-model="formItem.settleType" placeholder="请选择" style="width:400px;">
                         <el-option v-for="(item,key) in settleTypeList" :key="key" :label="item.text"
@@ -99,7 +99,7 @@ import upload from './upload'
 import { mapGetters } from 'vuex'
 export default {
     name: "companyInfo",
-    props: ['ruleForm', 'editType', 'serviceFeeList', 'showAddBtn', 'showDelBtn', 'goodsList'],
+    props: ['ruleForm', 'editType', 'serviceFeeList', 'showAddBtn', 'showDelBtn'],
     components: {
         contractCreateItem,
         contractCloseItem,
@@ -298,6 +298,17 @@ export default {
             this.upDataServerType()
         },
         formAdd(ev) {
+            // 判断重复
+            const repeat = this.ruleForm.contracts.some(el => {
+                return el.serviceCompanyId === this.info.serviceCompanyId
+            })
+            if(repeat) {
+                this.$message({
+                    message: '已有相同落地公司',
+                    type: 'warning'
+                });
+                return
+            }
             const customCompanyId = this.ruleForm.customerId
             const serviceCompanyId = this.info.serviceCompanyId
             const param = { customCompanyId, serviceCompanyId }
