@@ -317,7 +317,7 @@
                     endDate: [
                         {required: true, message: '请选择合同起止时间', trigger: 'blur'}
                     ],
-                    'prePayContent.fixFee': [
+                    'prePayContent.serviceFeeRate': [
                         {type: 'number', required: true, message: '请输入正确的服务费收费（大于零且最多两位小数）', trigger: 'blur'}
                     ],
                     openInvoiceType: [
@@ -416,9 +416,9 @@
                     prePayContent: {
                         discountRate: '',
                         fixFee: '',
-                        secondType: 'real',
+                        secondType: '',
                         serviceFeeRate: '',
-                        serviceFeeType: 'ratio'
+                        serviceFeeType: 'real'
                     },
                     serviceFeeContent: {
                         discountRate: '',
@@ -734,10 +734,10 @@
                 this.$refs['contractForm'].validateField('prePayContent.fixFee')
             },
             calcuServiceFeeReverse() {
-                if(this.contractForm.prePayContent.secondType == 'real') {
+                if(this.contractForm.prePayContent.serviceFeeType == 'real') {
                     this.prevRatio = this.contractForm.prePayContent.serviceFeeRate
                 }
-                if(this.contractForm.prePayContent.secondType == 'should') {
+                if(this.contractForm.prePayContent.serviceFeeType == 'should') {
                     this.prevRatio_1 = this.contractForm.prePayContent.serviceFeeRate
                     this.contractForm.prePayContent.serviceFeeType = 'ratio_1'
                     this.showPrev = 2
@@ -881,9 +881,9 @@
                         this.contractForm.prePayContent = {
                             discountRate: '',
                             fixFee: '',
-                            secondType: 'real',
+                            secondType: '',
                             serviceFeeRate: '',
-                            serviceFeeType: 'ratio'
+                            serviceFeeType: 'real'
                         }
                     }
                     if(!this.contractForm.serviceTypeList) {
@@ -896,7 +896,7 @@
                         })
                         this.contractForm.serviceTypeList = serviceTypeList
                     }
-                    this.contractForm.prePayContent.fixFee = this.contractForm.prePayContent.fixFee || 0
+                    this.contractForm.prePayContent.serviceFeeRate = this.contractForm.prePayContent.serviceFeeRate || 0
                     this.contractForm.serviceFeeContent.fixFee = this.contractForm.serviceFeeContent.fixFee || 0
                     this.contractForm.serviceFeeContent.monthIncomeAmount = this.contractForm.serviceFeeContent.monthIncomeAmount || '2.8'
                     if(this.contractForm.serviceFeeContent2 && !this.contractForm.serviceFeeContent2.containMonthAmount && !this.contractForm.serviceFeeContent.containMonthAmount) {

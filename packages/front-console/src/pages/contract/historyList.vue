@@ -2,7 +2,11 @@
     <div style="background-color:#fff;padding:15px;">
         <div style="margin-bottom:30px;">查看历史版本</div>
         <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
-            <el-table-column prop="versionSeq" label="版本号"></el-table-column>
+            <el-table-column prop="versionSeq" label="版本号">
+            	<template slot-scope="scope">
+                    <span>V{{scope.row.versionSeq}}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="statusName" label="状态"></el-table-column>
             <el-table-column prop="flowMemo" label="版本说明"></el-table-column>
             <el-table-column prop="createAt" label="创建时间"></el-table-column>

@@ -38,7 +38,11 @@
             <el-table-column prop="prePayFeeName" label="服务费是否预收" width="140"></el-table-column>
             <el-table-column prop="contractStartDate" label="合同开始时间"></el-table-column>
             <el-table-column prop="contractEndDate" label="合同结束时间"></el-table-column>
-            <el-table-column prop="versionSeq" label="合同版本"></el-table-column>
+            <el-table-column prop="versionSeq" label="合同版本">
+            	<template slot-scope="scope">
+                    <span>V{{scope.row.versionSeq}}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="versionStartDate" label="版本有效期"></el-table-column>
             <el-table-column prop="lastUpdateAt" label="更新时间" width="180">
                 <template slot-scope="scope">

@@ -8,7 +8,7 @@
             </h4>
         <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">版本生效月份：</el-col>
-            <el-col :span="8">{{detail.versionStartDate}}</el-col>
+            <el-col :span="8">{{detail.versonTimeMemo}}</el-col>
         </el-row>
         <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">企业名称：</el-col>
