@@ -86,9 +86,9 @@ class ContractModel extends BaseModel {
             status: '',
             // 送审的三个字段
             approveType: '',
-            // originalType: '',
-            // originalTypeName: '',
-            // original: '',
+            originalType: '',
+            originalTypeName: '',
+            original: '',
             receiver: '',
             receivePhone: '',
             receiveAddrList: [],

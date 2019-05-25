@@ -10,51 +10,51 @@
                     <el-step title="选择落地公司"></el-step>
                     <el-step title="附加条款"></el-step>
                 </el-steps>
-                <el-form label-width="200px" :inline="true" :model="ruleForm" ref="contractForm" :rules="rules">
+                <el-form label-width="200px" :inline="true" :model="contractModel.contractForm" ref="contractForm" :rules="check.rules">
                     <div v-if="active === 1">
                         <h3 class="green">请选择客户企业信息</h3>
                         <el-form-item label="选择已有客户信息" prop="customerId">
-                            <el-select style="width:450px;" v-model="ruleForm.customerId" filterable @change="companyChange">
+                            <el-select style="width:450px;" v-model="contractModel.contractForm.customerId" filterable @change="companyChange">
                                 <el-option v-for="(item, key) in companyIdentityList" :key="key" :label="item.name" :value="item.id"></el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="客户性质" prop="customNature">
-                            <el-radio v-model="ruleForm.customNature"
+                            <el-radio v-model="contractModel.contractForm.customNature"
                                     v-for="(item, key) in optionModel.customNatureList"
                                     :key="key" :label="item.value">{{item.text}}</el-radio>
                             <i class="el-icon-question ml10" title="非直接用工企业：人力资源公司、服务外包公司、城市合伙人公司、第三方平台等"></i>
                         </el-form-item>
                         <hr>
-                        <contractOption :contractModel="saleContract" :ruleForm="ruleForm"></contractOption>
+                        <contractOption :contractModel="contractModel"></contractOption>
                         <el-form-item label="客户类型" prop="originalType">
-                            <el-radio-group v-model="ruleForm.originalType" :disabled="true">
+                            <el-radio-group v-model="contractModel.contractForm.originalType" :disabled="true">
                                 <el-radio v-for="(item, key) in originalTypeList" :key="key" :label="item.value">{{item.text}}</el-radio>
                             </el-radio-group>
                         </el-form-item>
-                        <template v-if="ruleForm.originalType == 20">
+                        <template v-if="contractModel.contractForm.originalType == 20">
                             <el-form-item label="代理商名称" prop="agentCompanyId" :rules="{ required: true, message: '请选择代理商', trigger: 'change' }">
-                                <el-select v-model="ruleForm.agentCompanyId" style="width:900px;" filterable @change="agentChange" disabled>
+                                <el-select v-model="contractModel.contractForm.agentCompanyId" style="width:900px;" filterable @change="agentChange" disabled>
                                     <el-option v-for="e in agentList" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
                                 </el-select>
                             </el-form-item>
                         </template>
                         <el-form-item label="客户归属" prop="original">
-                            <el-radio-group v-model="ruleForm.original" style="width:1100px;" :disabled="true">
+                            <el-radio-group v-model="contractModel.contractForm.original" style="width:1100px;" :disabled="true">
                                 <el-radio v-for="(item, key) in originalsList" :key="key" :label="item.value">{{item.text}}</el-radio>
                             </el-radio-group>
                         </el-form-item>
                         <el-form-item label="付款方式" prop="vciPayType">
-                            <el-select style="width:450px;" v-model="ruleForm.vciPayType">
+                            <el-select style="width:450px;" v-model="contractModel.contractForm.vciPayType">
                                 <el-option v-for="(item, key) in vciPayTypeList" :key="key" :label="item.text" :value="item.value"></el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="发票类型" prop="invoiceType">
-                            <el-select style="width:450px;" v-model="ruleForm.invoiceType">
+                            <el-select style="width:450px;" v-model="contractModel.contractForm.invoiceType">
                                 <el-option v-for="(item, key) in invoiceTypeList" :key="key" :label="item.text" :value="item.value"></el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="结算日期" prop="vciSettleExp" v-if="ruleForm.vciPayType == 30" :rules="{required: true, message: '请输入结算日期', trigger: 'blur'}">
-                            <el-input v-model="ruleForm.vciSettleExp" style="width:450px;">
+                        <el-form-item label="结算日期" prop="vciSettleExp" v-if="contractModel.contractForm.vciPayType == 30" :rules="{required: true, message: '请输入结算日期', trigger: 'blur'}">
+                            <el-input v-model="contractModel.contractForm.vciSettleExp" style="width:450px;">
                                 <template slot="prepend">
                                     甲乙双方确认以每月
                                 </template>
@@ -64,8 +64,8 @@
                             </el-input>
                         </el-form-item>
                     </div>
-                    <companyInfo :ruleForm="ruleForm" :serviceFeeList="serviceFeeList" :chargeByName="chargeByName" v-if="active === 2"></companyInfo>
-                    <additionalClause :ruleForm="ruleForm" v-if="active === 3"></additionalClause>
+                    <companyInfo :ruleForm="contractModel.contractForm" :serviceFeeList="serviceFeeList" :chargeByName="chargeByName" v-if="active === 2"></companyInfo>
+                    <additionalClause :ruleForm="contractModel.contractForm" v-if="active === 3"></additionalClause>
                 </el-form>
                 <hr>
                 <div class="wizard-actions">
@@ -91,10 +91,14 @@ import { showNotify } from "../../plugin/utils-notify";
 import _ from 'lodash'
 import optionModel from '../../model/option/optionModel'
 import additionalClause from './components/additionalClause.vue' // 合同附加条款
+import ContractModel from '../../model/contract/newContract/ContractModel' // 数据模型
+import Check from '../../model/contract/newContract/check.js' // 检测数据模型
 export default {
     components: { companyInfo, options, checkboxs, radios, contractOption, additionalClause },
     data() {
         return {
+            contractModel: new ContractModel(),
+            check: new Check(),
             active: 1,
             ruleForm: {
                 customerId: '', // 客户信息id
@@ -164,14 +168,12 @@ export default {
             customerCompaniesList: 'customerCompaniesList',
             companyIdentityList: 'companyIdentityList',
             contractTplList: 'contractTplList',
-            saleContract: 'saleContract',
             industryTypeList: 'industryTypeList',
             serviceTypeList: 'serviceTypeList',
             originalTypeList: 'originalTypeList',
             originalsList: 'originalsList',
             invoiceTypeList: 'invoiceTypeList',
             vciPayTypeList: 'vciPayTypeList',
-            saleContractRules: 'saleContractRules',
             agentList: 'agentList',
         })
     },
@@ -190,7 +192,7 @@ export default {
         save() {
             let url = '/api/opencrm/workflow/save_draft';
             let form = {
-                datas: this.ruleForm,
+                datas: this.contractModel.contractForm,
                 instanceId: this.instanceId,
                 workflowType: 'add_sale_contract'
             };
@@ -202,7 +204,7 @@ export default {
             })
         },
         submit() {
-            if (!this.ruleForm.contracts.length) {
+            if (!this.contractModel.contractForm.contracts.length) {
                 showNotify('error', '请添加落地公司！')
                 return;
             }
@@ -210,7 +212,7 @@ export default {
                 if (valid) {
 
                     // 请选择合同附件那一步 需要上传清单的判断
-                    if (this.ruleForm.payAndInvoiceSame === '0' && this.ruleForm.customUnderAttachList.length  === 0) {
+                    if (this.contractModel.contractForm.payAndInvoiceSame === '0' && this.contractModel.contractForm.customUnderAttachList.length  === 0) {
                         showNotify('error', '请上传清单');
                         return;
                     }
@@ -224,7 +226,7 @@ export default {
 
                         const url = '/api/contract-web/contract/build-contract-attachments'
                         const param = {
-                            datas: this.ruleForm,
+                            datas: this.contractModel.contractForm,
                             instanceId: this.instanceId,
                             workflowType: 'add_sale_contract',
                         }
@@ -266,10 +268,10 @@ export default {
             const obj = this.companyIdentityList.find(item => {
                 return item['id'] === ev
             })
-            this.ruleForm.customerName = obj.name
-            this.ruleForm.original = obj.original
-            this.ruleForm.originalType = obj.originalType
-            this.ruleForm.agentCompanyId = obj.agentCompanyId
+            this.contractModel.contractForm.customerName = obj.name
+            this.contractModel.contractForm.original = obj.original
+            this.contractModel.contractForm.originalType = obj.originalType
+            this.contractModel.contractForm.agentCompanyId = obj.agentCompanyId
         },
         agentChange() {
             this.getChargeByName()
