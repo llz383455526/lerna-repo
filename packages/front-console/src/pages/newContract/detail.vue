@@ -119,6 +119,10 @@ export default {
   methods: {
       // 校验C端签约
       checkCSign() {
+          if (this.contractModel.workflowType === 'update_sale_contract'
+                || this.contractModel.workflowType === 'update_ns_sale_contract') {
+              return true
+          }
           if (!this.contractForm.signForm
               || !this.contractForm.smsType
               || !this.contractForm.passportType
