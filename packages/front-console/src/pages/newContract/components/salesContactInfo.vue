@@ -9,8 +9,7 @@
         <el-form-item label="销售联系邮箱" prop="contractEmail">
             <el-input 
                 v-model="contractModel.contractForm.contractEmail" 
-                style="width:450px;" 
-                :disabled="contractModel.workflowType === 'update_sale_contract'"></el-input>
+                style="width:450px;"></el-input>
         </el-form-item>
         <el-form-item label="销售联系电话" prop="contractTel">
             <el-input 
