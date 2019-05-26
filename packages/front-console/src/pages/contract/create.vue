@@ -48,11 +48,11 @@
             <el-form-item label="预收服务费" prop="prePayContent.fixFee" v-if="contractForm.prePayType == 1">
                 <el-row class="mb15">
                     <el-col :span="6">
-                        <el-radio label="real" v-model="contractForm.prePayContent.serviceFeeType" @change="prveFee(1)" disabled>实发金额</el-radio>
+                        <el-radio label="real" v-model="contractForm.prePayContent.serviceFeeType" @change="prveFee(1)">实发金额</el-radio>
                     </el-col>
                     <el-col :span="15">
                         <div style="float: left; width: 70px; color: #606266;">实发金额 * </div>
-                        <el-input v-model="prevRatio" @blur="prveFee(1)" disabled style="width: calc(100% - 70px);">
+                        <el-input v-model="prevRatio" @blur="prveFee(1)" style="width: calc(100% - 70px);">
                             <template slot="append">% 每笔</template>
                         </el-input>
                     </el-col>
@@ -62,15 +62,15 @@
                 </el-row>
                 <el-row>
                     <el-col :span="6">
-                        <el-radio label="should" v-model="contractForm.prePayContent.serviceFeeType" @change="prveFee(2)" disabled>应发金额</el-radio>
+                        <el-radio label="should" v-model="contractForm.prePayContent.serviceFeeType" @change="prveFee(2)">应发金额</el-radio>
                     </el-col>
                     <el-col :span="15">
                         <div style="display: inline-block; width: 110px; color: #606266;">实发金额 / ( 1 -  </div>
-                        <el-input v-model="prevRatio_1" @blur="prveFee(2)" disabled style="width: 135px;">
+                        <el-input v-model="prevRatio_1" @blur="prveFee(2)" style="width: 135px;">
                             <template slot="append">%</template>
                         </el-input>
                         <div style="display: inline-block; width: 20px; color: #606266;">) * </div>
-                        <el-input v-model="prevRatio_1" @blur="prveFee(2)" disabled style="width: 160px;">
+                        <el-input v-model="prevRatio_1" @blur="prveFee(2)" style="width: 160px;">
                             <template slot="append">% 每笔</template>
                         </el-input>
                     </el-col>
