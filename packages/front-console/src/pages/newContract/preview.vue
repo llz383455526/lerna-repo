@@ -78,6 +78,7 @@
                             <div class="col-xs-12">落地公司名称：{{ formItem.serviceCompanyName }}
                                 <el-checkbox v-model="formItem.showServiceCompanyInfo" label="1" disabled>合同中显示服务商收款账户信息</el-checkbox>
                             </div>
+                            <div class="col-xs-12" v-if="formItem.startDate">合同期限：{{ formItem.startDate + ' 至 ' + formItem.endDate }}</div>
                             <div class="col-xs-12">结算方式：{{ getText(formItem.settleType, contractModel.settleTypeList)
                                 }}</div>
                             <div class="col-xs-12">业务方案：{{ getText(formItem.goodsId, formItem.goodsList, 'id', 'name')
