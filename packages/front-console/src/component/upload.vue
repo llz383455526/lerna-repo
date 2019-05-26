@@ -5,8 +5,8 @@
                 <div class="ditem">
                     <div>下载模板文件：</div>
                     <div>
-                        <a class="abtn" :href="uploadDowload || '/api/sysmgr-web/client-user/download-client-user-import-template'" :download="uploadTitle+'.xlsx'" target="_blank">下载模板</a>
-                        <div>请先下载{{uploadTitle || 'C端客户导入模版'}}</div>
+                        <a class="abtn" :href="uploadDowload" :download="uploadTitle+'.xlsx'" target="_blank">下载模板</a>
+                        <div>请先下载{{uploadTitle}}</div>
                     </div>
                 </div>
                 <div class="ditem">
@@ -60,10 +60,12 @@ export default {
             type: Boolean,
         },
         uploadTitle: {
-            type: String
+            type: String,
+            default: 'C端客户导入模版'
         },
         uploadDowload: {
-            type: String
+            type: String,
+            default: '/api/sysmgr-web/client-user/download-client-user-import-template'
         },
         targetType: {
             type: String

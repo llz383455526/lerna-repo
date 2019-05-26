@@ -100,6 +100,12 @@
             </div>
             <div class="title">系统配置</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="eshow = true">编辑</el-button>
             <div class="box">
+                <!-- <el-row :gutter="20">
+                    <el-col :span="20">
+                        <el-col :span="6" class="right">先签约后发放</el-col>
+                        <el-col :span="10" style="word-wrap: break-word;">{{data.signPayForm == '1' ? '是' : '否'}}</el-col>
+                    </el-col>
+                </el-row> -->
                 <el-row :gutter="20">
                     <el-col :span="20">
                         <el-col :span="6" class="right">C端银行卡绑定（C端签约时）</el-col>
@@ -278,6 +284,10 @@
         </el-dialog>
         <el-dialog title="编辑" :visible.sync="eshow" @open="initSetForm" width="50%">
             <el-form :model="setForm" label-width="220px" ref="setForm">
+                <!-- <el-form-item label="先签约后发放" prop="signPayForm">
+                    <el-radio v-model="setForm.signPayForm" label="1">是</el-radio>
+                    <el-radio v-model="setForm.signPayForm" label="0">否</el-radio>
+                </el-form-item> -->
                 <el-form-item label="C端银行卡绑定（C端签约时）" prop="clientAccountBind">
                     <el-radio v-model="setForm.clientAccountBind" :label="1">开启</el-radio>
                     <el-radio v-model="setForm.clientAccountBind" :label="0">关闭</el-radio>
@@ -396,7 +406,8 @@ export default {
                 appId: '',
                 clientAccountBind: '',
                 apiRecharge: '',
-                reexchangeCallbackUrl: ''
+                reexchangeCallbackUrl: '',
+                signPayForm: ''
             }
         };
     },

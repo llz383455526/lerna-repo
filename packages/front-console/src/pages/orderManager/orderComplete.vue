@@ -15,11 +15,31 @@
                 {{msg.createByName}} 创建于 {{msg.createAt}}
             </div>
         </div>
-        <el-steps id="steps" :active="3" align-center size="small">
-            <el-step title="支付费用"></el-step>
-            <el-step title="执行发放"></el-step>
-            <el-step title="查看结果"></el-step>
-        </el-steps>
+        <div id="steps">
+            <template v-if="msg.signState === '-1'">
+                <el-steps :active="3" align-center size="small">
+                    <el-step title="支付费用"></el-step>
+                    <el-step title="执行发放"></el-step>
+                    <el-step title="查看结果"></el-step>
+                </el-steps>
+            </template>
+            <template v-if="msg.signState === '10'">
+                <el-steps :active="4" align-center size="small">
+                    <el-step title="未发起签约"></el-step>
+                    <el-step title="支付费用"></el-step>
+                    <el-step title="执行发放"></el-step>
+                    <el-step title="查看结果"></el-step>
+                </el-steps>
+            </template>
+            <template v-if="msg.signState === '20'">
+                <el-steps :active="4" align-center size="small">
+                    <el-step title="已发起签约"></el-step>
+                    <el-step title="支付费用"></el-step>
+                    <el-step title="执行发放"></el-step>
+                    <el-step title="查看结果"></el-step>
+                </el-steps>
+            </template>
+        </div>
         <div id="orderCost">
             <div class="mtitle">
                 订单费用
@@ -78,7 +98,7 @@
                 </el-form-item>
                 <el-form-item label="发放结果" prop="payState">
                     <el-select v-model="form.payState" filterable size="small">
-                        <el-option v-for="e in payOrderState" :key="e" :value="e.value" :label="e.text"></el-option>
+                        <el-option v-for="e in payOrderState" :key="e.value" :value="e.value" :label="e.text"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -86,7 +106,16 @@
                     <el-button size="small" @click="reset('query')">清空所有条件</el-button>
                 </el-form-item>
             </el-form>
-            <a target="_bank" :href="`${baseUrl}/api/console-dlv/company/salary-online-order/download-pay-item-details${term}`"><el-button type="primary" size="small" style="float: right;">导出数据</el-button></a>
+            <div class="clearfix">
+                <a target="_bank" :href="`${baseUrl}/api/console-dlv/company/salary-online-order/download-pay-item-details${term}`">
+                    <el-button type="primary" size="small" style="float: right;">导出数据</el-button>
+                </a>
+                <el-tabs v-model="activeTab" @tab-click="handleStateClick" style="float: left;">
+                    <el-tab-pane :label="`全部(${stateStatistics['totalCount']})`" name="all"></el-tab-pane>
+                    <el-tab-pane :label="`发放成功(${stateStatistics['successCount']})`" name="30"></el-tab-pane>
+                    <el-tab-pane :label="`发放失败(${stateStatistics['failCount']})`" name="40"></el-tab-pane>
+                </el-tabs>
+            </div>
             <el-button class="mr20" v-if="checkRight(permissions, 'console-dlv:/company/salary-online-order/download-batch-electronic-return') && msg.supportCertificateDownload" type="primary" size="small" style="float: right;" @click="download">导出流水回单</el-button>
             <el-table :data="detail" >
                 <el-table-column label="收款方账号名称" prop="accountName"></el-table-column>
@@ -101,6 +130,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="成功发放时间" prop="payRespAt"></el-table-column>
+                <el-table-column label="签约状态" prop="signMsg"></el-table-column>
                 <el-table-column label="发放结果" prop="payStateName"></el-table-column>
                 <el-table-column label="备注" prop="payMsg"></el-table-column>
                 <el-table-column label="操作" v-if="checkRight(permissions, 'console-dlv:/company/salary-online-order/download-electronic-return')">
@@ -169,7 +199,8 @@ export default {
           orderId: '',
           payState: '',
           page: 1,
-          pageSize: 10
+          pageSize: 10,
+          signState: ''
       },
       term: '',
       msg: [],
@@ -183,7 +214,9 @@ export default {
       showPro: false,
       delay: '',
       proNum: 0,
-      frame: ''
+      frame: '',
+        activeTab: 'all',
+        stateStatistics: []
     };
   },
   computed: {
@@ -233,6 +266,15 @@ export default {
     this.$store.dispatch('getPayOrderState')
   },
   methods: {
+      handleStateClick(tab) {
+        const { name } = tab
+        if (name === 'all') {
+            this.form.payState = ''
+        } else {
+            this.form.payState = name
+        }
+        this.query()
+    },
       query(a) {
         if(isNaN(a)){
             a = 1
@@ -241,6 +283,7 @@ export default {
         post('/api/console-dlv/company/salary-online-order/query-salary-order-item', this.form).then(data => {
             this.detail = data.list
             this.total = data.total
+            this.stateStatistics = data.stateStatistics
         })
       },
       setSize(a) {

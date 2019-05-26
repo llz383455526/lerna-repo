@@ -35,7 +35,7 @@
                     <i class="el-icon-question" title="表示按照固定比例来收取服务费。计算公式：实发发金额 * 收费比例 = 服务费"></i>
                 </el-col>
             </template>
-        </el-row> 
+        </el-row>
         <!-- <el-row class="w650">
             <el-col :span="6">
                 <el-radio :label="2" v-model="showInputRatio" @change="ratioChange">固定比例收费<br>（应发金额）</el-radio>
@@ -68,7 +68,7 @@
                                 <el-input v-model="scope.row.startAmount" class="input_100" @change="checkTable(true)">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsStart" @change="equals(scope.$index, 0)">含 
+                                <el-checkbox v-model="scope.row.equalsStart" @change="equals(scope.$index, 0)">含
                                     <template v-if="scope.row.sequence == columnIndex - 1">
                                         以上
                                     </template>
@@ -85,7 +85,7 @@
                                 <el-input v-model="scope.row.endAmount" class="input_100" @change="checkTable">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsEnd" @change="equals(scope.$index, 1)">含 
+                                <el-checkbox v-model="scope.row.equalsEnd" @change="equals(scope.$index, 1)">含
                                     <template v-if="!scope.row.sequence">
                                         以下
                                     </template>
@@ -130,7 +130,7 @@
                                 <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 4)" class="input_100" @change="checkTable(true)">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 4)" @change="equals(scope.$index, 0)">含 
+                                <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 4)" @change="equals(scope.$index, 0)">含
                                     <template v-if="scope.row.sequence == columnIndex - 1">
                                         以上
                                     </template>
@@ -147,7 +147,7 @@
                                 <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 4)" class="input_100" @change="checkTable">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 4)" @change="equals(scope.$index, 1)">含 
+                                <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 4)" @change="equals(scope.$index, 1)">含
                                     <template v-if="!scope.row.sequence">
                                         以下
                                     </template>
@@ -200,7 +200,7 @@
                                 <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable(true)">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0)">含 
+                                <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0)">含
                                     <template v-if="scope.row.sequence == columnIndex - 1">
                                         以上
                                     </template>
@@ -217,7 +217,7 @@
                                 <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 1)">含 
+                                <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 1)">含
                                     <template v-if="!scope.row.sequence">
                                         以下
                                     </template>
@@ -256,7 +256,7 @@
                                 <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable(true)">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0, 2)">含 
+                                <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0, 2)">含
                                     <template v-if="scope.row.sequence == columnIndex - 1">
                                         以上
                                     </template>
@@ -273,7 +273,7 @@
                                 <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 1, 2)">含 
+                                <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 1, 2)">含
                                     <template v-if="!scope.row.sequence">
                                         以下
                                     </template>
@@ -426,7 +426,8 @@ export default {
             float2: /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/,
             showInputRatio: 0,
             columnIndex: 0,
-            columnIndex2: 0
+            columnIndex2: 0,
+            inputRatio: null
         }
     },
     mounted() {
@@ -439,6 +440,7 @@ export default {
             if(this.contractForm.serviceFeeContent2) {
                 this.columnIndex2 = this.contractForm.serviceFeeContent2.stepwiseList.length
             }
+            console.log('this.contractForm.serviceFeeContent = ', this.contractForm.serviceFeeContent)
             if (this.contractForm.serviceFeeContent.serviceFeeType == 'dummy') {
                 this.showInputRatio = -1
             }
@@ -467,6 +469,7 @@ export default {
                 }
             }
             this.transferObj()
+            this.checkTable()
         },
         ratioChange() {
             if(this.showInputRatio == 3) {
@@ -583,7 +586,8 @@ export default {
         checkTable(type) {
             var results = []
             if(this.showInputRatio == 1) {
-                results.push((this.float2.test(this.inputRatio) && this.inputRatio <= 100) ? 0 : '')
+                const data = (this.float2.test(this.inputRatio) && this.inputRatio <= 100) ? 0 : ''
+                results.push(data)
             }
             if(this.showInputRatio == 2) {
                 results.push((this.float2.test(this.inputRatio_1) && this.inputRatio_1 <= 100) ? 0 : '')

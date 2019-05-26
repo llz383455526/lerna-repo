@@ -158,6 +158,22 @@ class Check extends BaseModel {
             ],
             originalType: [
               { required: true, message: "请选择客户类型", trigger: "change" }
+            ],
+            // 电子签约
+            signPayForm: [
+                { required: true, message: "请选择是否先签后发", trigger: "change" }
+            ],
+            signForm: [
+                { required: true, message: "请选择签约介质", trigger: "change" }
+            ],
+            smsType: [
+                { required: true, message: "请选择是否短信通知", trigger: "change" }
+            ],
+            passportType: [
+                { required: true, message: "请选择是否上传身份证", trigger: "change" }
+            ],
+            signMode: [
+                { required: true, message: "请选择签署方式", trigger: "change" }
             ]
         };
     }

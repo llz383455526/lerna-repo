@@ -1,185 +1,443 @@
 <template>
-    <div class="main">
-        <el-button type="primary" @click="show = true" v-if="showCreateBtn">创建工单</el-button>
-        <el-tabs class="mt20" v-model="activeName" @tab-click="tabClick">
-            <el-tab-pane name="getRuntimeTaskPageList">
-                <span slot="label">待办 <span class="red_0">{{count.TODO}}</span></span>
-            </el-tab-pane>
-            <el-tab-pane name="getBizProcessPageList">
-                <span slot="label">已处理 <span class="red_0 silver">{{count.FINISH}}</span></span>
-            </el-tab-pane>
-            <el-tab-pane name="getCreateByMePageList">
-                <span slot="label">我创建的 <span class="red_0 green_0">{{count.CREATE_BY_ME}}</span></span>
-            </el-tab-pane>
-            <el-tab-pane name="getReadTaskPageList">
-                <span slot="label">待阅 <span class="red_0 blue_0">{{count.UNREAD}}</span></span>
-            </el-tab-pane>
-            <el-tab-pane name="getAboutMePageList">
-                <!-- <span class="red_0">{{count.FINISH}}</span> -->
-                <span slot="label">与我相关</span>
-            </el-tab-pane>
-        </el-tabs>
-        <el-form :model="form" size="small" :inline="true" ref="form">
-            <el-form-item label="工单单号" prop="processInstanceId">
-                <el-input v-model="form.processInstanceId"></el-input>
-            </el-form-item>
-            <el-form-item label="客户名称" prop="customerCompanyId">
-                <el-select v-model="form.customerCompanyId" filterable>
-                    <el-option v-for="e in companys" :key="e.id" :value="e.id" :label="e.name"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="服务商" prop="serviceCompanyId">
-                <el-select v-model="form.serviceCompanyId" filterable>
-                    <el-option v-for="e in serviceCompanyList" :key="e.id" :value="e.id" :label="e.name"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="工单类型" prop="procDefKey">
-                <el-select v-model="form.procDefKey" filterable @change="getStatus">
-                    <el-option v-for="e in typeList" :key="e.key" :value="e.key" :label="e.name"></el-option>
-                </el-select>
-            </el-form-item>
-            <!-- <el-form-item label="当前步骤" prop="taskName">
+  <div class="main">
+    <el-button
+      type="primary"
+      @click="show = true"
+      v-if="showCreateBtn"
+    >
+      创建工单
+    </el-button>
+    <el-tabs
+      class="mt20"
+      v-model="activeName"
+      @tab-click="tabClick"
+    >
+      <el-tab-pane name="getRuntimeTaskPageList">
+        <span slot="label">待办 <span class="red_0">{{ count.TODO }}</span></span>
+      </el-tab-pane>
+      <el-tab-pane name="getBizProcessPageList">
+        <span slot="label">已处理 <span class="red_0 silver">{{ count.FINISH }}</span></span>
+      </el-tab-pane>
+      <el-tab-pane name="getCreateByMePageList">
+        <span slot="label">我创建的 <span class="red_0 green_0">{{ count.CREATE_BY_ME }}</span></span>
+      </el-tab-pane>
+      <el-tab-pane name="getReadTaskPageList">
+        <span slot="label">待阅 <span class="red_0 blue_0">{{ count.UNREAD }}</span></span>
+      </el-tab-pane>
+      <el-tab-pane name="getAboutMePageList">
+        <!-- <span class="red_0">{{count.FINISH}}</span> -->
+        <span slot="label">与我相关</span>
+      </el-tab-pane>
+    </el-tabs>
+    <el-form
+      :model="form"
+      size="small"
+      :inline="true"
+      ref="form"
+    >
+      <el-form-item
+        label="工单单号"
+        prop="processInstanceId"
+      >
+        <el-input v-model="form.processInstanceId" />
+      </el-form-item>
+      <el-form-item
+        label="客户名称"
+        prop="customerCompanyId"
+      >
+        <el-select
+          v-model="form.customerCompanyId"
+          filterable
+        >
+          <el-option
+            v-for="e in companys"
+            :key="e.id"
+            :value="e.id"
+            :label="e.name" 
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item
+        label="服务商"
+        prop="serviceCompanyId"
+      >
+        <el-select
+          v-model="form.serviceCompanyId"
+          filterable
+        >
+          <el-option
+            v-for="e in serviceCompanyList"
+            :key="e.id"
+            :value="e.id"
+            :label="e.name"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item
+        label="工单类型"
+        prop="procDefKey"
+      >
+        <el-select
+          v-model="form.procDefKey"
+          filterable
+          @change="getStatus"
+        >
+          <el-option
+            v-for="e in typeList"
+            :key="e.key"
+            :value="e.key"
+            :label="e.name"
+          />
+        </el-select>
+      </el-form-item>
+      <!-- <el-form-item label="当前步骤" prop="taskName">
                 <el-select v-model="form.taskName" filterable :no-data-text="form.procDefKey ? '无数据' : '请先选择工单类型'">
                     <el-option v-for="e in stepList" :key="e.taskName" :value="e.taskName" :label="e.taskName"></el-option>
                 </el-select>
             </el-form-item> -->
-            <el-form-item label="工单状态" prop="parentBusinessStatus">
-                <el-select v-model="form.parentBusinessStatus" :no-data-text="form.procDefKey ? '无数据' : '请先选择工单类型'">
-                    <el-option v-for="e in statusList" :key="e.parentBusinessStatus" :value="e.parentBusinessStatus" :label="e.parentBusinessStatus"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="相关交付" prop="deliveryName">
-                <el-select v-model="form.deliveryName" filterable>
-                    <el-option v-for="e in deliveryList" :key="e.id" :value="e.name" :label="e.name"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="相关销售" prop="salesName">
-                <el-select v-model="form.salesName" filterable>
-                    <el-option v-for="e in salesList" :key="e.id" :value="e.name" :label="e.name"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="创建时间">
-                <el-date-picker
-                    v-model="range"
-                    type="daterange"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    value-format="yyyy-MM-dd"
-                    @change="getTime">
-                </el-date-picker>
-            </el-form-item>
-            <!-- <el-form-item label="我创建的" prop="createByMe" v-if="activeName == 'getAboutMePageList'">
+      <el-form-item
+        label="工单状态"
+        prop="parentBusinessStatus"
+      >
+        <el-select
+          v-model="form.parentBusinessStatus"
+          :no-data-text="form.procDefKey ? '无数据' : '请先选择工单类型'"
+        >
+          <el-option
+            v-for="e in statusList"
+            :key="e.parentBusinessStatus"
+            :value="e.parentBusinessStatus"
+            :label="e.parentBusinessStatus"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item
+        label="相关交付"
+        prop="deliveryName"
+      >
+        <el-select
+          v-model="form.deliveryName"
+          filterable
+        >
+          <el-option
+            v-for="e in deliveryList"
+            :key="e.id"
+            :value="e.name"
+            :label="e.name"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item
+        label="相关销售"
+        prop="salesName"
+      >
+        <el-select
+          v-model="form.salesName"
+          filterable
+        >
+          <el-option
+            v-for="e in salesList"
+            :key="e.id"
+            :value="e.name"
+            :label="e.name"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="创建时间">
+        <el-date-picker
+          v-model="range"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd"
+          @change="getTime"
+        />
+      </el-form-item>
+      <!-- <el-form-item label="我创建的" prop="createByMe" v-if="activeName == 'getAboutMePageList'">
                 <el-select v-model="form.createByMe">
                     <el-option v-for="e in createByList" :key="e.text" :value="e.value" :label="e.text"></el-option>
                 </el-select>
             </el-form-item> -->
-            <el-form-item label="阅读状态" prop="status" v-if="activeName == 'getReadTaskPageList'">
-                <el-select v-model="form.status">
-                    <el-option value="" label="所有"></el-option>
-                    <el-option v-for="e in readStatusList" :key="e.value" :value="e.value" :label="e.text"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="query">查询</el-button>
-                <el-button @click="reset">清除</el-button>
-				<el-button @click="exportList" v-if="activeName != 'getReadTaskPageList'">导出excel</el-button>
-            </el-form-item>
-        </el-form>
-        <el-button size="small" type="primary" v-if="activeName == 'getReadTaskPageList'" :disabled="!ids.length" @click="setAllread">全部已阅</el-button>
-        <el-table :data="tableList.list" :key="activeName">
-            <el-table-column label="阅读状态" v-if="activeName == 'getReadTaskPageList'" fixed>
-                <template slot-scope="scope">
-                    <el-button type="text" v-if="scope.row.readStatus == '0'" @click="setRead([scope.row.id])">待阅</el-button>
-                    <el-button type="text" v-else>
-                        <span class="disable">已阅</span>
-                    </el-button>
-                </template>
-            </el-table-column>
-            <el-table-column label="工单单号" width="160px" fixed>
-                <template slot-scope="scope">
-                    <!-- <el-button class="allow" type="text" @click="handle(scope.row, false, activeName != 'getRuntimeTaskPageList' && activeName != 'getBizProcessPageList')">{{scope.row.processInstanceId}}</el-button> -->
-                    <el-button class="allow" type="text" @click="handle(scope.row, activeName != 'getRuntimeTaskPageList', activeName == 'getCreateByMePageList')">{{scope.row.processInstanceId}}</el-button>
-                </template>
-            </el-table-column>
-            <el-table-column label="工单类型" prop="procDefName" width="100px" fixed></el-table-column>
-            <!-- <el-table-column label="当前步骤" prop="taskName" fixed></el-table-column> -->
-            <el-table-column label="工单状态" prop="businessStatus" fixed></el-table-column>
-            <el-table-column label="客户名称" prop="customerCompanyName" width="120px" fixed></el-table-column>
-            <el-table-column label="服务商" prop="serviceCompanyName" width="120px" fixed></el-table-column>
-            <el-table-column label="紧急程度" width="140px" v-if="activeName != 'getBizProcessPageList'" fixed>
-                <template slot-scope="scope">
-                    <div :class="`tag ${scope.row.emergencyTag}`">{{scope.row.emergencyText}}</div>
-                </template>
-            </el-table-column>
-            <!-- <el-table-column label="代理商" prop="agentCompanyName"></el-table-column> -->
-            <el-table-column label="更新时间" prop="updateTime" width="160px"></el-table-column>
-            <el-table-column label="创建时间" prop="createTime" width="160px"></el-table-column>
-            <el-table-column label="相关销售" prop="salesName" width="120px">
-                <template slot-scope="scope" v-if="scope.row.salesName">
-                    <el-tooltip placement="top">
-                        <div slot="content">
-                            <div v-for="e in scope.row.salesName.split(',')">{{e}}</div>
-                        </div>
-                        <div class="textOver">{{scope.row.salesName}}</div>
-                    </el-tooltip>
-                </template>
-            </el-table-column>
-            <el-table-column label="相关交付" prop="deliveryName" width="120px">
-                <template slot-scope="scope" v-if="scope.row.deliveryName">
-                    <el-tooltip placement="top">
-                        <div slot="content">
-                            <div v-for="e in scope.row.deliveryName.split(',')">{{e}}</div>
-                        </div>
-                        <div class="textOver">{{scope.row.deliveryName}}</div>
-                    </el-tooltip>
-                </template>
-            </el-table-column>
-            <el-table-column label="工单来源" prop="orderSource" width="160px"></el-table-column>
-            <template v-if="activeName == 'getAboutMePageList' || activeName == 'getCreateByMePageList' || activeName == 'getReadTaskPageList'">
-                <el-table-column label="受理部门" prop="currentProcessDeptName" width="120px">
-                    <template slot-scope="scope" v-if="scope.row.currentProcessDeptName">
-                        <el-tooltip placement="top">
-                            <div slot="content">
-                                <div v-for="e in scope.row.currentProcessDeptName.split(',')">{{e}}</div>
-                            </div>
-                            <div class="textOver">{{scope.row.currentProcessDeptName}}</div>
-                        </el-tooltip>
-                    </template>
-                </el-table-column>
-                <el-table-column label="受理人" prop="currentProcessorName" width="120px">
-                    <template slot-scope="scope" v-if="scope.row.currentProcessorName">
-                        <el-tooltip placement="top">
-                            <div slot="content">
-                                <div v-for="e in scope.row.currentProcessorName.split(',')">{{e}}</div>
-                            </div>
-                            <div class="textOver">{{scope.row.currentProcessorName}}</div>
-                        </el-tooltip>
-                    </template>
-                </el-table-column>
-            </template>
-            <el-table-column label="创建人" prop="createdByName" width="120px"></el-table-column>
-        </el-table>
-        <ayg-pagination
-            v-if="tableList.total"
-            :total="tableList.total"
-            :currentPage="form.pageNo"
-            v-on:handleSizeChange="sizeChange"
-            v-on:handleCurrentChange="query">
-        </ayg-pagination>
-        <el-dialog title="创建工单" :visible.sync="show" width="500px">
-            <div class="flexBox">
-                <el-button class="mb20" v-for="(e, i) in btnList" :key="e.text" v-if="checkRight(permissions, e.right)" type="primary" @click="showWork(i)">{{e.text}}</el-button>
+      <el-form-item
+        label="阅读状态"
+        prop="status"
+        v-if="activeName == 'getReadTaskPageList'"
+      >
+        <el-select v-model="form.status">
+          <el-option
+            value=""
+            label="所有"
+          />
+          <el-option
+            v-for="e in readStatusList"
+            :key="e.value"
+            :value="e.value"
+            :label="e.text"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          type="primary"
+          @click="query"
+        >
+          查询
+        </el-button>
+        <el-button @click="reset">
+          清除
+        </el-button>
+        <el-button
+          @click="exportList"
+          v-if="activeName != 'getReadTaskPageList'"
+        >
+          导出excel
+        </el-button>
+      </el-form-item>
+    </el-form>
+    <el-button
+      size="small"
+      type="primary"
+      v-if="activeName == 'getReadTaskPageList'"
+      :disabled="!ids.length"
+      @click="setAllread"
+    >
+      全部已阅
+    </el-button>
+    <el-table
+      :data="tableList.list"
+      :key="activeName"
+    >
+      <el-table-column
+        label="阅读状态"
+        v-if="activeName == 'getReadTaskPageList'"
+        fixed
+      >
+        <template slot-scope="scope">
+          <el-button
+            type="text"
+            v-if="scope.row.readStatus == '0'"
+            @click="setRead([scope.row.id])"
+          >
+            待阅
+          </el-button>
+          <el-button
+            type="text"
+            v-else
+          >
+            <span class="disable">已阅</span>
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="工单单号"
+        width="160px"
+        fixed
+      >
+        <template slot-scope="scope">
+          <!-- <el-button class="allow" type="text" @click="handle(scope.row, false, activeName != 'getRuntimeTaskPageList' && activeName != 'getBizProcessPageList')">{{scope.row.processInstanceId}}</el-button> -->
+          <el-button
+            class="allow"
+            type="text"
+            @click="handle(scope.row, activeName != 'getRuntimeTaskPageList', activeName == 'getCreateByMePageList')"
+          >
+            {{ scope.row.processInstanceId }}
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="工单类型"
+        prop="procDefName"
+        width="100px"
+        fixed
+      />
+      <!-- <el-table-column label="当前步骤" prop="taskName" fixed></el-table-column> -->
+      <el-table-column
+        label="工单状态"
+        prop="businessStatus"
+        fixed
+      />
+      <el-table-column
+        label="客户名称"
+        prop="customerCompanyName"
+        width="120px"
+        fixed 
+      />
+      <el-table-column
+        label="服务商"
+        prop="serviceCompanyName"
+        width="120px"
+        fixed
+      />
+      <el-table-column
+        label="紧急程度"
+        width="140px"
+        v-if="activeName != 'getBizProcessPageList'"
+        fixed
+      >
+        <template slot-scope="scope">
+          <div :class="`tag ${scope.row.emergencyTag}`">
+            {{ scope.row.emergencyText }}
+          </div>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="代理商" prop="agentCompanyName"></el-table-column> -->
+      <el-table-column
+        label="更新时间"
+        prop="updateTime"
+        width="160px" 
+      />
+      <el-table-column
+        label="创建时间"
+        prop="createTime"
+        width="160px"
+      />
+      <el-table-column
+        label="相关销售"
+        prop="salesName"
+        width="120px"
+      >
+        <template
+          slot-scope="scope"
+          v-if="scope.row.salesName"
+        >
+          <el-tooltip placement="top">
+            <div slot="content">
+              <div v-for="e in scope.row.salesName.split(',')">
+                {{ e }}
+              </div>
             </div>
-        </el-dialog>
-        <recharge-dialog :submitCb="submitCb" :showStep="true" ref="rechargeDialog"></recharge-dialog>
-        <recharge-audit-dialog :auditCb="auditCb" :disable="rechargeDisable" :showStep="true" ref="rechargeAuditDialog"></recharge-audit-dialog>
-        <make-invoice ref="makeInvoice"></make-invoice>
-        <audit-invoice :query="query" ref="auditInvoice"></audit-invoice>
-        <knotty @create="submitCb" @handle="auditCb" ref="knotty"></knotty>
-        <insufficient ref="insufficient"></insufficient>
-        <service-insufficient ref="serviceInsufficient"></service-insufficient>
-    </div>
+            <div class="textOver">
+              {{ scope.row.salesName }}
+            </div>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="相关交付"
+        prop="deliveryName"
+        width="120px"
+      >
+        <template
+          slot-scope="scope"
+          v-if="scope.row.deliveryName"
+        >
+          <el-tooltip placement="top">
+            <div slot="content">
+              <div v-for="e in scope.row.deliveryName.split(',')">
+                {{ e }}
+              </div>
+            </div>
+            <div class="textOver">
+              {{ scope.row.deliveryName }}
+            </div>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="工单来源"
+        prop="orderSource"
+        width="160px" 
+      />
+      <template v-if="activeName == 'getAboutMePageList' || activeName == 'getCreateByMePageList' || activeName == 'getReadTaskPageList'">
+        <el-table-column
+          label="受理部门"
+          prop="currentProcessDeptName"
+          width="120px"
+        >
+          <template
+            slot-scope="scope"
+            v-if="scope.row.currentProcessDeptName"
+          >
+            <el-tooltip placement="top">
+              <div slot="content">
+                <div v-for="e in scope.row.currentProcessDeptName.split(',')">
+                  {{ e }}
+                </div>
+              </div>
+              <div class="textOver">
+                {{ scope.row.currentProcessDeptName }}
+              </div>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="受理人"
+          prop="currentProcessorName"
+          width="120px"
+        >
+          <template
+            slot-scope="scope"
+            v-if="scope.row.currentProcessorName"
+          >
+            <el-tooltip placement="top">
+              <div slot="content">
+                <div v-for="e in scope.row.currentProcessorName.split(',')">
+                  {{ e }}
+                </div>
+              </div>
+              <div class="textOver">
+                {{ scope.row.currentProcessorName }}
+              </div>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+      </template>
+      <el-table-column
+        label="创建人"
+        prop="createdByName"
+        width="120px" 
+      />
+    </el-table>
+    <ayg-pagination
+      v-if="tableList.total"
+      :total="tableList.total"
+      :current-page="form.pageNo"
+      @handleSizeChange="sizeChange"
+      @handleCurrentChange="query"
+    />
+    <el-dialog
+      title="创建工单"
+      :visible.sync="show"
+      width="500px"
+    >
+      <div class="flexBox">
+        <el-button
+          class="mb20"
+          v-for="(e, i) in btnList"
+          :key="e.text"
+          v-if="checkRight(permissions, e.right)"
+          type="primary"
+          @click="showWork(i)"
+        >
+          {{ e.text }}
+        </el-button>
+      </div>
+    </el-dialog>
+    <recharge-dialog
+      :submit-cb="submitCb"
+      :show-step="true"
+      ref="rechargeDialog" 
+    />
+    <recharge-audit-dialog
+      :audit-cb="auditCb"
+      :disable="rechargeDisable"
+      :show-step="true"
+      ref="rechargeAuditDialog" 
+    />
+    <make-invoice ref="makeInvoice" />
+    <audit-invoice
+      :query="query"
+      ref="auditInvoice" 
+    />
+    <knotty
+      @create="submitCb"
+      @handle="auditCb"
+      ref="knotty"
+    />
+    <insufficient ref="insufficient" />
+    <service-insufficient ref="serviceInsufficient" />
+  </div>
 </template>
 <script>
 import { get, post, importPost } from "../../store/api"
@@ -487,6 +745,9 @@ export default {
             this.query(true)
         },
         handle(param, look = false, isMe = false) {
+            get(workflow.getTaskId, {processInsId: param.processInstanceId }).then(res => {
+                param.id = res.processTaskId
+            
             switch (param.businessType) {
                 case 'invoice-flow':
                     this.$refs.auditInvoice.transmit({
@@ -548,6 +809,7 @@ export default {
             if(param.readStatus && param.readStatus == '0') {
                 this.setRead([param.id])
             }
+            })
         },
         tabClick(a) {
             if(this.activeName == 'getRuntimeTaskPageList') {

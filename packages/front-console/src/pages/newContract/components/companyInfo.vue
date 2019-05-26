@@ -290,6 +290,13 @@ export default {
             this.upDataServerType()
         },
         formAdd() {
+            if(!this.info.serviceCompanyId) {
+                this.$message({
+                    message: '请选择服务商',
+                    type: 'warning'
+                });
+                return
+            }
 
             let info = _.cloneDeep(this.info);
             let quoteFeeContent = _.cloneDeep(this.quoteFeeContent);
@@ -404,7 +411,7 @@ export default {
     async mounted() {
         await this.$store.dispatch('getServiceTypeList')
         this.$store.dispatch('getAgentList')
-        this.$store.dispatch('getServiceCompaniesList', this.ruleForm.agentCompanyId)
+        this.$store.dispatch('getServiceCompaniesList', this.ruleForm.agentCompanyId = this.ruleForm.agentCompanyId || '')
         this.$store.dispatch('getSettleTypeList')
 
 

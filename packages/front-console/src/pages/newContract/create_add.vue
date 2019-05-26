@@ -9,6 +9,7 @@
                     <el-step title="选择已有企业"></el-step>
                     <el-step title="选择落地公司"></el-step>
                     <el-step title="附加条款"></el-step>
+                    <el-step title="C端签约设置"></el-step>
                 </el-steps>
                 <el-form label-width="200px" :inline="true" :model="contractModel.contractForm" ref="contractForm" :rules="check.rules">
                     <div v-if="active === 1">
@@ -64,15 +65,18 @@
                             </el-input>
                         </el-form-item>
                     </div>
-                    <companyInfo :ruleForm="contractModel.contractForm" :serviceFeeList="serviceFeeList" :chargeByName="chargeByName" v-if="active === 2"></companyInfo>
+                    <div v-if="active === 2">
+                        <companyInfo :ruleForm="contractModel.contractForm" :serviceFeeList="serviceFeeList" :chargeByName="chargeByName"></companyInfo>
+                    </div>
                     <additionalClause :ruleForm="contractModel.contractForm" v-if="active === 3"></additionalClause>
+                    <setEContract :contractForm="contractModel.contractForm" :type="1" v-if="active === 4"></setEContract>
                 </el-form>
                 <hr>
                 <div class="wizard-actions">
                     <el-button @click="prev" v-if="active !== 0">上一步</el-button>
                     <el-button type="primary" @click="backToList('save')">保存并返回</el-button>
-                    <el-button type="success" @click="next" v-if="active !== 3">下一步</el-button>
-                    <el-button type="success" @click="submit" v-if="active === 3">提交</el-button>
+                    <el-button type="success" @click="next" v-if="active !== 4">下一步</el-button>
+                    <el-button type="success" @click="submit" v-if="active === 4">提交</el-button>
                 </div>
             </div>
         </div>
@@ -85,6 +89,7 @@ import options from '../../component/options.vue'
 import checkboxs from '../../component/checkboxs.vue'
 import radios from '../../component/radios.vue'
 import contractOption from './components/contractOption.vue' // 合同选项
+import setEContract from './components/setEContract.vue'  // c端签约设置
 import { mapGetters } from 'vuex';
 import { get, post, postWithErrorCallback } from "../../store/api"
 import { showNotify } from "../../plugin/utils-notify";
@@ -94,7 +99,7 @@ import additionalClause from './components/additionalClause.vue' // 合同附加
 import ContractModel from '../../model/contract/newContract/ContractModel' // 数据模型
 import Check from '../../model/contract/newContract/check.js' // 检测数据模型
 export default {
-    components: { companyInfo, options, checkboxs, radios, contractOption, additionalClause },
+    components: { companyInfo, options, checkboxs, radios, contractOption, additionalClause, setEContract },
     data() {
         return {
             contractModel: new ContractModel(),
@@ -117,6 +122,12 @@ export default {
                 serviceCompanyList: [],
                 contracts: [],
                 receiveAttachments: [],
+                // 电子签约设置
+                signForm: '',
+                signPayForm: '',
+                passportType: 1,
+                smsType: 1,
+                signMode: '',
                 customNature: '', // 客户性质
                 payAndInvoiceSame: '',
                 customUnderAttachList: []
@@ -159,6 +170,22 @@ export default {
                 vciPayType: [
                     { required: true, message: '请选择付款方式', trigger: 'change' }
                 ],
+                // 电子签约
+                signPayForm: [
+                    { required: true, message: "请选择是否先签后发", trigger: "change" }
+                ],
+                signForm: [
+                    { required: true, message: "请选择签约介质", trigger: "change" }
+                ],
+                smsType: [
+                    { required: true, message: "请选择是否短信通知", trigger: "change" }
+                ],
+                passportType: [
+                    { required: true, message: "请选择是否上传身份证", trigger: "change" }
+                ],
+                signMode: [
+                    { required: true, message: "请选择签署方式", trigger: "change" }
+                ]
             },
             optionModel: new optionModel()
         }
@@ -183,7 +210,7 @@ export default {
         },
         next() {
             this.$refs['contractForm'].validate(valid => {
-                if(valid && this.active !== 3) {
+                if(valid && this.active !== 4) {
                     this.active++
                     this.save()
                 }

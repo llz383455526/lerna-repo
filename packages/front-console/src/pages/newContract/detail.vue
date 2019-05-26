@@ -111,11 +111,23 @@ export default {
     let id = this.$route.query.id;
     this.contractModel.contractId = id;
     this.contractModel.getContractDetail(id, () => {
-      this.contractForm = this.contractModel.contractForm
+        this.contractForm = this.contractModel.contractForm
         this.contractModel.contractForm.cUserStandardAttachmentModels = []
+        this.checkCSign()
     })
   },
   methods: {
+      // 校验C端签约
+      checkCSign() {
+          if (!this.contractForm.signForm
+              || !this.contractForm.smsType
+              || !this.contractForm.passportType
+              || !this.contractForm.signMode) {
+              this.$message.error('请重新编辑，填写C端签约设置');
+              return false
+          }
+         return true
+      },
       jieSuanBiaoZhunChange(data) {
           this.contractModel.contractForm.cUserStandardAttachmentModels.push(data)
       },
@@ -171,6 +183,7 @@ export default {
       })
     },
     submit () {
+          if(!this.checkCSign()) { return }
         if (this.contractForm.approveType == 'standard') {
             // this.contractModel.workflowType = 'create_sale_contract';
             let workflowType = 'create_sale_contract'

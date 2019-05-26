@@ -11,6 +11,7 @@
                     <el-step title="企业信息"></el-step>
                     <el-step title="选择落地公司"></el-step>
                     <el-step title="附加条款"></el-step>
+                    <el-step title="C端签约设置" v-if="max == 5"></el-step>
                 </el-steps>
                 <hr>
 
@@ -23,8 +24,8 @@
                     <relevantMerchantInfo :contractModel="contractModel" v-if="false"></relevantMerchantInfo>
                     <businessBillingInfo :contractModel="contractModel" v-if="active === 2"></businessBillingInfo>
                     <companyInfo :ruleForm="contractModel.contractForm" :serviceFeeList="contractModel.serviceFeeList" v-if="active === 3"></companyInfo>
-                    <additionalClause :ruleForm="contractModel.contractForm" :editType="editType" :files="contractModel.files"
-                        v-if="active === 4"></additionalClause>
+                    <additionalClause :ruleForm="contractModel.contractForm" :contractModel="contractModel" :editType="editType" :files="contractModel.files" v-if="active === 4"></additionalClause>
+                    <setEContract :contractForm="contractModel.contractForm" v-if="active === 5"></setEContract>
                     <el-form-item v-if="editType != 'watch' && editType!='workflow' && false">
                         <el-button type="primary" @click="saveContract(false)">保存</el-button>
                     </el-form-item>
@@ -34,8 +35,8 @@
                 <div class="wizard-actions">
                     <el-button @click="backToList('list')">返回</el-button>
                     <el-button @click="prev" v-if="active != 0">上一步</el-button>
-                    <el-button type="success" @click="next('contractForm')" v-if="active != 4">下一步</el-button>
-                    <el-button type="primary" @click="submitContract('contractForm')" v-if="active == 4">提交</el-button>
+                    <el-button type="success" @click="next('contractForm')" v-if="active != max">下一步</el-button>
+                    <el-button type="primary" @click="submitContract('contractForm')" v-if="active == max">提交</el-button>
                 </div>
             </div>
         </div>
@@ -44,7 +45,7 @@
 </template>
 
 <script>
-import { post, postWithErrorCallback } from "../../store/api"
+import { post, postWithErrorCallback, importPost } from "../../store/api"
 import { showNotify } from "../../plugin/utils-notify";
 
 import ContractModel from '../../model/contract/newContract/ContractModel' // 数据模型
@@ -58,6 +59,7 @@ import businessBillingInfo from './components/businessBillingInfo.vue' // 企业
 import companyInfo from './components/companyInfo.vue' // 落地公司信息
 import additionalClause from './components/additionalClause.vue' // 合同附加条款
 import generateContract from './components/generateContract.vue' // 生成合同
+import setEContract from './components/setEContract.vue'  // c端签约设置
 import upload from './components/upload' // 上传组建
 import { mapGetters } from 'vuex';
 
@@ -72,6 +74,7 @@ export default {
         companyInfo,
         additionalClause,
         generateContract,
+        setEContract,
         upload
     },
     created() {
@@ -81,6 +84,7 @@ export default {
             this.contractModel.getContractDetail(id, null, 'create').then(() => {
                 // 返回数据处理服务类型
                 this.getServiceType();
+                this.maxChange()
             });
         } else {
             // 新建的时候
@@ -101,7 +105,8 @@ export default {
         return {
             contractModel: new ContractModel(),
             check: new Check(),
-            active: 0
+            active: 0,
+            max: 5, // active最大值
         }
     },
     computed: {
@@ -115,11 +120,13 @@ export default {
         userInformation(ev) {
             this.contractModel.contractForm.companyId = ev.userProfile.subjectId
             // console.log(this.contractModel.contractForm)
+        },
+        'contractModel.contractForm.isFromOutApp'() {
+            this.maxChange()
         }
     },
     methods: {
         saveContract(isSubmit) {
-            console.log('save 2')
             // 上传之前处理服务商报价数据
             this.contractModel.changeServiceFeeList();
             // let url = this.editType === 'edit' ? '/api/opencrm/workflow/save_data' : '/api/opencrm/workflow/create';
@@ -166,6 +173,7 @@ export default {
                     }
 
                     // 请选择合同附件那一步 需要上传清单的判断
+                    console.log('this.contractModel = ', this.contractModel)
                     if (this.active === 4
                         && this.contractModel.contractForm.payAndInvoiceSame === '0'
                         && this.contractModel.contractForm.customUnderAttachList.length  === 0) {
@@ -226,12 +234,12 @@ export default {
             this.$refs['contractForm'].validateField('serviceType')
         },
         prev() {
-            if (this.active-- < 1) this.active = 4;
+            if (this.active-- < 1) this.active = this.max;
         },
         next(formName) {
             this.$refs[formName].validate(valid => {
                 if (valid) {
-                    if (this.active++ > 4) this.active = 0;
+                    if (this.active++ > this.max) this.active = 0;
                     this.saveContract(false);
                 }
             })
@@ -261,6 +269,14 @@ export default {
                 })
             })
             this.contractModel.contractForm.serviceType = arr
+        },
+        maxChange() {
+            if(this.contractModel.contractForm.isFromOutApp == 0) {
+                this.max = 5
+            }
+            else {
+                this.max = 4
+            }
         }
     }
 }

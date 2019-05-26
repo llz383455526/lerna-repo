@@ -95,6 +95,13 @@ class ContractModel extends BaseModel {
             receiveAddr: '',
             receiveMemo: '',
             receiveAttachments: [],
+            // 电子签约设置
+            signForm: '',
+            signPayForm: '',
+            passportType: '1',
+            smsType: '1',
+            signMode: '',
+            econtractServiceCompanyList: []
         };
         this.serviceTypeList = []; // 已选择的服务类型
         this.serviceCompaniesList = [];

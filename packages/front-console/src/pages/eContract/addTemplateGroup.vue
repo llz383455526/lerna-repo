@@ -1,7 +1,7 @@
 <template>
     <div class="main template-main">
         <div class="title">{{ltype ? '查看' : (form.groupId ? '修改' : '新增')}}合同模板组</div>
-        <el-form :model="form" :rules="rules" label-width="150px" ref="form">
+        <el-form :model="form" :rules="rules" label-width="150px" :disabled="ltype ? true : false" ref="form">
             <div class="mtitle">基础信息设置</div>
             <el-form-item label="合同模板组名称:" prop="groupName">
                 <el-input v-model="form.groupName" class="form_input" placeholder="请填写合同模板组名称" size="small"></el-input>
@@ -116,13 +116,9 @@
                     </el-table>
                 </div>
             </el-form-item>
-
-            <el-form-item>
-                <el-button type="primary" size="small" @click="formSubmit" v-if="!ltype">提交</el-button>
-                <el-button size="small" @click="back">{{ltype ? '返回' : '取消'}}</el-button>
-            </el-form-item>
         </el-form>
-
+        <el-button type="primary" size="small" @click="formSubmit" v-if="!ltype">提交</el-button>
+        <el-button size="small" @click="back">{{ltype ? '返回' : '取消'}}</el-button>
         <el-dialog
                 title="新建合同模板"
                 :visible.sync="dialogVisible">

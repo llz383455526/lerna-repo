@@ -22,7 +22,8 @@ const workflow = {
     batchUpdateReadStatus: '/api/taxplan-workflow/bizNoticeInfo/batchUpdateReadStatus',
     mappingList: '/api/taxplan-workflow/bizStatusMapping/mappingList',
     queryInstanceId: '/api/taxplan-workflow/flowable/operate/query-instance-id',
-    getBizExtendData: '/api/taxplan-workflow/bizProcess/get-biz-extend-data'
+    getBizExtendData: '/api/taxplan-workflow/bizProcess/get-biz-extend-data',
+    getTaskId: '/api/taxplan-workflow/bizProcess/instanceDetail', // 获取工单的taskId
 }
 
 export {workflow}
