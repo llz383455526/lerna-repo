@@ -88,7 +88,8 @@
                 <el-radio v-model="contractForm.openInvoiceType" v-for="item in invoiceType" :key="item.value" :label="item.value" disabled>{{item.text}}</el-radio>
             </el-form-item>
             <el-form-item label="服务费收费比例" prop="serviceFeeContent.fixFee">
-                <contract-create-item @result="createResult" :contractForm="contractForm" ref="contractCreateItem"></contract-create-item>
+                <contract-create-item @result="createResult" :contractForm="contractForm" ref="contractCreateItem" disabled></contract-create-item>
+                <!-- <show-service :detail="{serviceFeeContent:contractForm.serviceFeeContent,serviceFeeContent2:contractForm.serviceFeeContent2}"></show-service> -->
                 <!--  -->
             </el-form-item>
             <el-form-item label="合同起止时间" prop="startDate">
@@ -227,11 +228,13 @@
     import fileUploader from '../../component/fileUploader'
     import { checkPhone } from '../../plugin/utils-element-validator'
     import contractCloseItem from '../../pageComponent/contractCloseItem'
+    import showService from '../../pageComponent/showService.vue'
     import contractCreateItem from '../../pageComponent/contractCreateItem'
     export default {
         components: {
             fileUploader,
             contractCloseItem,
+            showService,
             contractCreateItem
         },
         data() {
@@ -585,7 +588,7 @@
             getConfig(ev) {
                 this.customerCompaniesList.forEach(e => {
                     if(e.id == this.contractForm.customerId) {
-                        console.log(e)
+                        // console.log(e)
                         this.contractForm.original = e.original
                         this.contractForm.originalType = e.originalType
                         this.contractForm.agentCompanyId = this.contractForm.originalType === '20' ? e.agentCompanyId : ''
@@ -920,7 +923,7 @@
                     this.calcuServiceFeeReverse();
                     this.handdleChangeReverse();
                     // this.showType(this.contractForm.settleType);
-                    this.$refs.contractCreateItem.init(this.contractForm)
+                    // this.$refs.contractCreateItem.init(this.contractForm)
                     this.$forceUpdate()
                     this.agentList && this.companyChange(false)
                     this.getConfig()

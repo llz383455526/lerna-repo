@@ -211,7 +211,7 @@ export default {
         }
     },
     mounted() {
-        console.log(this.form)
+        // console.log(this.form)
         if(!this.form.quoteFeeContent.stepwiseList || !this.form.quoteFeeContent.stepwiseList.length) {
             this.initColumn()
         }

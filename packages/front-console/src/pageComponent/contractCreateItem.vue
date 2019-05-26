@@ -22,12 +22,12 @@
         </el-row> -->
         <el-row class="mb15 w650">
             <el-col :span="6">
-                <el-radio :label="1" v-model="showInputRatio" @change="ratioChange">固定比例收费<br>（实发金额）</el-radio>
+                <el-radio :label="1" v-model="showInputRatio" @change="ratioChange" :disabled="disabled">固定比例收费<br>（实发金额）</el-radio>
             </el-col>
             <template v-if="showInputRatio == 1">
                 <el-col :span="15">
                     <div style="float: left; width: 70px; color: #606266;">实发金额 * </div>
-                    <el-input v-model="inputRatio" @blur="checkTable" :disabled="!(showInputRatio == 1)" style="width: calc(100% - 70px);">
+                    <el-input v-model="inputRatio" @blur="checkTable" :disabled="!(showInputRatio == 1) || disabled" style="width: calc(100% - 70px);">
                         <template slot="append">% 每笔</template>
                     </el-input>
                 </el-col>
@@ -58,17 +58,21 @@
         </el-row> -->
         <el-row class="mb15">
             <el-col :span="6">
-                <el-radio :label="3" v-model="showInputRatio" @change="ratioChange">分{{showInputRatio == 3 ? contractForm.serviceFeeContent.stepwiseList[0] && contractForm.serviceFeeContent.stepwiseList[0].endAmount : '2.8'}}万 - 无流水阶梯报价</el-radio>
+                <el-radio 
+                    :label="3" 
+                    v-model="showInputRatio" 
+                    @change="ratioChange"
+                    :disabled="disabled">分{{showInputRatio == 3 ? contractForm.serviceFeeContent.stepwiseList[0] && contractForm.serviceFeeContent.stepwiseList[0].endAmount : '2.8'}}万 - 无流水阶梯报价</el-radio>
             </el-col><br>
             <el-col :span="24" v-show="showInputRatio == 3">
                 <el-table :data="contractForm.serviceFeeContent.stepwiseList">
                     <el-table-column label="月收入下限" width="240">
                         <template slot-scope="scope">
                             <template v-if="scope.row.sequence">
-                                <el-input v-model="scope.row.startAmount" class="input_100" @change="checkTable(true)">
+                                <el-input v-model="scope.row.startAmount" class="input_100" @change="checkTable(true)" :disabled="disabled">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsStart" @change="equals(scope.$index, 0)">含
+                                <el-checkbox v-model="scope.row.equalsStart" @change="equals(scope.$index, 0)" :disabled="disabled">含
                                     <template v-if="scope.row.sequence == columnIndex - 1">
                                         以上
                                     </template>
@@ -82,10 +86,10 @@
                     <el-table-column label="月收入上限" width="240">
                         <template slot-scope="scope">
                             <template v-if="scope.row.sequence != columnIndex - 1">
-                                <el-input v-model="scope.row.endAmount" class="input_100" @change="checkTable">
+                                <el-input v-model="scope.row.endAmount" class="input_100" @change="checkTable" :disabled="disabled">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsEnd" @change="equals(scope.$index, 1)">含
+                                <el-checkbox v-model="scope.row.equalsEnd" @change="equals(scope.$index, 1)" :disabled="disabled">含
                                     <template v-if="!scope.row.sequence">
                                         以下
                                     </template>
@@ -103,7 +107,7 @@
                     </el-table-column>
                     <el-table-column label="操作" width="100">
                         <template slot-scope="scope">
-                            <el-button type="text" @click="deleteColumn(scope.$index)" v-if="scope.$index > 1 && scope.$index == columnIndex - 1">删除</el-button>
+                            <el-button type="text" @click="deleteColumn(scope.$index)" v-if="scope.$index > 1 && scope.$index == columnIndex - 1" :disabled="disabled">删除</el-button>
                             <div class="center" v-else>-</div>
                         </template>
                     </el-table-column>
@@ -111,7 +115,7 @@
                 <!-- <el-button class="top_24" @click="addColumn" size="small" type="primary">增加阶梯</el-button> -->
                 <div class="top_24" v-if="showSettledRate">
                     甲乙双方同意在结 算当日暂按
-                    <el-input class="input_200" v-model="contractForm.serviceFeeContent.settledRate" @blur="checkTable">
+                    <el-input class="input_200" v-model="contractForm.serviceFeeContent.settledRate" @blur="checkTable" :disabled="disabled">
                         <template slot="append">%</template>
                     </el-input>
                     的标准计算管理费，并在此基础上计算服务费总额。
@@ -120,17 +124,17 @@
         </el-row>
         <el-row class="mb15">
             <el-col :span="6">
-                <el-radio :label="4" v-model="showInputRatio" @change="ratioChange">不分2.8万 - 按流水总额阶梯报价</el-radio>
+                <el-radio :label="4" v-model="showInputRatio" @change="ratioChange" :disabled="disabled">不分2.8万 - 按流水总额阶梯报价</el-radio>
             </el-col><br>
             <el-col :span="24" v-show="showInputRatio == 4">
                 <el-table :data="contractForm.serviceFeeContent.stepwiseList">
                     <el-table-column label="月总额下限" width="240">
                         <template slot-scope="scope">
                             <template v-if="scope.row.sequence">
-                                <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 4)" class="input_100" @change="checkTable(true)">
+                                <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 4) || disabled" class="input_100" @change="checkTable(true)">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 4)" @change="equals(scope.$index, 0)">含
+                                <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 4) || disabled" @change="equals(scope.$index, 0)">含
                                     <template v-if="scope.row.sequence == columnIndex - 1">
                                         以上
                                     </template>
@@ -144,10 +148,10 @@
                     <el-table-column label="月总额上限" width="240">
                         <template slot-scope="scope">
                             <template v-if="scope.row.sequence != columnIndex - 1">
-                                <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 4)" class="input_100" @change="checkTable">
+                                <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 4) || disabled" class="input_100" @change="checkTable">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 4)" @change="equals(scope.$index, 1)">含
+                                <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 4) || disabled" @change="equals(scope.$index, 1)">含
                                     <template v-if="!scope.row.sequence">
                                         以下
                                     </template>
@@ -165,15 +169,15 @@
                     </el-table-column>
                     <el-table-column label="操作" width="100">
                         <template slot-scope="scope">
-                            <el-button type="text" @click="deleteColumn(scope.$index)" v-if="scope.$index > 1 && scope.$index == columnIndex - 1">删除</el-button>
+                            <el-button type="text" @click="deleteColumn(scope.$index)" v-if="scope.$index > 1 && scope.$index == columnIndex - 1" :disabled="disabled">删除</el-button>
                             <div class="center" v-else>-</div>
                         </template>
                     </el-table-column>
                 </el-table>
-                <el-button class="top_24" v-if="contractForm.serviceFeeContent.stepwiseList.length < 10" @click="addColumn" size="small" type="primary">增加阶梯</el-button>
+                <el-button class="top_24" v-if="contractForm.serviceFeeContent.stepwiseList.length < 10" @click="addColumn" size="small" type="primary" :disabled="disabled">增加阶梯</el-button>
                 <div class="top_24" v-if="showSettledRate">
                     甲乙双方同意在结 算当日暂按
-                    <el-input class="input_200" v-model="contractForm.serviceFeeContent.settledRate" @blur="checkTable">
+                    <el-input class="input_200" v-model="contractForm.serviceFeeContent.settledRate" @blur="checkTable" :disabled="disabled">
                         <template slot="append">%</template>
                     </el-input>
                     的标准计算管理费，并在此基础上计算服务费总额。
@@ -182,25 +186,25 @@
         </el-row>
         <el-row class="mb15">
             <el-col :span="6">
-                <el-radio :label="5" v-model="showInputRatio" @change="ratioChange">分{{showInputRatio == 5 ? contractForm.serviceFeeContent.monthIncomeAmount : '2.8'}}万 - 按流水分阶梯报价</el-radio>
+                <el-radio :label="5" v-model="showInputRatio" @change="ratioChange" :disabled="disabled">分{{showInputRatio == 5 ? contractForm.serviceFeeContent.monthIncomeAmount : '2.8'}}万 - 按流水分阶梯报价</el-radio>
             </el-col><br>
             <el-col :span="24" v-show="showInputRatio == 5">
                 <div>
                     月收入
-                    <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount" @blur="checkTable">
+                    <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount" @blur="checkTable" :disabled="disabled">
                         <template slot="append">万</template>
                     </el-input>
-                    <el-checkbox v-model="contractForm.serviceFeeContent.containMonthAmount" :disabled="!(showInputRatio == 5)" @change="equalsIncomeAmount(0)">含</el-checkbox>
+                    <el-checkbox v-model="contractForm.serviceFeeContent.containMonthAmount" :disabled="!(showInputRatio == 5) || disabled" @change="equalsIncomeAmount(0)">含</el-checkbox>
                     以下
                 </div>
                 <el-table :data="contractForm.serviceFeeContent.stepwiseList">
                     <el-table-column label="月总额下限" width="240">
                         <template slot-scope="scope">
                             <template v-if="scope.row.sequence">
-                                <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable(true)">
+                                <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5) || disabled" class="input_100" @change="checkTable(true)">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0)">含
+                                <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5) || disabled" @change="equals(scope.$index, 0)">含
                                     <template v-if="scope.row.sequence == columnIndex - 1">
                                         以上
                                     </template>
@@ -214,10 +218,10 @@
                     <el-table-column label="月总额上限" width="240">
                         <template slot-scope="scope">
                             <template v-if="scope.row.sequence != columnIndex - 1">
-                                <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable">
+                                <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 5) || disabled" class="input_100" @change="checkTable">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 1)">含
+                                <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5) || disabled" @change="equals(scope.$index, 1)">含
                                     <template v-if="!scope.row.sequence">
                                         以下
                                     </template>
@@ -230,33 +234,33 @@
                     </el-table-column>
                     <el-table-column label="阶梯收费" width="270px">
                         <template slot-scope="scope">
-                            实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                            实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 5) || disabled" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" width="100">
                         <template slot-scope="scope">
-                            <el-button type="text" @click="deleteColumn(scope.$index)" v-if="scope.$index > 1 && scope.$index == columnIndex - 1">删除</el-button>
+                            <el-button type="text" @click="deleteColumn(scope.$index)" v-if="scope.$index > 1 && scope.$index == columnIndex - 1" :disabled="disabled">删除</el-button>
                             <div class="center" v-else>-</div>
                         </template>
                     </el-table-column>
                 </el-table>
-                <el-button class="top_24" v-if="contractForm.serviceFeeContent.stepwiseList.length < 10" @click="addColumn" size="small" type="primary">增加阶梯</el-button>
+                <el-button class="top_24" v-if="contractForm.serviceFeeContent.stepwiseList.length < 10" @click="addColumn" size="small" type="primary" :disabled="disabled">增加阶梯</el-button>
                 <div class="top_24">
                     月收入
-                    <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount" @blur="checkTable">
+                    <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount" @blur="checkTable" :disabled="disabled">
                         <template slot="append">万</template>
                     </el-input>
-                    <el-checkbox v-model="contractForm.serviceFeeContent2.containMonthAmount" :disabled="!(showInputRatio == 5)" @change="equalsIncomeAmount(1)">含</el-checkbox>
+                    <el-checkbox v-model="contractForm.serviceFeeContent2.containMonthAmount" :disabled="!(showInputRatio == 5) || disabled" @change="equalsIncomeAmount(1)">含</el-checkbox>
                     以上
                 </div>
                 <el-table :data="contractForm.serviceFeeContent2.stepwiseList">
                     <el-table-column label="月总额下限" width="240">
                         <template slot-scope="scope">
                             <template v-if="scope.row.sequence">
-                                <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable(true)">
+                                <el-input v-model="scope.row.startAmount" :disabled="!(showInputRatio == 5) || disabled" class="input_100" @change="checkTable(true)">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 0, 2)">含
+                                <el-checkbox v-model="scope.row.equalsStart" :disabled="!(showInputRatio == 5) || disabled" @change="equals(scope.$index, 0, 2)">含
                                     <template v-if="scope.row.sequence == columnIndex - 1">
                                         以上
                                     </template>
@@ -270,10 +274,10 @@
                     <el-table-column label="月总额上限" width="240">
                         <template slot-scope="scope">
                             <template v-if="scope.row.sequence != columnIndex2 - 1">
-                                <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 5)" class="input_100" @change="checkTable">
+                                <el-input v-model="scope.row.endAmount" :disabled="!(showInputRatio == 5) || disabled" class="input_100" @change="checkTable">
                                     <template slot="append">万</template>
                                 </el-input>
-                                <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5)" @change="equals(scope.$index, 1, 2)">含
+                                <el-checkbox v-model="scope.row.equalsEnd" :disabled="!(showInputRatio == 5) || disabled" @change="equals(scope.$index, 1, 2)">含
                                     <template v-if="!scope.row.sequence">
                                         以下
                                     </template>
@@ -286,20 +290,20 @@
                     </el-table-column>
                     <el-table-column label="阶梯收费" width="270px">
                         <template slot-scope="scope">
-                            实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 5)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                            实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 5) || disabled" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" width="100">
                         <template slot-scope="scope">
-                            <el-button type="text" @click="deleteColumn(scope.$index, 1)" v-if="scope.$index > 1 && scope.$index == columnIndex2 - 1">删除</el-button>
+                            <el-button type="text" @click="deleteColumn(scope.$index, 1)" v-if="scope.$index > 1 && scope.$index == columnIndex2 - 1" :disabled="disabled">删除</el-button>
                             <div class="center" v-else>-</div>
                         </template>
                     </el-table-column>
                 </el-table>
-                <el-button class="top_24" v-if="contractForm.serviceFeeContent2.stepwiseList.length < 10" @click="addColumn(1)" size="small" type="primary">增加阶梯</el-button>
+                <el-button class="top_24" v-if="contractForm.serviceFeeContent2.stepwiseList.length < 10" @click="addColumn(1)" size="small" type="primary" :disabled="disabled">增加阶梯</el-button>
                 <div class="top_24" v-if="showSettledRate">
                     甲乙双方同意在结 算当日暂按
-                    <el-input class="input_200" v-model="contractForm.serviceFeeContent.settledRate" @blur="checkTable">
+                    <el-input class="input_200" v-model="contractForm.serviceFeeContent.settledRate" @blur="checkTable" :disabled="disabled">
                         <template slot="append">%</template>
                     </el-input>
                     的标准计算管理费，并在此基础上计算服务费总额。
@@ -419,6 +423,10 @@ export default {
         showSettledRate: {
             type: Boolean,
             default: false
+        },
+        disabled: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
@@ -440,7 +448,7 @@ export default {
             if(this.contractForm.serviceFeeContent2) {
                 this.columnIndex2 = this.contractForm.serviceFeeContent2.stepwiseList.length
             }
-            console.log('this.contractForm.serviceFeeContent = ', this.contractForm.serviceFeeContent)
+            // console.log('this.contractForm.serviceFeeContent = ', this.contractForm.serviceFeeContent)
             if (this.contractForm.serviceFeeContent.serviceFeeType == 'dummy') {
                 this.showInputRatio = -1
             }
