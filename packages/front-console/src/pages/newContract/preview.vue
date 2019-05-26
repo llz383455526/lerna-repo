@@ -24,7 +24,7 @@
                         <div class="col-xs-6">客户从事：{{ contractForm.customIndustry }}</div>
                         <div class="col-xs-6">合同期限：{{ contractForm.contractStartDate + ' - ' +
                             contractForm.contractEndDate }}</div>
-                        <div class="col-xs-6">版本生效时间：{{ contractForm.versionStartDate | formatTime('yyyy-MM') }}</div>
+                        <div class="col-xs-6">版本生效时间：{{ contractForm.versionStartDate || contractForm.contractStartDate | formatTime('yyyy-MM') }}</div>
                     </div>
                     <div class="row" style="margin-bottom: 15px;">
                         <div class="col-xs-12">
