@@ -19,13 +19,14 @@
                 </div>
             </div>
             <div class="widget-main">
-                <el-form-item label="合同期限" :prop="'contracts.'+index+'.contractDate'" :rules="{ required: true, message: '请选择合同期限', trigger: 'blur' }"> 
+                <el-form-item label="合同期限" :prop="'contracts.'+index+'.startDate'" :rules="{ required: true, message: '请选择合同期限', trigger: 'blur' }"> 
                     <el-date-picker type="daterange" style="width:450px;"
-                                    v-model="formItem.contractDate"
+                                    v-model="contractDate[index]"
                                     start-placeholder="开始日期"
                                     end-placeholder="结束日期"
                                     value-format="yyyy-MM-dd"
-                                    @change="autoFill(index, formItem.contractDate)">
+                                    @change="autoFill(index, contractDate[index])" 
+                                    :picker-options="pickerOptions">
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item label="业务方案" :prop="'contracts.'+index+'.goodsId'" :rules="{required: true, message: '请选择业务方案', trigger: 'change'}">
@@ -209,14 +210,20 @@ export default {
             },
             // 服务类型集合
             serverTypeMap: new Map(),
-            contractDate: []
+            contractDate: [],
+            pickerOptions:{
+                disabledDate:(time) => {
+                    const { versionStartDate } = this.ruleForm
+                    return time.getTime() < versionStartDate;
+                }
+            }
         }
     },
     methods: {
         autoFill(index, val) {
             if (val) {
-                this.ruleForm.contracts[index].startDate = val[0];
-                this.ruleForm.contracts[index].endDate = val[1];
+                this.ruleForm.contracts[index].startDate = val[0]
+                this.ruleForm.contracts[index].endDate = val[1]
             }
         },
         setTaxLanding() {
@@ -235,6 +242,15 @@ export default {
             this.setTaxLanding()
             this.updateServiceTypeList()
             this.upDataServerType()
+            this.getContractDate()
+        },
+        // 处理每个落地公司的合同期限
+        getContractDate() {
+            const { contracts } = this.ruleForm
+            contracts.length && contracts.forEach((item, index) => {
+                const { startDate, endDate } = item
+                this.contractDate[index] = [startDate, endDate]
+            })
         },
         // 根据ID获取服务类型
         getServerTypeWithId(id) {
@@ -324,11 +340,11 @@ export default {
             const serviceCompanyId = this.info.serviceCompanyId
             const param = { customCompanyId, serviceCompanyId }
             post('/api/contract-web/commom/custom-form-contract', param).then((res) => {
-                this.ruleForm.contracts.push(Object.assign(res,{
-                    contractDate: [res.startDate, res.endDate]
-                }))
+                this.ruleForm.contracts.push(Object.assign(res))
                 this.setTaxLanding()
                 const index = this.ruleForm.contracts.length - 1
+                // 把时间读取出来
+                this.contractDate[index] = [res.startDate, res.endDate]
                 // 把goodList也存到contracts里面去
                 this.ruleForm.contracts[index].goodsList = this.info.goodsList
                 this.ruleForm.serviceCompanyList.push({
