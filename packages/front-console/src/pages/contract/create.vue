@@ -923,7 +923,7 @@
                     this.calcuServiceFeeReverse();
                     this.handdleChangeReverse();
                     // this.showType(this.contractForm.settleType);
-                    // this.$refs.contractCreateItem.init(this.contractForm)
+                    this.$refs.contractCreateItem.init(this.contractForm)
                     this.$forceUpdate()
                     this.agentList && this.companyChange(false)
                     this.getConfig()

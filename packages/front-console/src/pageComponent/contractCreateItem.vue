@@ -102,7 +102,7 @@
                     </el-table-column>
                     <el-table-column label="阶梯收费" width="270px">
                         <template slot-scope="scope">
-                            实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 3)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                            实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 3) || disabled" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" width="100">
@@ -164,7 +164,7 @@
                     </el-table-column>
                     <el-table-column label="阶梯收费" width="270px">
                         <template slot-scope="scope">
-                            实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 4)" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
+                            实发金额 * <el-input @blur="checkTable" :disabled="!(showInputRatio == 4) || disabled" v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 <i class="el-icon-question" title="按每人月收入分阶梯收费"></i>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" width="100">
