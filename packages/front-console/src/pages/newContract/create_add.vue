@@ -20,9 +20,9 @@
                             </el-select>
                         </el-form-item>
                         <el-form-item label="客户性质" prop="customNature">
-                            <el-radio v-model="contractModel.contractForm.customNature"
-                                    v-for="(item, key) in optionModel.customNatureList"
-                                    :key="key" :label="item.value">{{item.text}}</el-radio>
+                            <el-radio-group v-model="contractModel.contractForm.customNature">
+                                <el-radio v-for="(item, key) in optionModel.customNatureList" :key="key" :label="item.value">{{item.text}}</el-radio>
+                            </el-radio-group>
                             <i class="el-icon-question ml10" title="非直接用工企业：人力资源公司、服务外包公司、城市合伙人公司、第三方平台等"></i>
                         </el-form-item>
                         <hr>
@@ -65,9 +65,7 @@
                             </el-input>
                         </el-form-item>
                     </div>
-                    <div v-if="active === 2">
-                        <companyInfo :ruleForm="contractModel.contractForm" :serviceFeeList="serviceFeeList" :chargeByName="chargeByName"></companyInfo>
-                    </div>
+                    <companyInfo :ruleForm="contractModel.contractForm" :serviceFeeList="serviceFeeList" :chargeByName="chargeByName" v-if="active === 2"></companyInfo>
                     <additionalClause :ruleForm="contractModel.contractForm" v-if="active === 3"></additionalClause>
                     <setEContract :contractForm="contractModel.contractForm" :type="1" v-if="active === 4"></setEContract>
                 </el-form>
@@ -353,9 +351,17 @@ export default {
         this.$store.dispatch('getVciPayTypeList')
         this.$store.dispatch('getAgentList')
         this.$refs['contractForm'].resetFields()
-        this.ruleForm.instanceId = this.$route.query.id
-        if (this.ruleForm.instanceId) {
-            this.getDetail()
+        // this.ruleForm.instanceId = this.$route.query.id
+        // if (this.ruleForm.instanceId) {
+        //     this.getDetail()
+        // }
+        let id = this.$route.query.id;
+        if (id) {
+            this.contractModel.contractId = id;
+            this.contractModel.getContractDetail(id, null, 'create').then(() => {
+                // 返回数据处理服务类型
+                this.getServiceType();
+            });
         }
         this.optionModel.getCustomNatureList()
     }
