@@ -25,8 +25,7 @@
                                     start-placeholder="开始日期"
                                     end-placeholder="结束日期"
                                     value-format="yyyy-MM-dd"
-                                    @change="autoFill(index, contractDate[index])" 
-                                    :picker-options="pickerOptions">
+                                    @change="autoFill(index, contractDate[index])">
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item label="业务方案" :prop="'contracts.'+index+'.goodsId'" :rules="{required: true, message: '请选择业务方案', trigger: 'change'}">
@@ -211,12 +210,6 @@ export default {
             // 服务类型集合
             serverTypeMap: new Map(),
             contractDate: [],
-            pickerOptions:{
-                disabledDate:(time) => {
-                    const { versionStartDate } = this.ruleForm
-                    return time.getTime() < versionStartDate;
-                }
-            }
         }
     },
     methods: {
