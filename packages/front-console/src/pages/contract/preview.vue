@@ -2,7 +2,7 @@
     <div class="bg-white p15">
         <div style="margin-bottom:30px;">查看合同</div>
             <h4 class="ml50">基本信息
-                <el-select v-model="historyId" size="small ml10" @change="handleChange">
+                <el-select v-model="historyId" size="small ml10" @change="handleChange" v-if="historyId">
                     <el-option v-for="(e, k) in historyVer" :key="k" :label="e.versionMemo" :value="e.historyId"></el-option>
                 </el-select>
             </h4>
@@ -216,7 +216,7 @@
     }
     .inline {
         display: inline-block;
-        width: 136px;
+        width: 200px;
     }
     .flex {
         display: flex;
