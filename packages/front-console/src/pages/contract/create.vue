@@ -26,17 +26,17 @@
                 </div>
             </el-form-item>
             <el-form-item label="行业类型" prop="cotractType" required>
-                <el-select v-model="contractForm.cotractType" placeholder="请选择" style="width:100%;">
+                <el-select v-model="contractForm.cotractType" placeholder="请选择" style="width:100%;" disabled>
                     <el-option v-for="item in invoiceTypeList" :key="item.value" :label="item.text" :value="item.value"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="服务类型" prop="serviceTypeList" >
-                <el-checkbox-group v-model="contractForm.serviceTypeList">
+                <el-checkbox-group v-model="contractForm.serviceTypeList" disabled>
                     <el-checkbox v-for="item in serviceTypes" :key="item.serviceId" :label="item.serviceId">{{item.serviceName}}</el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
             <el-form-item label="结算方式" prop="settleType" required>
-                <el-select v-model="contractForm.settleType" placeholder="请选择" style="width:100%;"> <!-- @change="showType" -->
+                <el-select v-model="contractForm.settleType" placeholder="请选择" style="width:100%;" disabled> <!-- @change="showType" -->
                     <el-option v-for="item in options_0" :key="item.value" :label="item.text" :value="item.value"></el-option>
                     </el-select>
             </el-form-item>
@@ -48,12 +48,11 @@
             <el-form-item label="预收服务费" prop="prePayContent.fixFee" v-if="contractForm.prePayType == 1">
                 <el-row class="mb15">
                     <el-col :span="6">
-                        <el-radio label="real" v-model="contractForm.prePayContent.serviceFeeType" @change="prveFee(1)">实发金额</el-radio>
+                        <el-radio label="real" v-model="contractForm.prePayContent.serviceFeeType" @change="prveFee(1)" disabled>实发金额</el-radio>
                     </el-col>
                     <el-col :span="15">
                         <div style="float: left; width: 70px; color: #606266;">实发金额 * </div>
-                        <el-input v-model="prevRatio" @blur="prveFee(1)"
-                                  :disabled="!(showPrev === 1)" style="width: calc(100% - 70px);">
+                        <el-input v-model="prevRatio" @blur="prveFee(1)" disabled style="width: calc(100% - 70px);">
                             <template slot="append">% 每笔</template>
                         </el-input>
                     </el-col>
@@ -63,17 +62,15 @@
                 </el-row>
                 <el-row>
                     <el-col :span="6">
-                        <el-radio label="should" v-model="contractForm.prePayContent.serviceFeeType" @change="prveFee(2)">应发金额</el-radio>
+                        <el-radio label="should" v-model="contractForm.prePayContent.serviceFeeType" @change="prveFee(2)" disabled>应发金额</el-radio>
                     </el-col>
                     <el-col :span="15">
                         <div style="display: inline-block; width: 110px; color: #606266;">实发金额 / ( 1 -  </div>
-                        <el-input v-model="prevRatio_1" @blur="prveFee(2)"
-                                  :disabled="!(showPrev === 2)" style="width: 135px;">
+                        <el-input v-model="prevRatio_1" @blur="prveFee(2)" disabled style="width: 135px;">
                             <template slot="append">%</template>
                         </el-input>
                         <div style="display: inline-block; width: 20px; color: #606266;">) * </div>
-                        <el-input v-model="prevRatio_1" @blur="prveFee(2)"
-                                  :disabled="!(showPrev === 2)" style="width: 160px;">
+                        <el-input v-model="prevRatio_1" @blur="prveFee(2)" disabled style="width: 160px;">
                             <template slot="append">% 每笔</template>
                         </el-input>
                     </el-col>
@@ -83,12 +80,12 @@
                 </el-row>
             </el-form-item>
             <el-form-item label="发票类型" prop="invoiceType" required>
-                <el-select v-model="contractForm.invoiceType" placeholder="请选择" style="width:100%;">
+                <el-select v-model="contractForm.invoiceType" placeholder="请选择" style="width:100%;" disabled>
                     <el-option v-for="e in invoiceType_0" :label="e.text" :value="e.value" :key="e.value"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="开票类型" prop="openInvoiceType">
-                <el-radio v-model="contractForm.openInvoiceType" v-for="item in invoiceType" :key="item.value" :label="item.value">{{item.text}}</el-radio>
+                <el-radio v-model="contractForm.openInvoiceType" v-for="item in invoiceType" :key="item.value" :label="item.value" disabled>{{item.text}}</el-radio>
             </el-form-item>
             <el-form-item label="服务费收费比例" prop="serviceFeeContent.fixFee">
                 <contract-create-item @result="createResult" :contractForm="contractForm" ref="contractCreateItem"></contract-create-item>
@@ -102,7 +99,8 @@
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
                         value-format="yyyy-MM-dd"
-                        @change="handleChange">
+                        @change="handleChange" 
+                        disabled>
                 </el-date-picker>
             </el-form-item>
             <el-form-item label="客户类型" prop="originalType">
