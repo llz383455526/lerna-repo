@@ -149,7 +149,12 @@
         },
         watch: {
             companyIdList() {
-                this.contractForm.econtractServiceCompanyList = this.companyList.filter(e => this.companyIdList.includes(e.serviceCompanyId))
+                this.contractForm.econtractServiceCompanyList = this.companyList.map((item) => {
+                    item.selected = this.companyIdList.includes(item.serviceCompanyId)
+                    return {
+                        ...item
+                    }
+                })
             },
             'contractForm.signForm'(data) {
                 if (data === '2') {
@@ -180,18 +185,17 @@
                     customCompanyId: this.contractForm.customerId
                 }).then(data => {
                     data.forEach(e => {
-                        if (!this.companyList.filter(ev => ev.serviceCompanyId == e.value).length) {
+                        if (!this.companyList.filter(ev => ev.serviceCompanyId == e.companyId).length) {
                             this.companyList.push({
-                                serviceCompanyId: e.value,
-                                serviceCompanyName: e.text,
+                                serviceCompanyId: e.companyId,
+                                serviceCompanyName: e.name,
                                 selected: true
                             })
-                            this.companyIdList.push(e.value)
+                            this.companyIdList.push(e.companyId)
                         }
                     })
                 })
             }
-            console.log('this.$route.path = ', this.$route.path)
             if (this.$route.path === '/main/newContract/create_add') {
                 get(contract.econtractSynParam, {
                     customerName: this.contractForm.customerName
