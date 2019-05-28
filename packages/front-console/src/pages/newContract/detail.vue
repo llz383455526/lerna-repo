@@ -123,6 +123,7 @@ export default {
                 || this.contractModel.workflowType === 'update_ns_sale_contract') {
               return true
           }
+          if (this.contractForm.isFromOutApp === '1') { return true }
           if (!this.contractForm.signForm
               || !this.contractForm.smsType
               || !this.contractForm.passportType
