@@ -28,7 +28,7 @@ class ContractModel extends BaseModel {
             contractPerson: '',
             contractEmail: '',
             contractTel: '',
-            contractAddr: '',
+            contractAddr: '广州市天河区建中路59号柏朗奴商务大厦9楼',
             agentClient: '', // 是否代理商客户
             agentCompanyId: '', // 代理商名称
             // 企业基本信息
@@ -291,7 +291,7 @@ class ContractModel extends BaseModel {
         this.contractForm.contractPerson = auth.name;
         this.contractForm.contractTel = auth.mobilephone;
         this.contractForm.contractEmail = auth.email;
-        this.contractForm.contractAddr = '广州市天河区建中路59号柏朗奴商务大厦9楼';
+        // this.contractForm.contractAddr = '广州市天河区建中路59号柏朗奴商务大厦9楼';
     }
     // 处理省市区
     getArea() {

@@ -90,7 +90,7 @@
                 </div>
             </div>
         </template>
-        <template v-if="detail.serviceFeeContent.settledRate">
+        <template v-if="detail.serviceFeeContent.settledRate && showSettledRate">
             {{ `充值服务费预收：${detail.serviceFeeContent.settledRate}%` }}
         </template>
     </el-col>
@@ -98,12 +98,16 @@
 </template>
 <script>
 export default {
-  props: {
-    detail: {
-      type: Object,
-      default: {}
+    props: {
+        detail: {
+            type: Object,
+            default: {}
+        },
+        showSettledRate: {
+            type: Object,
+            default: true
+        }
     }
-  }
 }
 </script>
 <style scoped>

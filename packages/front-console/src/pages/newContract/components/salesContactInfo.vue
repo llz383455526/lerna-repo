@@ -20,8 +20,7 @@
         <el-form-item label="合同联系人地址" prop="contractAddr">
             <el-input 
                 v-model="contractModel.contractForm.contractAddr" 
-                style="width:450px;" 
-                :disabled="contractModel.workflowType === 'update_sale_contract'"></el-input>
+                style="width:450px;"></el-input>
         </el-form-item>
         <hr>
         <el-form-item label="客户类型" prop="originalType">

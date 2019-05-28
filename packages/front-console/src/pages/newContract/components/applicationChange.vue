@@ -45,6 +45,8 @@ export default {
             get('/api/contract-web/commom/custom-flow-form', param).then((data) => {
                 Object.assign(this.contractModel.contractForm, data.datas, {
                     customerId: ev,
+                }, {
+                    contractAddr: '广州市天河区建中路59号柏朗奴商务大厦9楼'
                 })
                 this.contractModel.workflowType = 'update_sale_contract'
             })

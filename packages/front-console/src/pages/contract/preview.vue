@@ -82,7 +82,7 @@
           <el-row class="mb15" style="font-weight: normal;" v-if="!historyId">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">代理推广费率：</el-col>
             <el-col :span="16">
-              <show-close-service :detail="detail"></show-close-service>
+              <show-close-service :detail="detail" :showSettledRate="false"></show-close-service>
             </el-col>
           </el-row>
         </template>
