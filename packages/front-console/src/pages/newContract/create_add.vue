@@ -357,7 +357,7 @@ export default {
         // }
         let id = this.$route.query.id;
         if (id) {
-            this.contractModel.contractId = id;
+            this.instanceId = id;
             this.contractModel.getContractDetail(id, null, 'create').then(() => {
                 // 返回数据处理服务类型
                 this.getServiceType();
