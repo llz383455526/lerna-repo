@@ -97,7 +97,7 @@
                     </div>
                     <div v-if="prePayContent && !isService">
                         合计充值金额 = 
-                        <template v-if="prePayContent.secondType == 'real'">
+                        <template v-if="prePayContent.serviceFeeType == 'real'">
                             实发金额 + 实发金额 * {{prePayContent.serviceFeeRate}}%
                         </template>
                         <template v-else>
