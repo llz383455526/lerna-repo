@@ -6,7 +6,7 @@
         <div class="widget-body">
             <div class="widget-main">
                 <el-form>
-                    <contractOption></contractOption>
+                    <contractOption :form="form"></contractOption>
                 </el-form>
             </div>
         </div>
@@ -20,7 +20,7 @@ export default {
     components: { contractOption },
     data() {
         return {
-            form: new From()
+            form: new Form()
         }
     }
 }

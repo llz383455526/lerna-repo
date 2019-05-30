@@ -18,6 +18,8 @@ class optionModel extends BaseModel {
             { text: '甲方子公司', value: 'sub' }
         ]; // 甲方下属公司类型
         this.companyIdentityList = []; // 已有客户
+        this.agentTypeList = []; // 客户主体列表
+        this.contractTplList = []; // 合同模版
 	}
 	getJson (list, key, value) {
 		return list.find(function(element) {
@@ -94,6 +96,16 @@ class optionModel extends BaseModel {
     getCompanyIdentityList() {
         get('/api/contract-web/contract/custom-company-options').then(data => {
             this.companyIdentityList = data;
+        })
+    }
+    getAgentTypeList() {
+        get('/api/contract-web/commom/option?enumType=AgentType').then(data => {
+            this.agentTypeList = data;
+        })
+    }
+    getContractTplList() {
+        get('/api/contract-web/contract-tpl/tpl-options').then(data => {
+            this.contractTplList = data;
         })
     }
 }
