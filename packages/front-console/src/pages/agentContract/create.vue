@@ -1,0 +1,14 @@
+<template>
+    <div class="contract-container bg-white">
+        <div class="widget-header">
+            <div class="widget-title">新增代理商合同</div>
+        </div>
+        <div class="widget-body">
+            <div class="widget-main">
+                <el-form>
+                    
+                </el-form>
+            </div>
+        </div>
+    </div>
+</template>

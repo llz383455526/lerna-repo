@@ -503,6 +503,26 @@ export default [{
           ]
         },
         {
+            path: 'agentContract',
+            component: index,
+            children: [
+                {
+                    path: 'list',
+                    component: r => require.ensure([], () => r(require('../pages/agentContract/list.vue'))),
+                    meta: {
+                        keepAlive: false
+                    }
+                },
+                {
+                    path: 'create',
+                    component: r => require.ensure([], () => r(require('../pages/agentContract/create.vue'))),
+                    meta: {
+                        keepAlive: false
+                    }
+                }
+            ]
+        },
+        {
           path: 'contract',
           component: index,
           children: [{
