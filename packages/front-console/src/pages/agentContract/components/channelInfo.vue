@@ -5,8 +5,9 @@
     </h3>
     <el-form-item
       label="代理商名称"
+      prop="datas.agentCompanyBaseInfo.name"
     >
-      <el-input v-model="form.name" />
+      <el-input v-model="form.datas.agentCompanyBaseInfo.name" />
     </el-form-item>
     <el-form-item
       label="税号"
@@ -58,9 +59,16 @@
 
 <script>
 export default {
+    props: {
+        form: {
+            type: Object,
+            default() {
+                return {}
+            }
+        }
+    },
     data() {
         return {
-            form: {}
         }
     }
 }
