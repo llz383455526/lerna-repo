@@ -6,9 +6,23 @@
         <div class="widget-body">
             <div class="widget-main">
                 <el-form>
-                    
+                    <contractOption></contractOption>
                 </el-form>
             </div>
         </div>
     </div>
 </template>
+
+<script>
+import Form from '../../model/agentContract/form'
+import contractOption from './components/contractOption'
+export default {
+    components: { contractOption },
+    data() {
+        return {
+            form: new From()
+        }
+    }
+}
+</script>
+
