@@ -4,7 +4,7 @@ class Check {
             'agentCompanyBaseInfo.agentType': [
                 { required: true, message: '请选择申请主体', trigger: 'change' }
             ],
-            tplId: [
+            'datas.tplId': [
                 { required: true, message: '请选择合同模板', trigger: 'change' }
             ],
             'agentContract.probation': [

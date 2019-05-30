@@ -4,8 +4,8 @@
         <el-form-item label="申请主体" prop="agentCompanyBaseInfo.agentType">
             <el-radio v-model="form.datas.agentCompanyBaseInfo.agentType" v-for="item in optionModel.agentTypeList" :key="item.value" :label="item.value" @change="agentTypeChange">{{item.text}}</el-radio>
         </el-form-item>
-        <el-form-item label="选择合同模板" prop="tplId">
-            <el-select v-model="form.datas.tplId" filterable placeholder="请选择" style="width:450px;">
+        <el-form-item label="选择合同模板" prop="datas.tplId">
+            <el-select v-model="form.datas.tplId" filterable placeholder="请选择" style="width:450px;" @change="tplIdChange">
                 <el-option v-for="item in optionModel.contractTplList" :key="item.value" :label="item.text" :value="item.value"></el-option>
             </el-select>
         </el-form-item>
@@ -37,6 +37,9 @@ export default {
         dateChange(ev) {
             this.form.datas.agentContract.agentStart = ev[0]
             this.form.datas.agentContract.agentEnd = ev[1]
+        },
+        tplIdChange(ev) {
+            console.log(this.form)
         }
     },
     created() {
