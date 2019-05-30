@@ -103,8 +103,9 @@ class optionModel extends BaseModel {
             this.agentTypeList = data;
         })
     }
-    getContractTplList() {
-        get('/api/contract-web/contract-tpl/tpl-options').then(data => {
+    getContractTplList(tplType) {
+        const param = { tplType: tplType || '' }
+        get('/api/contract-web/contract-tpl/tpl-options', param).then(data => {
             this.contractTplList = data;
         })
     }

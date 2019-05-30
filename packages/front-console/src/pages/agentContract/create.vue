@@ -5,7 +5,7 @@
         </div>
         <div class="widget-body">
             <div class="widget-main">
-                <el-form>
+                <el-form v-model="form.datas" :rules="check.rules" label-width="200px">
                     <contractOption :form="form"></contractOption>
                 </el-form>
             </div>
@@ -15,12 +15,14 @@
 
 <script>
 import Form from '../../model/agentContract/form'
+import Check from '../../model/agentContract/check'
 import contractOption from './components/contractOption'
 export default {
     components: { contractOption },
     data() {
         return {
-            form: new Form()
+            form: new Form(),
+            check: new Check()
         }
     }
 }
