@@ -5,10 +5,10 @@
     </h3>
     <el-form-item
       label="申请主体"
-      prop="datas.agentCompanyBaseInfo.agentType"
+      :prop="`${propName1}.agentType`"
     >
       <el-radio
-        v-model="form.datas.agentCompanyBaseInfo.agentType"
+        v-model="contract.datas.agentCompanyBaseInfo.agentType"
         v-for="item in optionModel.agentTypeList"
         :key="item.value"
         :label="item.value"
@@ -22,7 +22,7 @@
       prop="datas.tplId"
     >
       <el-select
-        v-model="form.datas.tplId"
+        v-model="contract.datas.tplId"
         filterable
         placeholder="请选择"
         style="width:450px;"
@@ -38,16 +38,16 @@
     </el-form-item>
     <el-form-item
       label="试合作期"
-      prop="datas.agentContract.probation"
+      :prop="`${propName1}.probation`"
     >
       若乙方第一次代理甲方产品，则本合同前 <el-input
         class="input_80"
-        v-model="form.datas.agentContract.probation"
+        v-model="contract.datas.agentCompanyBaseInfo .probation"
       /> 个月为试合作期
     </el-form-item>
     <el-form-item
       label="代理期限"
-      prop="datas.agentContract.agentStart"
+      :prop="`${propName2}.agentStart`"
     >
       <el-date-picker
         type="daterange"
@@ -62,11 +62,17 @@
 </template>
 
 <script>
-import optionModel from '../../../model/option/optionModel'
+import optionModel from 'src/model/option/optionModel'
 
 export default {
     props: {
-        form: {
+        contract: {
+            type: Object,
+            default() {
+                return {}
+            }
+        },
+        workflowType: {
             type: Object,
             default() {
                 return {}
@@ -76,19 +82,29 @@ export default {
     data() {
         return {
             optionModel: new optionModel(),
-            dateValue: ''
+            dateValue: '',
+            propName1: 'datas.agentCompanyBaseInfo',
+            propName2: 'datas.agentContract',
         }
     },
     methods: {
         agentTypeChange(ev) {
             this.optionModel.getContractTplList(ev)
+            // 工作流实例类型,标准
+            this.contract.workflowType = this.workflowType[ev][0]
+            // 清空所选的合同
+            this.contract.datas.tplId = ''
         },
         dateChange(ev) {
-            this.form.datas.agentContract.agentStart = ev[0]
-            this.form.datas.agentContract.agentEnd = ev[1]
+            if(ev) {
+                this.contract.datas.agentContract.agentStart = ev[0]
+                this.contract.datas.agentContract.agentEnd = ev[1]
+            } else {
+                this.contract.datas.agentContract.agentStart = this.contract.datas.agentContract.agentEnd = ''
+            }
         },
         tplIdChange(ev) {
-            console.log(this.form)
+            console.log(this.contract)
         }
     },
     created() {
