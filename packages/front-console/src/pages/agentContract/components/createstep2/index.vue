@@ -42,8 +42,17 @@
           :key="index"
           :settlement-rate-info="item" -->
           <!-- 这里是服务合同的细节 -->
-        <settlement-rate />
+          <el-form :model="ruleForm" ref="ruleForm" :inline="true">
+              <div v-for="(item, key) in ruleForm.serviceCompanyFeeContentList" :key="key">
+                  <settlement-rate :serviceCompanyFeeContent="item" :propKey="key" propName="serviceCompanyFeeContentList" @result="result"></settlement-rate>
+              </div>
+          </el-form>
+        
       </div>
+    </div>
+    <div>
+        <el-button>返回</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">下一步</el-button>
     </div>
     <el-dialog
       title="添加公司信息"
@@ -89,6 +98,7 @@
 
 <script>
 import settlementRate from 'src/pageComponent/settlementRate'
+import Form from 'src/model/settlementRate'
 
 export default {
     components: {settlementRate},
@@ -105,6 +115,11 @@ export default {
             dialogVisible: false,
             appForm: {
                 serviceCompanyId: ''
+            },
+            settlementRate : new Form(),
+            serviceCompanyFeeContentList: [],
+            ruleForm: {
+                serviceCompanyFeeContentList: []
             }
         }
     },
@@ -114,10 +129,27 @@ export default {
         }
     },
     methods: {
-        formAdd() {}
+        formAdd() {
+            this.ruleForm.serviceCompanyFeeContentList.push(this.settlementRate.serviceCompanyFeeContent)
+            this.dialogVisible = false
+        },
+        submitForm(formName) {
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    // alert('submit!');
+                    console.log(this.ruleForm)
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+        },
+        result() {
+        }
     },
     created() {
         this.$store.dispatch('getServiceCompaniesList')
+        // this.ruleForm.serviceCompanyFeeContentList.push(this.settlementRate.serviceCompanyFeeContent)
     }
 }
 </script>
