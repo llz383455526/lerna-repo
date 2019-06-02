@@ -148,6 +148,7 @@ export default {
         }
     },
     created() {
+        console.log(this.form)
         this.$store.dispatch('getServiceCompaniesList')
         // this.ruleForm.serviceCompanyFeeContentList.push(this.settlementRate.serviceCompanyFeeContent)
     }

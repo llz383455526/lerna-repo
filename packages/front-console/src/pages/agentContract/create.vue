@@ -39,7 +39,7 @@ export default {
     data() {
         return {
             form: {},
-            active: 2
+            active: 1
         }
     },
     methods: {
