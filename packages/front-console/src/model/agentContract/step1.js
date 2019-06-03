@@ -23,6 +23,7 @@ class Form {
                 agentContract: {
                     agentStart: '', // 代理合同结束期限
                     agentEnd: '', // 代理合同开始期限
+                    serviceCompanyFeeContentList: [] // 落地公司
                 },
                 "salesInfo": {
                     "email": "", // 销售联系人邮箱
@@ -51,7 +52,7 @@ class Form {
     }
     saveChannelInfo() {
         return post('/api/opencrm/workflow/save_draft', this.contract).then(res => {
-            console.log('res',res)
+            // console.log('res',res)
             this.contract.instanceId = res.id
         })
     }

@@ -104,7 +104,7 @@ export default {
             }
         },
         tplIdChange(ev) {
-            console.log(this.contract)
+            // console.log(this.contract)
         }
     },
     created() {

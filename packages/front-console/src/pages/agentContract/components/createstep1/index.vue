@@ -1,27 +1,14 @@
 
 <template>
-  <el-form
-    :model="form.contract"
-    :rules="check.rules"
-    label-width="200px"
-    ref="createAgentContract"
-  >
-    <contractOption
-      :contract="form.contract"
-      :workflow-type="form.workflowType"
-    />
-    <channel-info :contract="form.contract" />
-    <sale-contact-info :contract="form.contract" />
-    <el-form-item>
-      <el-button>返回</el-button>
-      <el-button
-        type="primary"
-        @click="onSubmit('createAgentContract')"
-      >
-        下一步
-      </el-button>
-    </el-form-item>
-  </el-form>
+    <el-form :model="form.contract" :rules="check.rules" label-width="200px" ref="createAgentContract">
+        <contractOption :contract="form.contract" :workflow-type="form.workflowType"></contractOption>
+        <channel-info :contract="form.contract"></channel-info>
+        <sale-contact-info :contract="form.contract"></sale-contact-info>
+        <el-form-item>
+            <el-button>返回</el-button>
+            <el-button type="primary" @click="onSubmit('createAgentContract')">下一步</el-button>
+        </el-form-item>
+    </el-form>
 </template>
 
 <script>
@@ -44,10 +31,10 @@ export default {
         onSubmit(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    this.$emit('step1', this.form.contract)
-                    // this.form.saveChannelInfo().then(() => {
-                    //     this.$emit('step1', this.form.contract)
-                    // })
+                    // this.$emit('step1', this.form.contract)
+                    this.form.saveChannelInfo().then(() => {
+                        this.$emit('step1', this.form.contract)
+                    })
                 } else {
                     console.log('error submit!!');
                     return false;
@@ -56,7 +43,9 @@ export default {
         },
     },
     created() {
-        this.form.getChannelDetail(259)
+        if (this.$route.query.id) {
+            this.form.getChannelDetail(this.$route.query.id)
+        }
     }
 }
 </script>
