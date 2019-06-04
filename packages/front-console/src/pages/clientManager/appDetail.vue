@@ -47,16 +47,16 @@
                     </el-col>
                 </el-row>
                 <el-row :gutter="20">
-                    <el-col :span="20">
+                    <!-- <el-col :span="20">
                         <el-col :span="4" class="right">异步通知appid</el-col>
                         <el-col :span="10" style="word-wrap: break-word;">{{data.notifyAppId}}</el-col>
-                    </el-col>
+                    </el-col> -->
                     <el-col :span="10">
                         <el-col :span="8" class="right">负责人电话</el-col>
                         <el-col :span="10">{{data.chargeMobile}}</el-col>
                     </el-col>
                 </el-row>
-                <el-row :gutter="20">
+                <!-- <el-row :gutter="20">
                     <el-col :span="10">
                         <el-col :span="8" class="right">更新人</el-col>
                         <el-col :span="10">{{data.updateByName}}</el-col>
@@ -65,7 +65,7 @@
                         <el-col :span="8" class="right">更新时间</el-col>
                         <el-col :span="10">{{data.updateTime}}</el-col>
                     </el-col>
-                </el-row>
+                </el-row> -->
                 <el-row :gutter="20">
                     <el-col :span="20">
                         <el-col :span="4" class="right">服务商</el-col>
@@ -79,7 +79,7 @@
                         </el-col>
                     </el-col>
                 </el-row>
-                <el-row :gutter="20">
+                <!-- <el-row :gutter="20">
                     <el-col :span="20">
                         <el-col :span="4" class="right">IP白名单（固定IP）</el-col>
                         <el-col :span="10" style="word-wrap: break-word;">{{data.allowIp}}</el-col>
@@ -96,7 +96,7 @@
                         <el-col :span="4" class="right">RSA公钥</el-col>
                         <el-col :span="10" style="word-wrap: break-word;">{{data.appRsaPublickKey}}</el-col>
                     </el-col>
-                </el-row>
+                </el-row> -->
             </div>
             <div class="title">系统配置</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="eshow = true">编辑</el-button>
             <div class="box">
@@ -126,8 +126,8 @@
                 </el-row>
             </div>
             <payment-channel :data="data" :appId="appId" :query="query" ref="paymentChannel"></payment-channel>
-            <div class="title" v-if="data.isFromOutApp">开发者信息</div>
-            <div class="box" v-if="data.isFromOutApp">
+            <div class="title">开发者信息</div>
+            <div class="box">
                 <el-row :gutter="20"><el-col :span="10"><el-col :span="8" class="rightHead">商户服务信息</el-col></el-col></el-row>
                 <el-row :gutter="20">
                     <el-col :span="10">

@@ -163,7 +163,7 @@
             }
         },
         mounted() {
-            this.contractForm.smsType = `${this.contractForm.smsType ? this.contractForm.smsType : 0}` || '1'
+            this.contractForm.smsType = '1'
             this.contractForm.passportType = this.contractForm.passportType || '1'
             this.contractForm.signMode = this.contractForm.contracts.length > 1 ? '0' : '1'
             this.contractForm.econtractServiceCompanyList = this.contractForm.econtractServiceCompanyList || []

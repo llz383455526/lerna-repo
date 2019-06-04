@@ -221,6 +221,8 @@ export default {
                 })
                 item.serviceTypeList = item.serviceTypeList.map((item) => {
                     return this.getServerTypeWithId(item.serviceId)
+                }).filter((item) => {
+                    return item
                 })
             })
             this.upDataServerType()

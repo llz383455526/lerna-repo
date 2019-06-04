@@ -193,8 +193,11 @@ const store = {
             })
         },
         getServerConfigList({commit}) {
-            get(url.serverConfigList).then(res => {
-                commit('setServerConfigList', res)
+            return new Promise((resolve) => {
+                get(url.serverConfigList).then(res => {
+                    commit('setServerConfigList', res)
+                    resolve(res);
+                })
             })
         },
         getInvitationStateList({commit}) {

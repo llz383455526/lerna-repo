@@ -76,7 +76,7 @@
                 </template>
             </el-table-column>
         </el-table>
-        <p>月度签约率/月度绩效数据</p>
+        <p>月度签约率/月度C端绩效费计算明细表</p>
         <el-table
             :data="monthData"
             border>
@@ -258,7 +258,7 @@
                             operation: 1
                         },
                         {
-                            title: 'C端绩效数据',
+                            title: 'C端绩效费计算明细表',
                             state: this.dropDetailData.companyRiskRateDTO.cuserPerformanceState === 'success' ? '审核通过' : '审核不通过',
                             uptime: this.dropDetailData.companyRiskRateDTO.cuserPerformanceUpdateTime,
                             operation: 2

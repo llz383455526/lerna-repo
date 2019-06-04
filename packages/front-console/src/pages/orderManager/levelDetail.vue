@@ -92,7 +92,7 @@
               title: 'C端结算标准',
               detail: '审核不通过'
             }, {
-              title: 'C端绩效数据',
+              title: 'C端绩效费计算明细表',
               detail: '审核不通过'
             }]
           case 'four-star':
@@ -104,7 +104,7 @@
               title: 'C端结算标准',
               detail: '审核通过'
             }, {
-              title: 'C端绩效数据',
+              title: 'C端绩效费计算明细表',
               detail: '审核通过'
             }]
         }

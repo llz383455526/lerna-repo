@@ -91,7 +91,7 @@
                 <el-table-column label="手机号" prop="phone"></el-table-column>
                 <el-table-column label="收款方账号" prop="accountNo"></el-table-column>
                 <!-- <el-table-column label="开户行" prop="depositBank"></el-table-column> -->
-                <el-table-column label="签约状态" prop="signMsg"></el-table-column>
+                <el-table-column label="签约状态" prop="signMsg" v-if="msg.signState !== '-1'"></el-table-column>
                 <el-table-column label="款项属性备注" prop="fund"></el-table-column>
                 <!-- <el-table-column label="外籍人员信息备注" prop="foreignNationality"></el-table-column> -->
                 <el-table-column label="实发金额">

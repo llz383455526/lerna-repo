@@ -1,111 +1,129 @@
 <template>
-    <el-form
-        ref="formData"
-        label-width="200px"
-        class="invoice-form"
-        :model="formData"
-        :rules="rules"
+  <el-form
+    ref="formData"
+    label-width="200px"
+    class="invoice-form"
+    :model="formData"
+    :rules="rules"
+  >
+    <el-form-item 
+      label="发票类型"
+      prop="invoiceType"
     >
-        <el-form-item 
-            label="发票类型"
-            prop="invoiceType"
+      <el-radio-group v-model="formData.invoiceType">
+        <el-radio 
+          v-for="item in $attrs.invoiceTypeList"
+          :key="item.value"
+          :label="item.value"
         >
-            <el-radio-group v-model="formData.invoiceType">
-                <el-radio 
-                    v-for="item in $attrs.invoiceTypeList"
-                    :key="item.value"
-                    :label="item.value"
-                >{{item.text}}</el-radio>
-            </el-radio-group>
-        </el-form-item>
-        <div
-            v-for="(invoiceWorkOrderSubjectParams,index) in formData.invoiceWorkOrderSubjectParams"
-            :key="index"
-        >   
-            <el-form-item 
-                label="发票类目"
-                :prop="'invoiceWorkOrderSubjectParams.' + index + '.subjectId'"
-                :rules="validateCategory"
-            >
-                <el-select
-                    v-model="invoiceWorkOrderSubjectParams.subjectId"
-                    @change="addText($event,index)"
-                    placeholder="请选择发票类目"
-                >
-                        <!-- $attrs.invoiceCategory -->
-                    <el-option
-                        v-for="item in filterInvoiceCategory(index)"
-                        :key="item.value"
-                        :label="item.text"
-                        :value="item.value"
-                    ></el-option>
-                </el-select>
-                <el-button
-                    class="addBtn"
-                    type="primary"
-                    size="large"
-                    @click="addCategory(index)"
-                >{{index === 0 ? '添加' : '删除'}}</el-button>
-            </el-form-item>
-            <el-form-item
-                label="开票金额（含税）"
-                :prop="'invoiceWorkOrderSubjectParams.' + index + '.amount'"
-                :rules="validateAmount"
-            >
-                <el-input
-                    class="shortinput"
-                    v-model.number="invoiceWorkOrderSubjectParams.amount"
-                ></el-input>
-            </el-form-item>
-        </div>
-        <el-form-item
-            v-if="formData.invoiceWorkOrderSubjectParams.length > 1"
-            label="开票总金额（含税）"
-            prop="amount"
+          {{ item.text }}
+        </el-radio>
+      </el-radio-group>
+    </el-form-item>
+    <div
+      v-for="(invoiceWorkOrderSubjectParams,index) in formData.invoiceWorkOrderSubjectParams"
+      :key="index"
+    >   
+      <el-form-item 
+        label="发票类目"
+        :prop="'invoiceWorkOrderSubjectParams.' + index + '.subjectId'"
+        :rules="validateCategory"
+      >
+        <el-select
+          v-model="invoiceWorkOrderSubjectParams.subjectId"
+          @change="addText($event,index)"
+          placeholder="请选择发票类目"
         >
-            <category-table
-                :tableData="formData.invoiceWorkOrderSubjectParams"
-            ></category-table>
-        </el-form-item>
-        <el-form-item
-            label="核对发票信息"
-            prop="invoiceInfo"
-            :rules="validateInvoiceInfo"
+          <!-- filterInvoiceCategory(index) -->
+          <el-option
+            v-for="item in $attrs.invoiceCategory"
+            :key="item.value"
+            :label="item.text"
+            :value="item.value"
+          />
+        </el-select>
+        <el-button
+          v-if="index !== 0"
+          class="addBtn"
+          type="primary"
+          size="large"
+          @click="deleteCategory(index)"
         >
-            <invoice-table
-                :customCompanyId="formData.customCompanyId"
-                :serviceCompanyId="formData.serviceCompanyId"
-                @getIvoiceInfo="getIvoiceInfo"
-            ></invoice-table>
-        </el-form-item>
-        <el-form-item
-            label="发票用途（对内说明）"
-            prop="purpose"
+          删除
+        </el-button>
+        <el-button
+          v-if="index === formData.invoiceWorkOrderSubjectParams.length - 1"
+          class="addBtn"
+          type="primary"
+          size="large"
+          @click="addCategory(index)"
         >
-            <el-input
-                class="shortinput"
-                type="textarea"
-                v-model="formData.purpose"
-            ></el-input>
-        </el-form-item>
-        <el-form-item
-            label="发票显示备注"
-            prop="remark"
-        >
-            <el-input
-                class="shortinput"
-                type="textarea"
-                v-model="formData.remark"
-            ></el-input>
-        </el-form-item>
-        <el-form-item>
-            <el-button @click="$router.back()">取消</el-button>
-            <el-button
-                type="primary"
-                @click="onSubmit('formData')"
-            >提交申请</el-button>
-        </el-form-item>
-    </el-form>
+          添加
+        </el-button>
+      </el-form-item>
+      <el-form-item
+        label="开票金额（含税）"
+        :prop="'invoiceWorkOrderSubjectParams.' + index + '.amount'"
+        :rules="validateAmount"
+      >
+        <el-input
+          class="shortinput"
+          v-model.number="invoiceWorkOrderSubjectParams.amount"
+        />
+      </el-form-item>
+    </div>
+    <el-form-item
+      v-if="formData.invoiceWorkOrderSubjectParams.length > 1"
+      label="开票总金额（含税）"
+      prop="amount"
+    >
+      <category-table
+        :table-data="formData.invoiceWorkOrderSubjectParams"
+      />
+    </el-form-item>
+    <el-form-item
+      label="核对发票信息"
+      prop="invoiceInfo"
+      :rules="validateInvoiceInfo"
+    >
+      <invoice-table
+        :custom-company-id="formData.customCompanyId"
+        :service-company-id="formData.serviceCompanyId"
+        @getIvoiceInfo="getIvoiceInfo"
+      />
+    </el-form-item>
+    <el-form-item
+      label="发票用途（对内说明）"
+      prop="purpose"
+    >
+      <el-input
+        class="shortinput"
+        type="textarea"
+        v-model="formData.purpose"
+      />
+    </el-form-item>
+    <el-form-item
+      label="发票显示备注"
+      prop="remark"
+    >
+      <el-input
+        class="shortinput"
+        type="textarea"
+        v-model="formData.remark"
+      />
+    </el-form-item>
+    <el-form-item>
+      <el-button @click="$router.back()">
+        取消
+      </el-button>
+      <el-button
+        type="primary"
+        @click="onSubmit('formData')"
+      >
+        提交申请
+      </el-button>
+    </el-form-item>
+  </el-form>
 </template>
 
 <script>
@@ -201,6 +219,7 @@ export default {
         CategoryTable
     },
     methods: {
+        // 这个函数是确保发票类目不能重复的，坤鹏写的，怎么看懂（20190529修改可以重复选择）
         filterInvoiceCategory(index) {
             return this.$attrs.invoiceCategory.filter((e, i) => {
                 return !this.formData.invoiceWorkOrderSubjectParams.filter((ev, ind) => index > ind && e.value == ev.subjectId).length
@@ -212,14 +231,16 @@ export default {
         //         return !this.form.quoteFeeContent.serviceCompanyRateList.filter((ev, ind) => a > ind && e.companyId == ev.serviceCompanyId).length
         //     })
         // },
+        // 为select添加文字选项
         addText(val,index) {
             console.log(val,index)
-            this.formData.invoiceWorkOrderSubjectParams.forEach((e, i) => {
-                if(i > index) {
-                    e.subjectId = ''
-                    e.subjectText = ''
-                }
-            })
+            // 选择后清除后面选择的发票类目，和filterInvoiceCategory配套使用的
+            // this.formData.invoiceWorkOrderSubjectParams.forEach((e, i) => {
+            //     if(i > index) {
+            //         e.subjectId = ''
+            //         e.subjectText = ''
+            //     }
+            // })
             const invoiceCategory = this.$attrs.invoiceCategory
             for(let i = 0; i<invoiceCategory.length; i++) {
                 if(invoiceCategory[i].value == val){
@@ -235,14 +256,14 @@ export default {
         },
         addCategory(index) {
             console.log(index)
-            if(index !== 0) {
-                this.formData.invoiceWorkOrderSubjectParams.splice(index, 1)
-                return;
-            }
             this.formData.invoiceWorkOrderSubjectParams.push({
                 "amount": '',
                 "subjectId":''
             })
+        },
+        deleteCategory(index) {
+            console.log(index)
+            this.formData.invoiceWorkOrderSubjectParams.splice(index, 1)
         },
         accAdd(arg1, arg2) {
             var r1, r2, m, c;

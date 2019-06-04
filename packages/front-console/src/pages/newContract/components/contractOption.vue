@@ -22,7 +22,7 @@
         <el-form-item label="客户从事" prop="customIndustry">
             <el-input v-model="contractModel.contractForm.customIndustry" style="width:450px;"></el-input>
         </el-form-item>
-        <el-form-item label="合同期限" prop="contractStartDate" v-if="contractModel.workflowType !== 'update_sale_contract'">
+        <el-form-item label="合同期限" prop="contractStartDate" v-if="contractModel.workflowType !== 'update_sale_contract' && contractModel.workflowType !== 'update_ns_sale_contract'">
             <el-date-picker type="daterange" style="width:450px;"
                             v-model="value"
                             start-placeholder="开始日期"

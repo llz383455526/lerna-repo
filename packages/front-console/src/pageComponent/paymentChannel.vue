@@ -114,7 +114,8 @@ export default {
             subServiceList: [],
             types: [],
             others: [],
-            dshow: false
+            dshow: false,
+            isDefault: 1
         }
     },
     mounted() {
@@ -223,7 +224,6 @@ export default {
             }
         },
         addRow() {
-            console.log('add')
             if (this.authCode) {
                 post(`/api/paymentmgt/front/channel/qrydetail?channelId=${this.result.channelId}`).then(data => {
                     postWithErrorCallback("/api/sysmgr-web/company-app/add-payment-user", {

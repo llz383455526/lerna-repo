@@ -28,7 +28,7 @@
                     <div class="label">商户类型：</div>
                     <div class="input">
                         <el-form-item>
-                            {{extInfo == '' ? '' : extInfo == 1 ? 'API商户' : 'Saas商户'}}
+                            {{extInfo == '' || extInfo == null ? '' : extInfo == 1 ? 'API商户' : 'Saas商户'}}
                         </el-form-item>
                     </div>
                 </div>

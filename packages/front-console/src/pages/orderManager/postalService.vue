@@ -143,7 +143,7 @@
                 </el-table-column>
                 <el-table-column label="成功发放时间" prop="payRespAt"></el-table-column>
                 <el-table-column label="发放结果" prop="payStateName"></el-table-column>
-                <el-table-column label="签约状态" prop="signMsg"></el-table-column>
+                <el-table-column label="签约状态" prop="signMsg" v-if="msg.signState !== '-1'"></el-table-column>
                 <el-table-column label="备注" prop="payMsg"></el-table-column>
             </el-table>
             <ayg-pagination

@@ -4,7 +4,7 @@
             <el-input 
                 v-model="contractModel.contractForm.contractPerson" 
                 style="width:450px;" 
-                :disabled="contractModel.workflowType === 'update_sale_contract'"></el-input>
+                :disabled="changeDisabled"></el-input>
         </el-form-item>
         <el-form-item label="销售联系邮箱" prop="contractEmail">
             <el-input 
@@ -15,7 +15,7 @@
             <el-input 
                 v-model="contractModel.contractForm.contractTel" 
                 style="width:450px;" 
-                :disabled="contractModel.workflowType === 'update_sale_contract'"></el-input>
+                :disabled="changeDisabled"></el-input>
         </el-form-item>
         <el-form-item label="合同联系人地址" prop="contractAddr">
             <el-input 
@@ -30,7 +30,7 @@
                 :key="e.value" 
                 :label="e.value" 
                 @change="getOriginalTypeName" 
-                :disabled="disableRadio || contractModel.workflowType === 'update_sale_contract'">{{e.text}}</el-radio>
+                :disabled="disableRadio || changeDisabled">{{e.text}}</el-radio>
         </el-form-item><br>
         <template v-if="contractModel.contractForm.originalType == 20">
             <el-form-item label="代理商名称" prop="agentCompanyId">
@@ -39,7 +39,7 @@
                     style="width:900px;" 
                     filterable 
                     @change="agentChange" 
-                    :disabled="contractModel.workflowType === 'update_sale_contract'">
+                    :disabled="changeDisabled">
                     <el-option v-for="e in contractModel.agentList" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
                 </el-select>
             </el-form-item><br>
@@ -51,7 +51,7 @@
                 :key="e.value" 
                 :label="e.value" 
                 @change="getOriginalName" 
-                :disabled="disableRadio || contractModel.workflowType === 'update_sale_contract'">{{e.text}}</el-radio>
+                :disabled="disableRadio || changeDisabled">{{e.text}}</el-radio>
         </el-form-item>
     </div>
 </template>
@@ -65,7 +65,11 @@ export default {
     computed: {
         ...mapGetters({
             userInformation: 'userInformation'
-        })
+        }),
+        changeDisabled() {
+            const { workflowType } = this.contractModel
+            return workflowType === 'update_sale_contract' || workflowType === 'update_ns_sale_contract'
+        }
     },
     data() {
         return {

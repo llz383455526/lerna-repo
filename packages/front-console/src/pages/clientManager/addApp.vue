@@ -11,14 +11,14 @@
       <el-form-item label="商户名称" prop="appName" size="small">
         <el-input class="form_input" v-model="form.appName"></el-input>
       </el-form-item>
-      <el-form-item label="appId" prop="appId" size="small">
+      <!-- <el-form-item label="appId" prop="appId" size="small">
         <el-input class="form_input" v-model="form.appId"></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="商户类型" prop="isFromOutApp">
         <el-radio v-model="form.isFromOutApp" label="1">API对接</el-radio>
-        <el-radio v-model="form.isFromOutApp" label="0" @change="form.serviceCodes = [];">SAAS系统</el-radio>
+        <el-radio v-model="form.isFromOutApp" label="0">SAAS系统</el-radio>
       </el-form-item>
-      <el-form-item label="服务类型" prop="serviceCodes" size="small" v-show="form.isFromOutApp == 1">
+      <!-- <el-form-item label="服务类型" prop="serviceCodes" size="small" v-show="form.isFromOutApp == 1">
         <el-checkbox-group v-model="form.serviceCodes">
           <el-checkbox
             :label="item.value"
@@ -26,7 +26,7 @@
             v-for="item in serverConfig"
           >{{item.text}}</el-checkbox>
         </el-checkbox-group>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="商户负责人电话" prop="mobilePhone">
         <el-input class="form_input" v-model="form.mobilePhone" @change="getSelect"></el-input>
       </el-form-item>
@@ -206,7 +206,7 @@ export default {
             ]
           });
         });
-        console.log(this.assign);
+        // console.log(this.assign);
       });
       get(
         `/api/sysmgr-web/user/get-platform-users?platformType=console-company`
@@ -216,12 +216,21 @@ export default {
       this.authCode = localStorage.getItem("authCode");
       get("/api/sysmgr-web/commom/service-config").then(data => {
         this.serverConfig = data;
+        this.pushServiceCodes()
       });
       get("/api/sysmgr-web/commom/company?companyIdentity=service").then(data => {
         this.assignCompany = data;
       });
     },
     methods: {
+        pushServiceCodes() {
+            let arr = []
+            this.serverConfig.forEach(el => {
+                arr.push(el.value)
+            });
+            this.form.serviceCodes = arr;
+            // console.log(this.form)
+        },
       back() {
         this.$router.back();
       },

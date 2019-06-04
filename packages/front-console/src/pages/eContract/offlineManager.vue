@@ -227,7 +227,7 @@ export default {
         a = 1
       }
       this.form.pageNo = a
-      post('/api/econtract/inner/qry', this.form).then(data => {
+      post('/api/econtract/inner/offline-qry', this.form).then(data => {
         this.data = data
       })
     },

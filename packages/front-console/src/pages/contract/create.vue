@@ -31,7 +31,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="服务类型" prop="serviceTypeList" >
-                <el-checkbox-group v-model="contractForm.serviceTypeList" disabled>
+                <el-checkbox-group v-model="contractForm.serviceTypeList">
                     <el-checkbox v-for="item in serviceTypes" :key="item.serviceId" :label="item.serviceId">{{item.serviceName}}</el-checkbox>
                 </el-checkbox-group>
             </el-form-item>

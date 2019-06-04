@@ -197,7 +197,7 @@ import showService from '../../pageComponent/showService.vue'
 import showCloseService from '../../pageComponent/showCloseService'
 import { mapGetters } from 'vuex'
 export default {
-    name: "detail",
+    name: "preview",
     components: {
         auditOption,
         showService,

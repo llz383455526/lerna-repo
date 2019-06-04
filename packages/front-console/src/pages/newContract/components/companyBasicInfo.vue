@@ -7,8 +7,8 @@
                       :key="key" :label="item.value">{{item.text}}</el-radio>
             <i class="el-icon-question ml10" title="非直接用工企业：人力资源公司、服务外包公司、城市合伙人公司、第三方平台等"></i>
         </el-form-item>
-        <el-form-item label="企业对接方式" style="width:100%;" prop="isFromOutApp" v-if="contractModel.workflowType !== 'update_sale_contract'">
-            <el-select style="width:450px;" v-model="contractModel.contractForm.isFromOutApp" @change="handleOutAppChange">
+        <el-form-item label="企业对接方式" style="width:100%;" prop="isFromOutApp" v-if="contractModel.workflowType === 'create_sale_contract' || contractModel.workflowType === 'create_ns_sale_contract'">
+            <el-select style="width:450px;" v-model="contractModel.contractForm.isFromOutApp">
                 <el-option v-for="(item, key) in list" :key="key" :label="item.label" :value="item.value"></el-option>
             </el-select>
         </el-form-item>
@@ -20,7 +20,7 @@
                 style="width:450px;">
                 <el-option v-for="e in companyList" :key="e.value" :value="e.text" :label="e.text"></el-option>
             </el-select>
-            <el-input v-else v-model="contractModel.contractForm.customerName" style="width:450px;" :disabled="contractModel.workflowType === 'update_sale_contract'"></el-input>
+            <el-input v-else v-model="contractModel.contractForm.customerName" style="width:450px;" :disabled="changeDisabled"></el-input>
         </el-form-item>
         <el-form-item label="企业地址" prop="areaName">
             <el-input v-model="contractModel.contractForm.areaName" style="width:450px;"></el-input>
@@ -29,10 +29,10 @@
             <el-input v-model="contractModel.contractForm.customLegalPerson" style="width:450px;"></el-input>
         </el-form-item>
         <el-form-item label="系统操作人" prop="customCollector">
-            <el-input v-model="contractModel.contractForm.customCollector" style="width:450px;" :disabled="contractModel.workflowType === 'update_sale_contract'"></el-input>
+            <el-input v-model="contractModel.contractForm.customCollector" style="width:450px;" :disabled="changeDisabled"></el-input>
         </el-form-item>
         <el-form-item label="操作人手机" prop="customCollectorPhone">
-            <el-input v-model="contractModel.contractForm.customCollectorPhone" style="width:450px;" maxlength="11" :disabled="contractModel.workflowType === 'update_sale_contract'"></el-input>
+            <el-input v-model="contractModel.contractForm.customCollectorPhone" style="width:450px;" maxlength="11" :disabled="changeDisabled"></el-input>
         </el-form-item>
         <el-form-item label="操作人邮箱" prop="customMail1">
             <el-input v-model="contractModel.contractForm.customMail1" style="width:450px;"></el-input>
@@ -91,7 +91,11 @@ export default {
                     callback(new Error(res.msg))
                 })
             } 
-            if (this.contractModel.workflowType !== 'update_sale_contract') {
+            const { workflowType } = this.contractModel
+            if (workflowType === 'agent_create_ns_sale_contract' 
+                || workflowType === 'agent_create_sale_contract'
+                || workflowType === 'create_ns_sale_contract'
+                || workflowType === 'create_sale_contract') {
                 return [
                     { required: true, message: '请输入企业名称', trigger: 'blur' },
                     { validator: checkCustomerName, trigger: 'blur' },
@@ -101,13 +105,19 @@ export default {
                     { required: true, message: '请输入企业名称', trigger: 'blur' }
                 ]
             }
+        },
+        changeDisabled() {
+            const { workflowType } = this.contractModel
+            return workflowType === 'update_sale_contract' || workflowType === 'update_ns_sale_contract'
         }
     },
     mounted() {
         get('/api/sysmgr-web/interim-company/interim-company-options').then(data => {
             this.companyList = data
         })
-        this.$store.dispatch('getServerConfigList')
+        this.$store.dispatch('getServerConfigList').then((data) => {
+            this.pushServiceCodes()
+        })
     },
     methods: {
         handleOutAppChange(ev) {
@@ -117,6 +127,13 @@ export default {
                     arr.push(el.value)
                 });
             }
+            this.contractModel.contractForm.serviceCodes = arr;
+        },
+        pushServiceCodes() {
+            let arr = []
+            this.serverConfigList.forEach(el => {
+                arr.push(el.value)
+            });
             this.contractModel.contractForm.serviceCodes = arr;
         }
     }

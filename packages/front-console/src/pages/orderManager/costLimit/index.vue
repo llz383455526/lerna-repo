@@ -109,9 +109,11 @@
       },
       handleSizeChange(size) {
         this.paging.pagheSize = size
+          this.getListData()
       },
       handleCurrentChange(num) {
         this.paging.pageNum = num
+          this.getListData()
       }
     },
     mounted() {

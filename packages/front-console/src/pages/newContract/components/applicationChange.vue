@@ -25,10 +25,33 @@ export default {
             optionModel: new optionModel(),
             pickerOptions:{
                 disabledDate(time){
-                    let curDate = (new Date()).getTime();
-                    let limit = 30 * 24 * 3600 * 1000;
-                    let monthsAgo = curDate - limit;
-                    let monthsLater = curDate + limit;
+                    const monthMap = {
+                        28: [2],
+                        30: [4,6,9,11],
+                        31: [1,3,5,7,8,10,12]
+                    }
+                    let curDate = new Date();
+                    const curMonth = curDate.getMonth()+1;
+                    const preMonth = curMonth - 1 <= 0 ? 12 : curMonth -1; 
+                    const afterMonth = curMonth + 1 >= 13 ? 1 : curMonth + 1;
+                    let curMonthDay,preMonthDay,afterMonthDay;
+                    for(const day in monthMap) {
+                        if (monthMap[day].indexOf(preMonth) > -1) {
+                            preMonthDay = parseInt(day)
+                        }
+                        if (monthMap[day].indexOf(afterMonth) > -1) {
+                            afterMonthDay = parseInt(day)
+                        }
+                        if (monthMap[day].indexOf(curMonth) > -1) {
+                            curMonthDay = parseInt(day)
+                        }
+                    }
+                    
+                    let curDay = curDate.getDate();
+                    let preDaylimit = (preMonthDay + curDay) * 24 * 3600 * 1000;
+                    let afterDaylimit = (afterMonthDay + curMonthDay - curDay) * 24 * 3600 * 1000;
+                    let monthsAgo = curDate.getTime() - preDaylimit;
+                    let monthsLater = curDate.getTime() + afterDaylimit;
                     return time.getTime() > monthsLater || time.getTime() < monthsAgo;
                 }
             }

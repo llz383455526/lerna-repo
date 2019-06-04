@@ -1,10 +1,10 @@
 <template>
     <div>
         <h3 class="green">请添加落地公司
-            <el-button 
-                size="small" 
-                type="primary" 
-                @click="dialogVisible = true;info.serviceCompanyId = ''" 
+            <el-button
+                size="small"
+                type="primary"
+                @click="dialogVisible = true;info.serviceCompanyId = ''"
                 v-if="!showAddBtn"
                 style="margin-left: 20px;">添加</el-button>
         </h3>
@@ -19,7 +19,7 @@
                 </div>
             </div>
             <div class="widget-main">
-                <el-form-item label="合同期限" :prop="'contracts.'+index+'.startDate'" :rules="{ required: true, message: '请选择合同期限', trigger: 'blur' }"> 
+                <el-form-item label="合同期限" :prop="'contracts.'+index+'.startDate'" :rules="{ required: true, message: '请选择合同期限', trigger: 'blur' }">
                     <el-date-picker type="daterange" style="width:450px;"
                                     v-model="contractDate[index]"
                                     start-placeholder="开始日期"
@@ -260,6 +260,8 @@ export default {
             this.ruleForm.contracts.forEach((item) => {
                 item.serviceTypeList = item.serviceTypeList.map((item) => {
                     return this.getServerTypeWithId(item.serviceId)
+                }).filter((item) => {
+                    return item
                 })
             })
         },

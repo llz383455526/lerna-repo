@@ -336,7 +336,6 @@
                     companyId: this.form.companyId
                 }).then((data) => {
                     this.companyRiskLevelInfo = data
-                    console.log('data = ', data)
                     if (this.companyRiskLevelInfo.companyRiskRateDTO) {
                         const cuserSignRate = this.companyRiskLevelInfo.companyRiskRateDTO.cuserSignRate
                         this.companyRiskLevelInfo.shenHeArr = [
@@ -349,7 +348,7 @@
                                 value: this.companyRiskLevelInfo.companyRiskRateDTO.cuserBalanceStandardState === 'fail' ? '不通过' : '审核通过'
                             },
                             {
-                                title: 'C端绩效数据',
+                                title: 'C端绩效费计算明细表',
                                 value: this.companyRiskLevelInfo.companyRiskRateDTO.cuserPerformanceState === 'fail' ? '不通过' : '审核通过'
                             }
                         ]
