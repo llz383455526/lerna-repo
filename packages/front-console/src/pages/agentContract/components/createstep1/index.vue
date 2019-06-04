@@ -46,6 +46,9 @@ export default {
         if (this.$route.query.id) {
             this.form.getChannelDetail(this.$route.query.id)
         }
+        this.form.contract.standardEnum = 1
+        this.form.contract.operateEnum = 1
+        this.form.contract.subjectType = 'channel'
     }
 }
 </script>

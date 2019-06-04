@@ -150,7 +150,7 @@ export default {
     },
     computed: {
         ruleForm () {
-            return this.settlementRate.serviceCompanyFeeContent
+            return this.serviceCompanyFeeContent || this.settlementRate.serviceCompanyFeeContent
         }
     },
     data() {

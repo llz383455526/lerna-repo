@@ -11,7 +11,7 @@
         <div class="widget-body">
             <div class="widget-main">
                 <createstep1 v-if="active === 1" @step1="step1"></createstep1>
-                <createstep2 v-if="active === 2" :form="form" @prev="active = 1"></createstep2>
+                <createstep2 v-if="active === 2" :form="form" @prev="active = 1" @step="active = 3"></createstep2>
                 <createstep3 v-if="active === 3"></createstep3>
             </div>
         </div>

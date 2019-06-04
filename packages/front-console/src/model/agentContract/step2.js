@@ -10,9 +10,7 @@ class Form {
         })
     }
     submitForm(form) {
-        post('/api/contract-web/agent-residence-flow/agent-residence-submit', form).then(res => {
-            console.log('res',res)
-        })
+        return post('/api/contract-web/agent-residence-flow/agent-residence-submit', form)
     }
 }
 
