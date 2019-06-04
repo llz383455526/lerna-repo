@@ -6,16 +6,14 @@
                     <template v-if="scope.$index">
                         <el-form-item 
                             :prop="`${propName}.${scope.$index}.startAmount`"
-                            :rules="{ required: true, message: '请输入月总额下限', trigger: 'blur' }">
-                            <el-input v-model="scope.row.startAmount" class="input">
+                            :rules="[{ required: true, message: '请输入月总额下限', trigger: 'blur' }, { validator: validateStartAmount, trigger: 'blur' }]">
+                            <el-input v-model="scope.row.startAmount" style="width: 120px;" @blur="fillPrev(scope.$index)">
                                 <template slot="append">万</template>
                             </el-input>
+                            <el-checkbox v-model="scope.row.equalsStart" class="mt10">含
+                                <template v-if="scope.row.sequence === tableData.length - 1">以上</template>
+                            </el-checkbox>
                         </el-form-item>
-                        <el-checkbox v-model="scope.row.equalsStart" class="mt10">含
-                            <template v-if="scope.row.sequence === tableData.length - 1">
-                                以上
-                            </template>
-                        </el-checkbox>
                     </template>
                     <template v-else>
                         <div class="center">无</div>
@@ -27,16 +25,14 @@
                     <template v-if="scope.row.sequence !== tableData.length - 1">
                         <el-form-item 
                             :prop="`${propName}.${scope.$index}.endAmount`"
-                            :rules="{ required: true, message: '请输入月总额上限', trigger: 'blur' }">
-                            <el-input v-model="scope.row.endAmount" class="input">
+                            :rules="[{ required: true, message: '请输入月总额上限', trigger: 'blur' }, { validator: validateEndAmount, trigger: 'blur' }]">
+                            <el-input v-model.number="scope.row.endAmount" style="width: 120px;" @blur="fillNext(scope.$index)">
                                 <template slot="append">万</template>
                             </el-input>
+                            <el-checkbox v-model="scope.row.equalsEnd" class="mt10">含
+                                <template v-if="!scope.row.sequence">以下</template>
+                            </el-checkbox>
                         </el-form-item>
-                        <el-checkbox v-model="scope.row.equalsEnd" class="mt10">含
-                            <template v-if="!scope.row.sequence">
-                                以下
-                            </template>
-                        </el-checkbox>
                     </template>
                     <template v-else>
                         <div class="center">无</div>
@@ -49,8 +45,8 @@
                         :prop="`${propName}.${scope.$index}.percent`"
                         :rules="{ required: true, message: '请输入阶梯收费', trigger: 'blur' }">
                         <el-input v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 
+                        <i class="el-icon-question mt10" title="按每人月收入分阶梯收费"></i>
                     </el-form-item>
-                    <i class="el-icon-question mt10" title="按每人月收入分阶梯收费"></i>
                 </template>
             </el-table-column>
             <el-table-column label="操作" width="100">
@@ -95,9 +91,40 @@ export default {
                 "sequence": list.length, // 序号
                 "startAmount": 0 // 开始金额
             })
+        },
+        fillPrev(index) {
+            if (this.tableData[index - 1]) {
+                this.tableData[index - 1].endAmount = this.tableData[index].startAmount
+            }
+        },
+        validateStartAmount(rule, value, callback) {
+            const index = rule.field.substr(-13, 1)
+            const nextValue = this.tableData[index].endAmount
+            if (nextValue === null) {
+                callback()
+            } else if (value >= nextValue) {
+                callback('月总额下限不得大于或等于上限')
+            } else {
+                callback()
+            }
+        },
+        fillNext(index) {
+            if (this.tableData[index + 1]) {
+                this.tableData[index + 1].startAmount = this.tableData[index].endAmount
+            }
+        },
+        validateEndAmount(rule, value, callback) {
+            const index = rule.field.substr(-11, 1)
+            const prevValue = this.tableData[index].startAmount
+            if (value <= prevValue) {
+                callback('月总额上限不得小于或等于下限')
+            } else {
+                callback()
+            }
         }
     },
     created() {
+        // console.log(this.tableData)
     }
 }
 </script>
@@ -106,9 +133,8 @@ export default {
 .center {
     text-align: center;
 }
-.input {
-    width: 120px;
-    // vertical-align: middle;
+.el-form-item .el-form-item {
+    margin-bottom: 22px;
 }
 </style>
 
