@@ -5,7 +5,7 @@
                 <!-- 落地公司名称 -->
                 <h4 class="widget-title mr25">{{ formItem.taxLandingName }} / {{ formItem.serviceCompanyName || '落地公司名称' }}</h4>
                 <div class="widget-toolbar">
-                    <el-button @click="deleteForm(index)" type="text" size="medium" v-if="!showDelBtn">删除</el-button>
+                    <el-button @click="formDel(index)" type="text" size="medium" v-if="!showDelBtn">删除</el-button>
                 </div>
             </div>
             <div class="widget-main">
@@ -43,6 +43,9 @@ export default {
             })
             check = result.indexOf(false) > -1 ? false : true // 判断所有验证是否通过
             return check === false ? check : this.list
+        },
+        formDel(index) {
+            this.$emit('formDel', index)
         }
     }
 }

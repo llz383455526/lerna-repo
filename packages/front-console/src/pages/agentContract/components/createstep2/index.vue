@@ -4,7 +4,7 @@
             <el-button size="small" type="primary" @click="dialogVisible = true">添加</el-button>
         </h3>
         <div class="mb25">报价规则：代理商返佣结算模式（实发*返佣比例）</div>
-        <serviceList :serviceCompanyFeeContentList="serviceCompanyFeeContentList" ref="serviceList"></serviceList>
+        <serviceList :serviceCompanyFeeContentList="serviceCompanyFeeContentList" ref="serviceList" @formDel="formDel"></serviceList>
         <serviceDialog :dialogVisible="dialogVisible" @close="dialogVisible = false" @formAdd="formAdd"></serviceDialog>
         <div>
             <el-button>返回</el-button>
@@ -34,12 +34,15 @@ export default {
     },
     computed: {
         serviceCompanyFeeContentList() {
-            return this.form.datas.agentContract.serviceCompanyFeeContentList || ruleForm.serviceCompanyFeeContentList
+            return this.form.datas.agentContract.serviceCompanyFeeContentList || this.ruleForm.serviceCompanyFeeContentList
         }
     },
     methods: {
+        formDel(index) {
+            this.serviceCompanyFeeContentList.splice(index, 1)
+        },
         formAdd(appForm) {
-            this.ruleForm.serviceCompanyFeeContentList.push(appForm)
+            this.serviceCompanyFeeContentList.push(appForm)
             this.dialogVisible = false
         },
         submitForm() {
@@ -60,7 +63,6 @@ export default {
         }
     },
     created() {
-        // console.log(this.serviceCompanyFeeContentList)
         this.$store.dispatch('getServiceCompaniesList')
     }
 }
