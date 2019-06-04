@@ -117,13 +117,13 @@
 
     <el-button
       size="small"
-      @click="$router.push({path:'create',query:{workflowType:'create_sale_contract'}})"
+      @click="$router.push({path:'create'})"
     >
       创建合同
     </el-button>
     <el-button
       size="small"
-      @click="$router.push({path:'create_add'})"
+      @click="$router.push({path:'create'})"
       v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'"
     >
       补签合同
@@ -132,7 +132,7 @@
     <!-- <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_ns_sale_contract'}})">新客户非标准合同</el-button> -->
     <el-button
       size="small"
-      @click="$router.push({path:'create_change',query:{workflowType:'update_sale_contract'}})"
+      @click="$router.push({path:'create'})"
       v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'"
     >
       合同变更
@@ -149,15 +149,15 @@
           label="企业名称" 
         /> -->
         <el-table-column
-          prop="customerName"
+          prop="name"
           label="代理商名称" 
         />
         <el-table-column
-          prop="customerName"
+          prop="agentTypeName"
           label="申请主体" 
         />
         <el-table-column
-          prop="customerName"
+          prop="salesName"
           label="渠道经理" 
         />
         <el-table-column
@@ -168,22 +168,25 @@
           prop="updatedAt"
           label="提交时间"
         />
-        <el-table-column label="合同类型">
+        <el-table-column
+          prop="standardEnum"
+          label="合同类型"
+        />
+        <!-- <el-table-column label="合同类型">
           <template slot-scope="scope">
             {{ workflowTypeList[scope.row.workflowType] || '非标合同' }}
-            <!-- {{scope.row.workflowType === 'create_sale_contract' ? '标准合同' : '非标准合同'}} -->
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="curProcessUser"
           label="当前处理人"
         />
         <el-table-column
-          prop="processedAt"
+          prop="updatedAt"
           label="最后审批时间"
         />
         <el-table-column
-          prop="agentCompanyBaseInfo.agentTypeName"
+          prop="operateEnum"
           label="申请类型"
         />
         <el-table-column

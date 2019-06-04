@@ -519,7 +519,14 @@ export default [{
                     meta: {
                         keepAlive: false
                     }
-                }
+                },
+                {
+                    path: 'preview',
+                    component: r => require.ensure([], () => r(require('../pages/agentContract/preview.vue'))),
+                    meta: {
+                        keepAlive: false
+                    }
+                },
             ]
         },
         {

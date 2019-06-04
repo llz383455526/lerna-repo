@@ -123,7 +123,7 @@ class Form {
     }
     getChannelDetail(id) {
         get(`/api/opencrm/workflow/details/${id}`).then(res => {
-			this.datas = res
+			this.contract = res
 		})
     }
 }
