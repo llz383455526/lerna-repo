@@ -82,13 +82,13 @@
 <script>
 import {
     post
-} from "../../../../store/api"
+} from "src/store/api"
 import {
     showNotify
-} from "../../../../plugin/utils-notify";
+} from "src/plugin/utils-notify";
 import {
     showConfirm
-} from '../../../../plugin/utils-message';
+} from 'src/plugin/utils-message';
 export default {
     name: "AuditOption",
     props: ['contractModel', 'editType'],

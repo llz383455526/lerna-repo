@@ -115,6 +115,55 @@ class Form {
             agent: ['create_agent_sale_contract', 'create_agent_ns_sale_contract'],
             channel: ['create_channel_sale_contract', 'create_channel_ns_sale_contract']
         }
+        // 申请主体
+        this.agentTypes = [
+            {
+                value: 'channel,agent',
+                label: '全部'
+            },
+            {
+                value: 'channel',
+                label: '渠道'
+            },
+            {
+                value: 'agent',
+                label: '代理商'
+            }
+        ]
+        // 申请类型
+        this.operateEnum = [
+            {
+                value: '',
+                label: '全部'
+            },
+            {
+                value: '1',
+                label: '新增'
+            },
+            {
+                value: '2',
+                label: '补签'
+            },
+            {
+                value: '3',
+                label: '变更'
+            }
+        ]
+        // 合同类型
+        this.standardEnum = [
+            {
+                value: '',
+                label: '全部'
+            },
+            {
+                value: '1',
+                label: '标准合同'
+            },
+            {
+                value: '2',
+                label: '非标合同'
+            }
+        ]
     }
     saveChannelInfo() {
         post('/api/opencrm/workflow/save_draft', this.contract).then(res => {

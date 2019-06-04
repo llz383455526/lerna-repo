@@ -28,27 +28,11 @@
       ref="formSearch"
     >
       <el-form-item
-        label="企业名称"
+        label="代理商名称"
         size="small"
         prop="customerName"
       >
-        <el-input v-model="formSearch.customerName" />
-      </el-form-item>
-
-      <el-form-item
-        label="申请人姓名"
-        size="small"
-        prop="createBy"
-      >
-        <el-input v-model="formSearch.createBy" />
-      </el-form-item>
-
-      <el-form-item
-        label="服务商名称"
-        size="small"
-        prop="serviceCompanyName"
-      >
-        <el-input v-model="formSearch.serviceCompanyName" />
+        <el-input v-model="formSearch.name" />
       </el-form-item>
 
       <el-form-item
@@ -56,21 +40,15 @@
         size="small"
       >
         <el-select
-          v-model="formSearch.workflowType"
+          v-model="formSearch.standardEnum"
           placeholder="请选择"
           style="width:100%;"
         >
           <el-option
-            label="全部"
-            value="" 
-          />
-          <el-option
-            label="标准"
-            value="create_sale_contract" 
-          />
-          <el-option
-            label="非标"
-            value="create_ns_sale_contract"
+            v-for="item in standardEnum"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value" 
           />
         </el-select>
       </el-form-item>
@@ -86,10 +64,6 @@
           style="width:100%;"
         >
           <el-option
-            label="全部"
-            value="" 
-          />
-          <el-option
             v-for="item in statusList"
             :key="item.value"
             :label="item.text"
@@ -97,7 +71,43 @@
           />
         </el-select>
       </el-form-item>
-
+      <el-form-item
+        label="申请主体"
+        size="small"
+        prop="status"
+        no-data-text="全部"
+      >
+        <el-select
+          v-model="formSearch.subjectType"
+          placeholder="请选择"
+          style="width:100%;"
+        >
+          <el-option
+            v-for="item in agentTypes"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value" 
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item
+        label="申请类型"
+        size="small"
+        prop="operateEnum"
+      >
+        <el-select
+          v-model="formSearch.operateEnum"
+          placeholder="请选择"
+          style="width:100%;"
+        >
+          <el-option
+            v-for="item in operateEnum"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value" 
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item style="margin-top: -4px">
         <el-button
           type="primary"
@@ -144,10 +154,6 @@
           prop="id"
           label="申请编号"
         />
-        <!-- <el-table-column
-          prop="customerName"
-          label="企业名称" 
-        /> -->
         <el-table-column
           prop="name"
           label="代理商名称" 
@@ -169,7 +175,7 @@
           label="提交时间"
         />
         <el-table-column
-          prop="standardEnum"
+          prop="standardEnumString"
           label="合同类型"
         />
         <!-- <el-table-column label="合同类型">
@@ -186,7 +192,7 @@
           label="最后审批时间"
         />
         <el-table-column
-          prop="operateEnum"
+          prop="operateEnumString"
           label="申请类型"
         />
         <el-table-column
@@ -261,6 +267,10 @@ import _ from 'lodash'
 import { post, get } from "../../store/api"
 import { showNotify } from "../../plugin/utils-notify";
 import { showConfirm } from "../../plugin/utils-message";
+import Form from 'src/model/agentContract/form'
+
+// 每个合同的数据
+const form = new Form()
 
 export default {
     created() {
@@ -289,7 +299,10 @@ export default {
                 serviceCompanyName: '',
                 status: '',
                 moduleName: 'sale_contract',
-                subjectType: 'agent,channel'
+                name: '', // 代理商名称
+                standardEnum: '', // 合同类型
+                subjectType: 'channel,agent', // 申请主体
+                operateEnum: '', // 申请类型
             },
             statusList: [],
             activeName: 'first',
@@ -301,6 +314,10 @@ export default {
                 agent_add_sale_contract: '标准合同',
                 agent_update_sale_contract: '标准合同',
             },
+            
+            agentTypes: form.agentTypes,
+            operateEnum: form.operateEnum,
+            standardEnum: form.standardEnum 
         }
     },
     methods: {
