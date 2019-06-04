@@ -28,7 +28,7 @@ export default {
     data() {
         return {
             form: {},
-            active: 3
+            active: 1
         }
     },
     methods: {
