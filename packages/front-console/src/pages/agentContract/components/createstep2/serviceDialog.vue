@@ -7,8 +7,8 @@
                 </el-select>
             </el-form-item>
             <el-form-item style="margin-left: 150px;">
-                <el-button type="primary" @click="formAdd">保存</el-button>
-                <el-button @click="close">取消</el-button>
+                <el-button type="primary" @click="save">保存</el-button>
+                <el-button @click="hideDialog">取消</el-button>
             </el-form-item>
         </el-form>
     </el-dialog>
@@ -16,11 +16,6 @@
 
 <script>
 export default {
-    props: {
-        dialogVisible: {
-            type: Boolean
-        }
-    },
     computed: {
         filterList() {
             return this.$store.getters.serviceCompaniesList
@@ -33,20 +28,24 @@ export default {
                 serviceCompanyName: '',
                 taxLandingName: ''
             },
+            dialogVisible: false
         }
     },
     methods: {
-        close() {
-            this.$emit('close')
-        },
-        formAdd() {
+        save() {
             const { serviceCompanyId } = this.appForm
             const obj = this.filterList.find((item) => {
                 return item.companyId === serviceCompanyId
             })
             this.appForm.serviceCompanyName = obj.name
             this.appForm.taxLandingName = obj.taxLandingName
-            this.$emit('formAdd', this.appForm)
+            this.$emit('save', this.appForm)
+        },
+        hideDialog() {
+            this.dialogVisible = false
+        },
+        showDialog() {
+            this.dialogVisible = true
         }
     }
 }

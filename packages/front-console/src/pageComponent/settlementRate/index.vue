@@ -1,19 +1,19 @@
 <template>
-    <el-form :model="ruleForm" :inline="true" label-width="100px" ref="ruleForm">
+    <el-form :model="serviceCompanyFeeContent" :inline="true" label-width="100px" ref="ruleForm">
         <el-form-item label="结算费率">
                 <div>
                     <el-form-item :prop="`subType`" :rules="{ required: true, message: '请选择结算费率类型', trigger: 'change' }">
-                        <el-radio-group v-model="ruleForm.subType">
+                        <el-radio-group v-model="serviceCompanyFeeContent.subType">
                             <el-radio label="ratio" :disabled="disabled">固定比例收费</el-radio>
                         </el-radio-group>
                     </el-form-item>
-                    <template v-if="ruleForm.subType === 'ratio'">
+                    <template v-if="serviceCompanyFeeContent.subType === 'ratio'">
                         <div style="line-height: 40px; display: inline-block;">
                             <span style="color: #606266; ">实发金额 * </span>
                             <el-form-item 
                                 :prop="`feeContentMap.no.0.percent`" 
                                 :rules="{ required: true, message: '请输入结算实发金额', trigger: 'blur' }">
-                                <el-input v-model="ruleForm.feeContentMap.no[0].percent" :disabled="disabled">
+                                <el-input v-model="serviceCompanyFeeContent.feeContentMap.no[0].percent" :disabled="disabled">
                                     <template slot="append">% 每笔</template>
                                 </el-input>
                             </el-form-item>
@@ -25,12 +25,12 @@
                     <el-form-item class="mb15"
                         :prop="`subType`" 
                         :rules="{ required: true, message: '请选择结算费率类型', trigger: 'change' }">
-                        <el-radio-group v-model="ruleForm.subType">
+                        <el-radio-group v-model="serviceCompanyFeeContent.subType">
                             <el-radio label="nonflow">分{{'2.8'}}万 - 无流水阶梯报价</el-radio>
                         </el-radio-group>
                     </el-form-item>
-                    <el-table v-if="ruleForm.subType === 'nonflow'"
-                        :data="[ruleForm.feeContentMap.down[0], ruleForm.feeContentMap.up[0]]">
+                    <el-table v-if="serviceCompanyFeeContent.subType === 'nonflow'"
+                        :data="[serviceCompanyFeeContent.feeContentMap.down[0], serviceCompanyFeeContent.feeContentMap.up[0]]">
                         <el-table-column label="月总额下限" width="240">
                             <template slot-scope="scope">
                                 <template v-if="scope.$index">
@@ -99,27 +99,27 @@
                     <el-form-item
                         :prop="`subType`" 
                         :rules="{ required: true, message: '请选择结算费率类型', trigger: 'change' }">
-                        <el-radio-group v-model="ruleForm.subType">
+                        <el-radio-group v-model="serviceCompanyFeeContent.subType">
                             <el-radio label="flow">分{{'2.8'}}万 - 按流水分阶梯报价</el-radio>
                         </el-radio-group>
                     </el-form-item>
-                    <div :span="24" v-if="ruleForm.subType === 'flow'">
+                    <div :span="24" v-if="serviceCompanyFeeContent.subType === 'flow'">
                         <el-form-item label="月收入"
                             :prop="`incomeAmount`" 
                             :rules="{ required: true, message: '请输入月收入', trigger: 'blur' }">
-                            <el-input style="width: 120px;" v-model="ruleForm.incomeAmount" :disabled="disabled">
+                            <el-input style="width: 120px;" v-model="serviceCompanyFeeContent.incomeAmount" :disabled="disabled">
                                 <template slot="append">万</template>
                             </el-input>
                             <span class="ml10">以下</span>
                         </el-form-item>
-                        <additionalProp :tableData="ruleForm.feeContentMap.down" :propName="`feeContentMap.down`"></additionalProp>
+                        <additionalProp :tableData="serviceCompanyFeeContent.feeContentMap.down" :propName="`feeContentMap.down`"></additionalProp>
                         <el-form-item label="月收入" class="mt25">
-                            <el-input style="width: 120px;" v-model="ruleForm.incomeAmount" :disabled="disabled">
+                            <el-input style="width: 120px;" v-model="serviceCompanyFeeContent.incomeAmount" :disabled="disabled">
                                 <template slot="append">万</template>
                             </el-input>
                             <span class="ml10">以上</span>
                         </el-form-item>
-                        <additionalProp :tableData="ruleForm.feeContentMap.up" :propName="`feeContentMap.up`"></additionalProp>
+                        <additionalProp :tableData="serviceCompanyFeeContent.feeContentMap.up" :propName="`feeContentMap.up`"></additionalProp>
                     </div>
                 </div>
         </el-form-item>
@@ -129,15 +129,11 @@
 
 <script>
 import radioFee from './ratioFee'
-import Form from 'src/model/settlementRate'
 import additionalProp from './additionalProp'
 
 export default {
     components: { radioFee, additionalProp },
     props: {
-        settlementRateInfo: {
-            type: Object
-        },
         serviceCompanyFeeContent: {
             type: Object
         },
@@ -148,16 +144,6 @@ export default {
             type: Number
         }
     },
-    computed: {
-        ruleForm () {
-            return this.serviceCompanyFeeContent || this.settlementRate.serviceCompanyFeeContent
-        }
-    },
-    data() {
-        return {
-           settlementRate : new Form()
-        }
-    },
     methods: {
         checkTable() {
             this.$emit('result')
@@ -166,7 +152,8 @@ export default {
             if (typeof callback === 'function') {
                 this.$refs['ruleForm'].validate((valid) => {
                     if (valid) {
-                        callback(this.ruleForm)
+                        // callback(this.ruleForm)
+                        callback(true);
                     } else {
                         callback(false);
                     }

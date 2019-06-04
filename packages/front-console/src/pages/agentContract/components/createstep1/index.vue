@@ -24,6 +24,7 @@ export default {
         return {
             form: new Form(),
             check: new Check(),
+            instanceId: ''
         }
     },
     methods: {
@@ -34,6 +35,12 @@ export default {
                     // this.$emit('step1', this.form.contract)
                     this.form.saveChannelInfo().then(() => {
                         this.$emit('step1', this.form.contract)
+                        this.$router.push({
+                            path: 'create',
+                            query: {
+                                instanceId: this.form.contract.instanceId
+                            }
+                        })
                     })
                 } else {
                     console.log('error submit!!');
@@ -43,8 +50,9 @@ export default {
         },
     },
     created() {
-        if (this.$route.query.id) {
-            this.form.getChannelDetail(this.$route.query.id)
+        this.instanceId = this.$route.query.instanceId
+        if (this.instanceId) {
+            this.form.getChannelDetail(this.instanceId)
         }
         this.form.contract.standardEnum = 1
         this.form.contract.operateEnum = 1

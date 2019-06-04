@@ -48,6 +48,7 @@ export default {
         return {
             form: new Form(),
             approveType: 'standard',
+            instanceId: ''
         }
     },
     methods: {
@@ -78,8 +79,9 @@ export default {
         }
     },
     created() {
-        if (this.$route.query.id) {
-            this.form.getDetail(this.$route.query.id)
+        this.instanceId = this.$route.query.instanceId
+        if (this.instanceId) {
+            this.form.getDetail(this.instanceId)
         }
     }
 }
