@@ -1,19 +1,17 @@
 <template>
-    <div>
-        <el-table :data="tableData">
-            <el-form ref="ruleFormaaa" :model="scope"></el-form>
-            <div>{{scope}}</div>
-            <!-- <el-table-column label="月总额下限" width="240">
+    <el-form :model="ruleForm" ref="ruleForm">
+        <el-table :data="ruleForm.list">
+            <el-table-column label="月总额下限" width="240">
                 <template slot-scope="scope">
                     <template v-if="scope.$index">
                         <el-form-item 
-                            :prop="`${propName}.${scope.$index}.startAmount`"
+                            :prop="`list.${scope.$index}.startAmount`"
                             :rules="[{ required: true, message: '请输入月总额下限', trigger: 'blur' }, { validator: validateStartAmount, trigger: 'blur' }]">
                             <el-input v-model="scope.row.startAmount" style="width: 120px;" @blur="fillPrev(scope.$index)">
                                 <template slot="append">万</template>
                             </el-input>
                             <el-checkbox v-model="scope.row.equalsStart" class="mt10">含
-                                <template v-if="scope.row.sequence === tableData.length - 1">以上</template>
+                                <template v-if="scope.row.sequence === ruleForm.list.length - 1">以上</template>
                             </el-checkbox>
                         </el-form-item>
                     </template>
@@ -24,9 +22,9 @@
             </el-table-column>
             <el-table-column label="月总额上限" width="240">
                 <template slot-scope="scope">
-                    <template v-if="scope.row.sequence !== tableData.length - 1">
+                    <template v-if="scope.$index !== ruleForm.list.length - 1">
                         <el-form-item 
-                            :prop="`${propName}.${scope.$index}.endAmount`"
+                            :prop="`list.${scope.$index}.endAmount`"
                             :rules="[{ required: true, message: '请输入月总额上限', trigger: 'blur' }, { validator: validateEndAmount, trigger: 'blur' }]">
                             <el-input v-model.number="scope.row.endAmount" style="width: 120px;" @blur="fillNext(scope.$index)">
                                 <template slot="append">万</template>
@@ -44,7 +42,7 @@
             <el-table-column label="阶梯收费" width="350">
                 <template slot-scope="scope">
                     <el-form-item label="实发金额"
-                        :prop="`${propName}.${scope.$index}.percent`"
+                        :prop="`list.${scope.$index}.percent`"
                         :rules="{ required: true, message: '请输入阶梯收费', trigger: 'blur' }">
                         <el-input v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 
                         <i class="el-icon-question mt10" title="按每人月收入分阶梯收费"></i>
@@ -55,16 +53,15 @@
                 <template slot-scope="scope">
                     <el-button 
                         type="text" 
-                        @click="deleteColumn(tableData, scope.$index)" 
-                        v-if="scope.$index > 1 && scope.$index === tableData.length - 1" 
+                        @click="deleteColumn(scope.$index)" 
+                        v-if="scope.$index > 1 && scope.$index === ruleForm.list.length - 1" 
                         :disabled="disabled">{{scope.$length}}删除</el-button>
                     <div class="center" v-else>-</div>
                 </template>
-            </el-table-column> -->
+            </el-table-column>
         </el-table>
-        <el-button @click="clickHandle">asds</el-button>
-        <el-button class="mt25" v-if="tableData.length < 10 && showAdd" @click="addColumn(tableData)" size="small" type="primary" :disabled="disabled">增加阶梯</el-button>
-    </div>
+        <el-button class="mt25" v-if="ruleForm.list.length < 10 && ruleForm.list.length > 2" @click="addColumn" size="small" type="primary" :disabled="disabled">增加阶梯</el-button>
+    </el-form>
 </template>
 
 <script>
@@ -79,30 +76,33 @@ export default {
         },
         propName: {
             type: String
+        },
+        ruleForm: {
+            type: Object
         }
     },
     methods: {
-        deleteColumn(list, index) {
-            list.splice(index, 1)
+        deleteColumn(index) {
+            this.ruleForm.list.splice(index, 1)
         },
-        addColumn(list) {
-            list.push({
+        addColumn() {
+            this.ruleForm.list.push({
                 "endAmount": null, // 结束金额
                 "equalsEnd": false, // 是否包含上限金额
                 "equalsStart": false, // 是否包含下限金额
-                "percent": 0, // 收费比例
-                "sequence": list.length, // 序号
-                "startAmount": 0 // 开始金额
+                "percent": '', // 收费比例
+                "sequence": this.ruleForm.list.length, // 序号
+                "startAmount": '' // 开始金额
             })
         },
         fillPrev(index) {
-            if (this.tableData[index - 1]) {
-                this.tableData[index - 1].endAmount = this.tableData[index].startAmount
+            if (this.ruleForm.list[index - 1]) {
+                this.ruleForm.list[index - 1].endAmount = this.ruleForm.list[index].startAmount
             }
         },
         validateStartAmount(rule, value, callback) {
             const index = rule.field.substr(-13, 1)
-            const nextValue = this.tableData[index].endAmount
+            const nextValue = this.ruleForm.list[index].endAmount
             if (nextValue === null) {
                 callback()
             } else if (value >= nextValue) {
@@ -112,25 +112,38 @@ export default {
             }
         },
         fillNext(index) {
-            if (this.tableData[index + 1]) {
-                this.tableData[index + 1].startAmount = this.tableData[index].endAmount
+            if (this.ruleForm.list[index + 1]) {
+                this.ruleForm.list[index + 1].startAmount = this.ruleForm.list[index].endAmount
             }
         },
         validateEndAmount(rule, value, callback) {
             const index = rule.field.substr(-11, 1)
-            const prevValue = this.tableData[index].startAmount
-            if (value <= prevValue) {
+            const prevValue = this.ruleForm.list[index].startAmount
+            if (index === '0') {
+                callback()
+            } else if (value <= prevValue) {
                 callback('月总额上限不得小于或等于下限')
             } else {
                 callback()
             }
         },
-        clickHandle() {
-            console.log(this.$refs['ruleFormaaa'])
+        validate(callback) {
+            if (typeof callback !== 'function') {
+                console.log('feeContentMap no callback')
+                return
+            }
+            console.log(this.$refs['ruleForm'])
+            this.$refs['ruleForm'].validate((valid) => {
+                if (valid) {
+                    callback(true);
+                } else {
+                    callback(false);
+                }
+            })
         }
     },
     created() {
-        console.log(this.tableData)
+        // console.log(this.ruleForm)
     }
 }
 </script>

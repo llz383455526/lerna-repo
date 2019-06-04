@@ -13,7 +13,7 @@
         <nonstandard :contractAttachments="partialAttachments" v-if="approveType === 'partial'"></nonstandard>
         <nonstandard :contractAttachments="customerAttachments" v-if="approveType === 'customer'"></nonstandard>
         <div>
-            <el-button>返回</el-button>
+            <el-button @click="$router.push('list')">返回</el-button>
             <el-button>保存</el-button>
             <el-button type="primary" @click="submitForm">送审</el-button>
         </div>

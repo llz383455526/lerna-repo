@@ -26,72 +26,17 @@
                             <el-radio label="nonflow">分{{'2.8'}}万 - 无流水阶梯报价</el-radio>
                         </el-radio-group>
                     </el-form-item>
-                    <!--<el-table v-if="serviceCompanyFeeContent.subType === 'nonflow'"
-                        :data="[serviceCompanyFeeContent.feeContentMap.down[0], serviceCompanyFeeContent.feeContentMap.up[0]]">
-                        <el-table-column label="月总额下限" width="240">
-                            <template slot-scope="scope">
-                                <template v-if="scope.$index">
-                                    <el-form-item 
-                                        :prop="scope.$index ? `feeContentMap.up.0.startAmount` : `feeContentMap.down.0.startAmount`" 
-                                        :rules="[{ required: true, message: '请输入月总额下限', trigger: 'blur' }, { validator: validateStartAmount, trigger: 'blur' }]">
-                                        <el-input v-model="scope.row.startAmount" style="width: 120px;" @blur="fillPrev(scope.$index)">
-                                            <template slot="append">万</template>
-                                        </el-input>
-                                        <el-checkbox v-model="scope.row.equalsStart" class="mt10">含
-                                            <template v-if="scope.row.sequence === 1">
-                                                以上
-                                            </template>
-                                        </el-checkbox>
-                                    </el-form-item>
-                                </template>
-                                <template v-else>
-                                    <div class="center">无</div>
-                                </template>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="月总额上限" width="240">
-                            <template slot-scope="scope">
-                                <template v-if="scope.row.sequence !== 1">
-                                    <el-form-item 
-                                        :prop="scope.$index ? `feeContentMap.up.0.endAmount` : `feeContentMap.down.0.endAmount`" 
-                                        :rules="[{ required: true, message: '请输入月总额上限', trigger: 'blur' }, { validator: validateEndAmount, trigger: 'blur' }]">
-                                        <el-input v-model="scope.row.endAmount" style="width: 120px;" @blur="fillNext(scope.$index)">
-                                            <template slot="append">万</template>
-                                        </el-input>
-                                        <el-checkbox v-model="scope.row.equalsEnd">含
-                                            <template v-if="!scope.row.sequence">
-                                                以下
-                                            </template>
-                                        </el-checkbox>
-                                    </el-form-item>
-                                </template>
-                                <template v-else>
-                                    <div class="center">无</div>
-                                </template>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="阶梯收费" width="350">
-                            <template slot-scope="scope">
-                                <el-form-item label="实发金额"
-                                    :prop="scope.$index ? `feeContentMap.up.0.percent` : `feeContentMap.down.0.percent`" 
-                                    :rules="{ required: true, message: '请输入阶梯收费', trigger: 'blur' }">
-                                    <el-input v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 
-                                    <i class="el-icon-question mt10" title="按每人月收入分阶梯收费"></i>
-                                </el-form-item>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="操作" width="100">
-                            <template slot-scope="scope">
-                                <el-button 
-                                    type="text" 
-                                    @click="deleteColumn(tableData, scope.$index)" 
-                                    v-if="scope.$index > 1 && scope.$index === 1" 
-                                    :disabled="disabled">{{scope.$length}}删除</el-button>
-                                <div class="center" v-else>-</div>
-                            </template>
-                        </el-table-column>
-                    </el-table>-->
-                    <feeContentMap :tableData="[serviceCompanyFeeContent.feeContentMap.down[0], serviceCompanyFeeContent.feeContentMap.up[0]]"></feeContentMap>
+                    <div v-if="serviceCompanyFeeContent.subType === 'nonflow'">
+                        <div v-for="item in ['whatever']" :key="item">
+                            <feeContentMap 
+                                ref="feeContentMap"
+                                :ruleForm="{ list: [
+                                    serviceCompanyFeeContent.feeContentMap.down[0], 
+                                    serviceCompanyFeeContent.feeContentMap.up[0]
+                                ] }"></feeContentMap>
+                        </div>
+                    </div>
+                    
                 </div>
                 <div class="mb25">
                     <el-form-item
@@ -102,7 +47,18 @@
                         </el-radio-group>
                     </el-form-item>
                     <div :span="24" v-if="serviceCompanyFeeContent.subType === 'flow'">
-                        <el-form-item label="月收入"
+                        <div v-for="item in ['down', 'up']" :key="item" class="mb25">
+                            <el-form-item label="月收入"
+                                :prop="`incomeAmount`" 
+                                :rules="{ required: true, message: '请输入月收入', trigger: 'blur' }">
+                                <el-input style="width: 120px;" v-model="serviceCompanyFeeContent.incomeAmount" :disabled="disabled">
+                                    <template slot="append">万</template>
+                                </el-input>
+                                <span class="ml10">以下</span>
+                            </el-form-item>
+                            <feeContentMap ref="feeContentMap" :ruleForm="{ list: serviceCompanyFeeContent.feeContentMap[item] }"></feeContentMap>
+                        </div>
+                        <!-- <el-form-item label="月收入"
                             :prop="`incomeAmount`" 
                             :rules="{ required: true, message: '请输入月收入', trigger: 'blur' }">
                             <el-input style="width: 120px;" v-model="serviceCompanyFeeContent.incomeAmount" :disabled="disabled">
@@ -110,14 +66,16 @@
                             </el-input>
                             <span class="ml10">以下</span>
                         </el-form-item>
-                        <additionalProp :tableData="serviceCompanyFeeContent.feeContentMap.down" :propName="`feeContentMap.down`"></additionalProp>
-                        <el-form-item label="月收入" class="mt25">
+                        <feeContentMap ref="feeContentMap" :ruleForm="{ list: serviceCompanyFeeContent.feeContentMap.down }"></feeContentMap> -->
+                        <!-- <additionalProp :tableData="serviceCompanyFeeContent.feeContentMap.down" :propName="`feeContentMap.down`"></additionalProp> -->
+                        <!-- <el-form-item label="月收入" class="mt25">
                             <el-input style="width: 120px;" v-model="serviceCompanyFeeContent.incomeAmount" :disabled="disabled">
                                 <template slot="append">万</template>
                             </el-input>
                             <span class="ml10">以上</span>
                         </el-form-item>
-                        <additionalProp :tableData="serviceCompanyFeeContent.feeContentMap.up" :propName="`feeContentMap.up`"></additionalProp>
+                        <feeContentMap ref="feeContentMap" :ruleForm="{ list: serviceCompanyFeeContent.feeContentMap.up }"></feeContentMap> -->
+                        <!-- <additionalProp :tableData="serviceCompanyFeeContent.feeContentMap.up" :propName="`feeContentMap.up`"></additionalProp> -->
                     </div>
                 </div>
             </el-form>
@@ -146,18 +104,23 @@ export default {
     },
     methods: {
         validate(callback) {
-            if (typeof callback === 'function') {
-                this.$refs['ruleForm'].validate((valid) => {
-                    if (valid) {
-                        // callback(this.ruleForm)
-                        callback(true);
-                    } else {
-                        callback(false);
-                    }
-                });
-            } else {
-                console.log('no callback')
+            if (typeof callback !== 'function') {
+                console.log('settlementRate no callback')
+                return
             }
+            let result = [] // 储存遍历每个验证结果
+            let check = false // 最后输出
+            this.$refs['feeContentMap'].forEach(item => {
+                item.validate((valid) => {
+                    if (valid) {
+                        result.push(true)
+                    } else {
+                        result.push(false)
+                    }
+                })
+            })
+            check = result.indexOf(false) > -1 ? false : true
+            callback(check)
         },
         fillPrev(index) {
             this.serviceCompanyFeeContent.feeContentMap.down[0].endAmount = this.serviceCompanyFeeContent.feeContentMap.up[0].startAmount

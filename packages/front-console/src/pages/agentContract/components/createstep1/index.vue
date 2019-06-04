@@ -7,7 +7,7 @@
         <channel-info :contract="form.contract"></channel-info>
         <sale-contact-info :contract="form.contract"></sale-contact-info>
         <el-form-item>
-            <el-button>返回</el-button>
+            <el-button @click="$router.push('list')">返回</el-button>
             <el-button type="primary" @click="onSubmit('createAgentContract')">下一步</el-button>
         </el-form-item>
     </el-form>
@@ -43,7 +43,8 @@ export default {
                         this.$router.push({
                             path: 'create',
                             query: {
-                                instanceId: this.form.contract.instanceId
+                                instanceId: this.form.contract.instanceId,
+                                operateEnum: this.operateEnum
                             }
                         })
                     })

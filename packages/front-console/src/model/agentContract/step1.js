@@ -61,7 +61,7 @@ class Form {
         })
     }
     getDetail(id) {
-        get(`/api/opencrm/workflow/details/${id}`).then(res => {
+        return get(`/api/opencrm/workflow/details/${id}`).then(res => {
 			this.contract = res
 		})
     }

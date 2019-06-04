@@ -37,12 +37,10 @@ export default {
             let check = false // 最后输出
             this.$refs['settlementRate'].forEach((item, i) => {
                 item.validate((res) => {
-                    // this.list[i] = Object.assign({}, this.serviceCompanyFeeContentList[i], res)
-                    // result[i] = res ? true : false
                     result[i] = res;
                 })
             })
-            check = result.indexOf(false) > -1 ? false : true // 判断所有验证是否通过
+            check = result.length === 0 || result.indexOf(false) > -1 ? false : true // 判断所有验证是否通过
             return check === false ? check : this.list
         },
         formDel(index) {

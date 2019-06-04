@@ -221,7 +221,7 @@
             </el-button>
             <el-button
               v-if="scope.row.status === 'init' || scope.row.status === 'draft'"
-              @click="toCreate(scope.row.id, scope.row.workflowType)"
+              @click="toCreate(scope.row)"
               type="text"
               size="medium"
               style="padding:0;"
@@ -378,26 +378,12 @@ export default {
                 }
             })
         },
-        toCreate(id, type) {
-            const editType = {
-                create_sale_contract: 'create',
-                create_ns_sale_contract: 'create',
-                add_sale_contract: 'create_add',
-                add_ns_sale_contract: 'create_add',
-                update_sale_contract: 'create_change',
-                update_ns_sale_contract: 'create_change',
-                agent_create_sale_contract: 'create',
-                agent_add_sale_contract: 'create_add',
-                agent_update_sale_contract: 'create_change',
-                agent_create_ns_sale_contract: 'create',
-                agent_add_ns_sale_contract: 'create_add',
-                agent_update_ns_sale_contract: 'create_change',
-            }
+        toCreate(row) {
             this.$router.push({
-                path: editType[type],
+                path: 'create',
                 query: {
-                    id: id,
-                    editType: type
+                    instanceId: row.id,
+                    operateEnum: row.operateEnum
                 }
             })
         },

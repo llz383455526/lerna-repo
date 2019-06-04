@@ -48,6 +48,7 @@
     <el-form-item
       label="代理期限"
       :prop="`${propName2}.agentStart`"
+      v-if="operateEnum !== '3'"
     >
       <el-date-picker
         type="daterange"
@@ -85,6 +86,7 @@ export default {
             dateValue: '',
             propName1: 'datas.agentCompanyBaseInfo',
             propName2: 'datas.agentContract',
+            operateEnum: ''
         }
     },
     methods: {
@@ -109,6 +111,7 @@ export default {
     },
     created() {
         this.optionModel.getAgentTypeList()
+        this.operateEnum = this.$route.query.operateEnum
     }
 }
 </script>

@@ -4,10 +4,11 @@
             <el-button size="small" type="primary" @click="showDialog">添加</el-button>
         </h3>
         <div class="mb25">报价规则：代理商返佣结算模式（实发*返佣比例）</div>
+        <agentDate></agentDate>
         <serviceList :serviceCompanyFeeContentList="form.datas.agentContract.serviceCompanyFeeContentList" ref="serviceList" @formDel="formDel"></serviceList>
         <serviceDialog @save="formAdd" ref="dialog"></serviceDialog>
         <div>
-            <el-button>返回</el-button>
+            <el-button @click="$router.push('list')">返回</el-button>
             <el-button @click="prev">上一步</el-button>
             <el-button type="primary" @click="submitForm">下一步</el-button>
         </div>
@@ -19,10 +20,11 @@
 import Form from 'src/model/settlementRate'
 import serviceDialog from './serviceDialog'
 import serviceList from './serviceList'
+import agentDate from './agentDate'
 import { post } from 'src/store/api'
 
 export default {
-    components: { serviceDialog, serviceList },
+    components: { serviceDialog, serviceList, agentDate },
     props: {
         form: {
             type: Object
