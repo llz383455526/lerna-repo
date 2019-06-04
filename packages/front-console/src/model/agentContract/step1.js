@@ -54,13 +54,13 @@ class Form {
             channel: ['create_channel_sale_contract', 'create_channel_ns_sale_contract']
         }
     }
-    saveChannelInfo() {
+    saveDraft() {
         return post('/api/opencrm/workflow/save_draft', this.contract).then(res => {
             // console.log('res',res)
             this.contract.instanceId = res.id
         })
     }
-    getChannelDetail(id) {
+    getDetail(id) {
         get(`/api/opencrm/workflow/details/${id}`).then(res => {
 			this.contract = res
 		})

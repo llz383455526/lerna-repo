@@ -127,13 +127,13 @@
 
     <el-button
       size="small"
-      @click="$router.push({path:'create'})"
+      @click="$router.push({path:'create', query: { 'operateEnum': '1' }})"
     >
       创建合同
     </el-button>
     <el-button
       size="small"
-      @click="$router.push({path:'create'})"
+      @click="$router.push({path:'create', query: { 'operateEnum': '2' }})"
       v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'"
     >
       补签合同
@@ -142,7 +142,7 @@
     <!-- <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_ns_sale_contract'}})">新客户非标准合同</el-button> -->
     <el-button
       size="small"
-      @click="$router.push({path:'create'})"
+      @click="$router.push({path:'create', query: { 'operateEnum': '3' }})"
       v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'"
     >
       合同变更

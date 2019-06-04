@@ -26,7 +26,7 @@
                             <el-radio label="nonflow">分{{'2.8'}}万 - 无流水阶梯报价</el-radio>
                         </el-radio-group>
                     </el-form-item>
-                    <el-table v-if="serviceCompanyFeeContent.subType === 'nonflow'"
+                    <!--<el-table v-if="serviceCompanyFeeContent.subType === 'nonflow'"
                         :data="[serviceCompanyFeeContent.feeContentMap.down[0], serviceCompanyFeeContent.feeContentMap.up[0]]">
                         <el-table-column label="月总额下限" width="240">
                             <template slot-scope="scope">
@@ -90,7 +90,8 @@
                                 <div class="center" v-else>-</div>
                             </template>
                         </el-table-column>
-                    </el-table>
+                    </el-table>-->
+                    <feeContentMap :tableData="[serviceCompanyFeeContent.feeContentMap.down[0], serviceCompanyFeeContent.feeContentMap.up[0]]"></feeContentMap>
                 </div>
                 <div class="mb25">
                     <el-form-item
@@ -128,9 +129,10 @@
 <script>
 import radioFee from './ratioFee'
 import additionalProp from './additionalProp'
+import feeContentMap from './feeContentMap'
 
 export default {
-    components: { radioFee, additionalProp },
+    components: { radioFee, additionalProp, feeContentMap },
     props: {
         serviceCompanyFeeContent: {
             type: Object
