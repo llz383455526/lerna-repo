@@ -10,8 +10,8 @@
         </div>
         <div class="widget-body">
             <div class="widget-main">
-                <createstep1 v-if="active === 1" @step1="step1"></createstep1>
-                <createstep2 v-if="active === 2" :form="form" @prev="active = 1" @step="active = 3"></createstep2>
+                <createstep1 v-if="active === 1" :form="form" @step="active = 2" @step1="step1"></createstep1>
+                <createstep2 v-if="active === 2" :form="form" @step="active = 3" @prev="active = 1"></createstep2>
                 <createstep3 v-if="active === 3"></createstep3>
             </div>
         </div>
@@ -22,12 +22,13 @@
 import createstep1 from './components/createstep1'
 import createstep2 from './components/createstep2'
 import createstep3 from './components/createstep3'
+import Form from 'src/model/agentContract/form'
 
 export default {
     components: { createstep1, createstep2, createstep3 },
     data() {
         return {
-            form: {},
+            form: new Form(),
             active: 1
         }
     },
@@ -35,10 +36,11 @@ export default {
         step1(res) {
             this.form = res;
             this.active = 2;
-        }
+        },
     },
     created() {
-
+        this.form.contract.id = this.$route.query.id || ''
+        this.form.contract.operateEnum = this.$route.query.operateEnum || ''
     }
 }
 </script>

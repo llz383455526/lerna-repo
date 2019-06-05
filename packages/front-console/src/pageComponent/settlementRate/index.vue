@@ -36,7 +36,6 @@
                                 ] }"></feeContentMap>
                         </div>
                     </div>
-                    
                 </div>
                 <div class="mb25">
                     <el-form-item
@@ -110,7 +109,14 @@ export default {
             }
             let result = [] // 储存遍历每个验证结果
             let check = false // 最后输出
-            this.$refs['feeContentMap'].forEach(item => {
+            this.$refs['ruleForm'].validate((valid) => {
+                if (valid) {
+                    result.push(true)
+                } else {
+                    result.push(false)
+                }
+            })
+            this.$refs['feeContentMap'] && this.$refs['feeContentMap'].forEach(item => {
                 item.validate((valid) => {
                     if (valid) {
                         result.push(true)

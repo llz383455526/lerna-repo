@@ -18,7 +18,8 @@ class Form {
                     "name": "", // 代理商名称
                     "probation": "", // 试合作期
                     "registerAddr": "", // 代理商单位地址
-                    "telephone": "" // 代理商电话
+                    "telephone": "", // 代理商电话
+                    "id": "" // 已有代理商
                 },
                 agentContract: {
                     agentStart: '', // 代理合同结束期限

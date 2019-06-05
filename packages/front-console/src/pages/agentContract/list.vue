@@ -382,7 +382,7 @@ export default {
             this.$router.push({
                 path: 'create',
                 query: {
-                    instanceId: row.id,
+                    id: row.id,
                     operateEnum: row.operateEnum
                 }
             })

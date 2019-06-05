@@ -17,58 +17,59 @@ class Form {
                     "name": "", // 代理商名称
                     "probation": "", // 试合作期
                     "registerAddr": "", // 代理商单位地址
-                    "telephone": "" // 代理商电话
+                    "telephone": "", // 代理商电话
+                    "id": "" // 已有代理商
                 },
                 agentContract: {
                     agentStart: '', // 代理合同结束期限
                     agentEnd: '', // 代理合同开始期限
                     "serviceCompanyFeeContentList": [ // 服务商报价表
-                        {
-                        "containIncomeAmount": false, // 是否包含分XX万收费金额
-                        "incomeAmount": 0, // 分XXX万收费金额
-                        // "prepayRate": 0, // 渠道预收比例
-                        // "quoteFeeRate": 0, // 固定结算费率
-                        "quoteFeeType": "", // 结算费率报价类型(ratio-固定,step-分xxx)
-                        // "quoteRule": "", // 报价规则
-                        "serviceCompanyId": 0, // 服务商ID
-                        "serviceCompanyName": "", // 服务商名称
-                        "subType": "", // 费率子类型(ratio - 固定，nonflow-无流水，flow-按流水)
-                        "feeContentMap":  {
-                            // 固定费率
-                            "no": [
-                                {
-                                    "endAmount": null, // 结束金额，null表示无穷大
-                                    "equalsEnd": false, // 是否包含上限金额
-                                    "equalsStart": false, // 是否包含下限金额
-                                    "percent": 0, // 收费比例
-                                    "sequence": 0, // 序号
-                                    "startAmount": 0 // 开始金额
-                                }
-                            ],
-                            // 分xxx的下限
-                            "down": [
-                                {
-                                    "endAmount": null, // 结束金额
-                                    "equalsEnd": false, // 是否包含上限金额
-                                    "equalsStart": false, // 是否包含下限金额
-                                    "percent": 0, // 收费比例
-                                    "sequence": 0, // 序号
-                                    "startAmount": 0 // 开始金额
-                                }
-                            ],
-                            // 分xxx的上限
-                            "up": [
-                                {
-                                    "endAmount": null, // 结束金额
-                                    "equalsEnd": false, // 是否包含上限金额
-                                    "equalsStart": false, // 是否包含下限金额
-                                    "percent": 0, // 收费比例
-                                    "sequence": 0, // 序号
-                                    "startAmount": 0 // 开始金额
-                                }
-                            ]
-                        }
-                        }
+                        // {
+                        //     "containIncomeAmount": false, // 是否包含分XX万收费金额
+                        //     "incomeAmount": 0, // 分XXX万收费金额
+                        //     // "prepayRate": 0, // 渠道预收比例
+                        //     // "quoteFeeRate": 0, // 固定结算费率
+                        //     "quoteFeeType": "", // 结算费率报价类型(ratio-固定,step-分xxx)
+                        //     // "quoteRule": "", // 报价规则
+                        //     "serviceCompanyId": 0, // 服务商ID
+                        //     "serviceCompanyName": "", // 服务商名称
+                        //     "subType": "", // 费率子类型(ratio - 固定，nonflow-无流水，flow-按流水)
+                        //     "feeContentMap":  {
+                        //         // 固定费率
+                        //         "no": [
+                        //             {
+                        //                 "endAmount": null, // 结束金额，null表示无穷大
+                        //                 "equalsEnd": false, // 是否包含上限金额
+                        //                 "equalsStart": false, // 是否包含下限金额
+                        //                 "percent": 0, // 收费比例
+                        //                 "sequence": 0, // 序号
+                        //                 "startAmount": 0 // 开始金额
+                        //             }
+                        //         ],
+                        //         // 分xxx的下限
+                        //         "down": [
+                        //             {
+                        //                 "endAmount": null, // 结束金额
+                        //                 "equalsEnd": false, // 是否包含上限金额
+                        //                 "equalsStart": false, // 是否包含下限金额
+                        //                 "percent": 0, // 收费比例
+                        //                 "sequence": 0, // 序号
+                        //                 "startAmount": 0 // 开始金额
+                        //             }
+                        //         ],
+                        //         // 分xxx的上限
+                        //         "up": [
+                        //             {
+                        //                 "endAmount": null, // 结束金额
+                        //                 "equalsEnd": false, // 是否包含上限金额
+                        //                 "equalsStart": false, // 是否包含下限金额
+                        //                 "percent": 0, // 收费比例
+                        //                 "sequence": 0, // 序号
+                        //                 "startAmount": 0 // 开始金额
+                        //             }
+                        //         ]
+                        //     }
+                        // }
                     ]
                 },
                 "contractAttachments": [ // 生成代理商合同的附件
@@ -100,7 +101,7 @@ class Form {
                 },
                 tplId: '' // 合同模版ID
             },
-            instanceId: '', // 工作流实例ID
+            id: '', // 工作流实例ID
             /**
              * 代理商流程：
              *   create_agent_sale_contract    标准
@@ -109,7 +110,10 @@ class Form {
              *   create_channel_sale_contract   标准
              *   create_channel_ns_sale_contract   非标
              */
-            workflowType:'' // 工作流实例类型
+            // workflowType:'', // 工作流实例类型
+            standardEnum: '1', // 标准类型：1标准，2非标
+            operateEnum: '', // 操作类型：1创建，2补签，3更新
+            subjectType: '', // 申请主体类型：customer，agent，channel，oem'
         }
         this.workflowType = {
             agent: ['create_agent_sale_contract', 'create_agent_ns_sale_contract'],
@@ -165,15 +169,18 @@ class Form {
             }
         ]
     }
-    saveChannelInfo() {
-        post('/api/opencrm/workflow/save_draft', this.contract).then(res => {
-            
+    saveDraft() {
+        return post('/api/opencrm/workflow/save_draft', this.contract).then(res => {
+            this.contract.id = res.id
         })
     }
-    getChannelDetail(id) {
-        get(`/api/opencrm/workflow/details/${id}`).then(res => {
+    getDetail(id) {
+        return get(`/api/opencrm/workflow/details/${id}`).then(res => {
 			this.contract = res
 		})
+    }
+    submit() {
+        return post('/api/contract-web/agent-residence-flow/agent-residence-submit', this.contract)
     }
 }
 

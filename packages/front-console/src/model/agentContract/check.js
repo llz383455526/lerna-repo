@@ -16,7 +16,7 @@ class Check {
                     contactName: [this.ruleObj('请填写代理商联系人')],
                     contactPhone: [this.ruleObj('请填写代理商联系人电话')],
                     contactAddr: [this.ruleObj('请填写代理商联系人地址')],
-                    
+                    id: [this.ruleObj('请选择已有代理商', 'change')],
                 },
                 agentContract: {
                     agentStart: [this.ruleObj('请选择代理期限', 'change')]
@@ -26,7 +26,7 @@ class Check {
                     mobilePhone: [this.ruleObj('请填写销售联系电话')],
                     salesAddress: [this.ruleObj('请填写销售地址')]
                 },
-                tplId: [this.ruleObj('请选择合同模板', 'change')],
+                // tplId: [this.ruleObj('请选择合同模板', 'change')],
             }
         }
     }

@@ -132,7 +132,6 @@ export default {
                 console.log('feeContentMap no callback')
                 return
             }
-            console.log(this.$refs['ruleForm'])
             this.$refs['ruleForm'].validate((valid) => {
                 if (valid) {
                     callback(true);

@@ -5,7 +5,7 @@
         </h3>
         <div class="mb25">报价规则：代理商返佣结算模式（实发*返佣比例）</div>
         <agentDate></agentDate>
-        <serviceList :serviceCompanyFeeContentList="form.datas.agentContract.serviceCompanyFeeContentList" ref="serviceList" @formDel="formDel"></serviceList>
+        <serviceList :serviceCompanyFeeContentList="form.contract.datas.agentContract.serviceCompanyFeeContentList" ref="serviceList" @formDel="formDel"></serviceList>
         <serviceDialog @save="formAdd" ref="dialog"></serviceDialog>
         <div>
             <el-button @click="$router.push('list')">返回</el-button>
@@ -21,7 +21,7 @@ import Form from 'src/model/settlementRate'
 import serviceDialog from './serviceDialog'
 import serviceList from './serviceList'
 import agentDate from './agentDate'
-import { post } from 'src/store/api'
+import { get, post } from 'src/store/api'
 
 export default {
     components: { serviceDialog, serviceList, agentDate },
@@ -36,30 +36,47 @@ export default {
         }
     },
     methods: {
+        validateContract(serviceCompanyId) {
+            let someCompany = false;
+            if(this.form.contract.operateEnum == '2') {
+                get('/api/contract-web/agent-residence-flow/check-agent-contract-exists?companyId=123456&serviceCompanyId='+serviceCompanyId).then(res => {
+                    // console.log(res)
+                })
+            }
+            return someCompany;
+        },
         formDel(index) {
-            this.form.datas.agentContract.serviceCompanyFeeContentList.splice(index, 1)
+            this.form.contract.datas.agentContract.serviceCompanyFeeContentList.splice(index, 1)
         },
         formAdd(appForm) {
-            const someCompany = this.form.datas.agentContract.serviceCompanyFeeContentList.find((el) => {
+            let someCompany = this.form.contract.datas.agentContract.serviceCompanyFeeContentList.find((el) => {
                 return el.serviceCompanyId === appForm.serviceCompanyId
             });
             if (someCompany) {
                 this.$message('已经选择该服务商')
                 return
             }
+            someCompany = this.validateContract(appForm.serviceCompanyId)
+            if (someCompany) {
+                this.$message('代理商合同已存在')
+                return
+            }
             const rObj = Object.assign({}, this.settlementRate.serviceCompanyFeeContent, appForm)
-            this.form.datas.agentContract.serviceCompanyFeeContentList.push(rObj)
+            this.form.contract.datas.agentContract.serviceCompanyFeeContentList.push(rObj)
             this.$refs['dialog'].hideDialog()
         },
         submitForm() {
-            if(!this.form.datas.agentContract.serviceCompanyFeeContentList.length) {
+            if(!this.form.contract.datas.agentContract.serviceCompanyFeeContentList.length) {
                 this.$message('请最少选择一个服务商')
                 return
             }
             const result = this.$refs['serviceList'].validate()
             if (result) {
-                // this.form.datas.agentContract.serviceCompanyFeeContentList = result
-                post('/api/contract-web/agent-residence-flow/agent-residence-submit', this.form).then(() => {
+                // this.form.contract.datas.agentContract.serviceCompanyFeeContentList = result
+                // post('/api/contract-web/agent-residence-flow/agent-residence-submit', this.form).then(() => {
+                //     this.$emit('step')
+                // })
+                this.form.submit().then(() => {
                     this.$emit('step')
                 })
             }

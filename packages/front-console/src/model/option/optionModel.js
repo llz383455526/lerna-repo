@@ -20,6 +20,7 @@ class optionModel extends BaseModel {
         this.companyIdentityList = []; // 已有客户
         this.agentTypeList = []; // 客户主体列表
         this.contractTplList = []; // 合同模版
+        this.agentCompanyList = []; // 代理商公司列表
 	}
 	getJson (list, key, value) {
 		return list.find(function(element) {
@@ -107,6 +108,11 @@ class optionModel extends BaseModel {
         const param = { tplType: tplType || '' }
         get('/api/contract-web/contract-tpl/tpl-options', param).then(data => {
             this.contractTplList = data;
+        })
+    }
+    getAgentCompanyList() {
+        get('/api/sysmgr-web/commom/agent-company-options').then(data => {
+            this.agentCompanyList = data
         })
     }
 }
