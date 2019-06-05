@@ -9,6 +9,7 @@
                 </div>
             </div>
             <div class="widget-main">
+                <agentDate ref="agentDate" :serviceCompanyFeeContent="formItem"></agentDate>
                 <!-- 这里是服务合同的细节 -->
                 <settlement-rate ref="settlementRate" :serviceCompanyFeeContent="formItem"></settlement-rate>
             </div>
@@ -18,9 +19,10 @@
 
 <script>
 import settlementRate from 'src/pageComponent/settlementRate'
+import agentDate from './agentDate'
 
 export default {
-    components: { settlementRate },
+    components: { settlementRate, agentDate },
     props: {
         serviceCompanyFeeContentList: {
             type: Array
@@ -35,9 +37,14 @@ export default {
         validate() {
             let result = [] // 储存遍历每个验证结果
             let check = false // 最后输出
+            this.$refs['agentDate'].forEach((item, i) => {
+                item.validate((res) => {
+                    result[i] = res
+                })
+            })
             this.$refs['settlementRate'].forEach((item, i) => {
                 item.validate((res) => {
-                    result[i] = res;
+                    result[i] = res
                 })
             })
             check = result.length === 0 || result.indexOf(false) > -1 ? false : true // 判断所有验证是否通过

@@ -45,7 +45,7 @@ export default {
                         this.$router.push({
                             path: 'create',
                             query: {
-                                id: this.form.contract.id,
+                                instanceId: this.form.contract.instanceId,
                                 operateEnum: this.form.contract.operateEnum
                             }
                         })

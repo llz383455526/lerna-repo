@@ -3,7 +3,7 @@
         <el-form :inline="true" :model="appForm" label-width="150px" ref="appForm">
             <el-form-item label="服务商名称">
                 <el-select v-model="appForm.serviceCompanyId" filterable placeholder="请选择" style="width: 450px;">
-                    <el-option v-for="(item,key) in filterList" :key="key" :label="item.name" :value="item.companyId"></el-option>
+                    <el-option v-for="(item,key) in operateEnum == '3' ? agentServiceCompanyList : filterList" :key="key" :label="item.name" :value="item.companyId"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item style="margin-left: 150px;">
@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import { get } from 'src/store/api'
+
 export default {
     computed: {
         filterList() {
@@ -28,8 +30,13 @@ export default {
                 serviceCompanyName: '',
                 taxLandingName: ''
             },
-            dialogVisible: false
+            dialogVisible: false,
+            operateEnum: '',
+            agentServiceCompanyList: []
         }
+    },
+    props: {
+        companyId: {}
     },
     methods: {
         save() {
@@ -46,6 +53,17 @@ export default {
         },
         showDialog() {
             this.dialogVisible = true
+        },
+        getAgentServiceCompany() {
+            get('/api/contract-web/agent-residence-flow/agent-service-company-options?companyId='+this.companyId).then((data) => {
+                this.agentServiceCompanyList = data
+            })
+        }
+    },
+    created() {
+        this.operateEnum = this.$route.query.operateEnum
+        if (this.operateEnum == '3') {
+            this.getAgentServiceCompany()
         }
     }
 }
