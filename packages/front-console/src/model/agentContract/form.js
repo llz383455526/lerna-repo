@@ -27,24 +27,24 @@ class Form {
                     "serviceCompanyFeeContentList": []
                 },
                 "contractAttachments": [ // 生成代理商合同的附件
-                    {
-                        "attachments": [ // 代理商合同的附件
-                            {
-                                "createByName": "", // 操作人
-                                "createTime": "2019-05-30T09:23:26.247Z", // 操作时间
-                                "displayname": "", // 显示名称
-                                "downloadCode": "", // 下载码
-                                "refId": "", // 附件ID
-                                "targetId": 0, // 附件类型ID
-                                "targetType": "", // 附件类型
-                                "targetTypeName": "" // 附件类型名称
-                            }
-                        ],
-                        "serviceCompanyId": 0, // 服务商ID
-                        "serviceCompanyName": "", // 服务商名称
-                        "taxLandingId": 0, // 服务商的税优地ID
-                        "taxLandingName": "" // 服务商的税优地名称
-                    }
+                    // {
+                    //     "attachments": [ // 代理商合同的附件
+                    //         {
+                    //             "createByName": "", // 操作人
+                    //             "createTime": "2019-05-30T09:23:26.247Z", // 操作时间
+                    //             "displayname": "", // 显示名称
+                    //             "downloadCode": "", // 下载码
+                    //             "refId": "", // 附件ID
+                    //             "targetId": 0, // 附件类型ID
+                    //             "targetType": "", // 附件类型
+                    //             "targetTypeName": "" // 附件类型名称
+                    //         }
+                    //     ],
+                    //     "serviceCompanyId": 0, // 服务商ID
+                    //     "serviceCompanyName": "", // 服务商名称
+                    //     "taxLandingId": 0, // 服务商的税优地ID
+                    //     "taxLandingName": "" // 服务商的税优地名称
+                    // }
                 ],
                 flowMemo: '', // 变更版本说明
                 "salesInfo": {
