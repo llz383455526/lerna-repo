@@ -1,10 +1,21 @@
 <template>
     <div>
         <el-form-item label="选择已有代理商" :prop="`${propName1}.id`" v-if="contract.operateEnum == '2'">
-            <el-select v-model="contract.datas.agentCompanyBaseInfo.id" filterable placeholder="请选择" style="width:450px;" @change="idChange">
+            <el-select v-model="contract.datas.agentCompanyBaseInfo.id" filterable placeholder="请选择" style="width:450px;" @change="getDetail">
                 <el-option v-for="item in optionModel.agentCompanyList" :key="item.agentCompanyId" :value="item.agentCompanyId" :label="item.agentCompanyName">
                 </el-option>
             </el-select>
+        </el-form-item>
+        <el-form-item label="选择已有代理商" :prop="`${propName1}.id`" v-if="contract.operateEnum == '3'">
+            <el-select v-model="contract.datas.agentCompanyBaseInfo.id" filterable placeholder="请选择" style="width:450px;" @change="getDetail">
+                <el-option v-for="item in optionModel.agentContractCompanyList" :key="item.companyId" :value="item.companyId" :label="item.companyNane"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="申请生效时间" :prop="`${propName2}.versionStartDate`" v-if="contract.operateEnum == '3'">
+            <el-date-picker style="width:450px;" v-model="contract.datas.agentContract.versionStartDate" type="month" :picker-options="pickerOptions"></el-date-picker>
+        </el-form-item>
+        <el-form-item label="变更版本说明" :prop="`datas.flowMemo`" v-if="contract.operateEnum == '3'">
+            <el-input style="width:450px;" v-model="contract.datas.flowMemo" type="textarea"></el-input>
         </el-form-item>
         <h3 class="green">合同基本信息</h3>
         <el-form-item label="申请主体" :prop="`${propName1}.agentType`">
@@ -52,6 +63,38 @@ export default {
             dateValue: '',
             propName1: 'datas.agentCompanyBaseInfo',
             propName2: 'datas.agentContract',
+            pickerOptions:{
+                disabledDate(time){
+                    const monthMap = {
+                        28: [2],
+                        30: [4,6,9,11],
+                        31: [1,3,5,7,8,10,12]
+                    }
+                    let curDate = new Date();
+                    const curMonth = curDate.getMonth()+1;
+                    const preMonth = curMonth - 1 <= 0 ? 12 : curMonth -1; 
+                    const afterMonth = curMonth + 1 >= 13 ? 1 : curMonth + 1;
+                    let curMonthDay,preMonthDay,afterMonthDay;
+                    for(const day in monthMap) {
+                        if (monthMap[day].indexOf(preMonth) > -1) {
+                            preMonthDay = parseInt(day)
+                        }
+                        if (monthMap[day].indexOf(afterMonth) > -1) {
+                            afterMonthDay = parseInt(day)
+                        }
+                        if (monthMap[day].indexOf(curMonth) > -1) {
+                            curMonthDay = parseInt(day)
+                        }
+                    }
+                    
+                    let curDay = curDate.getDate();
+                    let preDaylimit = (preMonthDay + curDay) * 24 * 3600 * 1000;
+                    let afterDaylimit = (afterMonthDay + curMonthDay - curDay) * 24 * 3600 * 1000;
+                    let monthsAgo = curDate.getTime() - preDaylimit;
+                    let monthsLater = curDate.getTime() + afterDaylimit;
+                    return time.getTime() > monthsLater || time.getTime() < monthsAgo;
+                }
+            }
         }
     },
     methods: {
@@ -76,7 +119,7 @@ export default {
         tplIdChange(ev) {
             // console.log(this.contract)
         },
-        idChange(ev) {
+        getDetail(ev) {
             get('/api/contract-web/agent-residence-flow/agent-residence-form?companyId='+ev).then(res => {
                 Object.assign(this.contract.datas, res.datas)
                 this.optionModel.getContractTplList(this.contract.datas.agentCompanyBaseInfo.agentType)
@@ -88,6 +131,9 @@ export default {
         this.optionModel.getAgentTypeList()
         if (this.contract.operateEnum == '2') {
             this.optionModel.getAgentCompanyList()
+        }
+        if (this.contract.operateEnum == '3') {
+            this.optionModel.getAgentContractCompanyList()
         }
     }
 }

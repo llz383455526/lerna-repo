@@ -19,14 +19,16 @@ class Check {
                     id: [this.ruleObj('请选择已有代理商', 'change')],
                 },
                 agentContract: {
-                    agentStart: [this.ruleObj('请选择代理期限', 'change')]
+                    agentStart: [this.ruleObj('请选择代理期限', 'change')],
+                    versionStartDate: [this.ruleObj('请选择申请生效时间', 'change')],
                 },
                 salesInfo: {
                     salesName: [this.ruleObj('请填写销售名称')],
                     mobilePhone: [this.ruleObj('请填写销售联系电话')],
                     salesAddress: [this.ruleObj('请填写销售地址')]
                 },
-                // tplId: [this.ruleObj('请选择合同模板', 'change')],
+                flowMemo: [this.ruleObj('请输入变更版本说明'), 'blur'],
+                tplId: [this.ruleObj('请选择合同模板', 'change')],
             }
         }
     }

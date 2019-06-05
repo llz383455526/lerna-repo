@@ -21,6 +21,7 @@ class optionModel extends BaseModel {
         this.agentTypeList = []; // 客户主体列表
         this.contractTplList = []; // 合同模版
         this.agentCompanyList = []; // 代理商公司列表
+        this.agentContractCompanyList = []; // 代理商公司列表
 	}
 	getJson (list, key, value) {
 		return list.find(function(element) {
@@ -113,6 +114,11 @@ class optionModel extends BaseModel {
     getAgentCompanyList() {
         get('/api/sysmgr-web/commom/agent-company-options').then(data => {
             this.agentCompanyList = data
+        })
+    }
+    getAgentContractCompanyList() {
+        get('/api/contract-web/agent-residence-flow/agent-contract-company-options').then(data => {
+            this.agentContractCompanyList = data
         })
     }
 }

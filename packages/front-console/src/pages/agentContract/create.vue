@@ -39,7 +39,7 @@ export default {
         },
     },
     created() {
-        this.form.contract.id = this.$route.query.id || ''
+        this.form.contract.instanceId = this.$route.query.instanceId || ''
         this.form.contract.operateEnum = this.$route.query.operateEnum || ''
     }
 }

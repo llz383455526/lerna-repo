@@ -3,6 +3,8 @@ import { get, post } from '../../store/api'
 class Form {
     constructor() {
         this.serviceCompanyFeeContent =  {
+            'agentStart': '', // 代理合同结束期限
+            'agentEnd': '', // 代理合同开始期限
             "containIncomeAmount": false, // 是否包含分XX万收费金额
             "incomeAmount": 0, // 分XXX万收费金额
             // "prepayRate": 0, // 渠道预收比例

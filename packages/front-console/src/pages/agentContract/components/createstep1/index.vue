@@ -2,7 +2,7 @@
 <template>
     <el-form :model="form.contract" :rules="check.rules" label-width="200px" ref="createAgentContract">
         <!-- <addOption :contract="form.contract" v-if="operateEnum === '2'"></addOption> -->
-        <changeOption :contract="form.contract" v-if="operateEnum === '3'"></changeOption>
+        <!-- <changeOption :contract="form.contract" v-if="operateEnum === '3'"></changeOption> -->
         <contractOption :contract="form.contract" ref="contractOption"></contractOption>
         <channel-info :contract="form.contract"></channel-info>
         <sale-contact-info :contract="form.contract"></sale-contact-info>
@@ -58,8 +58,8 @@ export default {
         }
     },
     created() {
-        if (this.form.contract.id) {
-            this.form.getDetail(this.form.contract.id).then(() => {
+        if (this.form.contract.instanceId) {
+            this.form.getDetail(this.form.contract.instanceId).then(() => {
                 this.$refs['contractOption'].showDate()
             })
         }
