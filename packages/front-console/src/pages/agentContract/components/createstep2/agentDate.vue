@@ -50,6 +50,9 @@ export default {
     },
     created() {
         this.operateEnum = this.$route.query.operateEnum
+        if(!this.dateValue) {
+            this.dateValue = [this.serviceCompanyFeeContent.agentStart, this.serviceCompanyFeeContent.agentEnd]
+        }
     }
 }
 </script>

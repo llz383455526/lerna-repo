@@ -230,7 +230,7 @@
             </el-button>
             <el-button
               v-if="scope.row.status === 'init' && scope.row.createdBy == userInformation.id"
-              @click="toDetail(scope.row.id, 'watch')"
+              @click="toDetail(scope.row)"
               type="text"
               size="medium"
               style="padding:0;"
@@ -369,12 +369,13 @@ export default {
                 }
             })
         },
-        toDetail(id, type) {
+        toDetail(row) {
             this.$router.push({
-                path: 'detail',
+                path: 'create',
                 query: {
-                    id: id,
-                    editType: type
+                    instanceId: row.id,
+                    operateEnum: row.operateEnum,
+                    active: 3
                 }
             })
         },

@@ -41,6 +41,9 @@ export default {
     created() {
         this.form.contract.instanceId = this.$route.query.instanceId || ''
         this.form.contract.operateEnum = this.$route.query.operateEnum || ''
+        if(this.$route.query.active) {
+            this.active = this.$route.query.active
+        }
     }
 }
 </script>
