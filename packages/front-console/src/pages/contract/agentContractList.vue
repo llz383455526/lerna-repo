@@ -15,6 +15,12 @@
                     <el-option v-for="e in statusList" :key="e.value" :label="e.text" :value="e.value"></el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="合同归档" prop="status">
+                <el-select class="form_input" v-model="form.archiveStatus">
+                    <el-option label="全部" value=""></el-option>
+                    <el-option v-for="e in archiveList" :key="e.value" :label="e.text" :value="e.value"></el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="query">查询</el-button>
                 <el-button @click="$refs['form'].resetFields()">清除</el-button>
@@ -39,7 +45,7 @@
             <el-table-column label="代理推广费率" prop="quoteFeeName"></el-table-column>
             <el-table-column label="渠道经理" prop="chargeByName"></el-table-column>
             <el-table-column label="状态" prop="statusName"></el-table-column>
-            <el-table-column label="合同归档"></el-table-column>
+            <el-table-column label="合同归档" prop="archiveStatusName"></el-table-column>
             <el-table-column label="版本号" prop="versionSeq"></el-table-column>
             <el-table-column label="版本生效月份" prop="versionStartDate">
                 <template slot-scope="scope">
@@ -71,18 +77,22 @@
 
         <el-dialog title="查看历史版本" :visible.sync="dialogTableVisible">
             <el-table :data="gridData">
-                <el-table-column property="contractNo" label="合同编号">
+                <el-table-column property="contractNo" label="合同编号" width="150">
                     <template slot-scope="scope">
                         <router-link :to="`agentContractCreate?contractHisId=${scope.row.constractHisId}&isLook=1`">
-                            <el-button type="text">合同编号{{scope.row.contractNo}}</el-button>
+                            <el-button type="text">{{scope.row.contractNo}}</el-button>
                         </router-link>
                     </template>
                 </el-table-column>
                 <el-table-column property="versionSeq" label="版本号"></el-table-column>
                 <el-table-column property="flowMemo" label="版本说明"></el-table-column>
-                <el-table-column property="" label="生效月份"></el-table-column>
+                <el-table-column property="versionStartDate" label="生效月份">
+                    <template slot-scope="scope">
+                        {{scope.row.versionStartDate.substr(5, 2)}}
+                    </template>
+                </el-table-column>
                 <el-table-column property="statusName" label="状态"></el-table-column>
-                <el-table-column property="createAt" label="创建时间"></el-table-column>
+                <el-table-column property="createAt" label="创建时间" width="200"></el-table-column>
                 <el-table-column property="createByName" label="创建人"></el-table-column>
             </el-table>
         </el-dialog>
@@ -103,19 +113,22 @@ export default {
             form: {
                 companyName: '',
                 status: '',
+                archiveStatus: '',
                 pageSize: 10,
                 page: 1
             },
             statusList: [],
+            archiveList: [],
             data: {},
             gridData: [],
             dialogTableVisible: false,
         }
     },
     mounted() {
-        get('/api/contract-web/commom/option?enumType=AgentContractStatus').then(data => {
+        get('/api/contract-web/commom/options?enumTypes=AgentContractStatus,ArchiveStatus').then(data => {
             console.log(data)
-            this.statusList = data
+            this.statusList = data.AgentContractStatus
+            this.archiveList = data.ArchiveStatus
             // this.form.status = this.statusList[0].value
             this.query()
         })
