@@ -1,96 +1,133 @@
 <template>
-  <div>
-    <div
-      class="widget-box bg-white"
-      style="margin-top:20px;"
-    >
-      <div class="widget-header">
-        <h4 class="widget-title">
-          合同业务信息补充
-        </h4>
-      </div>
-      <div class="widget-body">
+  <div class="widget-box bg-white">
+    <div class="widget-header">
+      <h4 class="widget-title">
+        入驻代理商审批 - {{ contractForm.datas.agentCompanyBaseInfo.name }}
+      </h4>
+    </div>
+    <div class="widget-body">
+      <div
+        class="widget-main"
+        style="font-size: 16px;line-height: 30px;"
+      >
         <div
-          class="widget-main"
-          style="font-size: 16px;line-height: 30px;"
+          class="row"
+          style="margin-bottom: 15px;"
         >
+          <div class="col-xs-12">
+            <h4 class="block green">
+              合同基本信息
+            </h4>
+          </div>
+          <div class="col-xs-12">
+            合同模板：{{ contractForm.tplName }}
+          </div>
+          <div class="col-xs-12">
+            试合作期：若乙方第一次代理甲方产品，则本合同前{{ contractForm.datas.agentCompanyBaseInfo.probation }}个月为试合作期
+          </div>
+          <div class="col-xs-12">
+            代理期限：{{ contractForm.datas.agentContract.agentStart + ' - ' +
+              contractForm.datas.agentContract.agentEnd }}
+          </div>
+        </div>
+        <div
+          class="row"
+          style="margin-bottom: 15px;"
+        >
+          <div class="col-xs-12">
+            <h4 class="block green">
+              代理商基本信息
+            </h4>
+          </div>
+          <div class="col-xs-6">
+            代理商名称：{{ contractForm.datas.agentCompanyBaseInfo.name }}
+          </div>
+          <div class="col-xs-6">
+            税号：{{ contractForm.datas.agentCompanyBaseInfo.taxIdcd }}
+          </div>
+          <div class="col-xs-6">
+            代理商单位地址：{{ contractForm.datas.agentCompanyBaseInfo.registerAddr }}
+          </div>
+          <div class="col-xs-6">
+            代理商电话：{{ contractForm.datas.agentCompanyBaseInfo.telephone }}
+          </div>
+          <div class="col-xs-6">
+            开户名称：{{ contractForm.datas.agentCompanyBaseInfo.accountName }}
+          </div>
+          <div class="col-xs-6">
+            开户银行：{{ contractForm.datas.agentCompanyBaseInfo.depositBank }}
+          </div>
+          <div class="col-xs-6">
+            银行账号：{{ contractForm.datas.agentCompanyBaseInfo.accountNo }}
+          </div>
+        </div>
+        <div
+          class="row"
+          style="margin-bottom: 15px;"
+        >
+          <div class="col-xs-12">
+            <h4 class="block green">
+              代理推广费报价
+            </h4>
+          </div>
           <div
-            class="row"
-            style="margin-bottom: 15px;"
+            v-for="(item, index) in contractForm.datas.agentContract.serviceCompanyFeeContentList"
+            :key="index"
           >
             <div class="col-xs-12">
-              <h4 class="block green">
-                合同收件人信息
-              </h4>
-            </div>
-            <div class="col-xs-6">
-              合同收件人姓名：{{ contractModel.contractForm.receiver }}
-            </div>
-            <div class="col-xs-6">
-              合同收件人电话：{{ contractModel.contractForm.receivePhone }}
+              落地公司：{{ item.serviceCompanyName }}
             </div>
             <div class="col-xs-12">
-              合同收件人地址：{{ addr + ' ' }}{{ contractModel.contractForm.receiveAddr }}
+              报价规则：{{ item.quoteRule === 'rakeback' ? '返佣规则': '结算规则' }}
             </div>
             <div class="col-xs-12">
-              <h4 class="block green">
-                合同证据链
-              </h4>
-            </div>
-            <div class="col-xs-8">
-              <el-table
-                :data="contractModel.contractForm.receiveAttachments"
-                class="mb20"
-              >
-                <!-- <el-table-column label="附件类型">
-                                    <template slot-scope="scope">
-                                        {{scope.row.targetType == 'customerContact' ? '系统附件' : '补充附件'}}
-                                    </template>
-                                </el-table-column> -->
-                <el-table-column
-                  label="文件名称"
-                  prop="displayname" 
-                />
-                <el-table-column
-                  label="操作"
-                  width="100"
-                >
-                  <template slot-scope="scope">
-                    <el-button
-                      type="text"
-                      size="medium"
-                      style="padding:0;"
-                      @click="handleDownload(scope.row.downloadCode)"
-                    >
-                      下载
-                    </el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-            <div class="col-xs-12">
-              <h4 class="block green">
-                企业结算标准
-              </h4>
-              <template v-if="contractModel.contractForm.cUserStandardAttachmentModels">
-                <div v-for="(v, k) in contractModel.contractForm.cUserStandardAttachmentModels">
-                  <span>{{ v.displayname }}</span>
-                  <a
-                    href="javascript:;"
-                    @click="jieSuanFileDown(v.downloadCode)"
-                    style="margin-left:10px;"
-                  >下载</a>
+              代理推广费率：
+              <span v-if="item.quoteFeeType === 'ratio'">{{ item.feeContentMap.no[0].percent }}</span>
+              <template v-else>
+                <span>分{{ item.incomeAmount }}万 - {{ item.subType === 'nonflow'?'无流水阶梯':'按流水分阶梯' }}报价</span>
+                <div style="padding-left: 20px">
+                  <p>(1) {{ item.incomeAmount }}万含以下</p>
+                  <p
+                    class="list-item"
+                    v-for="(downitem, downindex) in item.feeContentMap.down"
+                    :key="'downindex'+downindex"
+                  >
+                    {{ downindex === 0 ?'小于':downitem.startAmount+'万' + (downitem.equalsStart?'含':'') + (downindex === item.feeContentMap.down.length-1 ?'以上':'~') }}
+                    <span v-if="downindex < item.feeContentMap.down.length-1">{{ downitem.endAmount }}万{{ downitem.equalsEnd?'含':'' }}</span>，
+                    实发金额*{{ downitem.percent }}%
+                  </p>
+                  <p>(2) {{ item.incomeAmount }}万以上</p>
+                  <p
+                    class="list-item"
+                    v-for="(upitem, upindex) in item.feeContentMap.up"
+                    :key="upindex+'upindex'"
+                  >
+                    {{ upindex === 0 ?'小于':upitem.startAmount+'万' + (upitem.equalsStart?'含':'') + (upindex === item.feeContentMap.up.length-1 ?'以上':'~') }}
+                    <span v-if="upindex < item.feeContentMap.up.length-1">{{ upitem.endAmount }}万{{ upitem.equalsEnd?'含':'' }}</span>，
+                    实发金额*{{ upitem.percent }}%
+                  </p>
                 </div>
               </template>
             </div>
-            <div class="col-xs-12">
-              <h4 class="block green">
-                合同备注
-              </h4>
-            </div>
-            <div class="col-xs-12">
-              {{ contractModel.contractForm.receiveMemo }}
-            </div>
+          </div>
+        </div>
+        <div
+          class="row"
+          style="margin-bottom: 15px;"
+        >
+          <div class="col-xs-12">
+            <h4 class="block green">
+              销售（渠道经理）联系信息
+            </h4>
+          </div>
+          <div class="col-xs-12">
+            销售姓名：{{ contractForm.datas.salesInfo.salesName }}
+          </div>
+          <div class="col-xs-12">
+            销售联系电话：{{ contractForm.datas.salesInfo.mobilePhone }}
+          </div>
+          <div class="col-xs-12">
+            销售地址：{{ contractForm.datas.salesInfo.salesAddress }}
           </div>
         </div>
       </div>
@@ -99,35 +136,41 @@
 </template>
 
 <script>
-import { baseUrl } from '../../../../config/address.js'
-
 export default {
-    props: ['contractModel'],
-    data() {
-        return {
-            addr: '',
-        }
-    },
-    watch: {
-        'contractModel.contractForm.receiveAddrList'() {
-            this.getAdd()
+    name: 'ContractInfo',
+    props: {
+        contractForm: {
+            type: Object,
+            default() {
+                return {}
+            }
+        },
+        contractTplList: {
+            type: Array,
+            default() {
+                return []
+            }
         }
     },
     methods: {
-        getAdd() {
-            this.contractModel.contractForm.receiveAddrList.forEach(element => {
-                this.addr += element + ' - '
+        getText(value, list, inputKey = 'value', outputKey = 'text') {
+            if (!list.length) return;
+            let obj = list.find((element) => {
+                return element[inputKey] == value
             });
+            if (obj) {
+                return obj[outputKey];
+            }
         },
-        handleDownload (downloadCode) {
-            window.location.href = baseUrl + '/api/contract-web/file/download' +
-            '?downloadCode=' + downloadCode;
-        },
-        jieSuanFileDown (downloadCode) {
-            window.location.href = '/api/sysmgr-web/file/download' +
-                '?downloadCode=' + downloadCode;
-        }
-
     }
 }
 </script>
+<style lang="scss" scoped>
+p{
+    margin: 0;
+    &.list-item{
+        padding-left: 20px;
+        font-size: 14px;
+    }
+}
+</style>

@@ -15,7 +15,7 @@
           style="font-size: 16px;line-height: 30px;"
         >
           <el-table
-            :data="contractModel.processLogs"
+            :data="contractForm.processLogs"
             class="mb20"
           >
             <el-table-column
@@ -31,8 +31,7 @@
               label="审核意见" 
             />
           </el-table>
-          <!--  v-if="contractModel.actions.length" -->
-          <div>
+          <div v-if="contractForm.actions.length">
             <el-input
               type="textarea"
               v-model="opinion" 
@@ -49,22 +48,20 @@
     </div>
     <div
       class="mt20 mb20"
-      v-if="contractModel.status != 'init'"
+      v-if="contractForm.status != 'init'"
     >
-      <!-- 
-        v-if="contractModel.actions[0] === 'agree'" -->
       <el-button
         size="small"
         type="primary"
+        v-if="contractForm.actions[0] === 'agree'"
         @click="handleContract('agree')"
       >
         审批通过
       </el-button>
-      <!-- v-if="contractModel.actions[1] === 'reject'" -->
       <el-button
         size="small"
         type="danger"
-        
+        v-if="contractForm.actions[1] === 'reject'"
         @click="handleContract('reject')"
       >
         审批不通过
@@ -80,18 +77,12 @@
 </template>
 
 <script>
-import {
-    post
-} from "src/store/api"
-import {
-    showNotify
-} from "src/plugin/utils-notify";
-import {
-    showConfirm
-} from 'src/plugin/utils-message';
+import {post} from "src/store/api"
+import {showNotify} from "src/plugin/utils-notify";
+import {showConfirm} from 'src/plugin/utils-message';
 export default {
     name: "AuditOption",
-    props: ['contractModel', 'editType'],
+    props: ['contractForm', 'editType'],
     data() {
         return {
             opinion: ''

@@ -65,6 +65,8 @@ class Form {
              *   create_channel_sale_contract   标准
              *   create_channel_ns_sale_contract   非标
              */
+            workflowType:'', // 工作流实例类型
+            actions: [], // 好像是审核的权限
             // workflowType:'', // 工作流实例类型
             standardEnum: '1', // 标准类型：1标准，2非标
             operateEnum: '', // 操作类型：1创建，2补签，3更新
