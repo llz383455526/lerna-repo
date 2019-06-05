@@ -18,21 +18,21 @@
       <el-button
         size="small"
         type="primary"
-        @click="toDetail(contractForm.id, 'watch')"
+        @click="toDetail"
       >
         送审
       </el-button>
       <el-button
         size="small"
         type="info"
-        @click="toCreate(contractForm.id)"
+        @click="toCreate"
       >
         编辑
       </el-button>
       <el-button
         size="small"
         type="danger"
-        @click="closeContract(contractForm.id)"
+        @click="closeContract"
       >
         删除
       </el-button>
@@ -55,6 +55,8 @@ import contractInfo from './components/preview/contractInfo.vue' // 合同业务
 import auditOption from './components/preview/auditOption.vue' // 审核意见
 import contractAnnex from './components/preview/contractAnnex.vue' // 合同附件管理
 import { mapGetters } from 'vuex'
+import { showNotify } from "src/plugin/utils-notify";
+
 export default {
     name: "Preview",
     components: {
@@ -115,48 +117,33 @@ export default {
         handleDownloadAll() {
             window.location.href = baseUrl + '/api/contract-web/contract/download-sales-flow-attachments?salesInstanceId=' + this.contractModel.contractId
         },
-        toDetail(id, type) {
+        toDetail() {
             this.$router.push({
-                path: 'detail',
+                path: 'create',
                 query: {
-                    id: id,
-                    editType: type
+                    instanceId: this.contractForm.id,
+                    operateEnum: this.contractForm.operateEnum,
+                    active: 3
                 }
             })
         },
-        toCreate(id, type) {
-            const editType = {
-                create_sale_contract: 'create',
-                create_ns_sale_contract: 'create',
-                add_sale_contract: 'create_add',
-                add_ns_sale_contract: 'create_add',
-                update_sale_contract: 'create_change',
-                update_ns_sale_contract: 'create_change',
-                agent_create_sale_contract: 'create',
-                agent_add_sale_contract: 'create_add',
-                agent_update_sale_contract: 'create_change',
-                agent_create_ns_sale_contract: 'create',
-                agent_add_ns_sale_contract: 'create_add',
-                agent_update_ns_sale_contract: 'create_change',
-            }
+        toCreate() {
             this.$router.push({
-                path: editType[type],
+                path: 'create',
                 query: {
-                    id: id,
-                    editType: type
+                    instanceId: this.contractForm.id,
+                    operateEnum: this.contractForm.operateEnum
                 }
             })
         },
-        closeContract(id) {
+        closeContract() {
             showConfirm({
                 msg: '确认关闭合同？',
                 confirmCallback: () => {
-                    post('/api/opencrm/workflow/delete', {
-                        id: id,
-                        memo: ''
-                    }).then(result => {
+                    console.log(this.contractModel.deleteContract,this.contractForm.id)
+                    this.contractModel.deleteContract(this.contractForm.id).then(() => {
                         showNotify('success', '删除成功')
-                        this.getList()
+                        this.backToList()
                     })
                 }
             })

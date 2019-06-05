@@ -102,7 +102,7 @@ export default {
                 msg: '确认操作？',
                 confirmCallback: () => {
                     post('/api/opencrm/workflow/process', {
-                        instanceId: this.contractModel.contract.id,
+                        instanceId: this.contractForm.id,
                         actionType: type,
                         opinion: this.opinion
                     }).then(result => {

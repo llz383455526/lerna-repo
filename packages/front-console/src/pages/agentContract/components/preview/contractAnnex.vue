@@ -84,7 +84,7 @@ export default {
                 '?downloadCode=' + downloadCode;
         },
         handleDownloadAll() {
-            window.location.href = baseUrl + '/api/contract-web/contract/download-sales-flow-attachments?salesInstanceId=' + this.contractModel.contractId
+            window.location.href = baseUrl + '/api/contract-web/contract/download-sales-flow-attachments?salesInstanceId=' + this.contractForm.id
         },
     }
 }

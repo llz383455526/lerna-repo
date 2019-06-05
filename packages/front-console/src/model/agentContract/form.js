@@ -136,6 +136,9 @@ class Form {
 			this.contract = res
 		})
     }
+    deleteContract(id) {
+        return post('/api/opencrm/workflow/delete', {id: id})
+    }
     submit() {
         return post('/api/contract-web/agent-residence-flow/agent-residence-submit', this.contract)
     }

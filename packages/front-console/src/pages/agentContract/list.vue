@@ -392,10 +392,7 @@ export default {
             showConfirm({
                 msg: '确认关闭合同？',
                 confirmCallback: () => {
-                    post('/api/opencrm/workflow/delete', {
-                        id: id,
-                        memo: ''
-                    }).then(result => {
+                    form.deleteContract(id).then(() => {
                         showNotify('success', '删除成功')
                         this.getList()
                     })
