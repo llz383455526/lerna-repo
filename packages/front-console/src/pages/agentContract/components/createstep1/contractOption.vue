@@ -104,6 +104,7 @@ export default {
             // this.contract.workflowType = this.workflowType[ev][0]
             // 清空所选的合同
             this.contract.datas.tplId = ''
+            this.contract.subjectType = ev
         },
         dateChange(ev) {
             if(ev) {

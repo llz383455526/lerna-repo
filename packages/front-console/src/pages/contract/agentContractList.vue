@@ -11,6 +11,7 @@
             </el-form-item>
             <el-form-item label="状态" prop="status">
                 <el-select class="form_input" v-model="form.status">
+                    <el-option label="全部" value=""></el-option>
                     <el-option v-for="e in statusList" :key="e.value" :label="e.text" :value="e.value"></el-option>
                 </el-select>
             </el-form-item>
@@ -38,14 +39,24 @@
             <el-table-column label="代理推广费率" prop="quoteFeeName"></el-table-column>
             <el-table-column label="渠道经理" prop="chargeByName"></el-table-column>
             <el-table-column label="状态" prop="statusName"></el-table-column>
+            <el-table-column label="合同归档"></el-table-column>
+            <el-table-column label="版本号" prop="versionSeq"></el-table-column>
+            <el-table-column label="版本生效月份" prop="versionStartDate">
+                <template slot-scope="scope">
+                    {{scope.row.versionStartDate.substr(5, 2)}}
+                </template>
+            </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <router-link :to="`agentContractCreate?id=${scope.row.id}&isLook=1`">
+                    <router-link :to="`agentContractCreate?contractHisId=${scope.row.id}&isLook=1`">
                         <el-button type="text">查看</el-button>
                     </router-link>
-                    <router-link  v-if="scope.row.status != 20 && userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'" :to="`agentContractCreate?id=${scope.row.id}`">
+                    <router-link  v-if="scope.row.status != 20 && userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'" :to="`agentContractCreate?contractHisId=${scope.row.id}`">
                         <el-button type="text">编辑</el-button>
                     </router-link>
+                    <!-- <router-link> -->
+                        <el-button type="text" @click="showHistroy(scope.row)">历史版本</el-button>
+                    <!-- </router-link> -->
                 </template>
             </el-table-column>
         </el-table>
@@ -57,6 +68,25 @@
             v-on:handleCurrentChange="query"
             :currentPage="form.page">
         </ayg-pagination>
+
+        <el-dialog title="查看历史版本" :visible.sync="dialogTableVisible">
+            <el-table :data="gridData">
+                <el-table-column property="contractNo" label="合同编号">
+                    <template slot-scope="scope">
+                        <router-link :to="`agentContractCreate?contractHisId=${scope.row.constractHisId}&isLook=1`">
+                            <el-button type="text">合同编号{{scope.row.contractNo}}</el-button>
+                        </router-link>
+                    </template>
+                </el-table-column>
+                <el-table-column property="versionSeq" label="版本号"></el-table-column>
+                <el-table-column property="flowMemo" label="版本说明"></el-table-column>
+                <el-table-column property="" label="生效月份"></el-table-column>
+                <el-table-column property="statusName" label="状态"></el-table-column>
+                <el-table-column property="createAt" label="创建时间"></el-table-column>
+                <el-table-column property="createByName" label="创建人"></el-table-column>
+            </el-table>
+        </el-dialog>
+
     </div>
 </template>
 <script>
@@ -77,14 +107,16 @@ export default {
                 page: 1
             },
             statusList: [],
-            data: {}
+            data: {},
+            gridData: [],
+            dialogTableVisible: false,
         }
     },
     mounted() {
         get('/api/contract-web/commom/option?enumType=AgentContractStatus').then(data => {
             console.log(data)
             this.statusList = data
-            this.form.status = this.statusList[0].value
+            // this.form.status = this.statusList[0].value
             this.query()
         })
     },
@@ -101,6 +133,12 @@ export default {
         setSize(a) {
             this.form.pageSize = a
             this.query()
+        },
+        showHistroy(obj) {
+            this.dialogTableVisible = true
+            get('/api/contract-web/agent-contract/query-agentContracts-history?contractId='+obj.originId).then(res => {
+                this.gridData = res
+            })
         }
     }
 }

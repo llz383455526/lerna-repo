@@ -2,6 +2,9 @@
     <div class="r_main">
         <div class="title">基本信息</div>
         <el-form class="form" :model="form" :rules="rules" label-width="120px" size="small" :disabled="isLook" ref="form">
+            <el-form-item label="生效月份">
+
+            </el-form-item>
             <el-form-item label="代理商名称" prop="companyId">
                 <el-select class="form_input" v-model="form.companyId" @change="companyChange" :disabled="(id || isLook) ? true : false "   filterable>
                     <el-option v-for="e in agentList" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
@@ -30,6 +33,7 @@
                     <el-button type="text" v-if="i" @click="deleteCompany(i)">删除</el-button>
                 </div>
             </el-form-item>
+            <el-form-item label="申请主体"></el-form-item>
             <el-form-item label="报价规则" prop="quoteRule">
                 <el-radio v-for="e in ruleList" v-model="form.quoteRule" :key="e.value" :label="e.value">{{e.text}}</el-radio>
                 <i class="el-icon-question ml10" title="结算规则：按高于结算费率的部分结算   返佣规则：按返佣费率直接返佣"></i>
@@ -176,6 +180,7 @@ export default {
       chargeByName: "",
       agentList: [],
       id: "",
+      contractHisId: '',
       isLook: false,
       ruleList: [
         {
@@ -191,7 +196,7 @@ export default {
     };
   },
   mounted() {
-    this.id = this.$route.query.id;
+    this.contractHisId = this.$route.query.contractHisId;
     this.isLook = this.$route.query.isLook ? true : false;
     get("/api/contract-web/agent-contract/agent-company-option").then(data => {
       this.agentList = data;
@@ -199,12 +204,12 @@ export default {
     get('/api/salemgt/common/service-company/list?businessed=true').then(data => {
       this.companyList = data;
     })
-    this.id && this.getDetail();
+    this.contractHisId && this.getDetail();
   },
   methods: {
     getDetail() {
         get("/api/contract-web/agent-contract/detail", {
-            contractId: this.id
+            contractHisId: this.contractHisId
         }).then(data => {
             for (let k in data) {
                 if (k in this.form) {
