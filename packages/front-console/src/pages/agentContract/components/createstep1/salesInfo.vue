@@ -7,8 +7,8 @@
                 <el-option v-for="item in optionModel.groupUsersList" :key="item.id" :value="item.id" :label="item.name"></el-option>
             </el-select>
         </el-form-item>
-        <el-form-item label="销售联系电话" :prop="`${propName}.mobilePhone`" disabled>
-            <el-input v-model="contract.datas.salesInfo.mobilePhone"></el-input>
+        <el-form-item label="销售联系电话" :prop="`${propName}.mobilePhone`">
+            <el-input v-model="contract.datas.salesInfo.mobilePhone" disabled></el-input>
         </el-form-item>
         <el-form-item label="销售地址" :prop="`${propName}.salesAddress`">
             <el-input v-model="contract.datas.salesInfo.salesAddress"></el-input>
@@ -39,7 +39,9 @@ export default {
             const obj = this.optionModel.groupUsersList.find((item) => {
                 return item.id === ev
             })
-            console.log(obj)
+            this.contract.datas.salesInfo.mobilePhone = obj.mobilephone
+            this.contract.datas.salesInfo.email = obj.email
+            // this.contract.datas.salesInfo.mobilePhone = obj.mobilePhone
         }
     },
     created() {

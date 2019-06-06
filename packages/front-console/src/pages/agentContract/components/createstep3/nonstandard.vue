@@ -25,7 +25,7 @@
                         <el-table-column label="操作">
                             <template slot-scope="scope">
                                 <el-button type="text" size="medium" style="padding:0;" @click="handleDownload(scope.row.downloadCode)">下载</el-button>
-                                <el-button type="text" size="medium" style="padding:0;" @click="handleRemove(scope.row, key)" v-if="scope.row.targetType == 'contractUserAttach'">删除</el-button>
+                                <el-button type="text" size="medium" style="padding:0;" @click="handleRemove(scope.row, key, scope.$index)" v-if="scope.row.targetType == 'contractUserAttach'">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -71,7 +71,10 @@ export default {
         handleDownload(downloadCode) {
             const url = '/api/contract-web/file/download?downloadCode='
             window.open(baseUrl + url + downloadCode);
-        }
+        },
+        handleRemove (row, key, index) {
+            this.contractAttachments[key].attachments.splice(index, 1)
+        },
     }
 }
 </script>
