@@ -54,7 +54,8 @@ class Form {
                     "salesId": 0, // 销售联系人ID
                     "salesName": "" // 销售联系人
                 },
-                tplId: '' // 合同模版ID
+                tplId: '', // 合同模版ID
+                tplName: '' // 合同模版名称
             },
             instanceId: '', // 工作流实例ID
             /**

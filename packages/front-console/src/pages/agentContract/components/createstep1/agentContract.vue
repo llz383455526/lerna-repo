@@ -121,7 +121,10 @@ export default {
             this.dateValue = [ this.contract.datas.agentContract.agentStart, this.contract.datas.agentContract.agentEnd ]
         },
         tplIdChange(ev) {
-            // console.log(this.contract)
+            const obj = this.optionModel.contractTplList.find((item) => {
+                return item.value === ev
+            })
+            this.contract.datas.tplName = obj.text
         },
         getDetail(ev) {
             get('/api/contract-web/agent-residence-flow/agent-residence-form?companyId='+ev).then(res => {
