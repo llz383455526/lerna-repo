@@ -16,7 +16,7 @@
                     <i class="el-icon-question" title="表示按照固定比例来收取服务费。计算公式：实发发金额 * 收费比例 = 服务费"></i>
                 </el-form-item>
                 <div class="mb25">
-                    <el-form-item class="mb15" prop="subType" :rules="{ required: true, message: '请选择结算费率类型', trigger: 'change' }">
+                    <el-form-item prop="subType" :rules="{ required: true, message: '请选择结算费率类型', trigger: 'change' }">
                         <el-radio-group v-model="serviceCompanyFeeContent.subType">
                             <el-radio label="nonflow">分{{serviceCompanyFeeContent.incomeAmount}}万 - 无流水阶梯报价</el-radio>
                         </el-radio-group>
