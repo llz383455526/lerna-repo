@@ -20,7 +20,10 @@
             </h4>
           </div>
           <div class="col-xs-12">
-            合同模板：{{ contractForm.tplName }}
+            申请主体：{{ contractForm.datas.agentCompanyBaseInfo.agentType === 'channel'?'渠道':'代理商' }}
+          </div>
+          <div class="col-xs-12">
+            合同模板：{{ getText(contractForm.datas.tplId, contractTplList) }}
           </div>
           <div class="col-xs-12">
             试合作期：若乙方第一次代理甲方产品，则本合同前{{ contractForm.datas.agentCompanyBaseInfo.probation }}个月为试合作期
