@@ -13,15 +13,26 @@
                 <ratio v-if="serviceCompanyFeeContent.subType === 'ratio'" :serviceCompanyFeeContent="serviceCompanyFeeContent"></ratio>
                 <nonflow v-if="serviceCompanyFeeContent.subType === 'nonflow'" :serviceCompanyFeeContent="serviceCompanyFeeContent"></nonflow>
                 <div :span="24" v-if="serviceCompanyFeeContent.subType === 'flow'">
-                    <div v-for="item in ['down', 'up']" :key="item" class="mb25">
-                        <el-form-item label="月收入" :prop="`incomeAmount`" :rules="{ required: true, message: '请输入月收入', trigger: 'blur' }">
+                    <!-- <div v-for="item in ['down', 'up']" :key="item" class="mb25"> -->
+                        <el-form-item label="月收入" prop="incomeAmount" :rules="{ required: true, message: '请输入月收入', trigger: 'blur' }">
                             <el-input style="width: 120px;" v-model="serviceCompanyFeeContent.incomeAmount" :disabled="disabled">
                                 <template slot="append">万</template>
                             </el-input>
-                            <span class="ml10">以下</span>
+                            <span class="ml10">(含)以下</span>
                         </el-form-item>
-                        <feeContentMap ref="feeContentMap" :ruleForm="{ list: serviceCompanyFeeContent.feeContentMap[item] }"></feeContentMap>
-                    </div>
+                        <feeContentMap ref="feeContentMap" :ruleForm="{ list: serviceCompanyFeeContent.feeContentMap.down }"></feeContentMap>
+                        <el-form-item label="月收入" prop="incomeAmount" :rules="{ required: true, message: '请输入月收入', trigger: 'blur' }">
+                            <el-input style="width: 120px;" v-model="serviceCompanyFeeContent.incomeAmount" :disabled="disabled">
+                                <template slot="append">万</template>
+                            </el-input>
+                            <span class="ml10">以上</span>
+                        </el-form-item>
+                        <el-form-item label="实发金额" prop="feeContentMap.up.0.percent" :rules="{ required: true, message: '请输入实发金额', trigger: 'blur' }">
+                            <el-input v-model="serviceCompanyFeeContent.feeContentMap['up'][0].percent" style="width: 150px;">
+                                <template slot="append">%</template>
+                            </el-input>
+                        </el-form-item>
+                    <!-- </div> -->
                 </div>
             </el-form>
         </el-col>
@@ -57,14 +68,21 @@ export default {
                     result.push(false)
                 }
             })
-            this.$refs['feeContentMap'] && this.$refs['feeContentMap'].forEach(item => {
-                item.validate((valid) => {
-                    if (valid) {
-                        result.push(true)
-                    } else {
-                        result.push(false)
-                    }
-                })
+            // this.$refs['feeContentMap'] && this.$refs['feeContentMap'].forEach(item => {
+            //     item.validate((valid) => {
+            //         if (valid) {
+            //             result.push(true)
+            //         } else {
+            //             result.push(false)
+            //         }
+            //     })
+            // })
+            this.$refs['feeContentMap'].validate((valid) => {
+                if (valid) {
+                    result.push(true)
+                } else {
+                    result.push(false)
+                }
             })
             check = result.indexOf(false) > -1 ? false : true
             callback(check)

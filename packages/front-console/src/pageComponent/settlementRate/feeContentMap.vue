@@ -62,7 +62,7 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-button class="mt25" v-if="ruleForm.list.length < 10 && ruleForm.list.length > 2" @click="addColumn" size="small" type="primary" :disabled="disabled">增加阶梯</el-button>
+        <el-button class="mt25 mb25" v-if="ruleForm.list.length < 10 && ruleForm.list.length > 2" @click="addColumn" size="small" type="primary" :disabled="disabled">增加阶梯</el-button>
     </el-form>
 </template>
 
