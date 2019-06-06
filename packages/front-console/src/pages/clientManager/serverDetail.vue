@@ -287,6 +287,16 @@
 	    					  <el-col :span="8" class="right">对帐sftp密码</el-col><el-col :span="10">{{data['rec.hf.sftp.password']}}</el-col>
 	    				</el-col>
         			</el-row>
+                    <el-row :gutter="20">
+        			    <el-col :span="10">
+	    					  <el-col :span="8" class="right">msg是否忽略base64转换</el-col><el-col :span="10">{{data['hf.msg.sign.base64.disable'] == "true" ? "是" : "否"}}</el-col>
+	    				</el-col>
+        			</el-row>
+                    <el-row :gutter="20">
+        			    <el-col :span="10">
+	    					  <el-col :span="8" class="right">对账单是否使用http下载</el-col><el-col :span="14">{{data['hf.rec.api.use.http'] == "true" ? "是" : "否"}}</el-col>
+	    				</el-col>
+        			</el-row>
 	    		</template>
               <template v-if="data.thirdpaySystemId == 'hxb'">
 	    			<el-row :gutter="20">
@@ -624,6 +634,19 @@
                   <el-form-item label="对帐sftp密码" prop="rec$hf$sftp$password">
                       <el-input class="form_input" v-model="eform.rec$hf$sftp$password"></el-input>
                   </el-form-item>
+                  <el-form-item label="msg是否忽略base64转换" size="small" prop="hf$msg$sign$base64$disable
+">                  
+                    <el-radio-group v-model="eform.hf$msg$sign$base64$disable">
+                        <el-radio label="true">是</el-radio>
+                        <el-radio label="false">否</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="对账单是否使用http下载" size="small" prop="hf$rec$api$use$http">
+                    <el-radio-group v-model="eform.hf$rec$api$use$http">
+                        <el-radio label="true">是</el-radio>
+                        <el-radio label="false">否</el-radio>
+                    </el-radio-group>
+                </el-form-item>
 	    		</template>
               <template v-if="eform.thirdpaySystemId == 'hxb'">
                   <el-form-item label="商户号" prop="hxb$merchId">

@@ -196,6 +196,19 @@
                 <el-form-item label="对帐sftp密码" size="small" prop="rec$hf$sftp$password">
                     <el-input class="form_input" v-model="form.rec$hf$sftp$password"></el-input>
                 </el-form-item>
+                <el-form-item label="msg是否忽略base64转换" size="small" prop="hf$msg$sign$base64$disable
+">                  
+                    <el-radio-group v-model="form.hf$msg$sign$base64$disable">
+                        <el-radio label="true">是</el-radio>
+                        <el-radio label="false">否</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="对账单是否使用http下载" size="small" prop="hf$rec$api$use$http">
+                    <el-radio-group v-model="form.hf$rec$api$use$http">
+                        <el-radio label="true">是</el-radio>
+                        <el-radio label="false">否</el-radio>
+                    </el-radio-group>
+                </el-form-item>
             </template>
             <template v-if="form.thirdpaySystemId == 'hxb'">
                 <el-form-item label="商户号" size="small" prop="hxb$merchId">
@@ -304,14 +317,14 @@ export default {
   mounted() {
     Object.assign(this.form, this.$route.query)
     if(this.form.thirdpaySystemId == 'changjie'){
-        Object.assign(this.form, {
+        this.form = Object.assign({}, this.form, {
             'cj$merchant_id': '',
             'cj$merchant_public_key': '',
             'cj$merchant_private_key': '',
         })
     }
     if(this.form.thirdpaySystemId == 'wx'){
-        Object.assign(this.form, {
+        this.form = Object.assign({}, this.form, {
             'wx$mchid': '',
             'wx$submchid': '',
             'wx$appid': '',
@@ -323,7 +336,7 @@ export default {
         })
     }
     if(this.form.thirdpaySystemId == 'alipay'){
-        Object.assign(this.form, {
+        this.form = Object.assign({}, this.form, {
             'alipay$appid': '',
             'alipay$userid': '',
             'alipay$rsatype': '',
@@ -336,7 +349,7 @@ export default {
         })
     }
     if(this.form.thirdpaySystemId == 'yjf'){
-        Object.assign(this.form, {
+        this.form = Object.assign({}, this.form, {
             'partner_id': '',
             'signtype': '',
             'sercurity_key': '',
@@ -357,7 +370,7 @@ export default {
         }
     }
     if(this.form.thirdpaySystemId == 'pingan'){
-        Object.assign(this.form, {
+        this.form = Object.assign({}, this.form, {
             'pingan$outercustcode': '',
             'pingan$mainacct$no': '',
             'pingan$mainacct$name': '',
@@ -372,7 +385,7 @@ export default {
         })
     }
     if(this.form.thirdpaySystemId == 'cmb'){
-        Object.assign(this.form, {
+        this.form = Object.assign({}, this.form, {
             'cmb$server': '',
             'cmb$nteckopr$loginName': '',
             'cmb$nteckopr$cmbBkNbr': '',
@@ -383,7 +396,7 @@ export default {
         })
     }
     if(this.form.thirdpaySystemId == 'hf'){
-        Object.assign(this.form, {
+        const hfFormData = {
             'mer_id': '',
             'mer_cust_id': '',
             'pfx_file_fullname': '',
@@ -392,24 +405,27 @@ export default {
             'rec$hf$sftp$port': '',
             'rec$hf$sftp$dir': '',
             'rec$hf$sftp$username': '',
-            'rec$hf$sftp$password': ''
-        })
+            'rec$hf$sftp$password': '',
+            'hf$rec$api$use$http': 'false',
+            'hf$msg$sign$base64$disable': 'false'
+        }
+        this.form = Object.assign({}, this.form, hfFormData)
     }
     if(this.form.thirdpaySystemId == 'hxb'){
-        Object.assign(this.form, {
+        this.form = Object.assign({}, this.form, {
             'hxb$merchId': '',
             'hxb$server': ''
         })
     }
     if(this.form.thirdpaySystemId == 'yeepay'){
-        Object.assign(this.form, {
+        this.form = Object.assign({}, this.form, {
             'yeepay$merchId': '',
             'yeepay$privatekey': '',
             'yeepay$thirdPublickey': ''
         })
     }
     if(this.form.thirdpaySystemId == 'lianlianpay'){
-        Object.assign(this.form, {
+        this.form = Object.assign({}, this.form, {
             'lianlianpay$merchId': '',
             'lianlianpay$privatekey': '',
             'lianlianpay$thirdPublickey': '',
@@ -426,7 +442,7 @@ export default {
         })
     }
     if(this.form.thirdpaySystemId == 'alibank'){
-        Object.assign(this.form, {
+        this.form = Object.assign({}, this.form, {
             'alibank$merchId': '',
             'alibank$privatekey': '',
             'alibank$thirdPublickey': '',
