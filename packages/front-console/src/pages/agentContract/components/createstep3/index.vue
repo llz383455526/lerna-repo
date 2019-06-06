@@ -69,7 +69,7 @@ export default {
                 this.$alert('您的合同表单已提交，谢谢！', '', {
                     confirmButtonText: '确定',
                     callback: action => {
-                        // this.backToList('list')
+                        this.$router.push('list')
                     }
                 });
             })

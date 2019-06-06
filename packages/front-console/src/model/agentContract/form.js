@@ -142,6 +142,9 @@ class Form {
     submit() {
         return post('/api/contract-web/agent-residence-flow/agent-residence-submit', this.contract)
     }
+    submitForm () {
+        return post('/api/opencrm/workflow/save_submit', this.contract)
+    }
 }
 
 export default Form
