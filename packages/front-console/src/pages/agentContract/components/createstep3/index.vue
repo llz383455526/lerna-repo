@@ -75,7 +75,7 @@ export default {
             })
         },
         handleChange(ev) {
-            this.form.standardEnum = ev === 'standard' ? 1 : 2
+            this.form.contract.standardEnum = ev === 'standard' ? 1 : 2
         }
     },
     created() {

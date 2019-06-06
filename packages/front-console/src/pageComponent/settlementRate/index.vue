@@ -77,7 +77,7 @@ export default {
             //         }
             //     })
             // })
-            this.$refs['feeContentMap'].validate((valid) => {
+            this.$refs['feeContentMap'] && this.$refs['feeContentMap'].validate((valid) => {
                 if (valid) {
                     result.push(true)
                 } else {

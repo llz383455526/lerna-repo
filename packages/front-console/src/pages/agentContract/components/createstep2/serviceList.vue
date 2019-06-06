@@ -38,7 +38,6 @@ export default {
         validate() {
             let result = [] // 储存遍历每个验证结果
             let check = false // 最后输出
-            console.log(this.$refs['agentDate'])
             this.$refs['agentDate'] && this.$refs['agentDate'].forEach((item) => {
                 item.validate((res) => {
                     result.push(res)
