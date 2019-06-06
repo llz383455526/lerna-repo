@@ -11,28 +11,16 @@
                     </el-radio-group>
                 </el-form-item><br>
                 <ratio v-if="serviceCompanyFeeContent.subType === 'ratio'" :serviceCompanyFeeContent="serviceCompanyFeeContent"></ratio>
-                <!-- <el-form-item prop="subType" :rules="{ required: true, message: '请选择结算费率类型', trigger: 'change' }">
-                    <el-radio-group v-model="serviceCompanyFeeContent.subType">
-                        <el-radio label="nonflow">分{{serviceCompanyFeeContent.incomeAmount}}万 - 无流水阶梯报价</el-radio>
-                    </el-radio-group>
-                </el-form-item> -->
                 <nonflow v-if="serviceCompanyFeeContent.subType === 'nonflow'" :serviceCompanyFeeContent="serviceCompanyFeeContent"></nonflow>
-                <div class="mb25">
-                    <!-- <el-form-item prop="subType" :rules="{ required: true, message: '请选择结算费率类型', trigger: 'change' }">
-                        <el-radio-group v-model="serviceCompanyFeeContent.subType">
-                            <el-radio label="flow">分{{serviceCompanyFeeContent.incomeAmount}}万 - 按流水分阶梯报价</el-radio>
-                        </el-radio-group>
-                    </el-form-item> -->
-                    <div :span="24" v-if="serviceCompanyFeeContent.subType === 'flow'">
-                        <div v-for="item in ['down', 'up']" :key="item" class="mb25">
-                            <el-form-item label="月收入" :prop="`incomeAmount`" :rules="{ required: true, message: '请输入月收入', trigger: 'blur' }">
-                                <el-input style="width: 120px;" v-model="serviceCompanyFeeContent.incomeAmount" :disabled="disabled">
-                                    <template slot="append">万</template>
-                                </el-input>
-                                <span class="ml10">以下</span>
-                            </el-form-item>
-                            <feeContentMap ref="feeContentMap" :ruleForm="{ list: serviceCompanyFeeContent.feeContentMap[item] }"></feeContentMap>
-                        </div>
+                <div :span="24" v-if="serviceCompanyFeeContent.subType === 'flow'">
+                    <div v-for="item in ['down', 'up']" :key="item" class="mb25">
+                        <el-form-item label="月收入" :prop="`incomeAmount`" :rules="{ required: true, message: '请输入月收入', trigger: 'blur' }">
+                            <el-input style="width: 120px;" v-model="serviceCompanyFeeContent.incomeAmount" :disabled="disabled">
+                                <template slot="append">万</template>
+                            </el-input>
+                            <span class="ml10">以下</span>
+                        </el-form-item>
+                        <feeContentMap ref="feeContentMap" :ruleForm="{ list: serviceCompanyFeeContent.feeContentMap[item] }"></feeContentMap>
                     </div>
                 </div>
             </el-form>
