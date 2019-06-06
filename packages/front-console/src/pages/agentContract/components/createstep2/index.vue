@@ -44,6 +44,10 @@ export default {
         },
         formDel(index) {
             this.form.contract.datas.agentContract.serviceCompanyFeeContentList.splice(index, 1)
+            this.$forceUpdate()
+            if (!this.form.contract.datas.agentContract.serviceCompanyFeeContentList.length) {
+                this.form.contract.datas.agentContract.serviceCompanyFeeContentList = []
+            }
         },
         formAdd(appForm) {
             let someCompany = this.form.contract.datas.agentContract.serviceCompanyFeeContentList.find((el) => {
@@ -58,7 +62,7 @@ export default {
                 this.$message('代理商合同已存在')
                 return
             }
-            const rObj = Object.assign({}, this.settlementRate.serviceCompanyFeeContent, appForm)
+            const rObj = Object.assign({}, JSON.parse(JSON.stringify(this.settlementRate.serviceCompanyFeeContent)), appForm)
             this.form.contract.datas.agentContract.serviceCompanyFeeContentList.push(rObj)
             this.$refs['dialog'].hideDialog()
         },
