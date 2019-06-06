@@ -40,7 +40,7 @@
                     </div>
                 </div>
                 {{`（2）${detail.quoteFeeContent.incomeAmount}万以上：`}}
-                <div class="pl10" v-for="(e, i) in detail.quoteFeeContent.serviceCompanyRateList" >
+                <div class="pl10" v-for="(e, i) in detail.quoteFeeContent.serviceCompanyRateList" :key="i">
                   {{e.serviceCompanyName}}，实发金额*{{e.feeRateContent.quoteFeeRate}}%
                 </div>
             </div>

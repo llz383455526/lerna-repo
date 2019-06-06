@@ -52,7 +52,7 @@
         </el-row>
         <el-row class="mb15" style="font-weight: normal;" v-if="!isExamine">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">服务费收费比例/金额：</el-col>
-            <show-service :detail="detail"></show-service>
+            <show-service :detail="detail" :showSettledRate="false"></show-service>
         </el-row>
         <el-row class="mb15" style="font-weight: normal;">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">合同起止时间：</el-col>
@@ -82,7 +82,7 @@
           <el-row class="mb15" style="font-weight: normal;" v-if="!historyId">
             <el-col :span="4" style="text-align: right; margin-right: 20px;">代理推广费率：</el-col>
             <el-col :span="16">
-              <show-close-service :detail="detail" :showSettledRate="false"></show-close-service>
+              <show-close-service :detail="detail"></show-close-service>
             </el-col>
           </el-row>
         </template>
@@ -109,7 +109,7 @@
         </div>
         <h4 class="ml50 mt50" v-if="!isExamine">关联企业名称</h4>
         <div class="flex" v-if="!isExamine">
-            <div v-for="(e, i) in detail.branchs" :key="e.branchId">
+            <div v-for="e in detail.branchs" :key="e.branchId">
                 {{e.branchName}}
             </div>
         </div>

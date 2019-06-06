@@ -90,9 +90,9 @@
                 </div>
             </div>
         </template>
-        <!-- <template v-if="detail.serviceFeeContent.settledRate && showSettledRate">
+        <template v-if="detail.serviceFeeContent.settledRate && showSettledRate">
             {{ `充值服务费预收：${detail.serviceFeeContent.settledRate}%` }}
-        </template> -->
+        </template>
     </el-col>
   </div>
 </template>
