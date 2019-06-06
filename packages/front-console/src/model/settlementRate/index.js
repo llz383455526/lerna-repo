@@ -6,7 +6,7 @@ class Form {
             'agentStart': '', // 代理合同结束期限
             'agentEnd': '', // 代理合同开始期限
             "containIncomeAmount": false, // 是否包含分XX万收费金额
-            "incomeAmount": 0, // 分XXX万收费金额
+            "incomeAmount": 2.8, // 分XXX万收费金额
             // "prepayRate": 0, // 渠道预收比例
             // "quoteFeeRate": 0, // 固定结算费率
             "quoteFeeType": "", // 结算费率报价类型(ratio-固定,step-分xxx)

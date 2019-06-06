@@ -9,7 +9,7 @@
                 </div>
             </div>
             <div class="widget-main">
-                <agentDate ref="agentDate" :serviceCompanyFeeContent="formItem"></agentDate>
+                <agentDate ref="agentDate" :serviceCompanyFeeContent="formItem" v-if="operateEnum == '3'"></agentDate>
                 <!-- 这里是服务合同的细节 -->
                 <settlement-rate ref="settlementRate" :serviceCompanyFeeContent="formItem"></settlement-rate>
             </div>
@@ -30,7 +30,8 @@ export default {
     },
     data() {
         return {
-            list: []
+            list: [],
+            operateEnum: ''
         }
     },
     methods: {
@@ -53,6 +54,9 @@ export default {
         formDel(index) {
             this.$emit('formDel', index)
         }
+    },
+    created() {
+        this.operateEnum = this.$route.query.operateEnum
     }
 }
 </script>

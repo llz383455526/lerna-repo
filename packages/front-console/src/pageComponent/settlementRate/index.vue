@@ -23,7 +23,7 @@
                         :prop="`subType`" 
                         :rules="{ required: true, message: '请选择结算费率类型', trigger: 'change' }">
                         <el-radio-group v-model="serviceCompanyFeeContent.subType">
-                            <el-radio label="nonflow">分{{'2.8'}}万 - 无流水阶梯报价</el-radio>
+                            <el-radio label="nonflow">分{{serviceCompanyFeeContent.incomeAmount}}万 - 无流水阶梯报价</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <div v-if="serviceCompanyFeeContent.subType === 'nonflow'">
@@ -42,7 +42,7 @@
                         :prop="`subType`" 
                         :rules="{ required: true, message: '请选择结算费率类型', trigger: 'change' }">
                         <el-radio-group v-model="serviceCompanyFeeContent.subType">
-                            <el-radio label="flow">分{{'2.8'}}万 - 按流水分阶梯报价</el-radio>
+                            <el-radio label="flow">分{{serviceCompanyFeeContent.incomeAmount}}万 - 按流水分阶梯报价</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <div :span="24" v-if="serviceCompanyFeeContent.subType === 'flow'">
@@ -57,24 +57,6 @@
                             </el-form-item>
                             <feeContentMap ref="feeContentMap" :ruleForm="{ list: serviceCompanyFeeContent.feeContentMap[item] }"></feeContentMap>
                         </div>
-                        <!-- <el-form-item label="月收入"
-                            :prop="`incomeAmount`" 
-                            :rules="{ required: true, message: '请输入月收入', trigger: 'blur' }">
-                            <el-input style="width: 120px;" v-model="serviceCompanyFeeContent.incomeAmount" :disabled="disabled">
-                                <template slot="append">万</template>
-                            </el-input>
-                            <span class="ml10">以下</span>
-                        </el-form-item>
-                        <feeContentMap ref="feeContentMap" :ruleForm="{ list: serviceCompanyFeeContent.feeContentMap.down }"></feeContentMap> -->
-                        <!-- <additionalProp :tableData="serviceCompanyFeeContent.feeContentMap.down" :propName="`feeContentMap.down`"></additionalProp> -->
-                        <!-- <el-form-item label="月收入" class="mt25">
-                            <el-input style="width: 120px;" v-model="serviceCompanyFeeContent.incomeAmount" :disabled="disabled">
-                                <template slot="append">万</template>
-                            </el-input>
-                            <span class="ml10">以上</span>
-                        </el-form-item>
-                        <feeContentMap ref="feeContentMap" :ruleForm="{ list: serviceCompanyFeeContent.feeContentMap.up }"></feeContentMap> -->
-                        <!-- <additionalProp :tableData="serviceCompanyFeeContent.feeContentMap.up" :propName="`feeContentMap.up`"></additionalProp> -->
                     </div>
                 </div>
             </el-form>
@@ -93,12 +75,6 @@ export default {
     props: {
         serviceCompanyFeeContent: {
             type: Object
-        },
-        propName: {
-            type: String
-        },
-        propKey: {
-            type: Number
         }
     },
     methods: {

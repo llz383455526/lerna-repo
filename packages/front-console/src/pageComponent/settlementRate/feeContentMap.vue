@@ -67,16 +67,6 @@
 <script>
 export default {
     props: {
-        tableData: {
-            type: Array
-        },
-        showAdd: {
-            type: Boolean,
-            default: true
-        },
-        propName: {
-            type: String
-        },
         ruleForm: {
             type: Object
         }

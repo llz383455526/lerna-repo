@@ -42,7 +42,7 @@ export default {
         this.form.contract.instanceId = this.$route.query.instanceId || ''
         this.form.contract.operateEnum = this.$route.query.operateEnum || ''
         if(this.$route.query.active) {
-            this.active = this.$route.query.active
+            this.active = parseInt(this.$route.query.active)
         }
     }
 }

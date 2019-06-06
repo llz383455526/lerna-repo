@@ -1,11 +1,9 @@
 
 <template>
     <el-form :model="form.contract" :rules="check.rules" label-width="200px" ref="createAgentContract">
-        <!-- <addOption :contract="form.contract" v-if="operateEnum === '2'"></addOption> -->
-        <!-- <changeOption :contract="form.contract" v-if="operateEnum === '3'"></changeOption> -->
-        <contractOption :contract="form.contract" ref="contractOption"></contractOption>
-        <channel-info :contract="form.contract"></channel-info>
-        <sale-contact-info :contract="form.contract"></sale-contact-info>
+        <agentContract :contract="form.contract" ref="contractOption"></agentContract>
+        <agentCompanyBaseInfo :contract="form.contract"></agentCompanyBaseInfo>
+        <salesInfo :contract="form.contract"></salesInfo>
         <el-form-item>
             <el-button @click="$router.push('list')">返回</el-button>
             <el-button type="primary" @click="onSubmit('createAgentContract')">下一步</el-button>
@@ -15,13 +13,12 @@
 
 <script>
 import Check from 'src/model/agentContract/check'
-import contractOption from './contractOption'
-import channelInfo from './channelInfo'
-import saleContactInfo from './saleContactInfo'
-import changeOption from './changeOption'
+import agentContract from './agentContract'
+import agentCompanyBaseInfo from './agentCompanyBaseInfo'
+import salesInfo from './salesInfo'
 
 export default {
-    components: { contractOption, channelInfo, saleContactInfo, changeOption },
+    components: { agentContract, agentCompanyBaseInfo, salesInfo },
     props: {
         form: {
             type: Object
@@ -29,7 +26,6 @@ export default {
     },
     data() {
         return {
-            // form: new Form(),
             check: new Check(),
             instanceId: '',
             operateEnum: ''

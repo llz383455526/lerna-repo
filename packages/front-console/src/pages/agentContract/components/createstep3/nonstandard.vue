@@ -68,6 +68,10 @@ export default {
                 })
             })
         },
+        handleDownload(downloadCode) {
+            const url = '/api/contract-web/file/download?downloadCode='
+            window.open(baseUrl + url + downloadCode);
+        }
     }
 }
 </script>

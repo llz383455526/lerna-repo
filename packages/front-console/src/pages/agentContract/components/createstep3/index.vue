@@ -9,7 +9,7 @@
                 </el-radio-group>
             </el-form-item>
         </el-form>
-        <standard :contractAttachments="form.contractAttachments" :contractId="form.contractId" v-if="approveType === 'standard'"></standard>
+        <standard :contractAttachments="form.contract.datas.contractAttachments" :contractId="form.contractId" v-if="approveType === 'standard'"></standard>
         <nonstandard :contractAttachments="partialAttachments" v-if="approveType === 'partial'"></nonstandard>
         <nonstandard :contractAttachments="customerAttachments" v-if="approveType === 'customer'"></nonstandard>
         <div>
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import Form from 'src/model/agentContract/step3'
+import Form from 'src/model/agentContract/form'
 import standard from './standard'
 import nonstandard from './nonstandard'
 
@@ -29,13 +29,13 @@ export default {
     components: { standard, nonstandard },
     computed: {
         standardAttachments() {
-            return this.form.contractAttachments
+            return this.form.contract.datas.contractAttachments
         },
         partialAttachments() {
-            return this.form.contractAttachments
+            return this.form.contract.datas.contractAttachments
         },
         customerAttachments() {
-            const map = this.form.contractAttachments.map((item) => {
+            const map = this.form.contract.datas.contractAttachments.map((item) => {
                 let rObj = {}
                 Object.assign(rObj, item)
                 rObj.attachments = []
@@ -56,13 +56,13 @@ export default {
             const ev = this.approveType
             switch (ev) {
                 case 'standard':
-                    this.form.contractAttachments = this.standardAttachments
+                    this.form.contract.datas.contractAttachments = this.standardAttachments
                     break
                 case 'partial':
-                    this.form.contractAttachments = this.partialAttachments
+                    this.form.contract.datas.contractAttachments = this.partialAttachments
                     break
                 case 'customer':
-                    this.form.contractAttachments = this.customerAttachments
+                    this.form.contract.datas.contractAttachments = this.customerAttachments
                     break
             }
             this.form.submitForm().then(() => {
