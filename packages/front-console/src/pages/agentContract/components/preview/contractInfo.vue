@@ -82,30 +82,34 @@
             </div>
             <div class="col-xs-12">
               代理推广费率：
-              <span v-if="item.quoteFeeType === 'ratio'">{{ item.feeContentMap.no[0].percent }}</span>
+              <span v-if="item.quoteFeeType === 'ratio'">固定费率结算：{{ item.feeContentMap.no[0].percent }}%</span>
               <template v-else>
                 <span>分{{ item.incomeAmount }}万 - {{ item.subType === 'nonflow'?'无流水阶梯':'按流水分阶梯' }}报价</span>
                 <div style="padding-left: 20px">
-                  <p>(1) {{ item.incomeAmount }}万含以下</p>
-                  <p
-                    class="list-item"
-                    v-for="(downitem, downindex) in item.feeContentMap.down"
-                    :key="'downindex'+downindex"
-                  >
-                    {{ downindex === 0 ?'小于':downitem.startAmount+'万' + (downitem.equalsStart?'含':'') + (downindex === item.feeContentMap.down.length-1 ?'以上':'~') }}
-                    <span v-if="downindex < item.feeContentMap.down.length-1">{{ downitem.endAmount }}万{{ downitem.equalsEnd?'含':'' }}</span>，
-                    实发金额*{{ downitem.percent }}%
-                  </p>
-                  <p>(2) {{ item.incomeAmount }}万以上</p>
-                  <p
-                    class="list-item"
-                    v-for="(upitem, upindex) in item.feeContentMap.up"
-                    :key="upindex+'upindex'"
-                  >
-                    {{ upindex === 0 ?'小于':upitem.startAmount+'万' + (upitem.equalsStart?'含':'') + (upindex === item.feeContentMap.up.length-1 ?'以上':'~') }}
-                    <span v-if="upindex < item.feeContentMap.up.length-1">{{ upitem.endAmount }}万{{ upitem.equalsEnd?'含':'' }}</span>，
-                    实发金额*{{ upitem.percent }}%
-                  </p>
+                  <p>(1) {{ item.incomeAmount }}万含以下<span v-if="item.subType === 'nonflow'">，实发金额*{{ item.feeContentMap.down[0].percent }}%</span></p>
+                  <template v-if="item.subType === 'flow'">
+                    <p
+                      class="list-item"
+                      v-for="(downitem, downindex) in item.feeContentMap.down"
+                      :key="'downindex'+downindex"
+                    >
+                      {{ downindex === 0 ?'小于':downitem.startAmount+'万' + (downitem.equalsStart?'含':'') + (downindex === item.feeContentMap.down.length-1 ?'以上':'~') }}
+                      <span v-if="downindex < item.feeContentMap.down.length-1">{{ downitem.endAmount }}万{{ downitem.equalsEnd?'含':'' }}</span>，
+                      实发金额*{{ downitem.percent }}%
+                    </p>
+                  </template>
+                  <p>(2) {{ item.incomeAmount }}万以上<span v-if="item.subType === 'nonflow'">，实发金额*{{ item.feeContentMap.up[0].percent }}%</span></p>
+                  <template v-if="item.subType === 'flow'">
+                    <p
+                      class="list-item"
+                      v-for="(upitem, upindex) in item.feeContentMap.up"
+                      :key="upindex+'upindex'"
+                    >
+                      {{ upindex === 0 ?'小于':upitem.startAmount+'万' + (upitem.equalsStart?'含':'') + (upindex === item.feeContentMap.up.length-1 ?'以上':'~') }}
+                      <span v-if="upindex < item.feeContentMap.up.length-1">{{ upitem.endAmount }}万{{ upitem.equalsEnd?'含':'' }}</span>，
+                      实发金额*{{ upitem.percent }}%
+                    </p>
+                  </template>
                 </div>
               </template>
             </div>
