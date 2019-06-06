@@ -10,7 +10,7 @@
                             <el-input v-model="scope.row.startAmount" style="width: 120px;" @blur="fillPrev(scope.$index)">
                                 <template slot="append">万</template>
                             </el-input>
-                            <el-checkbox v-model="scope.row.equalsStart" class="mt10">含
+                            <el-checkbox v-model="scope.row.equalsStart">含
                                 <template v-if="scope.row.sequence === ruleForm.list.length - 1">以上</template>
                             </el-checkbox>
                         </el-form-item>
@@ -29,7 +29,7 @@
                             <el-input v-model.number="scope.row.endAmount" style="width: 120px;" @blur="fillNext(scope.$index)">
                                 <template slot="append">万</template>
                             </el-input>
-                            <el-checkbox v-model="scope.row.equalsEnd" class="mt10">含
+                            <el-checkbox v-model="scope.row.equalsEnd">含
                                 <template v-if="!scope.row.sequence">以下</template>
                             </el-checkbox>
                         </el-form-item>
@@ -44,7 +44,9 @@
                     <el-form-item label="实发金额"
                         :prop="`list.${scope.$index}.percent`"
                         :rules="{ required: true, message: '请输入阶梯收费', trigger: 'blur' }">
-                        <el-input v-model="scope.row.percent" style="width: 100px;"></el-input> % 每人 
+                        <el-input v-model="scope.row.percent" style="width: 150px;">
+                            <template slot="append">% 每人</template>
+                        </el-input>
                         <i class="el-icon-question mt10" title="按每人月收入分阶梯收费"></i>
                     </el-form-item>
                 </template>

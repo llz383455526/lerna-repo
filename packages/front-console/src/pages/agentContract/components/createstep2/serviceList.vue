@@ -11,7 +11,7 @@
             <div class="widget-main">
                 <agentDate ref="agentDate" :serviceCompanyFeeContent="formItem" v-if="operateEnum == '3'"></agentDate>
                 <!-- 这里是服务合同的细节 -->
-                <settlement-rate ref="settlementRate" :serviceCompanyFeeContent="formItem"></settlement-rate>
+                <settlement-rate ref="serviceCompanyFeeContent" :serviceCompanyFeeContent="formItem"></settlement-rate>
             </div>
         </div>
     </div>
@@ -43,7 +43,7 @@ export default {
                     result[i] = res
                 })
             })
-            this.$refs['settlementRate'].forEach((item, i) => {
+            this.$refs['serviceCompanyFeeContent'].forEach((item, i) => {
                 item.validate((res) => {
                     result[i] = res
                 })
