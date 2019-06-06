@@ -4,9 +4,9 @@
         <el-form :model="templateForm" :rules="rules" ref="templateForm" label-width="200px" class="demo-contractForm">
             <h4 class="ml50">基本信息</h4>
             <div v-if="editable">
-                <el-form-item label="业务类型" prop="contractType" required>
-                    <el-select v-model="templateForm.contractType" placeholder="请选择" style="width:100%;">
-                        <el-option v-for="item in searchOptions.BusinessType" :key="item.value" :label="item.text"
+                <el-form-item label="业务类型" prop="tplType" required>
+                    <el-select v-model="templateForm.tplType" placeholder="请选择" style="width:100%;">
+                        <el-option v-for="item in searchOptions.ContractTplType" :key="item.value" :label="item.text"
                                    :value="item.value"></el-option>
                     </el-select>
                 </el-form-item>
@@ -18,12 +18,12 @@
                     </el-checkbox-group>
                 </el-form-item>
 
-                <el-form-item label="合同类型" prop="tplType" required>
+                <!-- <el-form-item label="合同类型" prop="tplType" required>
                     <el-select v-model="templateForm.tplType" placeholder="请选择" style="width:100%;">
                         <el-option v-for="item in searchOptions.ContractTplType" :key="item.value" :label="item.text"
                                    :value="item.value"></el-option>
                     </el-select>
-                </el-form-item>
+                </el-form-item> -->
 
                 <el-form-item label="合同备注" prop="remark">
                     <el-input type="textarea" v-model="templateForm.remark"></el-input>
@@ -35,7 +35,7 @@
 
                 <el-form-item label="是否有效" prop="status">
                     <el-radio-group v-model="templateForm.status">
-                        <el-radio v-for="item in searchOptions.ValidationType" :key="item" :label="item.text"></el-radio>
+                        <el-radio v-for="item in searchOptions.ValidationType" :key="item.value" :label="item.text"></el-radio>
                     </el-radio-group>
                 </el-form-item>
             </div>
@@ -226,7 +226,7 @@
 		        })
 	        },
 	        getSearchOptions() {
-		        post('/api/sysmgr-web/commom/options?enumTypes=BusinessType,IndustryType,ValidationType,ContractTplType', {})
+		        post('/api/sysmgr-web/commom/options?enumTypes=BusinessType,IndustryType,ValidationType,ContractTplType,ContractTplType', {})
 			        .then(result => {
 				        this.searchOptions = result
 
