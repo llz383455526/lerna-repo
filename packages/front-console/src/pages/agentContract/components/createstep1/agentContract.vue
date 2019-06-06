@@ -105,6 +105,10 @@ export default {
             this.contract.datas.tplId = ''
             this.contract.subjectType = ev
         },
+        showTplList() {
+            const ev = this.contract.datas.agentCompanyBaseInfo.agentType
+            this.optionModel.getContractTplList(ev)
+        },
         dateChange(ev) {
             if(ev) {
                 this.contract.datas.agentContract.agentStart = ev[0]

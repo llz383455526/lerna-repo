@@ -1,7 +1,7 @@
 
 <template>
     <el-form :model="form.contract" :rules="check.rules" label-width="200px" ref="createAgentContract">
-        <agentContract :contract="form.contract" ref="contractOption"></agentContract>
+        <agentContract :contract="form.contract" ref="agentContract"></agentContract>
         <agentCompanyBaseInfo :contract="form.contract"></agentCompanyBaseInfo>
         <salesInfo :contract="form.contract"></salesInfo>
         <el-form-item>
@@ -56,7 +56,8 @@ export default {
     created() {
         if (this.form.contract.instanceId) {
             this.form.getDetail(this.form.contract.instanceId).then(() => {
-                this.$refs['contractOption'].showDate()
+                this.$refs['agentContract'].showDate()
+                this.$refs['agentContract'].showTplList()
             })
         }
     }

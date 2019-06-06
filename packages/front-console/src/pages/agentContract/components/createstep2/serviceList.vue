@@ -38,14 +38,15 @@ export default {
         validate() {
             let result = [] // 储存遍历每个验证结果
             let check = false // 最后输出
-            this.$refs['agentDate'] && this.$refs['agentDate'].forEach((item, i) => {
+            console.log(this.$refs['agentDate'])
+            this.$refs['agentDate'] && this.$refs['agentDate'].forEach((item) => {
                 item.validate((res) => {
-                    result[i] = res
+                    result.push(res)
                 })
             })
-            this.$refs['serviceCompanyFeeContent'].forEach((item, i) => {
+            this.$refs['serviceCompanyFeeContent'].forEach((item) => {
                 item.validate((res) => {
-                    result[i] = res
+                    result.push(res)
                 })
             })
             check = result.length === 0 || result.indexOf(false) > -1 ? false : true // 判断所有验证是否通过
