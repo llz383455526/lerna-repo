@@ -2,7 +2,7 @@
 <template>
     <el-form :model="form.contract" :rules="check.rules" label-width="200px" ref="createAgentContract">
         <agentContract :contract="form.contract" ref="agentContract"></agentContract>
-        <agentCompanyBaseInfo :contract="form.contract"></agentCompanyBaseInfo>
+        <baseInfo :contract="form.contract"></baseInfo>
         <salesInfo :contract="form.contract"></salesInfo>
         <el-form-item>
             <el-button @click="$router.push('list')">返回</el-button>
@@ -14,11 +14,11 @@
 <script>
 import Check from 'src/model/agentContract/check'
 import agentContract from './agentContract'
-import agentCompanyBaseInfo from './agentCompanyBaseInfo'
+import baseInfo from './baseInfo'
 import salesInfo from './salesInfo'
 
 export default {
-    components: { agentContract, agentCompanyBaseInfo, salesInfo },
+    components: { agentContract, baseInfo, salesInfo },
     props: {
         form: {
             type: Object
@@ -37,7 +37,7 @@ export default {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     this.form.saveDraft().then(() => {
-                        this.$emit('step')
+                        this.$emit('next')
                         this.$router.push({
                             path: 'create',
                             query: {

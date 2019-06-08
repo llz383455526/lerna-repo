@@ -129,7 +129,7 @@ class Form {
     }
     saveDraft() {
         return post('/api/opencrm/workflow/save_draft', this.contract).then(res => {
-            this.contract.instanceId = res.instanceId
+            // this.contract.instanceId = res.instanceId
         })
     }
     getDetail(id) {

@@ -10,8 +10,8 @@
         </div>
         <div class="widget-body">
             <div class="widget-main">
-                <createstep1 v-if="active === 1" :form="form" @step="active = 2" @step1="step1"></createstep1>
-                <createstep2 v-if="active === 2" :form="form" @step="active = 3" @prev="active = 1"></createstep2>
+                <createstep1 v-if="active === 1" :form="form" @next="active = 2"></createstep1>
+                <createstep2 v-if="active === 2" :form="form" @next="active = 3" @prev="active = 1"></createstep2>
                 <createstep3 v-if="active === 3"></createstep3>
             </div>
         </div>
@@ -32,17 +32,11 @@ export default {
             active: 1
         }
     },
-    methods: {
-        step1(res) {
-            this.form = res;
-            this.active = 2;
-        },
-    },
     created() {
-        this.form.contract.instanceId = this.$route.query.instanceId || ''
-        this.form.contract.operateEnum = this.$route.query.operateEnum || ''
+        this.form.contract.instanceId = this.$route.query.instanceId
+        this.form.contract.operateEnum = this.$route.query.operateEnum
         if(this.$route.query.active) {
-            this.active = parseInt(this.$route.query.active)
+            this.active = this.$route.query.active
         }
     }
 }
