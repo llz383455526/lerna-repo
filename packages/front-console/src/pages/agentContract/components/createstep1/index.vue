@@ -56,8 +56,8 @@ export default {
     created() {
         if (this.form.contract.instanceId) {
             this.form.getDetail(this.form.contract.instanceId).then(() => {
-                this.$refs['agentContract'].showDate()
-                this.$refs['agentContract'].showTplList()
+                this.$refs['agentContract'].getDate()
+                this.$refs['agentContract'].getTplList()
             })
         }
     }

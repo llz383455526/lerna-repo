@@ -47,10 +47,10 @@
                     <span>{{templateDetail.industryTypeNames}}</span>
                 </el-form-item>
                 <el-form-item label="合同备注">
-                    <div v-for="item in templateDetail.remark">{{item}}</div>
+                    <div v-for="(item, key) in templateDetail.remark" :key="key">{{item}}</div>
                 </el-form-item>
                 <el-form-item label="适用情况">
-                    <div v-for="item in templateDetail.usage">{{item}}</div>
+                    <div v-for="(item, key) in templateDetail.usage" :key="key">{{item}}</div>
                 </el-form-item>
                 <el-form-item label="是否有效">
                     <span>{{templateForm.status}}</span>

@@ -3,7 +3,7 @@
         <h3 class="green">请添加落地公司
             <el-button size="small" type="primary" @click="$refs['dialog'].showDialog()">添加</el-button>
         </h3>
-        <div class="mb25">报价规则：代理商返佣结算模式（实发*返佣比例）</div>
+        <div class="mb25">{{form.contract.datas.agentCompanyBaseInfo.agentType === 'channel' ? '*报价规则：返佣规则（实发*费率）' : '*报价规则：结算规则（客户报价-渠道结算价）'}}</div>
         <el-form ref="serviceFeeContent" :model="form.contract.datas.agentContract" :inline="true">
             <serviceFeeContent v-for="(item, key) in form.contract.datas.agentContract.serviceCompanyFeeContentList" :key="key" :serviceFeeContent="item" :propName="`serviceCompanyFeeContentList.${key}.`" @formDel="formDel"></serviceFeeContent>
         </el-form>

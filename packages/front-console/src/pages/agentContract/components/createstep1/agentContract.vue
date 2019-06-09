@@ -105,7 +105,7 @@ export default {
             this.contract.datas.tplId = ''
             this.contract.subjectType = ev
         },
-        showTplList() {
+        getTplList() {
             const ev = this.contract.datas.agentCompanyBaseInfo.agentType
             this.optionModel.getContractTplList(ev)
         },
@@ -117,7 +117,7 @@ export default {
                 this.contract.datas.agentContract.agentStart = this.contract.datas.agentContract.agentEnd = ''
             }
         },
-        showDate() {
+        getDate() {
             this.dateValue = [ this.contract.datas.agentContract.agentStart, this.contract.datas.agentContract.agentEnd ]
         },
         tplIdChange(ev) {
@@ -136,6 +136,11 @@ export default {
     },
     created() {
         this.optionModel.getAgentTypeList()
+        if (this.contract.operateEnum === 1 && !this.contract.instanceId) {
+            this.contract.datas.agentCompanyBaseInfo.agentType = 'channel'
+            this.contract.subjectType = 'channel'
+            this.getTplList()
+        }
         if (this.contract.operateEnum === 2) {
             this.optionModel.getAgentCompanyList()
         }

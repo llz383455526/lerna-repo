@@ -35,7 +35,7 @@
             :span="16"
             style="word-wrap: break-word;"
           >
-            {{ detail.chargeBy }}
+            {{ detail.agency }}
           </el-col>
         </el-col>
       </el-row>
@@ -65,7 +65,7 @@
             :span="16"
             style="word-wrap: break-word;"
           >
-            {{ detail.address }}
+            {{ detail.registerAddr }}
           </el-col>
         </el-col>
       </el-row>

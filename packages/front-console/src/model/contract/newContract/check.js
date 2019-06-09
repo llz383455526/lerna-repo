@@ -117,14 +117,14 @@ class Check extends BaseModel {
                 { required: true, message: '请输入法定代表人', trigger: 'blur' }
             ],
             customCollector: [
-                { required: true, message: '请输入企业负责人', trigger: 'blur' }
+                { required: true, message: '请输入系统操作人', trigger: 'blur' }
             ],
             customCollectorPhone: [
-                { required: true, message: '请输入负责人手机', trigger: 'blur' },
+                { required: true, message: '请输入操作人手机', trigger: 'blur' },
                 { validator: isMobile, trigger: 'blur' }
             ],
             customMail1: [
-                { required: true, message: '请输入负责人邮箱', trigger: 'blur' },
+                { required: true, message: '请输入操作人邮箱', trigger: 'blur' },
                 { validator: isEmail, message: '邮箱格式不正确', trigger: 'blur' }
             ],
             customCollectorAddr: [

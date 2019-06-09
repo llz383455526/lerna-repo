@@ -13,7 +13,7 @@ class Form {
             // "quoteRule": "", // 报价规则
             "serviceCompanyId": 0, // 服务商ID
             "serviceCompanyName": "", // 服务商名称
-            "subType": "", // 费率子类型(ratio - 固定，nonflow-无流水，flow-按流水)
+            "subType": "nonflow", // 费率子类型(ratio - 固定，nonflow-无流水，flow-按流水)
             "feeContentMap":  {
                 // 固定费率
                 "no": [
