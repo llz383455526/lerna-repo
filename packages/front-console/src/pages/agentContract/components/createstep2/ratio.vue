@@ -1,7 +1,7 @@
 <template>
     <el-form-item :prop="`${propName}feeContentMap.no.0.percent`" :rules="{ required: true, message: '请输入结算实发金额', trigger: 'blur' }">
         <span style="color: #606266; ">实发金额 * </span>
-        <el-input v-model="feeContentMap.no[0].percent" :disabled="disabled" style="width: 150px;">
+        <el-input v-model="serviceFeeContent.feeContentMap.no[0].percent" :disabled="disabled" style="width: 150px;">
             <template slot="append">% 每笔</template>
         </el-input>
         <i class="el-icon-question" title="表示按照固定比例来收取服务费。计算公式：实发发金额 * 收费比例 = 服务费"></i>
@@ -11,7 +11,7 @@
 <script>
 export default {
     props: {
-        feeContentMap: {
+        serviceFeeContent: {
             type: Object
         },
         propName: {

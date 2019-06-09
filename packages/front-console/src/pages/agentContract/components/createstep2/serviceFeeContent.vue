@@ -19,9 +19,9 @@
                         <el-radio label="flow">分{{serviceFeeContent.incomeAmount}}万 - 按流水分阶梯报价</el-radio>
                     </el-radio-group>
                 </el-form-item><br>
-                <ratio v-if="serviceFeeContent.subType === 'ratio'" :propName="propName" :feeContentMap="serviceFeeContent.feeContentMap" :incomeAmount="serviceFeeContent.incomeAmount"></ratio>
-                <nonflow v-if="serviceFeeContent.subType === 'nonflow'" :propName="propName" :feeContentMap="serviceFeeContent.feeContentMap" :incomeAmount="serviceFeeContent.incomeAmount"></nonflow>
-                <flow v-if="serviceFeeContent.subType === 'flow'" :propName="propName" :feeContentMap="serviceFeeContent.feeContentMap" :incomeAmount="serviceFeeContent.incomeAmount"></flow>
+                <ratio v-if="serviceFeeContent.subType === 'ratio'" :propName="propName" :serviceFeeContent="serviceFeeContent"></ratio>
+                <nonflow v-if="serviceFeeContent.subType === 'nonflow'" :propName="propName" :serviceFeeContent="serviceFeeContent"></nonflow>
+                <flow v-if="serviceFeeContent.subType === 'flow'" :propName="propName" :serviceFeeContent="serviceFeeContent"></flow>
             </div>
         </div>
     </div>
