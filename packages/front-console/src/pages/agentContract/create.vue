@@ -1,7 +1,7 @@
 <template>
     <div class="contract-container bg-white">
         <div class="widget-header">
-            <div class="widget-title">新增代理商合同</div>
+            <div class="widget-title">{{operateEnum[form.contract.operateEnum] || '新增'}}代理商合同</div>
             <el-steps :active="active" simple finish-status="success">
                 <el-step title="完善渠道信息"></el-step>
                 <el-step title="添加落地公司"></el-step>
@@ -29,12 +29,17 @@ export default {
     data() {
         return {
             form: new Form(),
-            active: 1
+            active: 1,
+            operateEnum: {
+                1: '新增',
+                2: '补签',
+                3: '变更'
+            }
         }
     },
     created() {
         this.form.contract.instanceId = this.$route.query.instanceId
-        this.form.contract.operateEnum = this.$route.query.operateEnum
+        this.form.contract.operateEnum = parseInt(this.$route.query.operateEnum)
         if(this.$route.query.active) {
             this.active = this.$route.query.active
         }

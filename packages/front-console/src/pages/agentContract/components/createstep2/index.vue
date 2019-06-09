@@ -54,8 +54,9 @@ export default {
                 this.$message('已经选择该服务商')
                 return
             }
-            console.log(this.form.contract.operateEnum === '2')
-            if (this.form.contract.operateEnum === '2' && this.validateContract(appForm.serviceCompanyId)) {
+            // console.log(this.form.contract)
+            // console.log(this.form.contract.operateEnum === 2)
+            if (this.form.contract.operateEnum === 2 && this.validateContract(appForm.serviceCompanyId)) {
                 this.$message('代理商合同已存在')
                 return
             }
@@ -81,7 +82,6 @@ export default {
         },
     },
     created() {
-        console.log(this.form.contract)
         this.$store.dispatch('getServiceCompaniesList')
     }
 }
