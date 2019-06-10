@@ -28,7 +28,23 @@
           <div class="col-xs-12">
             试合作期：若乙方第一次代理甲方产品，则本合同前{{ contractForm.datas.agentCompanyBaseInfo.probation }}个月为试合作期
           </div>
-          <div class="col-xs-12">
+          <template v-if="contractForm.datas.agentContract.versionStartDate">
+            <div
+              class="col-xs-12"
+            >
+              变更生效：{{ formatTime(contractForm.datas.agentContract.versionStartDate) }}
+            </div>
+            <div
+              class="col-xs-12"
+              v-if="contractForm.datas.agentContract.versionStartDate"
+            >
+              变更说明：{{ contractForm.datas.flowMemo }}
+            </div>
+          </template>
+          <div
+            class="col-xs-12"
+            v-else
+          >
             代理期限：{{ contractForm.datas.agentContract.agentStart + ' - ' +
               contractForm.datas.agentContract.agentEnd }}
           </div>
@@ -116,6 +132,12 @@
                 </div>
               </template>
             </div>
+            <div
+              class="col-xs-12"
+              v-if="contractForm.datas.agentContract.versionStartDate"
+            >
+              代理期限：{{ item.agentStart + ' - ' + item.agentEnd }}
+            </div>
           </div>
         </div>
         <div
@@ -143,6 +165,8 @@
 </template>
 
 <script>
+import {formatTime} from 'src/plugin/utils-functions'
+
 export default {
     name: 'ContractInfo',
     props: {
@@ -169,6 +193,9 @@ export default {
                 return obj[outputKey];
             }
         },
+        formatTime(date) {
+            return formatTime(date)
+        }
     }
 }
 </script>
