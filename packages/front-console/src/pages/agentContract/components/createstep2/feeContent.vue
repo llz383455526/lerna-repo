@@ -8,7 +8,7 @@
                             <el-input v-model="scope.row.startAmount" style="width: 120px;" @blur="feeContent[scope.$index - 1].endAmount = scope.row.startAmount">
                                 <template slot="append">万</template>
                             </el-input>
-                            <el-checkbox v-model="scope.row.equalsStart">含
+                            <el-checkbox v-model="scope.row.equalsStart" @change="feeContent[scope.$index - 1].equalsEnd = !scope.row.equalsStart">含
                                 <template v-if="scope.row.sequence === feeContent.length - 1">以上</template>
                             </el-checkbox>
                         </el-form-item>
@@ -25,7 +25,7 @@
                             <el-input v-model.number="scope.row.endAmount" style="width: 120px;" @blur="feeContent[scope.$index + 1].startAmount = scope.row.endAmount">
                                 <template slot="append">万</template>
                             </el-input>
-                            <el-checkbox v-model="scope.row.equalsEnd">含
+                            <el-checkbox v-model="scope.row.equalsEnd" @change="feeContent[scope.$index + 1].equalsStart = !scope.row.equalsEnd">含
                                 <template v-if="!scope.row.sequence">以下</template>
                             </el-checkbox>
                         </el-form-item>

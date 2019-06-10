@@ -16,42 +16,42 @@ class Form {
             "subType": "nonflow", // 费率子类型(ratio - 固定，nonflow-无流水，flow-按流水)
             "feeContentMap":  {
                 // 固定费率
-                "no": [
-                    {
-                        "endAmount": null, // 结束金额，null表示无穷大
-                        "equalsEnd": false, // 是否包含上限金额
-                        "equalsStart": false, // 是否包含下限金额
-                        "percent": '', // 收费比例
-                        "sequence": 0, // 序号
-                        "startAmount": 0 // 开始金额
-                    }
-                ],
+                // "no": [
+                //     {
+                //         "endAmount": null, // 结束金额，null表示无穷大
+                //         "equalsEnd": false, // 是否包含上限金额
+                //         "equalsStart": false, // 是否包含下限金额
+                //         "percent": '', // 收费比例
+                //         "sequence": 0, // 序号
+                //         "startAmount": 0 // 开始金额
+                //     }
+                // ],
                 // 分xxx的下限
                 "down": [
                     {
                         "endAmount": null, // 结束金额
-                        "equalsEnd": false, // 是否包含上限金额
+                        "equalsEnd": true, // 是否包含上限金额
                         "equalsStart": false, // 是否包含下限金额
                         "percent": 0, // 收费比例
                         "sequence": 0, // 序号
                         "startAmount": 0 // 开始金额
                     },
-                    {
-                        "endAmount": null, // 结束金额
-                        "equalsEnd": false, // 是否包含上限金额
-                        "equalsStart": false, // 是否包含下限金额
-                        "percent": 0, // 收费比例
-                        "sequence": 1, // 序号
-                        "startAmount": 0 // 开始金额
-                    },
-                    {
-                        "endAmount": null, // 结束金额
-                        "equalsEnd": false, // 是否包含上限金额
-                        "equalsStart": false, // 是否包含下限金额
-                        "percent": 0, // 收费比例
-                        "sequence": 2, // 序号
-                        "startAmount": 0 // 开始金额
-                    }
+                    // {
+                    //     "endAmount": null, // 结束金额
+                    //     "equalsEnd": true, // 是否包含上限金额
+                    //     "equalsStart": false, // 是否包含下限金额
+                    //     "percent": 0, // 收费比例
+                    //     "sequence": 1, // 序号
+                    //     "startAmount": 0 // 开始金额
+                    // },
+                    // {
+                    //     "endAmount": null, // 结束金额
+                    //     "equalsEnd": true, // 是否包含上限金额
+                    //     "equalsStart": false, // 是否包含下限金额
+                    //     "percent": 0, // 收费比例
+                    //     "sequence": 2, // 序号
+                    //     "startAmount": 0 // 开始金额
+                    // }
                 ],
                 // 分xxx的上限
                 "up": [

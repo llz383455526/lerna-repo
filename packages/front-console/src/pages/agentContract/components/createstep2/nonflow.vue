@@ -5,7 +5,7 @@
                 <template slot="append">万</template>
             </el-input><span class="ml10" style="color: #606266;">(含)以下</span>
         </el-form-item>
-        <el-form-item label="实发金额" :prop="`${propName}feeContentMap.down[0].percent`" :rules="{ required: true, message: '请输入实发金额', trigger: 'blur' }">
+        <el-form-item v-if="serviceFeeContent.feeContentMap.down" label="实发金额" :prop="`${propName}feeContentMap.down[0].percent`" :rules="{ required: true, message: '请输入实发金额', trigger: 'blur' }">
             <el-input style="width: 120px;" v-model="serviceFeeContent.feeContentMap.down[0].percent">
                 <template slot="append">%</template>
             </el-input>
@@ -15,7 +15,7 @@
                 <template slot="append">万</template>
             </el-input><span class="ml10" style="color: #606266;">以上</span>
         </el-form-item>
-        <el-form-item label="实发金额" :prop="`${propName}feeContentMap.up[0].percent`" :rules="{ required: true, message: '请输入实发金额', trigger: 'blur' }">
+        <el-form-item v-if="serviceFeeContent.feeContentMap.up" label="实发金额" :prop="`${propName}feeContentMap.up[0].percent`" :rules="{ required: true, message: '请输入实发金额', trigger: 'blur' }">
             <el-input style="width: 120px;" v-model="serviceFeeContent.feeContentMap.up[0].percent">
                 <template slot="append">%</template>
             </el-input>

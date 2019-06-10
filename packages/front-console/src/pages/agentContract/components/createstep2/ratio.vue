@@ -1,5 +1,5 @@
 <template>
-    <el-form-item :prop="`${propName}feeContentMap.no.0.percent`" :rules="{ required: true, message: '请输入结算实发金额', trigger: 'blur' }">
+    <el-form-item v-if="serviceFeeContent.feeContentMap.no" :prop="`${propName}feeContentMap.no.0.percent`" :rules="{ required: true, message: '请输入结算实发金额', trigger: 'blur' }">
         <span style="color: #606266; ">实发金额 * </span>
         <el-input v-model="serviceFeeContent.feeContentMap.no[0].percent" :disabled="disabled" style="width: 150px;">
             <template slot="append">% 每笔</template>
