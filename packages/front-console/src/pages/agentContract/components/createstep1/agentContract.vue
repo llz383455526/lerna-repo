@@ -29,7 +29,7 @@
         </el-form-item>
         <el-form-item label="试合作期" :prop="`${propName1}.probation`">
             若乙方第一次代理甲方产品，则本合同前
-            <el-input class="input_80" v-model="contract.datas.agentCompanyBaseInfo .probation" /> 个月为试合作期
+            <el-input style="width: 50px;" v-model="contract.datas.agentCompanyBaseInfo .probation" disabled></el-input> 个月为试合作期
         </el-form-item>
         <el-form-item label="代理期限" :prop="`${propName2}.agentStart`" v-if="contract.operateEnum !== 3">
             <el-date-picker type="daterange" v-model="dateValue" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" @change="dateChange"></el-date-picker>
@@ -156,9 +156,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.input_80 {
-    width: 80px;
-}
 </style>
 
 

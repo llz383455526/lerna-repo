@@ -535,7 +535,10 @@ export default [{
             children: [
                 {
                     path: 'preview_agent',
-                    component: r => require.ensure([], () => r(require('../pages/contractManager/preview_agent.vue')), 'preview_agent')
+                    component: r => require.ensure([], () => r(require('../pages/contractManager/preview_agent.vue')), 'preview_agent'),
+                    meta: {
+                        keepAlive: false
+                    }
                 }
             ]
         },

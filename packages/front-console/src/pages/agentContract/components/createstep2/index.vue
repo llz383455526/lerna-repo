@@ -8,7 +8,7 @@
             <serviceFeeContent v-for="(item, key) in form.contract.datas.agentContract.serviceCompanyFeeContentList" :key="key" :serviceFeeContent="item" :propName="`serviceCompanyFeeContentList.${key}.`" @formDel="formDel"></serviceFeeContent>
         </el-form>
         <serviceDialog :companyId="form.contract.datas.agentCompanyBaseInfo.id" @save="formAdd" ref="dialog"></serviceDialog>
-        <div>
+        <div style="text-align: right;">
             <el-button @click="$router.push('list')">返回</el-button>
             <el-button @click="$emit('prev')">上一步</el-button>
             <el-button type="primary" @click="submitForm">下一步</el-button>
@@ -37,8 +37,14 @@ export default {
     methods: {
         validateContract(serviceCompanyId) {
             let someCompany = false;
-            get('/api/contract-web/agent-residence-flow/check-agent-contract-exists?companyId=123456&serviceCompanyId='+serviceCompanyId).then(res => {
-                // console.log(res)
+            const companyId = this.form.contract.datas.agentCompanyBaseInfo.id
+            get(`/api/contract-web/agent-residence-flow/check-agent-contract-exists?companyId=${companyId}&serviceCompanyId=${serviceCompanyId}`)
+            .then(res => {
+                console.log(res)
+            })
+            .catch((err) => {
+                console.log(err)
+                someCompany = true
             })
             return someCompany;
         },

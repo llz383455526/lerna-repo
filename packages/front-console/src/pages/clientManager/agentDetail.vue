@@ -247,7 +247,7 @@
         label="操作人"
         prop="createByName" 
       />
-      <el-table-column label="操作">
+      <!-- <el-table-column label="操作">
         <template slot-scope="scope">
           <a
             :href="`/api/contract-web/agent-contract/download-agent-contract-attachments?contractId=${scope.row.id}`"
@@ -257,7 +257,7 @@
             <el-button type="text">下载</el-button>
           </a>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <div class="title">
       签约信息

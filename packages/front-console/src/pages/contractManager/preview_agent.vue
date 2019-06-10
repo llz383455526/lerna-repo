@@ -79,8 +79,9 @@ export default {
             uploadUrl: ''
         };
     },
-    mounted() {
+    created() {
         this.contractHisId = this.$route.query.contractHisId;
+        console.log(this.contractHisId)
         this.contractHisId && this.getDetail();
         // 上传接口
         this.uploadUrl = contract.uploadUrl

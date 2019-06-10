@@ -1,9 +1,7 @@
 <template>
     <div class="r_main">
         <el-breadcrumb>
-            <el-breadcrumb-item>
-                代理商管理
-            </el-breadcrumb-item>
+            <el-breadcrumb-item>我的入驻代理商</el-breadcrumb-item>
         </el-breadcrumb>
         <div class="content">
             <el-form class="form" :model="form" :inline="true" label-width="100px" size="small" ref="form">
@@ -15,21 +13,23 @@
                     <el-button @click="$refs['form'].resetFields()">清除</el-button>
                 </el-form-item>
             </el-form>
-            <router-link to="addAgent">
+            <!-- <router-link to="addAgent">
                 <el-button size="small" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">新增</el-button>
             </router-link>
-            <el-button class="ml20" size="small" @click="download">导出</el-button>
+            <el-button class="ml20" size="small" @click="download">导出</el-button> -->
             <el-table :data="data.list">
                 <el-table-column label="代理商名称" prop="fullName"></el-table-column>
-                <el-table-column label="渠道经理" prop="chargeByName"></el-table-column>
+                <el-table-column label="申请主体"></el-table-column>
+                <el-table-column label="关联销售" prop="salesman"></el-table-column>
+                <!-- <el-table-column label="渠道经理" prop="chargeByName"></el-table-column> -->
                 <!-- <el-table-column label="地区">
                     <template slot-scope="scope">
                         {{scope.row.province}} {{scope.row.city}}
                     </template>
                 </el-table-column> -->
                 <el-table-column label="客户数量" prop="customerCount"></el-table-column>
-                <el-table-column label="代理推广费率" prop="quoteFeeName"></el-table-column>
-                <el-table-column label="代理期限" prop="periodTime" width="200px"></el-table-column>
+                <!-- <el-table-column label="代理推广费率" prop="quoteFeeName"></el-table-column>
+                <el-table-column label="代理期限" prop="periodTime" width="200px"></el-table-column> -->
                 <el-table-column label="更新人" prop="updateByName"></el-table-column>
                 <el-table-column label="更新时间" prop="updateTime"></el-table-column>
                 <el-table-column label="操作">
@@ -37,7 +37,7 @@
                         <router-link :to="`agentDetail?id=${scope.row.id}`">
                             <el-button type="text">查看</el-button>
                         </router-link>
-                        <el-button type="text" @click="edit(scope.row)" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">编辑</el-button>
+                        <!--<el-button type="text" @click="edit(scope.row)" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">编辑</el-button>-->
                     </template>
                 </el-table-column>
             </el-table>

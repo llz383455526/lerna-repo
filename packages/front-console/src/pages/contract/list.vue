@@ -300,12 +300,6 @@ export default {
         this.getSettleType();
         this.getOptionCustomerCompanies();
         this.getOptionServiceCompanies();
-    },
-    activated() {
-        this.requestAction({
-            page: this.$route.query.page || 1,
-            pageSize: this.pageSize,
-        });
     }
 }
 </script>

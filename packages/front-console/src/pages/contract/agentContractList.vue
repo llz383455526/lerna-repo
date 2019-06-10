@@ -75,7 +75,7 @@
             <el-table :data="gridData">
                 <el-table-column property="contractNo" label="合同编号" width="150">
                     <template slot-scope="scope">
-                        <router-link :to="`agentContractCreate?contractHisId=${scope.row.constractHisId}&isLook=1`">
+                        <router-link :to="`/main/contractManager/preview_agent?contractHisId=${scope.row.constractHisId}&isLook=1`">
                             <el-button type="text">{{scope.row.contractNo}}</el-button>
                         </router-link>
                     </template>

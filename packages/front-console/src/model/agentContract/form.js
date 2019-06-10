@@ -15,7 +15,7 @@ class Form {
                     "contactPhone": "", // 代理商联系人电话
                     "depositBank": "", // 开户银行
                     "name": "", // 代理商名称
-                    "probation": "", // 试合作期
+                    "probation": 6, // 试合作期
                     "registerAddr": "", // 代理商单位地址
                     "telephone": "", // 代理商电话
                     "id": "" // 已有代理商
