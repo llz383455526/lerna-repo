@@ -32,9 +32,9 @@ class Form {
                         "endAmount": null, // 结束金额
                         "equalsEnd": true, // 是否包含上限金额
                         "equalsStart": false, // 是否包含下限金额
-                        "percent": 0, // 收费比例
+                        "percent": null, // 收费比例
                         "sequence": 0, // 序号
-                        "startAmount": 0 // 开始金额
+                        "startAmount": null // 开始金额
                     },
                     // {
                     //     "endAmount": null, // 结束金额
@@ -59,9 +59,9 @@ class Form {
                         "endAmount": null, // 结束金额
                         "equalsEnd": false, // 是否包含上限金额
                         "equalsStart": false, // 是否包含下限金额
-                        "percent": 0, // 收费比例
+                        "percent": null, // 收费比例
                         "sequence": 0, // 序号
-                        "startAmount": 0 // 开始金额
+                        "startAmount": null // 开始金额
                     },
                 ]
             }
