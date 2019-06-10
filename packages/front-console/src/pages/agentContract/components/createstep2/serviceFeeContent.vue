@@ -29,13 +29,12 @@
 
 <script>
 import settlementRate from 'src/pageComponent/settlementRate'
-import agentDate from './agentDate'
 import ratio from './ratio'
 import nonflow from './nonflow'
 import flow from './flow'
 
 export default {
-    components: { settlementRate, agentDate, ratio, nonflow, flow },
+    components: { settlementRate, ratio, nonflow, flow },
     props: {
         serviceFeeContent: {
             type: Object

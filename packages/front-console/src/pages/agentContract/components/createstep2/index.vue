@@ -19,12 +19,11 @@
 <script>
 import Form from 'src/model/settlementRate'
 import serviceDialog from './serviceDialog'
-import serviceList from './serviceList'
 import { get, post } from 'src/store/api'
 import serviceFeeContent from './serviceFeeContent'
 
 export default {
-    components: { serviceDialog, serviceList, serviceFeeContent },
+    components: { serviceDialog, serviceFeeContent },
     props: {
         form: {
             type: Object
