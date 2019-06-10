@@ -4,7 +4,7 @@
             <el-table-column label="月总额下限" width="240">
                 <template slot-scope="scope">
                     <template v-if="scope.$index">
-                        <el-form-item :prop="`${propName}.${scope.$index}.startAmount`" :rules="[{ required: true, message: '请输入月总额下限', trigger: 'blur' }, { validator: validateStartAmount, trigger: 'blur' }]">
+                        <el-form-item :prop="`${propName}.${scope.$index}.startAmount`" :rules="[{ required: true, message: '请输入月总额下限', trigger: 'blur' }, { validator: validateStartAmount, trigger: 'blur' }, { pattern: /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/, message: '请输入任意正整数，正小数（小数位不超过2位）', trigger: 'blur'}]">
                             <el-input v-model="scope.row.startAmount" style="width: 120px;" @blur="feeContent[scope.$index - 1].endAmount = scope.row.startAmount">
                                 <template slot="append">万</template>
                             </el-input>
@@ -21,7 +21,7 @@
             <el-table-column label="月总额上限" width="240">
                 <template slot-scope="scope">
                     <template v-if="scope.$index !== feeContent.length - 1">
-                        <el-form-item :prop="`${propName}.${scope.$index}.endAmount`" :rules="[{ required: true, message: '请输入月总额上限', trigger: 'blur' }, { validator: validateEndAmount, trigger: 'blur' }]">
+                        <el-form-item :prop="`${propName}.${scope.$index}.endAmount`" :rules="[{ required: true, message: '请输入月总额上限', trigger: 'blur' }, { validator: validateEndAmount, trigger: 'blur' }, { pattern: /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/, message: '请输入任意正整数，正小数（小数位不超过2位）', trigger: 'blur'}]">
                             <el-input v-model.number="scope.row.endAmount" style="width: 120px;" @blur="feeContent[scope.$index + 1].startAmount = scope.row.endAmount">
                                 <template slot="append">万</template>
                             </el-input>
@@ -37,7 +37,7 @@
             </el-table-column>
             <el-table-column label="阶梯收费" width="350">
                 <template slot-scope="scope">
-                    <el-form-item label="实发金额" :prop="`${propName}.${scope.$index}.percent`" :rules="{ required: true, message: '请输入阶梯收费', trigger: 'blur' }">
+                    <el-form-item label="实发金额" :prop="`${propName}.${scope.$index}.percent`" :rules="[{ required: true, message: '请输入阶梯收费', trigger: 'blur' }, { pattern: /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/, message: '请输入任意正整数，正小数（小数位不超过2位）', trigger: 'blur'}]">
                         <el-input v-model="scope.row.percent" style="width: 150px;">
                             <template slot="append">% 每人</template>
                         </el-input>
