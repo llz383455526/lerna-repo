@@ -53,9 +53,9 @@
                     <router-link :to="`/main/contractManager/preview_agent?contractHisId=${scope.row.id}&isLook=1`">
                         <el-button type="text">查看</el-button>
                     </router-link>
-                    <router-link  v-if="scope.row.status != 20 && userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'" :to="`agentContractCreate?contractHisId=${scope.row.id}`">
+                    <!-- <router-link  v-if="scope.row.status != 20 && userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'" :to="`agentContractCreate?contractHisId=${scope.row.id}`">
                         <el-button type="text">编辑</el-button>
-                    </router-link>
+                    </router-link> -->
                     <!-- <router-link> -->
                         <el-button type="text" @click="showHistroy(scope.row)">历史版本</el-button>
                     <!-- </router-link> -->

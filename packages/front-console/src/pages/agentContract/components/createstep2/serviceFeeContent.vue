@@ -9,7 +9,7 @@
                 </div>
             </div>
             <div class="widget-main">
-                <el-form-item label="代理期限" :prop="`${propName}agentStart`" :rules="{ required: true, message: '请选择代理期限', trigger: 'change' }" v-if="$route.query.operateEnum === '3'">
+                <el-form-item label="代理期限" :prop="`${propName}agentStart`" :rules="{ required: true, message: '请选择代理期限', trigger: 'change' }" v-if="parseInt($route.query.operateEnum) === 3">
                     <el-date-picker type="daterange" v-model="dateValue" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd" @change="dateChange"></el-date-picker>
                 </el-form-item><br>
                 <el-form-item label="结算费率" :prop="`${propName}subType`" :rules="{ required: true, message: '请选择结算费率类型', trigger: 'change' }">

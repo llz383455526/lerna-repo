@@ -14,7 +14,7 @@
         <nonstandard :contractAttachments="customerAttachments" v-if="approveType === 'customer'"></nonstandard>
         <div>
             <el-button @click="$router.push('list')">返回</el-button>
-            <el-button @click="form.saveDraft(), $router.push('list')">保存</el-button>
+            <!-- <el-button @click="form.saveDraft(), $router.push('list')">保存</el-button> -->
             <el-button type="primary" @click="submitForm">送审</el-button>
         </div>
     </div>

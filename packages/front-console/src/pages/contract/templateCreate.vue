@@ -154,6 +154,7 @@
 	                contractType: '',
                     industryTypes: [],
                     tplType: '',
+                    tplTypeName: '',
 	                remark: '',
 	                usage: '',
                     status: '有效',
@@ -193,6 +194,12 @@
             }
         },
         methods: {
+            tplTypeChange(ev) {
+                const obj = this.searchOptions.ContractTplType.find((item) => {
+                    return item.value = ev
+                })
+                this.templateForm.tplTypeName = obj.text
+            },
 	        getTemplateDetail(tplId) {
 		        get('/api/contract-web/contract-tpl/contract-tpl-detail', {
 			        id: tplId

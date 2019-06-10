@@ -32,7 +32,7 @@
         <div class="table-container">
             <el-table :data="tableList.list" @selection-change="handleSelectionChange">
                 <el-table-column prop="tplNo" label="合同模板编号"></el-table-column>
-                <el-table-column prop="contractTypeName" label="业务类型"></el-table-column>
+                <el-table-column prop="tplTypeName" label="业务类型"></el-table-column>
                 <el-table-column prop="industryTypeNames" label="行业类型"></el-table-column>
                 <el-table-column prop="remark" label="合同备注"></el-table-column>
                 <el-table-column prop="usage" label="适用情况"></el-table-column>
