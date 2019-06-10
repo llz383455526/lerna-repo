@@ -51,7 +51,7 @@ class Form {
                     "email": "", // 销售联系人邮箱
                     "mobilePhone": "", // 销售联系人电话
                     "salesAddress": "", // 销售联系人地址
-                    "salesId": 0, // 销售联系人ID
+                    "salesId": '', // 销售联系人ID
                     "salesName": "" // 销售联系人
                 },
                 tplId: '', // 合同模版ID

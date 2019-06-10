@@ -15,7 +15,7 @@
                 {{ form.agentStart + ' - ' + form.agentEnd }}
             </el-form-item>
             <el-form-item label="落地公司">
-                {{ form.companyName }}
+                {{ form.serviceCompanyName }}
             </el-form-item>
             <el-form-item label="申请主体">
                 {{ form.agentTypeName }}

@@ -142,6 +142,7 @@ export default {
         this.optionModel.getAgentTypeList()
         if (this.contract.operateEnum === 1 && !this.contract.instanceId) {
             this.contract.datas.agentCompanyBaseInfo.agentType = 'channel'
+            this.contract.datas.agentCompanyBaseInfo.agentTypeName = '渠道'
             this.contract.subjectType = 'channel'
             this.getTplList()
         }
