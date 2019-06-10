@@ -23,7 +23,7 @@
             申请主体：{{ contractForm.datas.agentCompanyBaseInfo.agentType === 'channel'?'渠道':'代理商' }}
           </div>
           <div class="col-xs-12">
-            合同模板：{{ getText(contractForm.datas.tplId, contractTplList) }}
+            合同模板：{{ contractForm.datas.tplName }}
           </div>
           <div class="col-xs-12">
             试合作期：若乙方第一次代理甲方产品，则本合同前{{ contractForm.datas.agentCompanyBaseInfo.probation }}个月为试合作期
