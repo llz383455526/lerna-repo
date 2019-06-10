@@ -91,7 +91,7 @@
                 prop="name"
                 label="比例">
                 <template slot-scope="scope">
-                    {{scope.row.cuserSignRate ? scope.row.cuserSignRate : 0}}%
+                    {{scope.row.cuserQuarterSignRate ? scope.row.cuserQuarterSignRate : 0}}%
                 </template>
             </el-table-column>
             <el-table-column
@@ -243,16 +243,16 @@
             // 设置风险评级
             setFengXianPingJiData() {
                 if (this.dropDetailData && this.dropDetailData.companyRiskRateDTO) {
-                    const cuserSignRate = this.dropDetailData.companyRiskRateDTO.cuserSignRate
+                    const cuserQuarterSignRate = this.dropDetailData.companyRiskRateDTO.cuserQuarterSignRate
                     this.fengXianPingJi = [
                         {
                             title: 'C端用户签约率',
-                            state: `${cuserSignRate ? cuserSignRate : '0'}%`,
+                            state: `${cuserQuarterSignRate ? cuserQuarterSignRate : '0'}%`,
                             uptime: this.dropDetailData.companyRiskRateDTO.cuserSignRateUpdateTime,
                             operation: 0
                         },
                         {
-                            title: 'C端结算标准',
+                            title: 'C端绩效计算规则',
                             state: this.dropDetailData.companyRiskRateDTO.cuserBalanceStandardState === 'success' ? '审核通过' : '审核不通过',
                             uptime: this.dropDetailData.companyRiskRateDTO.cuserBalanceStandardUpdateTime,
                             operation: 1

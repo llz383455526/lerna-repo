@@ -337,14 +337,14 @@
                 }).then((data) => {
                     this.companyRiskLevelInfo = data
                     if (this.companyRiskLevelInfo.companyRiskRateDTO) {
-                        const cuserSignRate = this.companyRiskLevelInfo.companyRiskRateDTO.cuserSignRate
+                        const cuserQuarterSignRate = this.companyRiskLevelInfo.companyRiskRateDTO.cuserQuarterSignRate
                         this.companyRiskLevelInfo.shenHeArr = [
                             {
                                 title: 'C端用户签约率',
-                                value: `${cuserSignRate ? cuserSignRate : 0}%`
+                                value: `${cuserQuarterSignRate ? cuserQuarterSignRate : 0}%`
                             },
                             {
-                                title: 'C端结算标准',
+                                title: 'C端绩效计算规则',
                                 value: this.companyRiskLevelInfo.companyRiskRateDTO.cuserBalanceStandardState === 'fail' ? '不通过' : '审核通过'
                             },
                             {

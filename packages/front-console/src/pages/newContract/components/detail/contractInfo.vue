@@ -23,7 +23,7 @@
                     <hr>
                     <h4 class="h4">合同证据链</h4>
                     <upload :list="contractModel.contractForm.receiveAttachments" style="width: 1100px;" @remove="handleRemove" @uploadSuccess="uploadSuccess"></upload>
-                    <h4 class="h4">企业结算标准</h4>
+                    <h4 class="h4">C端绩效计算规则</h4>
                     <div class="jie-suan-biao-zhun-box">
                         <el-upload class="form_input" :action="`/api/econtract/template/parsefile`" :auto-upload="false" :on-change="jieSuanBiaoZhunUpload" multiple :show-file-list="false">
                             <el-button style="margin-left: 20px" size="small" type="primary" @click="index = key">上传附件</el-button>

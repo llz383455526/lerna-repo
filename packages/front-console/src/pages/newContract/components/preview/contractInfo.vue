@@ -32,7 +32,7 @@
                             </el-table>
                         </div>
                         <div class="col-xs-12">
-                            <h4 class="block green">企业结算标准</h4>
+                            <h4 class="block green">C端绩效计算规则</h4>
                             <template v-if="contractModel.contractForm.cUserStandardAttachmentModels">
                                 <div v-for="(v, k) in contractModel.contractForm.cUserStandardAttachmentModels">
                                     <span>{{ v.displayname }}</span>
