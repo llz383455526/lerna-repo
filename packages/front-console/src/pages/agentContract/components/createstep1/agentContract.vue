@@ -104,6 +104,10 @@ export default {
             // 清空所选的合同
             this.contract.datas.tplId = ''
             this.contract.subjectType = ev
+            const obj = this.optionModel.agentTypeList.find((item) => {
+                return item.value === ev
+            })
+            this.contract.datas.agentCompanyBaseInfo.agentTypeName = obj.text
         },
         getTplList() {
             const ev = this.contract.datas.agentCompanyBaseInfo.agentType
