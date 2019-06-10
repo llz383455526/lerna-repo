@@ -208,7 +208,7 @@
     <el-table :data="detail.agentContractList">
       <el-table-column label="合同编号">
         <template slot-scope="scope">
-          <router-link :to="`/main/contract/preview?contractId=${scope.row.contractId}`">
+          <router-link :to="`/main/contractManager/preview_agent?contractHisId=${scope.row.id}`">
             {{ scope.row.contractNo }}
           </router-link>
         </template>
