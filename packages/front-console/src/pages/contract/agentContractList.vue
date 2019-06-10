@@ -32,11 +32,7 @@
         <el-table class="table" :data="data.list">
             <el-table-column label="合同编号" prop="contractNo"></el-table-column>
             <el-table-column label="代理商名称" prop="companyName"></el-table-column>
-            <el-table-column label="服务商名称">
-                <template slot-scope="scope">
-                    {{scope.row.serviceCompanyRateList | formatServer()}}
-                </template>
-            </el-table-column>
+            <el-table-column label="服务商名称" prop="serviceCompanyName"></el-table-column>
             <el-table-column label="代理期限" width="200px">
                 <template slot-scope="scope">
                     {{scope.row.agentStart | formatTime('yyyy-MM-dd')}} 至 {{scope.row.agentEnd | formatTime('yyyy-MM-dd')}}
@@ -54,7 +50,7 @@
             </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <router-link :to="`agentContractCreate?contractHisId=${scope.row.id}&isLook=1`">
+                    <router-link :to="`/main/contractManager/preview_agent?contractHisId=${scope.row.id}&isLook=1`">
                         <el-button type="text">查看</el-button>
                     </router-link>
                     <router-link  v-if="scope.row.status != 20 && userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'" :to="`agentContractCreate?contractHisId=${scope.row.id}`">

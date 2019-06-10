@@ -530,6 +530,16 @@ export default [{
             ]
         },
         {
+            path: 'contractManager',
+            component: index,
+            children: [
+                {
+                    path: 'preview_agent',
+                    component: r => require.ensure([], () => r(require('../pages/contractManager/preview_agent.vue')), 'preview_agent')
+                }
+            ]
+        },
+        {
           path: 'contract',
           component: index,
           children: [{
