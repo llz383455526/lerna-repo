@@ -18,7 +18,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-4">
+                        <!-- <div class="col-xs-4">
                             <div>补充附件：</div>
                             <div v-for="(el, index) in formItem.attachments" :key="index">
                                 <div v-if="el.targetTypeName == '自定义附件'">{{ el.displayname }}
@@ -26,7 +26,7 @@
                                     <a href="javascript:;" class="ml10" @click="handleDownload(el.downloadCode)">下载</a>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

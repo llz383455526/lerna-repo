@@ -59,7 +59,7 @@
             </h4>
           </div>
           <div class="col-xs-6">
-              渠道联系人信息： {{ contractForm.datas.salesInfo.salesName }}
+              渠道联系人信息： {{ contractForm.datas.agentCompanyBaseInfo.contactName }}
           </div>
           <div class="col-xs-6">
             渠道名称：{{ contractForm.datas.agentCompanyBaseInfo.name }}
