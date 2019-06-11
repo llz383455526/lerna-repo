@@ -8,11 +8,11 @@
             <el-form-item label="服务商名称" size="small" prop="serviceCompanyName">
                 <el-input v-model="formSearch.serviceCompanyName"></el-input>
             </el-form-item>
-            <el-form-item label="结算周期" size="small" prop="settleType">
+            <!-- <el-form-item label="结算周期" size="small" prop="settleType">
                 <el-select v-model="formSearch.settleType" placeholder="请选择" style="width:100%;">
                     <el-option v-for="item in searchOptions.SettleType" :key="item.value" :label="item.text" :value="item.value"></el-option>
                 </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="合同归档" size="small" prop="archiveStatus">
                 <el-select v-model="formSearch.archiveStatus" placeholder="请选择" style="width:100%;">
                     <el-option label="全部" value=""></el-option>
@@ -33,13 +33,14 @@
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="search" size="small">查询</el-button>
                 <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
+                <el-button size="small" @click="exportDetail">导出</el-button>
             </el-form-item>
         </el-form>
         <el-button size="small" @click="routerPush('/main/contract/create')" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">新增</el-button>
         <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
             <el-table-column prop="customerName" label="企业名称" width="200"></el-table-column>
             <el-table-column prop="serviceCompanyName" label="服务商名称" width="220"></el-table-column>
-            <el-table-column prop="settleTypeName" label="结算周期"></el-table-column>
+            <!-- <el-table-column prop="settleTypeName" label="结算周期"></el-table-column> -->
             <el-table-column prop="serviceFeeName" label="服务费收费比例"></el-table-column>
             <el-table-column prop="prePayFeeName" label="服务费是否预收" width="140"></el-table-column>
             <el-table-column prop="contractStartDate" label="合同开始时间"></el-table-column>
@@ -299,6 +300,18 @@ export default {
             get(url).then(data => {
                 this.serviceCompaniesList = data
             })
+        },
+        exportDetail() {
+            var str = ''
+            for (var k in this.formSearch) {
+                if(!str) {
+                    str += `?${k}=${this.formSearch[k]}`
+                }
+                else {
+                    str += `&${k}=${this.formSearch[k]}`
+                }
+            }
+            window.open(`/contract/export-contract-list${str}`)
         }
     },
     created() {

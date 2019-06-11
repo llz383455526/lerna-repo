@@ -24,6 +24,7 @@
             <el-form-item>
                 <el-button type="primary" @click="query">查询</el-button>
                 <el-button @click="$refs['form'].resetFields()">清除</el-button>
+                <el-button size="small" @click="exportDetail">导出</el-button>
             </el-form-item>
         </el-form>
         <router-link to="agentContractCreate" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
@@ -66,9 +67,9 @@
             v-if="data.total"
             :total="data.total"
             v-on:handleSizeChange="setSize"
-            :currentSize="form.pageSize"
+            :currentSize="pageSize"
             v-on:handleCurrentChange="query"
-            :currentPage="form.page">
+            :currentPage="page">
         </ayg-pagination>
 
         <el-dialog title="查看历史版本" :visible.sync="dialogTableVisible">
@@ -106,12 +107,12 @@ export default {
     },
     data() {
         return {
+            pageSize: 10,
+            page: 1,
             form: {
                 companyName: '',
                 status: '',
                 archiveStatus: '',
-                pageSize: 10,
-                page: 1
             },
             statusList: [],
             archiveList: [],
@@ -134,13 +135,20 @@ export default {
             if(isNaN(a)) {
                 a = 1
             }
-            this.form.page = a
-            post('/api/contract-web/agent-contract/list', this.form).then(data => {
+            this.page = a
+            let param = {
+                status: this.form.status,
+                archiveStatus: this.form.archiveStatus,
+                companyName: this.form.companyName,
+                page: this.page,
+                pageSize: this.pageSize,
+            };
+            post('/api/contract-web/agent-contract/list', param).then(data => {
                 this.data = data
             })
         },
         setSize(a) {
-            this.form.pageSize = a
+            this.pageSize = a
             this.query()
         },
         showHistroy(obj) {
@@ -148,6 +156,18 @@ export default {
             get('/api/contract-web/agent-contract/query-agentContracts-history?contractId='+obj.originId).then(res => {
                 this.gridData = res
             })
+        },
+        exportDetail() {
+            var str = ''
+            for (var k in this.form) {
+                if(!str) {
+                    str += `?${k}=${this.form[k]}`
+                }
+                else {
+                    str += `&${k}=${this.form[k]}`
+                }
+            }
+            window.open(`/agent-contract/export-agent-contract-list${str}`)
         }
     }
 }
