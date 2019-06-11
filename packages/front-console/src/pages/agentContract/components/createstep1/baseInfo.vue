@@ -25,7 +25,7 @@
       label="渠道电话"
       :prop="`${propName}.telephone`"
     >
-      <el-input v-model="contract.datas.agentCompanyBaseInfo.telephone" />
+      <el-input v-model="contract.datas.agentCompanyBaseInfo.telephone" maxlength="11" />
     </el-form-item>
     <el-form-item
       label="开户名称"
@@ -55,7 +55,7 @@
       label="渠道联系人电话"
       :prop="`${propName}.contactPhone`"
     >
-      <el-input v-model="contract.datas.agentCompanyBaseInfo.contactPhone" />
+      <el-input v-model="contract.datas.agentCompanyBaseInfo.contactPhone" maxlength="11" />
     </el-form-item>
     <el-form-item
       label="渠道联系人地址"
