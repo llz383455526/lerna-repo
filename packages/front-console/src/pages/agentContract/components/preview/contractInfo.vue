@@ -59,9 +59,6 @@
             </h4>
           </div>
           <div class="col-xs-6">
-              渠道联系人信息： {{ contractForm.datas.agentCompanyBaseInfo.contactName }}
-          </div>
-          <div class="col-xs-6">
             渠道名称：{{ contractForm.datas.agentCompanyBaseInfo.name }}
           </div>
           <div class="col-xs-6">
@@ -83,19 +80,24 @@
             银行账号：{{ contractForm.datas.agentCompanyBaseInfo.accountNo }}
           </div>
         </div>
-        <div class="row" style="margin-bottom: 15px;">
-            <div class="col-xs-12">
-                <h4 class="block green">渠道联系信息</h4>
-            </div>
-            <div class="col-xs-6">
-                渠道联系人： {{ contractForm.datas.salesInfo.salesName }}
-            </div>
-            <div class="col-xs-6">
-                渠道联系人电话： {{ contractForm.datas.salesInfo.mobilePhone }}
-            </div>
-            <div class="col-xs-6">
-                渠道联系人地址： {{ contractForm.datas.salesInfo.salesAddress }}
-            </div>
+        <div
+          class="row"
+          style="margin-bottom: 15px;"
+        >
+          <div class="col-xs-12">
+            <h4 class="block green">
+              渠道联系信息
+            </h4>
+          </div>
+          <div class="col-xs-6">
+            渠道联系人： {{ contractForm.datas.agentCompanyBaseInfo.contactName }}
+          </div>
+          <div class="col-xs-6">
+            渠道联系人电话： {{ contractForm.datas.agentCompanyBaseInfo.contactPhone }}
+          </div>
+          <div class="col-xs-6">
+            渠道联系人地址： {{ contractForm.datas.agentCompanyBaseInfo.contactAddr }}
+          </div>
         </div>
         <div
           class="row"
