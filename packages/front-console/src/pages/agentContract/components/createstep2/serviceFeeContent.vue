@@ -14,9 +14,9 @@
                 </el-form-item><br>
                 <el-form-item label="结算费率" :prop="`${propName}subType`" :rules="{ required: true, message: '请选择结算费率类型', trigger: 'change' }">
                     <el-radio-group v-model="serviceFeeContent.subType" @change="subTypeChange">
-                        <el-radio label="ratio" :disabled="disabled">固定比例收费</el-radio>
-                        <el-radio label="nonflow">分{{serviceFeeContent.incomeAmount}}万 - 无流水阶梯报价</el-radio>
-                        <el-radio label="flow">分{{serviceFeeContent.incomeAmount}}万 - 按流水分阶梯报价</el-radio>
+                        <el-radio label="ratio" :disabled="disabled">固定费率结算</el-radio>
+                        <el-radio label="nonflow">分{{serviceFeeContent.incomeAmount}}万 - 无流水阶梯结算</el-radio>
+                        <el-radio label="flow">分{{serviceFeeContent.incomeAmount}}万 - 按流水分阶梯结算</el-radio>
                     </el-radio-group>
                 </el-form-item><br>
                 <ratio v-if="serviceFeeContent.subType === 'ratio'" :propName="propName" :serviceFeeContent="serviceFeeContent"></ratio>

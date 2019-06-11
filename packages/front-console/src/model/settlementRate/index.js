@@ -13,7 +13,7 @@ class Form {
             // "quoteRule": "", // 报价规则
             "serviceCompanyId": 0, // 服务商ID
             "serviceCompanyName": "", // 服务商名称
-            "subType": "nonflow", // 费率子类型(ratio - 固定，nonflow-无流水，flow-按流水)
+            "subType": "flow", // 费率子类型(ratio - 固定，nonflow-无流水，flow-按流水)
             "feeContentMap":  {
                 // 固定费率
                 // "no": [
@@ -36,22 +36,22 @@ class Form {
                         "sequence": 0, // 序号
                         "startAmount": null // 开始金额
                     },
-                    // {
-                    //     "endAmount": null, // 结束金额
-                    //     "equalsEnd": true, // 是否包含上限金额
-                    //     "equalsStart": false, // 是否包含下限金额
-                    //     "percent": 0, // 收费比例
-                    //     "sequence": 1, // 序号
-                    //     "startAmount": 0 // 开始金额
-                    // },
-                    // {
-                    //     "endAmount": null, // 结束金额
-                    //     "equalsEnd": true, // 是否包含上限金额
-                    //     "equalsStart": false, // 是否包含下限金额
-                    //     "percent": 0, // 收费比例
-                    //     "sequence": 2, // 序号
-                    //     "startAmount": 0 // 开始金额
-                    // }
+                    {
+                        "endAmount": null, // 结束金额
+                        "equalsEnd": true, // 是否包含上限金额
+                        "equalsStart": false, // 是否包含下限金额
+                        "percent": 0, // 收费比例
+                        "sequence": 1, // 序号
+                        "startAmount": 0 // 开始金额
+                    },
+                    {
+                        "endAmount": null, // 结束金额
+                        "equalsEnd": true, // 是否包含上限金额
+                        "equalsStart": false, // 是否包含下限金额
+                        "percent": 0, // 收费比例
+                        "sequence": 2, // 序号
+                        "startAmount": 0 // 开始金额
+                    }
                 ],
                 // 分xxx的上限
                 "up": [
