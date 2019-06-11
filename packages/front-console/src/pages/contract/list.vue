@@ -10,7 +10,13 @@
             </el-form-item>
             <el-form-item label="结算周期" size="small" prop="settleType">
                 <el-select v-model="formSearch.settleType" placeholder="请选择" style="width:100%;">
-                    <el-option v-for="item in options" :key="item.value" :label="item.text" :value="item.value"></el-option>
+                    <el-option v-for="item in searchOptions.SettleType" :key="item.value" :label="item.text" :value="item.value"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="合同归档" size="small" prop="archiveStatus">
+                <el-select v-model="formSearch.archiveStatus" placeholder="请选择" style="width:100%;">
+                    <el-option label="全部" value=""></el-option>
+                    <el-option v-for="item in searchOptions.ArchiveStatus" :key="item.value" :label="item.text" :value="item.value"></el-option>
                 </el-select>
             </el-form-item>
             <br>
@@ -38,6 +44,7 @@
             <el-table-column prop="prePayFeeName" label="服务费是否预收" width="140"></el-table-column>
             <el-table-column prop="contractStartDate" label="合同开始时间"></el-table-column>
             <el-table-column prop="contractEndDate" label="合同结束时间"></el-table-column>
+            <el-table-column prop="archiveStatusName" label="合同归档"></el-table-column>
             <el-table-column prop="versionSeq" label="合同版本">
             	<template slot-scope="scope">
                     <span>V{{scope.row.versionSeq}}</span>
@@ -112,13 +119,14 @@ export default {
             pageSize: 10,
             currentPage: parseInt(this.$route.query.page) || 1,
             tableList: [],
-            options: [],
+            searchOptions: {},
             formSearch: {
                 customerName: '',
                 serviceCompanyName: '',
                 settleType: '',
                 startAt: '',
-                endAt: ''
+                endAt: '',
+                archiveStatus: ''
             },
             dateValue: '',
             show: false,
@@ -207,10 +215,10 @@ export default {
         routerPush(val) {
             this.$router.push({path: val});
         },
-        getSettleType() {
-            let url = '/api/contract-web/commom/option';
-            get(url, {enumType: 'SettleType'}).then(data => {
-                this.options = data
+        getSearchOptions() {
+            let url = '/api/contract-web/commom/options';
+            get(url, {enumTypes: 'SettleType,ArchiveStatus'}).then(data => {
+                this.searchOptions = data
             })
         },
         handleLook(id) {
@@ -297,9 +305,9 @@ export default {
             page: this.$route.query.page || 1,
             pageSize: this.pageSize,
         });
-        this.getSettleType();
-        this.getOptionCustomerCompanies();
-        this.getOptionServiceCompanies();
+        this.getSearchOptions();
+        // this.getOptionCustomerCompanies();
+        // this.getOptionServiceCompanies();
     }
 }
 </script>
