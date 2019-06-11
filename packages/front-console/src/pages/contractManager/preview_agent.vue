@@ -6,7 +6,7 @@
                 {{ form.versionStartDate && form.versionStartDate.substr(5, 2) }}
             </el-form-item>
             <el-form-item label="渠道名称">
-                {{ form.agentTypeName }}
+                {{ form.companyName }}
             </el-form-item>
             <el-form-item label="渠道经理">
                 {{ form.chargeByName }}
