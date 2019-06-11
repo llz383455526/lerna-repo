@@ -35,35 +35,32 @@ export default {
         }
     },
     methods: {
-        validateContract(serviceCompanyId) {
-            let someCompany = false;
+        validateCompanyExists(appForm) {
             const companyId = this.form.contract.datas.agentCompanyBaseInfo.id
-            get(`/api/contract-web/agent-residence-flow/check-agent-contract-exists?companyId=${companyId}&serviceCompanyId=${serviceCompanyId}`)
-            .then(res => {
-                console.log(res)
-            })
-            .catch((err) => {
-                console.log(err)
-                someCompany = true
-            })
-            return someCompany;
+            return new Promise(resolve => {
+                get(`/api/contract-web/agent-residence-flow/check-agent-contract-exists?companyId=${companyId}&serviceCompanyId=${appForm.serviceCompanyId}`)
+                .then(res => {
+                    resolve(res)
+                })
+            }) 
         },
         formDel(index) {
             this.form.contract.datas.agentContract.serviceCompanyFeeContentList.splice(index, 1)
         },
-        formAdd(appForm) {
-            let someCompany = this.form.contract.datas.agentContract.serviceCompanyFeeContentList.find((el) => {
+        async formAdd(appForm) {
+            const someCompany = this.form.contract.datas.agentContract.serviceCompanyFeeContentList.find((el) => {
                 return el.serviceCompanyId === appForm.serviceCompanyId
             });
             if (someCompany) {
                 this.$message('已经选择该服务商')
                 return
             }
-            // console.log(this.form.contract)
-            // console.log(this.form.contract.operateEnum === 2)
-            if (this.form.contract.operateEnum === 2 && this.validateContract(appForm.serviceCompanyId)) {
-                this.$message('渠道合同已存在')
-                return
+            if (this.form.contract.operateEnum === 2) {
+                const result = await this.validateCompanyExists(appForm)
+                if (!result.result) {
+                    this.$message(result.message)
+                    return
+                }
             }
             const rObj = Object.assign({}, new Form().serviceCompanyFeeContent, appForm)
             this.form.contract.datas.agentContract.serviceCompanyFeeContentList.push(rObj)
