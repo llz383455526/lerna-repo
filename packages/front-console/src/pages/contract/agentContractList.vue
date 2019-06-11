@@ -167,7 +167,7 @@ export default {
                     str += `&${k}=${this.form[k]}`
                 }
             }
-            window.open(`/agent-contract/export-agent-contract-list${str}`)
+            window.open(`/api/contract-web/agent-contract/export-agent-contract-list${str}`)
         }
     }
 }

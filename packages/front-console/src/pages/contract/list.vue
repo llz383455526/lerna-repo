@@ -311,7 +311,7 @@ export default {
                     str += `&${k}=${this.formSearch[k]}`
                 }
             }
-            window.open(`/contract/export-contract-list${str}`)
+            window.open(`/api/contract-web/contract/export-contract-list${str}`)
         }
     },
     created() {
