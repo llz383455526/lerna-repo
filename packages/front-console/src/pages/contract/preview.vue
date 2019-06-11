@@ -68,7 +68,7 @@
         </el-row> -->
         <template v-if="detail.originalType == 20">
           <el-row class="mb15" style="font-weight: normal;" v-if="!historyId">
-            <el-col :span="4" style="text-align: right; margin-right: 20px;">代理商名称：</el-col>
+            <el-col :span="4" style="text-align: right; margin-right: 20px;">渠道名称：</el-col>
             <el-col :span="8">{{detail.agentCompanyName}}</el-col>
           </el-row>
           <!-- <el-row class="mb15" style="font-weight: normal;">

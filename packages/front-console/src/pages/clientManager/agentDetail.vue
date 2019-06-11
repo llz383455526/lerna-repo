@@ -2,7 +2,7 @@
   <div class="r_main">
     <el-breadcrumb>
       <el-breadcrumb-item>
-        代理商名称
+        渠道名称
       </el-breadcrumb-item>
     </el-breadcrumb>
     <div class="title">
@@ -15,7 +15,7 @@
             :span="8"
             class="right"
           >
-            代理商名称
+            渠道名称
           </el-col>
           <el-col
             :span="16"
@@ -45,7 +45,7 @@
             :span="8"
             class="right"
           >
-            代理商简称
+            渠道简称
           </el-col>
           <el-col
             :span="16"
@@ -59,7 +59,7 @@
             :span="8"
             class="right"
           >
-            代理商单位地址
+            渠道单位地址
           </el-col>
           <el-col
             :span="16"
@@ -89,7 +89,7 @@
             :span="8"
             class="right"
           >
-            代理商电话码
+            渠道电话码
           </el-col>
           <el-col
             :span="16"
@@ -117,7 +117,7 @@
             :span="8"
             class="right"
           >
-            代理商联系人
+            渠道联系人
           </el-col>
           <el-col
             :span="16"
@@ -147,7 +147,7 @@
             :span="8"
             class="right"
           >
-            代理商联系人电话
+            渠道联系人电话
           </el-col>
           <el-col
             :span="16"
@@ -177,7 +177,7 @@
             :span="8"
             class="right"
           >
-            代理商联系人地址
+            渠道联系人地址
           </el-col>
           <el-col
             :span="16"
@@ -203,7 +203,7 @@
       </el-row>
     </div>
     <div class="title">
-      代理商合同
+      渠道合同
     </div>
     <el-table :data="detail.agentContractList">
       <el-table-column label="合同编号">
@@ -283,7 +283,7 @@
         label="代理推广费率"
         prop="quoteFeeName"
       />
-      <!-- <el-table-column label="代理商分润">
+      <!-- <el-table-column label="渠道分润">
                 <template slot-scope="scope">
                     {{scope.row.agentFeeContent.serviceFeeRate}}%
                 </template>

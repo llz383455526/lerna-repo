@@ -1,11 +1,11 @@
 <template>
     <div class="r_main">
         <el-breadcrumb>
-            <el-breadcrumb-item>我的入驻代理商</el-breadcrumb-item>
+            <el-breadcrumb-item>我的入驻渠道</el-breadcrumb-item>
         </el-breadcrumb>
         <div class="content">
             <el-form class="form" :model="form" :inline="true" label-width="100px" size="small" ref="form">
-                <el-form-item label="代理商名称" prop="fullName">
+                <el-form-item label="渠道名称" prop="fullName">
                     <el-input v-model="form.fullName" class="in_input"></el-input>
                 </el-form-item>
                 <el-form-item>
@@ -18,7 +18,7 @@
             </router-link>
             <el-button class="ml20" size="small" @click="download">导出</el-button> -->
             <el-table :data="data.list">
-                <el-table-column label="代理商名称" prop="fullName"></el-table-column>
+                <el-table-column label="渠道名称" prop="fullName"></el-table-column>
                 <el-table-column label="申请主体"></el-table-column>
                 <el-table-column label="关联销售" prop="salesman"></el-table-column>
                 <!-- <el-table-column label="渠道经理" prop="chargeByName"></el-table-column> -->

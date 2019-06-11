@@ -2,11 +2,11 @@
     <div class="r_main">
         <el-breadcrumb>
             <el-breadcrumb-item>
-                代理商合同管理
+                渠道合同管理
             </el-breadcrumb-item>
         </el-breadcrumb>
         <el-form :model="form" class="form" :inline="true" size="small" ref="form">
-            <el-form-item label="代理商名称" prop="companyName">
+            <el-form-item label="渠道名称" prop="companyName">
                 <el-input class="form_input" v-model="form.companyName"></el-input>
             </el-form-item>
             <el-form-item label="状态" prop="status">
@@ -31,7 +31,7 @@
         </router-link>
         <el-table class="table" :data="data.list">
             <el-table-column label="合同编号" prop="contractNo"></el-table-column>
-            <el-table-column label="代理商名称" prop="companyName"></el-table-column>
+            <el-table-column label="渠道名称" prop="companyName"></el-table-column>
             <el-table-column label="服务商名称" prop="serviceCompanyName"></el-table-column>
             <el-table-column label="代理期限" width="200px">
                 <template slot-scope="scope">

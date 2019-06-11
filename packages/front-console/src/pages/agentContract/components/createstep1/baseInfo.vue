@@ -4,7 +4,7 @@
       渠道信息
     </h3>
     <el-form-item
-      label="代理商名称"
+      label="渠道名称"
       :prop="`${propName}.name`"
     >
       <el-input v-model="contract.datas.agentCompanyBaseInfo.name" />
@@ -16,13 +16,13 @@
       <el-input v-model="contract.datas.agentCompanyBaseInfo.taxIdcd" />
     </el-form-item>
     <el-form-item
-      label="代理商单位地址"
+      label="渠道单位地址"
       :prop="`${propName}.registerAddr`"
     >
       <el-input v-model="contract.datas.agentCompanyBaseInfo.registerAddr" />
     </el-form-item>
     <el-form-item
-      label="代理商电话"
+      label="渠道电话"
       :prop="`${propName}.telephone`"
     >
       <el-input v-model="contract.datas.agentCompanyBaseInfo.telephone" />
@@ -46,19 +46,19 @@
       <el-input v-model="contract.datas.agentCompanyBaseInfo.accountNo" />
     </el-form-item>
     <el-form-item
-      label="代理商联系人"
+      label="渠道联系人"
       :prop="`${propName}.contactName`"
     >
       <el-input v-model="contract.datas.agentCompanyBaseInfo.contactName" />
     </el-form-item>
     <el-form-item
-      label="代理商联系人电话"
+      label="渠道联系人电话"
       :prop="`${propName}.contactPhone`"
     >
       <el-input v-model="contract.datas.agentCompanyBaseInfo.contactPhone" />
     </el-form-item>
     <el-form-item
-      label="代理商联系人地址"
+      label="渠道联系人地址"
       :prop="`${propName}.contactAddr`"
     >
       <el-input v-model="contract.datas.agentCompanyBaseInfo.contactAddr" />

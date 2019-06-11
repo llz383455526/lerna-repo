@@ -1,11 +1,11 @@
 <template>
     <div>
-        <el-form-item label="选择已有代理商" :prop="`${propName1}.id`" v-if="contract.operateEnum === 2">
+        <el-form-item label="选择已有渠道" :prop="`${propName1}.id`" v-if="contract.operateEnum === 2">
             <el-select v-model="contract.datas.agentCompanyBaseInfo.id" filterable placeholder="请选择" style="width: 400px;" @change="getDetail">
                 <el-option v-for="item in optionModel.agentCompanyList" :key="item.agentCompanyId" :value="item.agentCompanyId" :label="item.agentCompanyName"></el-option>
             </el-select>
         </el-form-item>
-        <el-form-item label="选择已有代理商" :prop="`${propName1}.id`" v-if="contract.operateEnum === 3">
+        <el-form-item label="选择已有渠道" :prop="`${propName1}.id`" v-if="contract.operateEnum === 3">
             <el-select v-model="contract.datas.agentCompanyBaseInfo.id" filterable placeholder="请选择" style="width: 400px;" @change="getDetail">
                 <el-option v-for="item in optionModel.agentContractCompanyList" :key="item.companyId" :value="item.companyId" :label="item.companyNane"></el-option>
             </el-select>

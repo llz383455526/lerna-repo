@@ -62,7 +62,7 @@ export default {
             // console.log(this.form.contract)
             // console.log(this.form.contract.operateEnum === 2)
             if (this.form.contract.operateEnum === 2 && this.validateContract(appForm.serviceCompanyId)) {
-                this.$message('代理商合同已存在')
+                this.$message('渠道合同已存在')
                 return
             }
             const rObj = Object.assign({}, new Form().serviceCompanyFeeContent, appForm)

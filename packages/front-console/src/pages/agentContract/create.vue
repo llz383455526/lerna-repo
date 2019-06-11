@@ -1,7 +1,7 @@
 <template>
     <div class="contract-container bg-white">
         <div class="widget-header">
-            <div class="widget-title">{{operateEnum[form.contract.operateEnum] || '新增'}}代理商合同</div>
+            <div class="widget-title">{{operateEnum[form.contract.operateEnum] || '新增'}}渠道合同</div>
             <el-steps :active="active" simple finish-status="success">
                 <el-step title="完善渠道信息"></el-step>
                 <el-step title="添加落地公司"></el-step>

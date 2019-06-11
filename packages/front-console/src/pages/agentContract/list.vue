@@ -1,26 +1,23 @@
 <template>
   <div class="main-container">
+    <div class="mb10">渠道入驻申请</div>
     <el-tabs
       v-model="activeName"
       @tab-click="handleClick"
     >
       <el-tab-pane
-        label="我的入驻申请"
+        label="我的申请"
         name="first" 
       />
       <el-tab-pane
-        label="待处理入驻申请"
+        label="待处理申请"
         name="second" 
       />
       <el-tab-pane
-        label="全部入驻申请"
+        label="全部申请"
         name="third"
       />
     </el-tabs>
-
-    <div style="margin-bottom:30px;">
-      合同申请审核管理
-    </div>
 
     <el-form
       :inline="true"
@@ -28,7 +25,7 @@
       ref="formSearch"
     >
       <el-form-item
-        label="代理商名称"
+        label="渠道名称"
         size="small"
         prop="customerName"
       >
@@ -156,7 +153,7 @@
         />
         <el-table-column
           prop="name"
-          label="代理商名称" 
+          label="渠道名称" 
         />
         <el-table-column
           prop="agentTypeName"
@@ -207,7 +204,6 @@
 
         <el-table-column
           label="操作"
-          width="200"
         >
           <template slot-scope="scope">
             <el-button
