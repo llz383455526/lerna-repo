@@ -201,6 +201,7 @@ export default {
                 customerName: this.formSearch.customerName,
                 serviceCompanyName: this.formSearch.serviceCompanyName,
                 settleType: this.formSearch.settleType,
+                archiveStatus: this.formSearch.archiveStatus,
                 page: pageInfo.page,
                 pageSize: pageInfo.pageSize,
             };
