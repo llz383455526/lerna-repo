@@ -115,9 +115,9 @@
             <div class="col-xs-12">
               落地公司：{{ item.serviceCompanyName }}
             </div>
-            <div class="col-xs-12">
+            <!-- <div class="col-xs-12">
               报价规则：{{ item.quoteRule === 'rakeback' ? '返佣规则': '结算规则' }}
-            </div>
+            </div> -->
             <div class="col-xs-12">
               代理推广费率：
               <span v-if="item.quoteFeeType === 'ratio'">固定费率结算：{{ item.feeContentMap.no[0].percent }}%</span>
