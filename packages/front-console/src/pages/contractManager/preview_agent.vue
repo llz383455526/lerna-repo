@@ -3,7 +3,7 @@
         <div class="title">基本信息</div>
         <el-form class="form" :model="form" ref="form" :rules="rules" label-width="120px">
             <el-form-item label="生效月份">
-                {{ form.versionStartDate && form.versionStartDate.substr(5, 2) }}
+                {{ form.versionStartDate && form.versionStartDate.substr(0, 7) }}
             </el-form-item>
             <el-form-item label="渠道名称">
                 {{ form.companyName }}

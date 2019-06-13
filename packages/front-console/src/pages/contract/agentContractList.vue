@@ -123,7 +123,7 @@ export default {
     },
     mounted() {
         get('/api/contract-web/commom/options?enumTypes=AgentContractStatus,ArchiveStatus').then(data => {
-            console.log(data)
+            // console.log(data)
             this.statusList = data.AgentContractStatus
             this.archiveList = data.ArchiveStatus
             // this.form.status = this.statusList[0].value
