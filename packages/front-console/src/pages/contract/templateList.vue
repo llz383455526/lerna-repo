@@ -36,7 +36,7 @@
                 <el-table-column prop="industryTypeNames" label="行业类型"></el-table-column>
                 <el-table-column prop="remark" label="合同备注"></el-table-column>
                 <el-table-column prop="usage" label="适用情况"></el-table-column>
-                <el-table-column prop="tplTypeName" label="合同类型"></el-table-column>
+                <!-- <el-table-column prop="tplTypeName" label="合同类型"></el-table-column> -->
                 <el-table-column prop="status" label="是否有效">
                     <template slot-scope="scope">{{scope.row.status === '1' ? '有效' : '无效'}}</template>
                 </el-table-column>

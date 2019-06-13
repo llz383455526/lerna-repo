@@ -148,7 +148,7 @@
             </el-form-item>
             <template v-if="cform.originalType == 20">
               <el-form-item label="代理商名称" prop="agentCompanyId">
-                <el-select v-model="cform.agentCompanyId" style="width:400px;" filterable @change="companyChange" disabled>
+                <el-select v-model="cform.agentCompanyId" style="width:400px;" filterable disabled>
                     <el-option v-for="e in agentList" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
                 </el-select>
               </el-form-item>

@@ -9,12 +9,12 @@
             <el-form-item label="渠道名称" prop="companyName">
                 <el-input class="form_input" v-model="form.companyName"></el-input>
             </el-form-item>
-            <el-form-item label="状态" prop="status">
+            <!-- <el-form-item label="状态" prop="status">
                 <el-select class="form_input" v-model="form.status">
                     <el-option label="全部" value=""></el-option>
                     <el-option v-for="e in statusList" :key="e.value" :label="e.text" :value="e.value"></el-option>
                 </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="合同归档" prop="status">
                 <el-select class="form_input" v-model="form.archiveStatus">
                     <el-option label="全部" value=""></el-option>
@@ -41,7 +41,7 @@
             </el-table-column>
             <el-table-column label="代理推广费率" prop="quoteFeeName"></el-table-column>
             <el-table-column label="渠道经理" prop="chargeByName"></el-table-column>
-            <el-table-column label="状态" prop="statusName"></el-table-column>
+            <!-- <el-table-column label="状态" prop="statusName"></el-table-column> -->
             <el-table-column label="合同归档" prop="archiveStatusName"></el-table-column>
             <el-table-column label="版本号" prop="versionSeq"></el-table-column>
             <el-table-column label="版本生效月份" prop="versionStartDate">
