@@ -88,6 +88,7 @@ export default {
         })
         this.contractModel.contractForm.agentCompanyId && this.companyChange(this.contractModel.contractForm.agentCompanyId)
 
+        // console.log(this.userInformation)
         if (this.userInformation.userProfile.subjectType === 'agent') {
             this.disableRadio = true
             this.contractModel.contractForm.originalType = '20'
@@ -109,6 +110,7 @@ export default {
         agentChange() {
             this.companyChange()
             this.contractModel.contractForm.contracts = []
+            this.contractModel.contractForm.serviceCompanyList = []
         },
         companyChange(companyId) {
             this.contractModel.getChargeByName(companyId);

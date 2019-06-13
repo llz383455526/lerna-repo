@@ -1,3 +1,12 @@
+function hasEmpty(rule, value, callback) {
+    var reg = /(^\s+)|(\s+$)|\s+/g;
+    if(reg.test(value)) {
+        callback('不能出现空格')
+    } else {
+        callback()
+    }
+}
+
 class Check {
     constructor() {
         this.rules = {
@@ -5,16 +14,16 @@ class Check {
                 agentCompanyBaseInfo: {
                     agentType: [this.ruleObj('请选择申请主体', 'change')],
                     probation: [this.ruleObj('请输入试合作期')],
-                    name: [this.ruleObj('请填写渠道名称')],
+                    // name: [this.ruleObj('请填写渠道名称')],
                     taxIdcd: [this.ruleObj('请填写税号')],
                     registerAddr: [this.ruleObj('请填写渠道单位地址')],
-                    telephone: [this.ruleObj('请填写渠道电话'), { pattern: /^1\d{10}$/, message: '请正确填写渠道电话', trigger: 'blur' }],
+                    telephone: [this.ruleObj('请填写渠道电话'), { validator: hasEmpty, trigger: 'blur' }],
                     registerAddr: [this.ruleObj('请填写渠道单位地址')],
                     accountName: [this.ruleObj('请填写开户名称')],
                     depositBank: [this.ruleObj('请填写开户银行')],
                     accountNo: [this.ruleObj('请填写银行账号')],
                     contactName: [this.ruleObj('请填写渠道联系人')],
-                    contactPhone: [this.ruleObj('请填写渠道联系人电话'), { pattern: /^1\d{10}$/, message: '请正确填写渠道联系人电话', trigger: 'blur' }],
+                    contactPhone: [this.ruleObj('请填写渠道联系人电话'), { validator: hasEmpty, trigger: 'blur' }],
                     contactAddr: [this.ruleObj('请填写渠道联系人地址')],
                     id: [this.ruleObj('请选择已有渠道', 'change')],
                 },

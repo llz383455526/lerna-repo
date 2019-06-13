@@ -10,15 +10,15 @@ class Form {
                     "taxIdcd": "", // 税号
                     "agency": "", // 代理机构
                     "agentType": "", // 申请主体： channel-渠道， agent-代理商
-                    "contactAddr": "", // 代理商联系人地址
-                    "contactName": "", // 代理商联系人
-                    "contactPhone": "", // 代理商联系人电话
+                    "contactAddr": "", // 渠道联系人地址
+                    "contactName": "", // 渠道联系人
+                    "contactPhone": "", // 渠道联系人电话
                     "depositBank": "", // 开户银行
-                    "name": "", // 代理商名称
+                    "name": "", // 渠道名称
                     "probation": 6, // 试合作期
-                    "registerAddr": "", // 代理商单位地址
-                    "telephone": "", // 代理商电话
-                    "id": "" // 已有代理商
+                    "registerAddr": "", // 渠道单位地址
+                    "telephone": "", // 渠道电话
+                    "id": "" // 已有渠道
                 },
                 agentContract: {
                     agentStart: '', // 代理合同结束期限

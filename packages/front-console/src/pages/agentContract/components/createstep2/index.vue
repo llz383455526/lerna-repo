@@ -44,6 +44,16 @@ export default {
                 })
             }) 
         },
+        getFeeContent(appForm) {
+            const companyId = this.form.contract.datas.agentCompanyBaseInfo.id
+            const { serviceCompanyId } = appForm
+            return new Promise(resolve => {
+                get(`/api/contract-web/agent-residence-flow/agent-contract-flow-form?companyId=${companyId}&serviceCompanyId=${serviceCompanyId}`)
+                .then(res => {
+                    resolve(res)
+                })
+            })
+        },
         formDel(index) {
             this.form.contract.datas.agentContract.serviceCompanyFeeContentList.splice(index, 1)
         },
@@ -62,7 +72,11 @@ export default {
                     return
                 }
             }
-            const rObj = Object.assign({}, new Form().serviceCompanyFeeContent, appForm)
+            let feeContent = {}
+            if (this.form.contract.operateEnum === 3) {
+                feeContent = await this.getFeeContent(appForm)
+            }
+            const rObj = Object.assign({}, new Form().serviceCompanyFeeContent, appForm, feeContent)
             this.form.contract.datas.agentContract.serviceCompanyFeeContentList.push(rObj)
             this.$refs['dialog'].hideDialog()
         },

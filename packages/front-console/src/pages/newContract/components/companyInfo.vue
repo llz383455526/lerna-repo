@@ -291,7 +291,21 @@ export default {
             }
             this.upDataServerType()
         },
-        formAdd() {
+        getQuoteFeeContent() {
+            const agentCompanyId = this.ruleForm.agentCompanyId
+            const serviceCompanyId = this.info.serviceCompanyId
+            const param = { agentCompanyId, serviceCompanyId }
+            return new Promise(resolve => {
+                if (agentCompanyId) {
+                    get('/api/contract-web/agent-contract/query-agentContract', param).then(res => {
+                        resolve(res)
+                    })
+                } else {
+                    resolve({})
+                }
+            })
+        },
+        async formAdd() {
             if(!this.info.serviceCompanyId) {
                 this.$message({
                     message: '请选择服务商',
@@ -300,11 +314,15 @@ export default {
                 return
             }
 
+            
+
             let info = _.cloneDeep(this.info);
-            let quoteFeeContent = _.cloneDeep(this.quoteFeeContent);
+            // let quoteFeeContent = _.cloneDeep(this.quoteFeeContent);
+            let quoteFeeContent = await this.getQuoteFeeContent()
+            // console.log(quoteFeeContent)
             // 只需要当前所选的落地公司
-            let serviceCompanyRateList  = quoteFeeContent.serviceCompanyRateList.filter(e => e.serviceCompanyId == info.serviceCompanyId)
-            quoteFeeContent.serviceCompanyRateList = serviceCompanyRateList || []
+            // let serviceCompanyRateList  = quoteFeeContent.serviceCompanyRateList.filter(e => e.serviceCompanyId == info.serviceCompanyId)
+            // quoteFeeContent.serviceCompanyRateList = serviceCompanyRateList || []
             this.ruleForm.serviceCompanyList.push({
                 serviceCompanyName: info.serviceCompanyName,
                 serviceCompanyId: info.serviceCompanyId

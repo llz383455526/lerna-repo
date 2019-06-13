@@ -9,7 +9,7 @@
                 {{ form.companyName }}
             </el-form-item>
             <el-form-item label="渠道经理">
-                {{ form.chargeByName }}
+                {{ form.salesInfo && form.salesInfo.salesName }}
             </el-form-item>
             <el-form-item label="代理期限">
                 {{ form.agentStart + ' - ' + form.agentEnd }}
@@ -81,7 +81,7 @@ export default {
     },
     created() {
         this.contractHisId = this.$route.query.contractHisId;
-        console.log(this.contractHisId)
+        // console.log(this.contractHisId)
         this.contractHisId && this.getDetail();
         // 上传接口
         this.uploadUrl = contract.uploadUrl

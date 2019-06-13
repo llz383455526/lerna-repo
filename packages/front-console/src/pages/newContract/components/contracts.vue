@@ -349,6 +349,7 @@ export default {
                 this.dialogVisible = false
                 this.updateServiceTypeList()
                 this.upDataServerType()
+                // console.log(this.ruleForm.contracts)
             })
         },
         result({

@@ -439,6 +439,7 @@ export default {
         }
     },
     mounted() {
+        // console.log(this.contractForm)
         this.init(this.contractForm)
     },
     methods: {

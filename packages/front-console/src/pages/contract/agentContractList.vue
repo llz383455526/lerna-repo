@@ -27,9 +27,9 @@
                 <el-button size="small" @click="exportDetail">导出</el-button>
             </el-form-item>
         </el-form>
-        <router-link to="agentContractCreate" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
+        <!-- <router-link to="agentContractCreate" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
             <el-button size="small">新增</el-button>
-        </router-link>
+        </router-link> -->
         <el-table class="table" :data="data.list">
             <el-table-column label="合同编号" prop="contractNo"></el-table-column>
             <el-table-column label="渠道名称" prop="companyName"></el-table-column>

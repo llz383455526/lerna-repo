@@ -18,7 +18,7 @@
         </el-form-item>
         <h3 class="green">合同基本信息</h3>
         <el-form-item label="申请主体" :prop="`${propName1}.agentType`">
-            <el-radio v-model="contract.datas.agentCompanyBaseInfo.agentType" v-for="item in optionModel.agentTypeList" :key="item.value" :label="item.value" @change="agentTypeChange" :disabled="contract.operateEnum != '1'">
+            <el-radio v-model="contract.datas.agentCompanyBaseInfo.agentType" v-for="item in optionModel.agentTypeList" :key="item.value" :label="item.value" @change="agentTypeChange" :disabled="contract.operateEnum !== 1">
                 {{ item.text }}
             </el-radio>
         </el-form-item>

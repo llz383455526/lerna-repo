@@ -19,8 +19,8 @@
             <el-button class="ml20" size="small" @click="download">导出</el-button> -->
             <el-table :data="data.list">
                 <el-table-column label="渠道名称" prop="fullName"></el-table-column>
-                <el-table-column label="申请主体"></el-table-column>
-                <el-table-column label="关联销售" prop="salesman"></el-table-column>
+                <el-table-column label="申请主体" prop="agentTypeName"></el-table-column>
+                <el-table-column label="关联销售" prop="salesInfo.salesName"></el-table-column>
                 <!-- <el-table-column label="渠道经理" prop="chargeByName"></el-table-column> -->
                 <!-- <el-table-column label="地区">
                     <template slot-scope="scope">

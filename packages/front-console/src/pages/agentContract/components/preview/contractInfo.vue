@@ -32,7 +32,7 @@
             <div
               class="col-xs-12"
             >
-              变更生效：{{ formatTime(contractForm.datas.agentContract.versionStartDate) }}
+              变更生效：{{ formatTime(contractForm.datas.agentContract.versionStartDate, "yyyy-MM-dd") }}
             </div>
             <div
               class="col-xs-12"
@@ -212,8 +212,8 @@ export default {
                 return obj[outputKey];
             }
         },
-        formatTime(date) {
-            return formatTime(date)
+        formatTime(date, format) {
+            return formatTime(date, format)
         }
     }
 }
