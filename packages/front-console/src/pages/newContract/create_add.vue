@@ -28,16 +28,19 @@
                         <hr>
                         <contractOption :contractModel="contractModel"></contractOption>
                         <el-form-item label="客户类型" prop="originalType">
-                            <el-radio-group v-model="contractModel.contractForm.originalType" :disabled="true">
+                            <el-radio-group v-model="contractModel.contractForm.originalType" disabled style="width:450px;">
                                 <el-radio v-for="(item, key) in originalTypeList" :key="key" :label="item.value">{{item.text}}</el-radio>
                             </el-radio-group>
                         </el-form-item>
                         <template v-if="contractModel.contractForm.originalType == 20">
-                            <el-form-item label="代理商名称" prop="agentCompanyId" :rules="{ required: true, message: '请选择代理商', trigger: 'change' }">
+                            <el-form-item label="代理商名称">
+                                <el-input v-model="contractModel.contractForm.agentCompanyName" disabled style="width:450px;"></el-input>
+                            </el-form-item>
+                            <!-- <el-form-item label="代理商名称" prop="agentCompanyId" :rules="{ required: true, message: '请选择代理商', trigger: 'change' }">
                                 <el-select v-model="contractModel.contractForm.agentCompanyId" style="width:900px;" filterable @change="agentChange" disabled>
                                     <el-option v-for="e in agentList" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
                                 </el-select>
-                            </el-form-item>
+                            </el-form-item> -->
                         </template>
                         <el-form-item label="客户归属" prop="original">
                             <el-radio-group v-model="contractModel.contractForm.original" style="width:1100px;" :disabled="true">
@@ -297,6 +300,7 @@ export default {
             this.contractModel.contractForm.original = obj.original
             this.contractModel.contractForm.originalType = obj.originalType
             this.contractModel.contractForm.agentCompanyId = obj.agentCompanyId
+            this.contractModel.contractForm.agentCompanyName = obj.agentCompanyName
         },
         agentChange() {
             this.getChargeByName()

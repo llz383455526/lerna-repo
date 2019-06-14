@@ -30,7 +30,8 @@ class ContractModel extends BaseModel {
             contractTel: '',
             contractAddr: '广州市天河区建中路59号柏朗奴商务大厦9楼',
             agentClient: '', // 是否代理商客户
-            agentCompanyId: '', // 代理商名称
+            agentCompanyId: '', // 代理商Id
+            agentCompanyName: '', // 代理商名称
             // 企业基本信息
             customNature: '',
             serviceCodes: [],
