@@ -41,7 +41,7 @@
             </div>
             <div v-else>
                 <el-form-item label="业务类型">
-                    <span>{{templateDetail.contractTypeName}}</span>
+                    <span>{{templateDetail.tplTypeName}}</span>
                 </el-form-item>
                 <el-form-item label="行业类型">
                     <span>{{templateDetail.industryTypeNames}}</span>
