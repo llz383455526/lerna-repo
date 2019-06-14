@@ -46,7 +46,7 @@
             <el-table-column label="版本号" prop="versionSeq"></el-table-column>
             <el-table-column label="版本生效月份" prop="versionStartDate">
                 <template slot-scope="scope">
-                    {{scope.row.versionStartDate.substr(5, 2)}}
+                    {{scope.row.versionStartDate.substr(0, 7)}}
                 </template>
             </el-table-column>
             <el-table-column label="操作">
@@ -85,7 +85,7 @@
                 <el-table-column property="flowMemo" label="版本说明"></el-table-column>
                 <el-table-column property="versionStartDate" label="生效月份">
                     <template slot-scope="scope">
-                        {{scope.row.versionStartDate.substr(5, 2)}}
+                        {{scope.row.versionStartDate.substr(0, 7)}}
                     </template>
                 </el-table-column>
                 <el-table-column property="statusName" label="状态"></el-table-column>
