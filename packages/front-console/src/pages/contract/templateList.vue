@@ -2,9 +2,10 @@
 
     <div class="main-container">
         <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
-            <el-form-item label="业务类型" size="small" prop="contractType">
-                <el-select v-model="formSearch.contractType" placeholder="请选择" style="width:100%;">
-                    <el-option v-for="item in searchOptions.BusinessType" :key="item.value" :label="item.text" :value="item.value"></el-option>
+            <el-form-item label="模版类型" size="small" prop="tplType">
+                <el-select v-model="formSearch.tplType" placeholder="请选择" style="width:100%;">
+                    <el-option label="全部" value=""></el-option>
+                    <el-option v-for="item in searchOptions.ContractTplType" :key="item.value" :label="item.text" :value="item.value"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="行业类型" size="small" prop="industryType">
@@ -18,11 +19,11 @@
                     <el-option v-for="item in searchOptions.ValidationType" :key="item.value" :label="item.text" :value="item.value"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="合同类型"  size="small" prop="tplType">
+            <!-- <el-form-item label="合同类型"  size="small" prop="tplType">
                 <el-select v-model="formSearch.tplType" placeholder="请选择" style="width:100%;">
                     <el-option v-for="item in searchOptions.ContractTplType" :key="item.value" :label="item.text" :value="item.value"></el-option>
                 </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item style="margin-top: -4px">
                 <el-button type="primary" @click="search" size="small">查询</el-button>
                 <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
@@ -32,7 +33,7 @@
         <div class="table-container">
             <el-table :data="tableList.list" @selection-change="handleSelectionChange">
                 <el-table-column prop="tplNo" label="合同模板编号"></el-table-column>
-                <el-table-column prop="tplTypeName" label="业务类型"></el-table-column>
+                <el-table-column prop="tplTypeName" label="模版类型"></el-table-column>
                 <el-table-column prop="industryTypeNames" label="行业类型"></el-table-column>
                 <el-table-column prop="remark" label="合同备注"></el-table-column>
                 <el-table-column prop="usage" label="适用情况"></el-table-column>
@@ -50,7 +51,7 @@
                             <el-button @click="toPath(scope.row.id, '0')" type="text" size="medium" style="padding:0;">查看</el-button>
                             <el-button @click="toPath(scope.row.id, '1')" type="text" size="medium" style="padding:0;">编辑</el-button>
                         </template>
-                        <el-button v-if="scope.row.statusName === '有效' && scope.row.contractType !== 'CHANNEL'" @click="createContract(scope.row.id)" type="text" size="medium" style="padding:0;">生成合同</el-button>
+                        <!-- <el-button v-if="scope.row.statusName === '有效' && scope.row.contractType !== 'CHANNEL'" @click="createContract(scope.row.id)" type="text" size="medium" style="padding:0;">生成合同</el-button> -->
                     </template>
                 </el-table-column>
             </el-table>
@@ -131,14 +132,14 @@
                     .then(result => {
 	                    this.tableList = result
 
-                        this.$router.replace({
-                            path: 'templateList',
-                            query: {
-	                            page: this.pageIndex,
-	                            pageSize: this.pageSize,
-                                param: JSON.stringify(this.formSearch)
-                            }
-                        })
+                        // this.$router.replace({
+                        //     path: 'templateList',
+                        //     query: {
+	                    //         page: this.pageIndex,
+	                    //         pageSize: this.pageSize,
+                        //         param: JSON.stringify(this.formSearch)
+                        //     }
+                        // })
                     })
 	        },
             getSearchOptions() {

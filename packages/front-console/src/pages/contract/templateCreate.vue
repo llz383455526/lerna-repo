@@ -4,7 +4,7 @@
         <el-form :model="templateForm" :rules="rules" ref="templateForm" label-width="200px" class="demo-contractForm">
             <h4 class="ml50">基本信息</h4>
             <div v-if="editable">
-                <el-form-item label="业务类型" prop="tplType" required>
+                <el-form-item label="模版类型" prop="tplType" required>
                     <el-select v-model="templateForm.tplType" placeholder="请选择" style="width:100%;">
                         <el-option v-for="item in searchOptions.ContractTplType" :key="item.value" :label="item.text"
                                    :value="item.value"></el-option>
@@ -40,7 +40,7 @@
                 </el-form-item>
             </div>
             <div v-else>
-                <el-form-item label="业务类型">
+                <el-form-item label="模版类型">
                     <span>{{templateDetail.tplTypeName}}</span>
                 </el-form-item>
                 <el-form-item label="行业类型">
