@@ -192,6 +192,7 @@ const companyTax = () => import('../pages/iframe/companyTax')
 const personTax = () => import('../pages/iframe/personTax')
 const addedValue = () => import('../pages/iframe/addedValue')
 const incomeTax = () => import('../pages/iframe/incomeTax')
+const dataCenter = () => import('../pages/iframe/dataCenter')
 
 // 工单系统路由
 import workOrder from './workOrder'
@@ -1499,6 +1500,13 @@ export default [{
               {
                 path: 'incomeTax',
                 component: incomeTax,
+                meta: {
+                  keepAlive: false
+                }
+              },
+              {
+                path: 'dataCenter',
+                component: dataCenter,
                 meta: {
                   keepAlive: false
                 }
