@@ -31,7 +31,7 @@
                             <el-radio-group v-model="contractModel.contractForm.originalType" disabled style="width:450px;">
                                 <el-radio v-for="(item, key) in originalTypeList" :key="key" :label="item.value">{{item.text}}</el-radio>
                             </el-radio-group>
-                        </el-form-item>
+                        </el-form-item><br>
                         <template v-if="contractModel.contractForm.originalType == 20">
                             <el-form-item label="代理商名称">
                                 <el-input v-model="contractModel.contractForm.agentCompanyName" disabled style="width:450px;"></el-input>

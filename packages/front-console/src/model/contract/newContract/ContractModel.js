@@ -208,7 +208,7 @@ class ContractModel extends BaseModel {
         let obj = this.agentList.find(element => {
             return element.companyId === companyId;
         });
-        this.chargeByName = obj.chargeByName;
+        this.chargeByName = obj ? obj.chargeByName : '';
     }
     // 获取合同详细信息
     getContractDetail(id, callback, type) {

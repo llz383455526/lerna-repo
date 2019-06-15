@@ -32,17 +32,22 @@
                 @change="getOriginalTypeName" 
                 :disabled="disableRadio || changeDisabled">{{e.text}}</el-radio>
         </el-form-item><br>
-        <template v-if="contractModel.contractForm.originalType == 20">
+        <template v-if="contractModel.contractForm.originalType == 20 && !changeDisabled">
             <el-form-item label="代理商名称" prop="agentCompanyId">
                 <el-select 
                     v-model="contractModel.contractForm.agentCompanyId" 
-                    style="width:900px;" 
+                    style="width: 450px;" 
                     filterable 
                     @change="agentChange" 
                     :disabled="changeDisabled">
                     <el-option v-for="e in contractModel.agentList" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
                 </el-select>
             </el-form-item><br>
+        </template>
+        <template v-if="contractModel.contractForm.originalType == 20 && changeDisabled">
+            <el-form-item label="代理商名称">
+                <el-input v-model="contractModel.contractForm.agentCompanyName" disabled style="width:450px;"></el-input>
+            </el-form-item>
         </template>
         <el-form-item label="客户归属" prop="original">
             <el-radio 
