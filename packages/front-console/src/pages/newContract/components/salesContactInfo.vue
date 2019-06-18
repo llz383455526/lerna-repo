@@ -4,7 +4,7 @@
       prop="contractPerson">
       <el-input v-model="contractModel.contractForm.contractPerson"
         style="width:450px;"
-        :disabled="changeDisabled"></el-input>
+        :disabled="isChange"></el-input>
     </el-form-item>
     <el-form-item label="销售联系邮箱"
       prop="contractEmail">
@@ -15,7 +15,7 @@
       prop="contractTel">
       <el-input v-model="contractModel.contractForm.contractTel"
         style="width:450px;"
-        :disabled="changeDisabled"></el-input>
+        :disabled="isChange"></el-input>
     </el-form-item>
     <el-form-item label="合同联系人地址"
       prop="contractAddr">
@@ -30,16 +30,16 @@
         :key="e.value"
         :label="e.value"
         @change="getOriginalTypeName"
-        :disabled="disableRadio || changeDisabled">{{e.text}}</el-radio>
+        :disabled="disableRadio || isChange">{{e.text}}</el-radio>
     </el-form-item><br>
-    <template v-if="contractModel.contractForm.originalType == 20 && !changeDisabled">
+    <template v-if="contractModel.contractForm.originalType == 20 && !isChange">
       <el-form-item label="代理商名称"
         prop="agentCompanyId">
         <el-select v-model="contractModel.contractForm.agentCompanyId"
           style="width: 450px;"
           filterable
           @change="agentChange"
-          :disabled="changeDisabled">
+          :disabled="isChange">
           <el-option v-for="e in optionModel.agentContractCompanyList"
             :key="e.companyId"
             :label="e.companyName"
@@ -47,7 +47,7 @@
         </el-select>
       </el-form-item><br>
     </template>
-    <template v-if="contractModel.contractForm.originalType == 20 && changeDisabled">
+    <template v-if="contractModel.contractForm.originalType == 20 && isChange">
       <el-form-item label="代理商名称">
         <el-input v-model="contractModel.contractForm.agentCompanyName"
           disabled
@@ -61,7 +61,7 @@
         :key="e.value"
         :label="e.value"
         @change="getOriginalName"
-        :disabled="disableRadio || changeDisabled">{{e.text}}</el-radio>
+        :disabled="disableRadio || isChange">{{e.text}}</el-radio>
     </el-form-item>
   </div>
 </template>
@@ -77,9 +77,8 @@ export default {
         ...mapGetters({
             userInformation: 'userInformation'
         }),
-        changeDisabled() {
-            const { workflowType } = this.contractModel
-            return workflowType === 'update_sale_contract' || workflowType === 'update_ns_sale_contract'
+        isChange() {
+            return this.contractModel.workflowType.indexOf('update') !== -1
         }
     },
     data() {
