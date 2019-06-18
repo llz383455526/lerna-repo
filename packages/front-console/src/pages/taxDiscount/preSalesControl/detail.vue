@@ -2,7 +2,7 @@
     <div>
         <el-form :inline="true" :model="searchForm" class="demo-form-inline" size="mini">
             <el-form-item label="企业名称">
-                <el-input v-model="searchForm.name" placeholder="查询，审合" clearable></el-input>
+                <el-input v-model="searchForm.name" placeholder="输入企业名称" clearable></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="searchBtnClick">查询</el-button>
