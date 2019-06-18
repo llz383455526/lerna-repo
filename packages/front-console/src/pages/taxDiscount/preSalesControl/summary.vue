@@ -6,7 +6,8 @@
                     v-model="searchForm.month"
                     type="month"
                     value-format="yyyy-MM"
-                    placeholder="选择月份">
+                    placeholder="选择月份"
+                    clearable>
                 </el-date-picker>
             </el-form-item>
             <el-form-item>
