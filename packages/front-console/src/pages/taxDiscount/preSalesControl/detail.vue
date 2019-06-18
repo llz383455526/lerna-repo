@@ -12,35 +12,35 @@
             :data="tableData"
             style="width: 100%">
             <el-table-column
-                prop="date"
+                prop="customerCompanyName"
                 label="企业名称">
             </el-table-column>
             <el-table-column
-                prop="date"
+                prop="approveTime"
                 label="审核时间">
             </el-table-column>
             <el-table-column
-                prop="date"
+                prop="highRiskIndustry"
                 label="A-高风险行业企业">
             </el-table-column>
             <el-table-column
-                prop="date"
+                prop="illegalRecordCompany"
                 label="B-有违法违规记录的企业">
             </el-table-column>
             <el-table-column
-                prop="date"
+                prop="applyBusinessNotSuit"
                 label="C-申请业务不适用众包产品">
             </el-table-column>
             <el-table-column
-                prop="date"
+                prop="applyBusinessInvoiceNotFit"
                 label="D-申请业务与发票类目不一致">
             </el-table-column>
             <el-table-column
-                prop="date"
+                prop="applyBusinessOutCompass"
                 label="E-申请业务超出落地公司经营范围或资质">
             </el-table-column>
             <el-table-column
-                prop="date"
+                prop="contractItemIllegal"
                 label="F-合同条款不符合法务/风控要求">
             </el-table-column>
         </el-table>
@@ -60,6 +60,7 @@
 </template>
 
 <script>
+    import { get, post } from "../../../store/api";
     export default {
         name: "detail",
         data() {
@@ -67,23 +68,7 @@
                 searchForm: {
                     name: ''
                 },
-                tableData: [{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
-                }],
+                tableData: [],
                 pageData: {
                     page: 1,
                     pageSize: 10,
@@ -93,13 +78,21 @@
         },
         methods: {
             searchBtnClick() {
+                post('/api/console-dlv/sales-before-risk/company-detail-list', {
+                    companyName: this.searchForm.name,
+                    "page": this.pageData.page,
+                    "pageSize": this.pageData.pageSize
+                }).then((data) => {
+                    this.tableData = data.list
+                    this.pageData.total = data.total
+                }).catch(() => {})
             },
-            handleSizeChange(page) {
-                this.pageData.page = page
+            handleSizeChange(pageSize) {
+                this.pageData.pageSize = pageSize
                 this.searchBtnClick()
             },
-            handleCurrentChange(pageSize) {
-                this.pageData.pageSize = pageSize
+            handleCurrentChange(page) {
+                this.pageData.page = page
                 this.searchBtnClick()
             }
         },

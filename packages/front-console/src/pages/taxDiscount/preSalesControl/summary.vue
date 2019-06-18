@@ -5,6 +5,7 @@
                 <el-date-picker
                     v-model="searchForm.month"
                     type="month"
+                    value-format="yyyy-MM"
                     placeholder="选择月份">
                 </el-date-picker>
             </el-form-item>
@@ -16,39 +17,39 @@
             :data="tableData"
             style="width: 100%">
             <el-table-column
-                prop="date"
+                prop="dateStr"
                 label="审批月份">
             </el-table-column>
             <el-table-column
-                prop="date"
+                prop="applyCompanyNum"
                 label="申请企业总量">
             </el-table-column>
             <el-table-column
-                prop="date"
+                prop="failDataNum"
                 label="不通过数据">
             </el-table-column>
             <el-table-column
-                prop="date"
+                prop="highRiskIndustryNum"
                 label="A-高风险行业企业">
             </el-table-column>
             <el-table-column
-                prop="date"
+                prop="illegalRecordCompanyNum"
                 label="B-有违法违规记录的企业">
             </el-table-column>
             <el-table-column
-                prop="date"
+                prop="applyBusinessNotSuitNum"
                 label="C-申请业务不适用众包产品">
             </el-table-column>
             <el-table-column
-                prop="date"
+                prop="applyBusinessInvoiceNotFitNum"
                 label="D-申请业务与发票类目不一致">
             </el-table-column>
             <el-table-column
-                prop="date"
+                prop="applyBusinessOutCompassNum"
                 label="E-申请业务超出落地公司经营范围或资质">
             </el-table-column>
             <el-table-column
-                prop="date"
+                prop="contractItemIllegalNum"
                 label="F-合同条款不符合法务/风控要求">
             </el-table-column>
         </el-table>
@@ -68,6 +69,7 @@
 </template>
 
 <script>
+    import { get, post } from "../../../store/api";
     export default {
         name: "detail",
         data() {
@@ -75,23 +77,7 @@
                 searchForm: {
                     month: ''
                 },
-                tableData: [{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
-                }],
+                tableData: [],
                 pageData: {
                     page: 1,
                     pageSize: 10,
@@ -101,13 +87,21 @@
         },
         methods: {
             searchBtnClick() {
+                post('/api/console-dlv/sales-before-risk/history-statistics-list', {
+                    dateStr: this.searchForm.month,
+                    "page": this.pageData.page,
+                    "pageSize": this.pageData.pageSize
+                }).then((data) => {
+                    this.tableData = data.list
+                    this.pageData.total = data.total
+                }).catch(() => {})
             },
-            handleSizeChange(page) {
-                this.pageData.page = page
+            handleSizeChange(pageSize) {
+                this.pageData.pageSize = pageSize
                 this.searchBtnClick()
             },
-            handleCurrentChange(pageSize) {
-                this.pageData.pageSize = pageSize
+            handleCurrentChange(page) {
+                this.pageData.page = page
                 this.searchBtnClick()
             }
         },
