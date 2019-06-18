@@ -136,7 +136,7 @@ class ContractModel extends BaseModel {
         this.getSettleType();
         this.getCustomNatureList();
         this.getVciPayTypeList();
-        this.getAgentList();
+        // this.getAgentList();
     }
     // 获取服务商名称列表
     getOptionServiceCompanies() {

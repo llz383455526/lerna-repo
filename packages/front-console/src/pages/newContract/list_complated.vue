@@ -1,17 +1,23 @@
 <template>
-<div class="main-container">
+  <div class="main-container">
     <div style="margin-bottom:30px;">合同申请审核管理</div>
 
-    <el-form :inline="true" :model="formSearch" ref="formSearch">
-        <el-form-item label="企业名称" size="small" prop="customerName">
-            <el-input v-model="formSearch.customerName"></el-input>
-        </el-form-item>
+    <el-form :inline="true"
+      :model="formSearch"
+      ref="formSearch">
+      <el-form-item label="企业名称"
+        size="small"
+        prop="customerName">
+        <el-input v-model="formSearch.customerName"></el-input>
+      </el-form-item>
 
-        <el-form-item label="申请人姓名" size="small" prop="createBy">
-            <el-input v-model="formSearch.createBy"></el-input>
-        </el-form-item>
+      <el-form-item label="申请人姓名"
+        size="small"
+        prop="createBy">
+        <el-input v-model="formSearch.createBy"></el-input>
+      </el-form-item>
 
-        <!-- <el-form-item label="服务商名称" size="small" prop="serviceCompanyName">
+      <!-- <el-form-item label="服务商名称" size="small" prop="serviceCompanyName">
             <el-input v-model="formSearch.serviceCompanyName"></el-input>
         </el-form-item>
 
@@ -29,49 +35,80 @@
             </el-select>
         </el-form-item> -->
 
-        <el-form-item style="margin-top: -4px">
-            <el-button type="primary" @click="search" size="small">查询</el-button>
-            <el-button size="small" @click="resetForm">清除</el-button>
-        </el-form-item>
+      <el-form-item style="margin-top: -4px">
+        <el-button type="primary"
+          @click="search"
+          size="small">查询</el-button>
+        <el-button size="small"
+          @click="resetForm">清除</el-button>
+      </el-form-item>
     </el-form>
 
     <!-- <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_sale_contract'}})">创建合同</el-button> -->
     <!-- <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_ns_sale_contract'}})">新客户非标准合同</el-button> -->
 
     <div class="table-container">
-        <el-table :data="tableList.data">
-            <el-table-column prop="id" label="申请编号"></el-table-column>
-            <el-table-column prop="customerName" label="企业名称"></el-table-column>
-            <el-table-column prop="createdByName" label="申请人"></el-table-column>
-            <el-table-column prop="updatedAt" label="提交时间"></el-table-column>
-            <el-table-column prop="processedAt" label="最后审批时间"></el-table-column>
-            <el-table-column label="合同类型">
-                <template slot-scope="scope">
+      <el-table :data="tableList.data">
+        <el-table-column prop="id"
+          label="申请编号"></el-table-column>
+        <el-table-column prop="customerName"
+          label="企业名称"></el-table-column>
+        <el-table-column prop="createdByName"
+          label="申请人"></el-table-column>
+        <el-table-column prop="updatedAt"
+          label="提交时间"></el-table-column>
+        <el-table-column prop="processedAt"
+          label="最后审批时间"></el-table-column>
+        <el-table-column prop="standardEnumString"
+          label="合同类型">
+          <!-- <template slot-scope="scope">
                     {{workflowTypeList[scope.row.workflowType] || '非标合同'}}
-                    <!-- {{scope.row.workflowType === 'create_sale_contract' ? '标准合同' : '非标准合同'}} -->
-                </template>
-            </el-table-column>
-            <el-table-column prop="statusName" label="申请状态">
-                <template slot-scope="scope">
-                    <span v-if="scope.row.statusName">{{scope.row.statusName}}</span>
-                    <span v-else-if="scope.row.status === 'init'">待提交</span>
-                </template>
-            </el-table-column>
+                </template> -->
+        </el-table-column>
+        <el-table-column prop="statusName"
+          label="申请状态">
+          <template slot-scope="scope">
+            <span v-if="scope.row.statusName">{{scope.row.statusName}}</span>
+            <span v-else-if="scope.row.status === 'init'">待提交</span>
+          </template>
+        </el-table-column>
 
-            <el-table-column label="操作" width="200">
-                <template slot-scope="scope">
-                    <el-button v-if="scope.row.status != 'draft'" @click="toPreview(scope.row.id, 'watch')" type="text" size="medium" style="padding:0;">查看</el-button>
-                    <el-button v-if="scope.row.status === 'init' || scope.row.status === 'draft'" @click="toCreate(scope.row.id, 'edit')" type="text" size="medium" style="padding:0;">编辑</el-button>
-                    <el-button v-if="scope.row.status === 'init' && scope.row.createdBy == userInformation.id" @click="toDetail(scope.row.id, 'watch')" type="text" size="medium" style="padding:0;">送审</el-button>
-                    <el-button v-if="scope.row.status === 'draft' || scope.row.status === 'init'" @click="closeContract(scope.row.id)" type="text" size="medium" style="padding:0;">删除</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
+        <el-table-column label="操作"
+          width="200">
+          <template slot-scope="scope">
+            <el-button v-if="scope.row.status != 'draft'"
+              @click="toPreview(scope.row.id, 'watch')"
+              type="text"
+              size="medium"
+              style="padding:0;">查看</el-button>
+            <el-button v-if="scope.row.status === 'init' || scope.row.status === 'draft'"
+              @click="toCreate(scope.row.id, 'edit')"
+              type="text"
+              size="medium"
+              style="padding:0;">编辑</el-button>
+            <el-button v-if="scope.row.status === 'init' && scope.row.createdBy == userInformation.id"
+              @click="toDetail(scope.row.id, 'watch')"
+              type="text"
+              size="medium"
+              style="padding:0;">送审</el-button>
+            <el-button v-if="scope.row.status === 'draft' || scope.row.status === 'init'"
+              @click="closeContract(scope.row.id)"
+              type="text"
+              size="medium"
+              style="padding:0;">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
     </div>
-    <ayg-pagination v-if="tableList.total" :total="tableList.total" v-on:handleSizeChange="handleSizeChange" :currentSize="pageSize" v-on:handleCurrentChange="handleCurrentChange" :currentPage="pageIndex"></ayg-pagination>
+    <ayg-pagination v-if="tableList.total"
+      :total="tableList.total"
+      v-on:handleSizeChange="handleSizeChange"
+      :currentSize="pageSize"
+      v-on:handleCurrentChange="handleCurrentChange"
+      :currentPage="pageIndex"></ayg-pagination>
 
-</div>
+  </div>
 </template>
 
 <script>
@@ -231,13 +268,13 @@ export default {
 
 <style lang="scss" scoped>
 .main-container {
-    background-color: #fff;
-    padding: 15px;
-    margin-bottom: 30px;
+  background-color: #fff;
+  padding: 15px;
+  margin-bottom: 30px;
 }
 
 .table-container {
-    width: 100%;
-    margin-top: 20px;
+  width: 100%;
+  margin-top: 20px;
 }
 </style>

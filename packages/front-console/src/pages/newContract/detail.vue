@@ -116,11 +116,15 @@ export default {
         this.checkCSign()
     })
   },
+  computed: {
+    isChange() {
+      return this.contractModel.workflowType.indexOf('update') !== -1
+    }
+  },
   methods: {
       // 校验C端签约
       checkCSign() {
-          if (this.contractModel.workflowType === 'update_sale_contract'
-                || this.contractModel.workflowType === 'update_ns_sale_contract') {
+          if (this.isChange) {
               return true
           }
           if (this.contractForm.isFromOutApp === '1') { return true }
@@ -198,10 +202,7 @@ export default {
             if (this.contractModel.workflowType === 'add_sale_contract') {
                 workflowType = 'add_sale_contract'
             }
-            if (this.contractModel.workflowType === 'update_ns_sale_contract') {
-                workflowType = 'update_sale_contract'
-            }
-            if (this.contractModel.workflowType === 'update_sale_contract') {
+            if (this.isChange) {
                 workflowType = 'update_sale_contract'
             }
             // 代理商新增
@@ -210,12 +211,6 @@ export default {
             }
             if (this.contractModel.workflowType === 'agent_add_sale_contract') {
                 workflowType = 'agent_add_sale_contract'
-            }
-            if (this.contractModel.workflowType === 'agent_update_ns_sale_contract') {
-                workflowType = 'agent_update_sale_contract'
-            }
-            if (this.contractModel.workflowType === 'agent_update_sale_contract') {
-                workflowType = 'agent_update_sale_contract'
             }
             // this.submitContract(this.contractModel.workflowType)
             this.submitContract(workflowType)
@@ -223,30 +218,21 @@ export default {
         if (this.contractForm.approveType == 'partial' || this.contractForm.approveType == 'customer') {
             // this.contractModel.workflowType = 'create_ns_sale_contract';
             let workflowType = 'create_ns_sale_contract'
-            if (this.contractModel.workflowType === 'update_sale_contract') {
-                workflowType = 'update_ns_sale_contract'
-            }
             if (this.contractModel.workflowType === 'add_sale_contract') {
                 workflowType = 'add_ns_sale_contract'
             }
             if (this.contractModel.workflowType === 'add_ns_sale_contract') {
                 workflowType = 'add_ns_sale_contract'
             }
-            if (this.contractModel.workflowType === 'update_ns_sale_contract') {
+            if (this.isChange) {
                 workflowType = 'update_ns_sale_contract'
             }
             // 代理商新增
-            if (this.contractModel.workflowType === 'agent_update_sale_contract') {
-                workflowType = 'agent_update_ns_sale_contract'
-            }
             if (this.contractModel.workflowType === 'agent_add_sale_contract') {
                 workflowType = 'agent_add_ns_sale_contract'
             }
             if (this.contractModel.workflowType === 'agent_add_ns_sale_contract') {
                 workflowType = 'agent_add_ns_sale_contract'
-            }
-            if (this.contractModel.workflowType === 'agent_update_ns_sale_contract') {
-                workflowType = 'agent_update_ns_sale_contract'
             }
             this.submitContract(workflowType);
         }
