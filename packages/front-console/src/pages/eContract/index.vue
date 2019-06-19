@@ -217,15 +217,15 @@
 						value: '0'
 					},
 					{
-						text: '认证失败',
+						text: '上传失败',
 						value: '1'
 					},
 					{
-						text: '认证成功',
+						text: '上传成功',
 						value: '2'
 					},
 					{
-						text: '不需要上传',
+						text: '不需上传',
 						value: '3'
 					}
 				],

@@ -609,6 +609,7 @@ export default {
                         var formData = new FormData()
                         formData.append('templateId', this.form.templateId)
                         formData.append('fileName', this.file.name)
+                        formData.append('platform', this.form.platform)
                         formData.append('file', this.file.raw)
                         formData.append('personalPartyNum', this.form.partys[1].signNo)
                         formData.append('companyPartyNum', companyPartyNum)

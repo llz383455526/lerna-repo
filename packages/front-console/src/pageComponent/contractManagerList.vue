@@ -30,11 +30,11 @@
             <el-table-column label="合同原件">
                 <template slot-scope="scope">
                     <div v-if="scope.row.templateId">
-                        <a target="_bank" :href="`/api/econtract/template/download?fileName=${scope.row.fname}`">{{scope.row.fname}}</a>
+                        <a target="_bank" :href="`/api/econtract/template/download?templateId=${scope.row.templateId}`">{{scope.row.fname}}</a>
                     </div>
                     <div v-else>
-                        <div v-for="item in scope.row.templateFileNames">
-                            <a target="_bank" :href="`/api/econtract/template/download?fileName=${item}`">{{item}}</a>
+                        <div v-for="(item, index) in scope.row.templateFileNames">
+                            <a target="_bank" :href="`/api/econtract/template/download?templateId=${scope.row.templateIds[index]}`">{{item}}</a>
                         </div>
                     </div>
                 </template>
@@ -281,7 +281,7 @@ export default {
                 this.copyForm.height = data.height
                 this.copyForm.width = data.width
                 this.copyForm.pageSize = data.pageSize
-                
+
                 var formData = new FormData()
                 formData.append('templateId', this.copyForm.templateId)
                 formData.append('fileName', a.name)

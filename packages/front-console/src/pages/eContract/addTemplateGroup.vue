@@ -100,7 +100,7 @@
                         </el-table-column>
                         <el-table-column label="合同原件" prop="fname">
                             <template slot-scope="scope">
-                                <a :href="`${baseUrl}/api/econtract/template/download?fileName=${scope.row.fname}`" target="_blank">{{scope.row.fname}}</a>
+                                <a :href="`${baseUrl}/api/econtract/template/download?templateId=${scope.row.templateId}`" target="_blank">{{scope.row.fname}}</a>
                             </template>
                         </el-table-column>
 
