@@ -1,7 +1,7 @@
 <template>
     <div class="main-container">
         <el-tabs>
-            <el-tab-pane label="企业明细" name="0">
+            <el-tab-pane label="企业拒绝记录" name="0">
                 <w-detail />
             </el-tab-pane>
             <el-tab-pane label="历史汇总" name="1">

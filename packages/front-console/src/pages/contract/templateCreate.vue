@@ -1,126 +1,205 @@
 <template>
 
-    <div class="bg-white p15">
-        <el-form :model="templateForm" :rules="rules" ref="templateForm" label-width="200px" class="demo-contractForm">
-            <h4 class="ml50">基本信息</h4>
-            <div v-if="editable">
-                <el-form-item label="模版类型" prop="tplType" required>
-                    <el-select v-model="templateForm.tplType" placeholder="请选择" style="width:100%;">
-                        <el-option v-for="item in searchOptions.ContractTplType" :key="item.value" :label="item.text"
-                                   :value="item.value"></el-option>
-                    </el-select>
-                </el-form-item>
+  <div class="bg-white p15">
+    <el-form :model="templateForm"
+      :rules="rules"
+      ref="templateForm"
+      label-width="200px"
+      class="demo-contractForm">
+      <h4 class="ml50">基本信息</h4>
+      <div v-if="editable">
+        <el-form-item label="模版类型"
+          prop="tplType"
+          required>
+          <el-select v-model="templateForm.tplType"
+            placeholder="请选择"
+            style="width:100%;">
+            <el-option v-for="item in searchOptions.ContractTplType"
+              :key="item.value"
+              :label="item.text"
+              :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
 
-                <el-form-item label="行业类型" prop="industryTypes">
-                    <el-checkbox-group v-model="templateForm.industryTypes">
-                        <el-checkbox v-for="item in searchOptions.IndustryType" :key="item.value" :label="item.text"
-                        ></el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
+        <el-form-item label="行业类型"
+          prop="industryTypes">
+          <el-checkbox-group v-model="templateForm.industryTypes">
+            <el-checkbox v-for="item in searchOptions.IndustryType"
+              :key="item.value"
+              :label="item.text"></el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
 
-                <!-- <el-form-item label="合同类型" prop="tplType" required>
+        <!-- <el-form-item label="合同类型" prop="tplType" required>
                     <el-select v-model="templateForm.tplType" placeholder="请选择" style="width:100%;">
                         <el-option v-for="item in searchOptions.ContractTplType" :key="item.value" :label="item.text"
                                    :value="item.value"></el-option>
                     </el-select>
                 </el-form-item> -->
 
-                <el-form-item label="合同备注" prop="remark">
-                    <el-input type="textarea" v-model="templateForm.remark"></el-input>
-                </el-form-item>
+        <el-form-item label="适用渠道"
+          prop="allAgent">
+          <el-radio-group v-model="templateForm.allAgent">
+            <el-radio label="1">全部</el-radio>
+            <el-radio label="0">指定渠道</el-radio>
+          </el-radio-group>
+        </el-form-item>
 
-                <el-form-item label="适用情况" prop="usage">
-                    <el-input type="textarea" v-model="templateForm.usage"></el-input>
-                </el-form-item>
+        <el-form-item prop="agentCompanyIds"
+          v-if="templateForm.allAgent === '0'">
+          <el-select v-model="templateForm.agentCompanyIds"
+            style="width: 100%;"
+            multiple
+            filterable>
+            <el-option v-for="item in agentCompanyIdsList"
+              :key="item.agentCompanyId"
+              :value="item.agentCompanyId"
+              :label="item.agentCompanyName"></el-option>
+          </el-select>
+        </el-form-item>
 
-                <el-form-item label="是否有效" prop="status">
-                    <el-radio-group v-model="templateForm.status">
-                        <el-radio v-for="item in searchOptions.ValidationType" :key="item.value" :label="item.text"></el-radio>
-                    </el-radio-group>
-                </el-form-item>
-            </div>
-            <div v-else>
-                <el-form-item label="模版类型">
-                    <span>{{templateDetail.tplTypeName}}</span>
-                </el-form-item>
-                <el-form-item label="行业类型">
-                    <span>{{templateDetail.industryTypeNames}}</span>
-                </el-form-item>
-                <el-form-item label="合同备注">
-                    <div v-for="(item, key) in templateDetail.remark" :key="key">{{item}}</div>
-                </el-form-item>
-                <el-form-item label="适用情况">
-                    <div v-for="(item, key) in templateDetail.usage" :key="key">{{item}}</div>
-                </el-form-item>
-                <el-form-item label="是否有效">
-                    <span>{{templateForm.status}}</span>
-                </el-form-item>
-            </div>
+        <el-form-item label="合同备注"
+          prop="remark">
+          <el-input type="textarea"
+            v-model="templateForm.remark"></el-input>
+        </el-form-item>
 
-            <h4 class="ml50 mt50">解决方案</h4>
-            <el-button class="ml50" size="small" type="primary" @click="show = true">点击上传</el-button>
+        <el-form-item label="适用情况"
+          prop="usage">
+          <el-input type="textarea"
+            v-model="templateForm.usage"></el-input>
+        </el-form-item>
 
-            <div class="pl50 mb50">
-                <el-table :data="fileList">
-                    <el-table-column prop="fileName" label="文件名称"></el-table-column>
-                    <el-table-column prop="tplAttachTypeName" label="文件类型"></el-table-column>
-                    <el-table-column prop="createTime" label="上传时间">
-                        <template slot-scope="scope">
-                            <span>{{scope.row.createTime | formatTime}}</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="createByName" label="操作人"></el-table-column>
-                    <el-table-column label="操作">
-                        <template slot-scope="scope">
-                            <el-button @click="handleDownload(scope.row.downloadCode)" type="text" size="medium"
-                                       style="padding:0;">下载
-                            </el-button>
-                            <el-button  type="text" size="medium" v-if="editable"
-                                        style="padding:0;" @click="openDeleteDialog(scope.row.downloadCode, scope.$index)">删除
-                            </el-button>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </div>
+        <el-form-item label="是否有效"
+          prop="status">
+          <el-radio-group v-model="templateForm.status">
+            <el-radio v-for="item in searchOptions.ValidationType"
+              :key="item.value"
+              :label="item.text"></el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </div>
+      <div v-else>
+        <el-form-item label="模版类型">
+          <span>{{templateDetail.tplTypeName}}</span>
+        </el-form-item>
+        <el-form-item label="行业类型">
+          <span>{{templateDetail.industryTypeNames}}</span>
+        </el-form-item>
+        <el-form-item label="适用渠道">
+          <span>{{templateDetail.allAgent === '0' ? '指定渠道' : '全部'}}</span>
+        </el-form-item>
+        <el-form-item label="指定渠道"
+          v-if="templateDetail.allAgent === '0'">
+          <div class="el-select">
+            <span class="el-tag"
+              v-for="(item,key) in templateDetail.agentCompanyRefList"
+              :key="key">{{item.agentCompanyName}}</span>
+          </div>
 
-            <el-form-item v-if="editable">
-                <el-button type="primary" @click="submitForm('templateForm')">保存</el-button>
-                <el-button @click="backToList">取消</el-button>
-            </el-form-item>
-            <el-form-item v-else>
-                <el-button @click="backToListTwo">返回</el-button>
-            </el-form-item>
-            <el-dialog title="选择文件类型" :visible.sync="show" width="500px">
-                <el-form-item label="文件类型" prop="tplAttachType" required label-width="120px">
-                    <el-radio v-model="templateForm.tplAttachType" v-for="e in tplList" :label="e.value" :key="e.value">{{e.text}}</el-radio>
-                </el-form-item>
-                <span slot="footer">
-                    <el-button size="small" @click="show = false">取消</el-button>
-                    <el-upload
-                            v-if="editable"
-                            class="upload-demo ml20"
-                            :action=uploadUrl
-                            :on-error="handleError"
-                            :before-upload="handleBeforeUpload"
-                            :http-request="handleHttpRequest"
-                            multiple
-                            accept=".docx, .xlsx, .xls"
-                            :show-file-list=false
-                            :file-list="fileList">
-                        <el-button size="small" type="primary">点击上传</el-button>
-                    </el-upload>
-                </span>
-            </el-dialog>
-        </el-form>
+        </el-form-item>
+        <el-form-item label="合同备注">
+          <div v-for="(item, key) in templateDetail.remark"
+            :key="key">{{item}}</div>
+        </el-form-item>
+        <el-form-item label="适用情况">
+          <div v-for="(item, key) in templateDetail.usage"
+            :key="key">{{item}}</div>
+        </el-form-item>
+        <el-form-item label="是否有效">
+          <span>{{templateForm.status}}</span>
+        </el-form-item>
+      </div>
 
-        <el-dialog :visible.sync="dialogVisible" width="30%">
-            <span>确认删除该合同文件吗？</span>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="handleDelete">确 定</el-button>
-            </div>
-        </el-dialog>
-    </div>
+      <h4 class="ml50 mt50">解决方案</h4>
+      <el-button class="ml50"
+        size="small"
+        type="primary"
+        @click="show = true">点击上传</el-button>
+
+      <div class="pl50 mb50">
+        <el-table :data="fileList">
+          <el-table-column prop="fileName"
+            label="文件名称"></el-table-column>
+          <el-table-column prop="tplAttachTypeName"
+            label="文件类型"></el-table-column>
+          <el-table-column prop="createTime"
+            label="上传时间">
+            <template slot-scope="scope">
+              <span>{{scope.row.createTime | formatTime}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="createByName"
+            label="操作人"></el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button @click="handleDownload(scope.row.downloadCode)"
+                type="text"
+                size="medium"
+                style="padding:0;">下载
+              </el-button>
+              <el-button type="text"
+                size="medium"
+                v-if="editable"
+                style="padding:0;"
+                @click="openDeleteDialog(scope.row.downloadCode, scope.$index)">删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+      <el-form-item v-if="editable">
+        <el-button type="primary"
+          @click="submitForm('templateForm')">保存</el-button>
+        <el-button @click="backToList">取消</el-button>
+      </el-form-item>
+      <el-form-item v-else>
+        <el-button @click="backToListTwo">返回</el-button>
+      </el-form-item>
+      <el-dialog title="选择文件类型"
+        :visible.sync="show"
+        width="500px">
+        <el-form-item label="文件类型"
+          prop="tplAttachType"
+          required
+          label-width="120px">
+          <el-radio v-model="templateForm.tplAttachType"
+            v-for="e in tplList"
+            :label="e.value"
+            :key="e.value">{{e.text}}</el-radio>
+        </el-form-item>
+        <span slot="footer">
+          <el-button size="small"
+            @click="show = false">取消</el-button>
+          <el-upload v-if="editable"
+            class="upload-demo ml20"
+            :action=uploadUrl
+            :on-error="handleError"
+            :before-upload="handleBeforeUpload"
+            :http-request="handleHttpRequest"
+            multiple
+            accept=".docx, .xlsx, .xls, .pdf"
+            :show-file-list=false
+            :file-list="fileList">
+            <el-button size="small"
+              type="primary">点击上传</el-button>
+          </el-upload>
+        </span>
+      </el-dialog>
+    </el-form>
+
+    <el-dialog :visible.sync="dialogVisible"
+      width="30%">
+      <span>确认删除该合同文件吗？</span>
+      <div slot="footer"
+        class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary"
+          @click="handleDelete">确 定</el-button>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -131,6 +210,7 @@
 	import { baseUrl } from '../../config/address'
 
 	import { showNotify } from '../../plugin/utils-notify'
+import { mapGetters } from 'vuex';
 
 	export default {
 		created() {
@@ -146,6 +226,12 @@
                 this.tplList = data
                 this.templateForm.tplAttachType = data[0].value
             })
+            this.$store.dispatch('getAgentCompanyIdsList')
+        },
+        computed: {
+            agentCompanyIdsList() {
+                return this.$store.getters.agentCompanyIdsList
+            }
         },
         data() {
 			return {
@@ -159,7 +245,9 @@
 	                usage: '',
                     status: '有效',
                     attachments: [],
-                    tplAttachType: ''
+                    tplAttachType: '',
+                    allAgent: '',
+                    agentCompanyIds: []
                 },
 				rules: {
 					contractType: [
@@ -177,6 +265,12 @@
                     ],
 					status: [
 						{ required: true, message: '请选择有效状态', trigger: 'change' }
+                    ],
+                    allAgent: [
+                        { required: true, message: '请选择适用渠道', trigger: 'change' }
+                    ],
+                    agentCompanyIds: [
+                        { required: true, message: '请选择指定渠道', trigger: 'change' }
                     ]
                 },
 				uploadUrl: '',
@@ -218,7 +312,7 @@
                             referId: attachment.id,
                             tplAttachType: attachment.tplAttachType
                         })
-                        console.log(this.templateForm.attachments)
+                        // console.log(this.templateForm.attachments)
 			        })
 
                     this.templateForm = {
@@ -228,7 +322,9 @@
 	                    remark: result.remark,
                         usage: result.usage,
                         status: _.find(this.searchOptions.ValidationType, item => item.value === result.status).text,
-                        attachments: this.templateForm.attachments
+                        attachments: this.templateForm.attachments,
+                        allAgent: result.allAgent,
+                        agentCompanyIds: result.agentCompanyIds,
                     }
 		        })
 	        },
@@ -250,7 +346,7 @@
 		        this.referArr.push(file.data.referId)
 	        },*/
 	        handleBeforeUpload(file) {
-		        const AllImgExt = ".docx, .xlsx, .xls";
+		        const AllImgExt = ".docx, .xlsx, .xls, .pdf";
 		        let extName = file.name.substring(file.name.lastIndexOf(".")).toLowerCase()
 		        if (AllImgExt.indexOf(extName) < 0) {
 			        showNotify('error', '文件类型错误')
@@ -345,16 +441,16 @@
 </script>
 
 <style lang="scss" scoped>
-    .demo-contractForm {
-        width: 800px;
-    }
-    .el-checkbox {
-        margin-right: 15px;
-    }
-    .ml20 {
-        margin-left: 20px;
-    }
-    .upload-demo {
-        display: inline-block;
-    }
+.demo-contractForm {
+  width: 800px;
+}
+.el-checkbox {
+  margin-right: 15px;
+}
+.ml20 {
+  margin-left: 20px;
+}
+.upload-demo {
+  display: inline-block;
+}
 </style>

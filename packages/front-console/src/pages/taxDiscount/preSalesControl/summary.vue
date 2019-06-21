@@ -11,7 +11,7 @@
                 </el-date-picker>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="searchBtnClick">查询</el-button>
+                <el-button type="primary" @click="searchBtnClick(true)">查询</el-button>
             </el-form-item>
         </el-form>
         <el-table
@@ -87,7 +87,10 @@
             }
         },
         methods: {
-            searchBtnClick() {
+            searchBtnClick(reload) {
+                if (reload) {
+                    this.pageData.page = 1
+                }
                 post('/api/console-dlv/sales-before-risk/history-statistics-list', {
                     dateStr: this.searchForm.month,
                     "page": this.pageData.page,

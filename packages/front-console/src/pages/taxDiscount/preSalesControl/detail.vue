@@ -5,7 +5,7 @@
                 <el-input v-model="searchForm.name" placeholder="输入企业名称" clearable></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="searchBtnClick">查询</el-button>
+                <el-button type="primary" @click="searchBtnClick(true)">查询</el-button>
             </el-form-item>
         </el-form>
         <el-table
@@ -14,6 +14,10 @@
             <el-table-column
                 prop="customerCompanyName"
                 label="企业名称">
+            </el-table-column>
+            <el-table-column
+                prop="approveName"
+                label="审核人">
             </el-table-column>
             <el-table-column
                 prop="approveTime"
@@ -77,7 +81,10 @@
             }
         },
         methods: {
-            searchBtnClick() {
+            searchBtnClick(reload) {
+                if (reload) {
+                    this.pageData.page = 1
+                }
                 post('/api/console-dlv/sales-before-risk/company-detail-list', {
                     companyName: this.searchForm.name,
                     "page": this.pageData.page,

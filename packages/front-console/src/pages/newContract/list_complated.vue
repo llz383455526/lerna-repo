@@ -61,9 +61,10 @@
           label="最后审批时间"></el-table-column>
         <el-table-column prop="standardEnumString"
           label="合同类型">
-          <!-- <template slot-scope="scope">
-                    {{workflowTypeList[scope.row.workflowType] || '非标合同'}}
-                </template> -->
+          <template slot-scope="scope">
+            {{ scope.row.workflowType.indexOf('ns') === -1 ? '标准合同' : '非标合同' }}
+            <!-- {{workflowTypeList[scope.row.workflowType] || '非标合同'}} -->
+          </template>
         </el-table-column>
         <el-table-column prop="statusName"
           label="申请状态">

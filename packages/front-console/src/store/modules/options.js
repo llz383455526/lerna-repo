@@ -1,4 +1,4 @@
-import {post, get} from '../api'
+import { post, get } from '../api'
 
 const url = {
     customerCompaniesList: '/api/console-dlv/option/get-option-customer-companies',
@@ -19,6 +19,7 @@ const url = {
     invitationStateList: '/api/contract-web/commom/option?enumType=InvitationState',
     serviceTypeOptions: '/api/contract-web/commom/service-type-options',
     contractGenInvoiceType: '/api/contract-web/commom/option?enumType=ContractGenInvoiceType',
+    agentCompanyIdsList: '/api/sysmgr-web/commom/agent-company-options',
 }
 
 const store = {
@@ -45,6 +46,7 @@ const store = {
         invitationStateList: [], // 邀请状态
         serviceTypeOptions: [], // 服务类型
         contractGenInvoiceType: [], // 发票类型
+        agentCompanyIdsList: [], // 
     },
     getters: {
         customerCompaniesList: state => state.customerCompaniesList,
@@ -65,6 +67,7 @@ const store = {
         invitationStateList: state => state.invitationStateList,
         serviceTypeOptions: state => state.serviceTypeOptions,
         contractGenInvoiceType: state => state.contractGenInvoiceType,
+        agentCompanyIdsList: state => state.agentCompanyIdsList,
     },
     mutations: {
         setCustomerCompaniesList(state, payload) {
@@ -118,63 +121,66 @@ const store = {
         setContractGenInvoiceType(state, payload) {
             state.contractGenInvoiceType = payload
         },
+        setAgentCompanyIdsList(state, payload) {
+            state.agentCompanyIdsList = payload
+        }
     },
     actions: {
-        getCustomerCompaniesList({commit} ) {
+        getCustomerCompaniesList({ commit }) {
             get(url.customerCompaniesList).then(res => {
-                commit('setCustomerCompaniesList',res)
+                commit('setCustomerCompaniesList', res)
             })
         },
-        getCompanyIdentityListForAdd({commit}) {
+        getCompanyIdentityListForAdd({ commit }) {
             get(url.companyIdentityListForAdd).then(res => {
                 commit('setCompanyIndentityList', res)
             })
         },
-        getCompanyIdentityListForUpdate({commit}) {
+        getCompanyIdentityListForUpdate({ commit }) {
             get(url.companyIdentityListForUpdate).then(res => {
                 commit('setCompanyIndentityList', res)
             })
         },
-        getCustomerServiceCompanyList({commit}, param) {
-            get(url.customerServiceCompanyList+param).then(res => {
+        getCustomerServiceCompanyList({ commit }, param) {
+            get(url.customerServiceCompanyList + param).then(res => {
                 commit('setCustomerServiceCompanyList', res)
             })
         },
-        getContractTplList({commit}) {
+        getContractTplList({ commit }) {
             get(url.contractTplList).then(res => {
                 commit('setContractTplList', res)
             })
         },
-        getIndustryTypeList({commit}) {
+        getIndustryTypeList({ commit }) {
             get(url.industryTypeList).then(res => {
                 commit('setIndustryTypeList', res)
             })
         },
-        async getServiceTypeList({commit}) {
+        async getServiceTypeList({ commit }) {
             const data = await get(url.serviceTypeList)
             commit('setServiceTypeList', data)
         },
-        getOriginalTypeList({commit}) {
+        getOriginalTypeList({ commit }) {
             get(url.originalTypeList).then(res => {
                 commit('setOriginalTypeList', res)
             })
         },
-        getOriginalsList({commit}) {
+        getOriginalsList({ commit }) {
             get(url.originalsList).then(res => {
                 commit('setOriginalsList', res)
             })
         },
-        getInvoiceTypeList({commit}) {
+        getInvoiceTypeList({ commit }) {
             get(url.invoiceTypeList).then(res => {
                 commit('setInvoiceTypeList', res)
             })
         },
-        getVciPayTypeList({commit}) {
+        getVciPayTypeList({ commit }) {
             get(url.vciPayTypeList).then(res => {
                 commit('setVciPayTypeList', res)
             })
         },
-        getServiceCompaniesList({commit}, agentCompanyId) {
+        getServiceCompaniesList({ commit }, agentCompanyId) {
             const param = agentCompanyId == null ? {} : {
                 agentCompanyId
             };
@@ -182,17 +188,17 @@ const store = {
                 commit('setServiceCompaniesList', res)
             })
         },
-        getSettleTypeList({commit}) {
+        getSettleTypeList({ commit }) {
             get(url.settleTypeList).then(res => {
                 commit('setSettleTypeList', res)
             })
         },
-        getAgentList({commit}) {
+        getAgentList({ commit }) {
             get(url.agentList).then(res => {
                 commit('setAgentList', res)
             })
         },
-        getServerConfigList({commit}) {
+        getServerConfigList({ commit }) {
             return new Promise((resolve) => {
                 get(url.serverConfigList).then(res => {
                     commit('setServerConfigList', res)
@@ -200,19 +206,24 @@ const store = {
                 })
             })
         },
-        getInvitationStateList({commit}) {
+        getInvitationStateList({ commit }) {
             get(url.invitationStateList).then(res => {
                 commit('setInvitationStateList', res)
             })
         },
-        getServiceTypeOptions({commit}) {
+        getServiceTypeOptions({ commit }) {
             get(url.serviceTypeOptions).then(res => {
                 commit('setServiceTypeOptions', res)
             })
         },
-        getContractGenInvoiceType({commit}) {
+        getContractGenInvoiceType({ commit }) {
             get(url.contractGenInvoiceType).then(res => {
                 commit('setContractGenInvoiceType', res)
+            })
+        },
+        getAgentCompanyIdsList({ commit }) {
+            get(url.agentCompanyIdsList).then(res => {
+                commit('setAgentCompanyIdsList', res)
             })
         },
     },

@@ -1,19 +1,30 @@
 <template>
-    <div>
-        <h3 class="green">请添加落地公司
-            <el-button size="small" type="primary" @click="$refs['dialog'].showDialog()">添加</el-button>
-        </h3>
-        <div class="mb25">{{form.contract.datas.agentCompanyBaseInfo.agentType === 'agent' ? '*报价规则：返佣规则（实发*费率）' : '*报价规则：底价结算（客户报价-渠道结算价）'}}</div>
-        <el-form ref="serviceFeeContent" :model="form.contract.datas.agentContract" :inline="true">
-            <serviceFeeContent v-for="(item, key) in form.contract.datas.agentContract.serviceCompanyFeeContentList" :key="key" :serviceFeeContent="item" :propName="`serviceCompanyFeeContentList.${key}.`" @formDel="formDel"></serviceFeeContent>
-        </el-form>
-        <serviceDialog :companyId="form.contract.datas.agentCompanyBaseInfo.id" @save="formAdd" ref="dialog"></serviceDialog>
-        <div style="text-align: right;">
-            <el-button @click="$router.push('list')">返回</el-button>
-            <el-button @click="$emit('prev')">上一步</el-button>
-            <el-button type="primary" @click="submitForm">下一步</el-button>
-        </div>
+  <div>
+    <h3 class="green">请添加落地公司
+      <el-button size="small"
+        type="primary"
+        @click="$refs['dialog'].showDialog()">添加</el-button>
+    </h3>
+    <div class="mb25">{{form.contract.datas.agentCompanyBaseInfo.agentType === 'agent' ? '*报价规则：返佣规则（实发*费率）' : '*报价规则：底价结算（客户报价-渠道结算价）'}}</div>
+    <el-form ref="serviceFeeContent"
+      :model="form.contract.datas.agentContract"
+      :inline="true">
+      <serviceFeeContent v-for="(item, key) in form.contract.datas.agentContract.serviceCompanyFeeContentList"
+        :key="key"
+        :serviceFeeContent="item"
+        :propName="`serviceCompanyFeeContentList.${key}.`"
+        @formDel="formDel(key)"></serviceFeeContent>
+    </el-form>
+    <serviceDialog :companyId="form.contract.datas.agentCompanyBaseInfo.id"
+      @save="formAdd"
+      ref="dialog"></serviceDialog>
+    <div style="text-align: right;">
+      <el-button @click="$router.push('list')">返回</el-button>
+      <el-button @click="$emit('prev')">上一步</el-button>
+      <el-button type="primary"
+        @click="submitForm">下一步</el-button>
     </div>
+  </div>
 </template>
 
 <script>
