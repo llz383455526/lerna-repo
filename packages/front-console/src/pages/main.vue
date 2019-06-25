@@ -2,35 +2,13 @@
     <div class="main-container2">
         <div class="top-menu">
             <div class="menu-container">
-                <el-menu class="login-menu-wrap"
-                         text-color="rgba(255, 255, 255, .7)"
-                         active-text-color="#fff"
-                         mode="horizontal"
-                         @select="handleSelect"
-                         background-color="#0283fb" style="float:right;margin-right: 50px;">
-                    <el-submenu index="0">
-                        <template slot="title">{{userInformation.name}}</template>
-                        <!--<el-menu-item index="0-1" style="min-width: 100px">账户中心</el-menu-item>-->
-                        <el-menu-item index="modify-pass" style="min-width: 100px">修改密码</el-menu-item>
-                        <el-menu-item index="logout" style="min-width: 100px">退出登录</el-menu-item>
-                    </el-submenu>
-                </el-menu>
-                <div style="float:right;width: 28px;margin-top: 15px; margin-left: 35px;margin-right: 15px;">
-                    <img src="../image/ic-person-avatar.png" style="width: 100%; border-radius: 50%"/>
-                </div>
-                <!--<div @click="messageClick" style="float: right;cursor: pointer">-->
-                    <!--<el-badge :value="userTaskCount" :max="99" background-color="#3582e2"-->
-                              <!--style="margin-left:20px; margin-top: 18px;">-->
-                        <!--<i class="el-icon-bell" width="16" style="width: 16px;color: white"></i>-->
-                    <!--</el-badge>-->
-                <!--</div>-->
-                <i @click="search" slot="prefix" class="el-input__icon el-icon-search"
-                   style="float: right;color: white;margin-top: 20px;cursor: pointer;display: none"></i>
-                <el-menu style="float: right" v-if="principalMenu&&principalMenu.length!=0"
+                    <el-menu v-if="principalMenu&&principalMenu.length!=0"
                          :default-active="activeIndex"
                          text-color="rgba(255, 255, 255, .7)"
                          active-text-color="#fff"
                          mode="horizontal"
+                         id="test"
+                         style="display:flex; flex-flow: row wrap;justify-content:flex-end;flex-grow:1;"
                          @select="handleSelect" background-color="#0283fb">
                     <div v-for="item in principalMenu" :key="item.orderSeq" style="display: inline-block">
                         <el-menu-item v-if="item.children.length==0" :index="buildMenuIndex(item.orderSeq)">{{item.title}}</el-menu-item>
@@ -42,6 +20,33 @@
                         </el-submenu>
                     </div>
                 </el-menu>
+                <div class="user-profile">
+                    <!-- <i @click="search" slot="prefix" class="el-input__icon el-icon-search"
+                    style="float: right;color: white;margin-top: 20px;cursor: pointer;display: none"></i> -->
+                    <img src="../image/ic-person-avatar.png" class="avator"/>
+                    <el-menu class="login-menu-wrap"
+                            text-color="rgba(255, 255, 255, .7)"
+                            active-text-color="#fff"
+                            mode="horizontal"
+                            @select="handleSelect"
+                            background-color="#0283fb">
+                        <el-submenu index="0">
+                            <template slot="title">{{userInformation.name}}</template>
+                            <!--<el-menu-item index="0-1" style="min-width: 100px">账户中心</el-menu-item>-->
+                            <el-menu-item index="modify-pass" style="min-width: 100px">修改密码</el-menu-item>
+                            <el-menu-item index="logout" style="min-width: 100px">退出登录</el-menu-item>
+                        </el-submenu>
+                    </el-menu>
+                </div>
+                
+                <!--<div @click="messageClick" style="float: right;cursor: pointer">-->
+                    <!--<el-badge :value="userTaskCount" :max="99" background-color="#3582e2"-->
+                              <!--style="margin-left:20px; margin-top: 18px;">-->
+                        <!--<i class="el-icon-bell" width="16" style="width: 16px;color: white"></i>-->
+                    <!--</el-badge>-->
+                <!--</div>-->
+                
+                
             </div>
         </div>
 
@@ -280,39 +285,48 @@ export default {
 
 .top-menu {
   width: 100%;
-  height: 60px;
   background-color: $basic-green;
-  position: relative;
-  overflow-x: auto;
-  overflow-y: hidden;
   .menu-container {
-    // position: absolute;
-    right: 0;
-    min-width: 1460px;
-    overflow: auto;
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
 
-    .login-menu-wrap {
-      .el-menu {
-        width: 80px;
-        .el-menu-item {
-          width: 100%;
-          min-width: unset;
+
+    .user-profile {
+        flex: 0 0 auto;
+        display: flex;
+        flex-flow: row nowrap;
+        .login-menu-wrap {
+            .el-menu {
+                width: 80px;
+                .el-menu-item {
+                width: 100%;
+                min-width: unset;
+                }
+            }
+            .el-submenu__title {
+                padding: 0 30px;
+            }
         }
-      }
-      .el-submenu__title {
-        padding: 0 30px;
-      }
+        .avator {
+            display:inline-block;
+            width: 28px;
+            height:28px;
+            margin-top: 17px;
+            border-radius: 50%;
+            flex: 0 0 auto;
+        }
     }
   }
 }
 
 #container {
-  position: absolute;
   width: 100%;
-  bottom: 0;
-  top: 55px;
   overflow: auto;
   background-color: $bg-color;
+  position: relative;
+  top: -1px;
 
   #mainContainer {
     position: relative;
@@ -335,6 +349,7 @@ export default {
 .el-dialog__body {
 	text-align: left;
 }
+
 </style>
 
 
