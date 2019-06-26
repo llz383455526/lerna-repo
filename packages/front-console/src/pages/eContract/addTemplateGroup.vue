@@ -972,6 +972,7 @@
 
 	                        formData.append('personalPartyNum', personalPartyNum)
 	                        formData.append('companyPartyNum', companyPartyNum)
+                            formData.append('platform', templateModel.platform)
 
 	                        importPost('/api/econtract/template/uploadfile', formData)
 		                        .then(result => {
