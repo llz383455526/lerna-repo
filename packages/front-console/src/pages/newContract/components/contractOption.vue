@@ -120,7 +120,7 @@
             }
         },
         mounted() {
-            this.$store.dispatch('getContractTplList')
+            this.$store.dispatch('getContractTplList', this.contractModel.contractForm.agentCompanyId)
             this.$store.dispatch('getIndustryTypeList')
             this.fillValue()
         }

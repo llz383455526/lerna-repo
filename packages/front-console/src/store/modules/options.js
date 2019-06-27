@@ -146,8 +146,15 @@ const store = {
                 commit('setCustomerServiceCompanyList', res)
             })
         },
-        getContractTplList({ commit }) {
-            get(url.contractTplList).then(res => {
+        getContractTplList({ commit }, agentCompanyId) {
+            // get(url.contractTplList).then(res => {
+            //     commit('setContractTplList', res)
+            // })
+            const params = {
+                tplType: 'client',
+                agentCompanyId: agentCompanyId === null ? '' : agentCompanyId || ''
+            }
+            get('/api/contract-web/contract-tpl/tpl-options', params).then(res => {
                 commit('setContractTplList', res)
             })
         },

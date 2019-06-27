@@ -1,87 +1,141 @@
 <template>
-    <div class="bg-white">
-        <div class="widget-header">
-            <h4 class="widget-title">补签合同</h4>
-        </div>
-        <div class="widget-body">
-            <div class="widget-main">
-                <el-steps :active="active" simple>
-                    <el-step title="选择已有企业"></el-step>
-                    <el-step title="选择落地公司"></el-step>
-                    <el-step title="附加条款"></el-step>
-                    <el-step title="C端签约设置"></el-step>
-                </el-steps>
-                <el-form label-width="200px" :inline="true" :model="contractModel.contractForm" ref="contractForm" :rules="check.rules">
-                    <div v-if="active === 1">
-                        <h3 class="green">请选择客户企业信息</h3>
-                        <el-form-item label="选择已有客户信息" prop="customerId">
-                            <el-select style="width:450px;" v-model="contractModel.contractForm.customerId" filterable @change="companyChange">
-                                <el-option v-for="(item, key) in companyIdentityList" :key="key" :label="item.name" :value="item.id"></el-option>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="客户性质" prop="customNature">
-                            <el-radio-group v-model="contractModel.contractForm.customNature">
-                                <el-radio v-for="(item, key) in optionModel.customNatureList" :key="key" :label="item.value">{{item.text}}</el-radio>
-                            </el-radio-group>
-                            <i class="el-icon-question ml10" title="非直接用工企业：人力资源公司、服务外包公司、城市合伙人公司、第三方平台等"></i>
-                        </el-form-item>
-                        <hr>
-                        <contractOption :contractModel="contractModel"></contractOption>
-                        <el-form-item label="客户类型" prop="originalType">
-                            <el-radio-group v-model="contractModel.contractForm.originalType" disabled style="width:450px;">
-                                <el-radio v-for="(item, key) in originalTypeList" :key="key" :label="item.value">{{item.text}}</el-radio>
-                            </el-radio-group>
-                        </el-form-item><br>
-                        <template v-if="contractModel.contractForm.originalType == 20">
-                            <el-form-item label="代理商名称">
-                                <el-input v-model="contractModel.contractForm.agentCompanyName" disabled style="width:450px;"></el-input>
-                            </el-form-item>
-                            <!-- <el-form-item label="代理商名称" prop="agentCompanyId" :rules="{ required: true, message: '请选择代理商', trigger: 'change' }">
+  <div class="bg-white">
+    <div class="widget-header">
+      <h4 class="widget-title">补签合同</h4>
+    </div>
+    <div class="widget-body">
+      <div class="widget-main">
+        <el-steps :active="active"
+          simple>
+          <el-step title="选择已有企业"></el-step>
+          <el-step title="选择落地公司"></el-step>
+          <el-step title="附加条款"></el-step>
+          <el-step title="C端签约设置"></el-step>
+        </el-steps>
+        <el-form label-width="200px"
+          :inline="true"
+          :model="contractModel.contractForm"
+          ref="contractForm"
+          :rules="check.rules">
+          <div v-if="active === 1">
+            <h3 class="green">请选择客户企业信息</h3>
+            <el-form-item label="选择已有客户信息"
+              prop="customerId">
+              <el-select style="width:450px;"
+                v-model="contractModel.contractForm.customerId"
+                filterable
+                @change="companyChange">
+                <el-option v-for="(item, key) in companyIdentityList"
+                  :key="key"
+                  :label="item.name"
+                  :value="item.id"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="客户性质"
+              prop="customNature">
+              <el-radio-group v-model="contractModel.contractForm.customNature">
+                <el-radio v-for="(item, key) in optionModel.customNatureList"
+                  :key="key"
+                  :label="item.value">{{item.text}}</el-radio>
+              </el-radio-group>
+              <i class="el-icon-question ml10"
+                title="非直接用工企业：人力资源公司、服务外包公司、城市合伙人公司、第三方平台等"></i>
+            </el-form-item>
+            <hr>
+            <contractOption :contractModel="contractModel"></contractOption>
+            <el-form-item label="客户类型"
+              prop="originalType">
+              <el-radio-group v-model="contractModel.contractForm.originalType"
+                disabled
+                style="width:450px;">
+                <el-radio v-for="(item, key) in originalTypeList"
+                  :key="key"
+                  :label="item.value">{{item.text}}</el-radio>
+              </el-radio-group>
+            </el-form-item><br>
+            <template v-if="contractModel.contractForm.originalType == 20">
+              <el-form-item label="代理商名称">
+                <el-input v-model="contractModel.contractForm.agentCompanyName"
+                  disabled
+                  style="width:450px;"></el-input>
+              </el-form-item>
+              <!-- <el-form-item label="代理商名称" prop="agentCompanyId" :rules="{ required: true, message: '请选择代理商', trigger: 'change' }">
                                 <el-select v-model="contractModel.contractForm.agentCompanyId" style="width:900px;" filterable @change="agentChange" disabled>
                                     <el-option v-for="e in agentList" :key="e.companyId" :label="e.companyName" :value="e.companyId"></el-option>
                                 </el-select>
                             </el-form-item> -->
-                        </template>
-                        <el-form-item label="客户归属" prop="original">
-                            <el-radio-group v-model="contractModel.contractForm.original" style="width:1100px;" :disabled="true">
-                                <el-radio v-for="(item, key) in originalsList" :key="key" :label="item.value">{{item.text}}</el-radio>
-                            </el-radio-group>
-                        </el-form-item>
-                        <el-form-item label="付款方式" prop="vciPayType">
-                            <el-select style="width:450px;" v-model="contractModel.contractForm.vciPayType">
-                                <el-option v-for="(item, key) in vciPayTypeList" :key="key" :label="item.text" :value="item.value"></el-option>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="发票类型" prop="invoiceType">
-                            <el-select style="width:450px;" v-model="contractModel.contractForm.invoiceType">
-                                <el-option v-for="(item, key) in invoiceTypeList" :key="key" :label="item.text" :value="item.value"></el-option>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="结算日期" prop="vciSettleExp" v-if="contractModel.contractForm.vciPayType == 30" :rules="{required: true, message: '请输入结算日期', trigger: 'blur'}">
-                            <el-input v-model="contractModel.contractForm.vciSettleExp" style="width:450px;">
-                                <template slot="prepend">
-                                    甲乙双方确认以每月
-                                </template>
-                                <template slot="append">
-                                    日为结算日期
-                                </template>
-                            </el-input>
-                        </el-form-item>
-                    </div>
-                    <companyInfo :ruleForm="contractModel.contractForm" :serviceFeeList="serviceFeeList" :chargeByName="chargeByName" v-if="active === 2"></companyInfo>
-                    <additionalClause :ruleForm="contractModel.contractForm" v-if="active === 3"></additionalClause>
-                    <setEContract :contractForm="contractModel.contractForm" :type="1" v-if="active === 4"></setEContract>
-                </el-form>
-                <hr>
-                <div class="wizard-actions">
-                    <el-button @click="prev" v-if="active !== 0">上一步</el-button>
-                    <el-button type="primary" @click="backToList('save')">保存并返回</el-button>
-                    <el-button type="success" @click="next" v-if="active !== 4">下一步</el-button>
-                    <el-button type="success" @click="submit" v-if="active === 4">提交</el-button>
-                </div>
-            </div>
+            </template>
+            <el-form-item label="客户归属"
+              prop="original">
+              <el-radio-group v-model="contractModel.contractForm.original"
+                style="width:1100px;"
+                :disabled="true">
+                <el-radio v-for="(item, key) in originalsList"
+                  :key="key"
+                  :label="item.value">{{item.text}}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="付款方式"
+              prop="vciPayType">
+              <el-select style="width:450px;"
+                v-model="contractModel.contractForm.vciPayType">
+                <el-option v-for="(item, key) in vciPayTypeList"
+                  :key="key"
+                  :label="item.text"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="发票类型"
+              prop="invoiceType">
+              <el-select style="width:450px;"
+                v-model="contractModel.contractForm.invoiceType">
+                <el-option v-for="(item, key) in invoiceTypeList"
+                  :key="key"
+                  :label="item.text"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="结算日期"
+              prop="vciSettleExp"
+              v-if="contractModel.contractForm.vciPayType == 30"
+              :rules="{required: true, message: '请输入结算日期', trigger: 'blur'}">
+              <el-input v-model="contractModel.contractForm.vciSettleExp"
+                style="width:450px;">
+                <template slot="prepend">
+                  甲乙双方确认以每月
+                </template>
+                <template slot="append">
+                  日为结算日期
+                </template>
+              </el-input>
+            </el-form-item>
+          </div>
+          <companyInfo :ruleForm="contractModel.contractForm"
+            :serviceFeeList="serviceFeeList"
+            :chargeByName="chargeByName"
+            v-if="active === 2"></companyInfo>
+          <additionalClause :ruleForm="contractModel.contractForm"
+            v-if="active === 3"></additionalClause>
+          <setEContract :contractForm="contractModel.contractForm"
+            :type="1"
+            v-if="active === 4"></setEContract>
+        </el-form>
+        <hr>
+        <div class="wizard-actions">
+          <el-button @click="prev"
+            v-if="active !== 0">上一步</el-button>
+          <el-button type="primary"
+            @click="backToList('save')">保存并返回</el-button>
+          <el-button type="success"
+            @click="next"
+            v-if="active !== 4">下一步</el-button>
+          <el-button type="success"
+            @click="submit"
+            v-if="active === 4">提交</el-button>
         </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -301,6 +355,7 @@ export default {
             this.contractModel.contractForm.originalType = obj.originalType
             this.contractModel.contractForm.agentCompanyId = obj.agentCompanyId
             this.contractModel.contractForm.agentCompanyName = obj.agentCompanyName
+            this.$store.dispatch('getContractTplList', this.contractModel.contractForm.agentCompanyId)
         },
         agentChange() {
             this.getChargeByName()
