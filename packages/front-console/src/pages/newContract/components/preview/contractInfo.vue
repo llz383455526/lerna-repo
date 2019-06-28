@@ -31,7 +31,7 @@
                                 </el-table-column>
                             </el-table>
                         </div>
-                        <div class="col-xs-12">
+                        <div class="col-xs-12" v-if="false">
                             <h4 class="block green">C端绩效计算规则</h4>
                             <template v-if="contractModel.contractForm.cUserStandardAttachmentModels">
                                 <div v-for="(v, k) in contractModel.contractForm.cUserStandardAttachmentModels">

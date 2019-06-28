@@ -43,7 +43,6 @@ let starManagement = r => require.ensure([], () => r(require('../pages/orderMana
 let costLimit = r => require.ensure([], () => r(require('../pages/orderManager/costLimit/index.vue')), 'costLimit');
 let costLimitDetail = r => require.ensure([], () => r(require('../pages/orderManager/costLimit/detail.vue')), 'costLimitDetail');
 let costLimitAddRule = r => require.ensure([], () => r(require('../pages/orderManager/costLimit/addRule.vue')), 'costLimitAddRule');
-let addEnterprise = r => require.ensure([], () => r(require('../pages/orderManager/costLimit/addEnterprise.vue')), 'addEnterprise');
 
 
 let eContractIndex = r => require.ensure([], () => r(require('../pages/eContract/index.vue')), 'eContractIndex');
@@ -193,6 +192,11 @@ const personTax = () => import('../pages/iframe/personTax')
 const addedValue = () => import('../pages/iframe/addedValue')
 const incomeTax = () => import('../pages/iframe/incomeTax')
 const dataCenter = () => import('../pages/iframe/dataCenter')
+
+// 风控报表
+const RiskControlPerformanceManager = () => import('../pages/riskControl/performanceManager')
+const RiskControlPerformanceManagerDetail = () => import('../pages/riskControl/performanceManager/detail')
+const RiskControlPerformanceManagerStar = () => import('../pages/riskControl/performanceManager/fengkong/starManger')
 
 // 工单系统路由
 import workOrder from './workOrder'
@@ -480,13 +484,6 @@ export default [{
                 keepAlive: false
               }
             },
-            {
-              path: 'addEnterprise',
-              component: addEnterprise,
-              meta: {
-                keepAlive: false
-              }
-            }
           ]
         },
         {
@@ -1537,6 +1534,33 @@ export default [{
             },
           ],
         },
+          {
+              path: 'riskControl',
+              component: index,
+              children: [
+                  {
+                      path: 'performanceManager',
+                      component: RiskControlPerformanceManager,
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+                  {
+                      path: 'performanceManagerDetail',
+                      component: RiskControlPerformanceManagerDetail,
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+                  {
+                      path: 'performanceManagerStar',
+                      component: RiskControlPerformanceManagerStar,
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+              ],
+          },
         ...workOrder
       ]
     },

@@ -108,7 +108,6 @@
       :currentSize="pageSize"
       v-on:handleCurrentChange="handleCurrentChange"
       :currentPage="pageIndex"></ayg-pagination>
-
   </div>
 </template>
 

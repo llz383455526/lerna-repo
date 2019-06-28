@@ -143,9 +143,8 @@ export default {
             }
         },
         getFileList() {
-            console.log('getFileList = ', this.ruleForm)
             if (!this.ruleForm.customUnderAttachList || !this.ruleForm.customUnderAttachList.length) {
-                return 
+                return
             }
             this.ruleForm.customUnderAttachList.forEach((el) => {
                 this.files.push({

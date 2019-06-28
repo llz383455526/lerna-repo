@@ -22,11 +22,6 @@
     </router-link>
     <el-table class="table" :data="tableData" border="">
       <el-table-column prop="fullName" label="企业全称"></el-table-column>
-      <el-table-column prop="fullName" label="风控等级">
-        <template slot-scope="scope">
-          <w-start :count="scope.row.riskLevel"/>
-        </template>
-      </el-table-column>
       <el-table-column prop="chargeByName" label="企业负责人"></el-table-column>
       <el-table-column prop="salesList" label="关联销售">
         <template slot-scope="scope">
@@ -44,7 +39,6 @@
         <template slot-scope="scope">
           <el-button v-if="checkRight(permissions, 'sysmgr-web:/company/edit-company')" @click="appManager(scope.row)" type="text">管理</el-button>
           <el-button @click="appExamine(scope.row)" type="text">查看</el-button>
-          <el-button v-if="checkRight(permissions, 'console-dlv:/risk_level_degrade/refresh-company-risk-level')" @click="fengKongBtnClick(scope.row)" type="text">风控</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -61,11 +55,7 @@
 <script>
   import {mapGetters} from 'vuex';
   import {get, post, formPost, postButNoErrorToast} from "../../store/api";
-  import WStart from '../../component/star'
   export default {
-    components: {
-      WStart
-    },
     data() {
       return {
         form: {
@@ -93,9 +83,6 @@
       this.query(this.form.page);
     },
     methods: {
-      fengKongBtnClick(item) {
-        this.$router.push(`/main/clientManager/dropDetail?id=${item.id}`)
-      },
       query(a) {
         this.form.page = 1;
         if (a && !isNaN(a)) {

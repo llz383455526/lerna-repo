@@ -23,29 +23,31 @@
                     <hr>
                     <h4 class="h4">合同证据链</h4>
                     <upload :list="contractModel.contractForm.receiveAttachments" style="width: 1100px;" @remove="handleRemove" @uploadSuccess="uploadSuccess"></upload>
-                    <h4 class="h4">C端绩效计算规则</h4>
-                    <div class="jie-suan-biao-zhun-box">
-                        <el-upload class="form_input" :action="`/api/econtract/template/parsefile`" :auto-upload="false" :on-change="jieSuanBiaoZhunUpload" multiple :show-file-list="false">
-                            <el-button style="margin-left: 20px" size="small" type="primary" @click="index = key">上传附件</el-button>
-                        </el-upload>
-                        <el-table
-                            :data="contractModel.contractForm.cUserStandardAttachmentModels"
-                            style="margin-left: 275px"
-                        >
-                            <el-table-column
-                                prop="displayname"
-                                label="名称">
-                            </el-table-column>
-                            <el-table-column
-                                prop="address"
-                                width="100px"
-                                label="操作">
-                                <template slot-scope="scope">
-                                    <el-button type="text" size="small" @click="jieSuanFileRemove(scope)">删除</el-button>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-                    </div>
+                    <template v-if="false">
+                        <h4 class="h4">C端绩效计算规则</h4>
+                        <div class="jie-suan-biao-zhun-box">
+                            <el-upload class="form_input" :action="`/api/econtract/template/parsefile`" :auto-upload="false" :on-change="jieSuanBiaoZhunUpload" multiple :show-file-list="false">
+                                <el-button style="margin-left: 20px" size="small" type="primary" @click="index = key">上传附件</el-button>
+                            </el-upload>
+                            <el-table
+                                :data="contractModel.contractForm.cUserStandardAttachmentModels"
+                                style="margin-left: 275px"
+                            >
+                                <el-table-column
+                                    prop="displayname"
+                                    label="名称">
+                                </el-table-column>
+                                <el-table-column
+                                    prop="address"
+                                    width="100px"
+                                    label="操作">
+                                    <template slot-scope="scope">
+                                        <el-button type="text" size="small" @click="jieSuanFileRemove(scope)">删除</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </template>
                     <br>
                     <h4 class="h4">合同备注</h4>
                     <el-form-item>

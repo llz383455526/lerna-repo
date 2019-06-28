@@ -64,7 +64,7 @@ import {
 	Message,
     Cascader,
     Card,
-    Alert
+    Alert,
 } from 'element-ui'
 
 Vue.use(Menu)

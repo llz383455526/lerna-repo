@@ -67,7 +67,7 @@
                         <el-col :span="19">{{msg.originalName}}</el-col>
                     </el-row>
                 </el-col>
-                <el-col :span="12" v-if="checkRight(permissions, 'console-dlv:/risk_level_degrade/refresh-company-risk-level')">
+                <el-col :span="12" v-if="false && checkRight(permissions, 'console-dlv:/risk_level_degrade/refresh-company-risk-level')">
                     <div class="title" style="width: 200px">
                         风控信息
                         <el-button type="text" style="float: right; padding: 0" @click="fengKongDetail">查看细项</el-button>
