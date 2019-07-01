@@ -180,6 +180,7 @@
                 this.getListData()
             },
             searchBtnClick() {
+                this.pageData.page =  1
                 this.getListData()
             },
             handleSizeChange(pageSize) {

@@ -39,6 +39,7 @@
         </el-form>
         <el-button type="primary" @click="showRecharge(true, false)" v-if="checkRight(permissions, 'balance-web:/recharge-order/comfirm') && !riskApprove">充值申请</el-button>
         <el-button type="primary" @click="showRecharge(true, true)" v-if="checkRight(permissions, 'balance-web:/recharge-order/serviceFeeConfirm')">服务费充值申请</el-button>
+        <statistics-box :data-list="statisticsDataList"></statistics-box>
         <el-table :data="rechargeApplyList.list" style="width: 100%;margin-top: 20px;">
                 <el-table-column prop="stateName" label="处理状态" width="100px">
                     <template slot-scope="scope">
@@ -121,12 +122,13 @@ import { get, post, importPost } from "../../store/api";
 import {showLoading, hideLoading} from '../../plugin/utils-loading'
 import rechargeDialog from '../../pageComponent/rechargeDialog.vue'
 import rechargeAuditDialog from '../../pageComponent/rechargeAuditDialog.vue'
-
+import statisticsBox from '../../component/statisticsBox.vue'
 export default {
   name: "credit-bill",
   components: {
       rechargeDialog,
-      rechargeAuditDialog
+      rechargeAuditDialog,
+      statisticsBox
   },
   data() {
     var time = new Date();
@@ -169,7 +171,8 @@ export default {
       isService: false,
       acccountList: [],
       isReady: true,
-      prevUrl: ''
+      prevUrl: '',
+      statisticsDataList: []
     };
   },
   computed: {
@@ -224,6 +227,13 @@ export default {
         post(`/api/balance-web/recharge-order/${this.riskApprove ? 'query-risk-approve-list': 'query-list'}`, this.formSearch).then(data => {
             this.rechargeApplyList = data
             this.isReady = false
+            this.statisticsDataList = [
+            {
+                title: '充值成功总金额',
+                type: 1,
+                value: data.totalAmount || 0
+            }
+        ]
         })
         // this.$store.dispatch("getRechargeApplyList", this.formSearch);
     },

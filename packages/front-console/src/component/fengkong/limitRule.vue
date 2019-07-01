@@ -343,6 +343,11 @@
         },
         mounted() {
             this.getListData()
+        },
+        watch: {
+            companyId() {
+                this.getListData()
+            }
         }
     }
 </script>

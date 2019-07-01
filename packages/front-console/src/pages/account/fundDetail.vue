@@ -51,6 +51,7 @@
                 <el-button size="small" @click="exportDetail">导出</el-button>
             </el-form-item>
         </el-form>
+        <statistics-box :data-list="statisticsDataList"></statistics-box>
         <el-table :data="data.list">
             <el-table-column label="关联订单号" prop="orderNo"></el-table-column>
             <el-table-column label="商户" prop="appName"></el-table-column>
@@ -86,7 +87,11 @@
 import { post, get } from "../../store/api";
 import optionModel from '../../model/option/optionModel.js'
 import {showLoading, hideLoading} from '../../plugin/utils-loading'
+import StatisticsBox from '../../component/statisticsBox.vue'
 export default {
+    components: {
+        StatisticsBox
+    },
     data() {
       var time = new Date(),
           time_0 = new Date(time.getTime() - 1000 * 60 * 60 * 24 * 7), 
@@ -112,7 +117,8 @@ export default {
         option: new optionModel(),
         isReady: true,
         downloadCode: '',
-        interval: ''
+        interval: '',
+        statisticsDataList: []
       };
     },
     mounted() {
@@ -138,6 +144,28 @@ export default {
             post('/api/balance-web/balance-account/query-fund', this.form).then(data => {
                 this.data = data
                 this.isReady = false
+                // todo 查询统计数据
+                let rechargeTotal = data.totalRechargeAmount //充值总金额 totalRechargeAmount
+                let rechargeInTotal = data.totalCorrectionAmount //充值冲正总金额 totalCorrectionAmount
+                let rechargeOutTotal = data.totalPayAmount //发放总金额 totalPayAmount
+
+                this.statisticsDataList = [
+                    {
+                        title: '充值总金额',
+                        type:1,
+                        value: rechargeTotal || 0
+                    },
+                    {
+                        title: '充值冲正总金额',
+                        type: 1,
+                        value: rechargeInTotal || 0
+                    },
+                    {
+                        title: '发放总金额',
+                        type: 1,
+                        value: rechargeOutTotal || 0
+                    },
+                ]
             })
         },
         setSize(a) {

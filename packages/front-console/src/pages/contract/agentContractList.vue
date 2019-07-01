@@ -22,11 +22,12 @@
                 </el-select>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="query">查询</el-button>
+                <el-button type="primary" @click="searchHander">查询</el-button>
                 <el-button @click="$refs['form'].resetFields()">清除</el-button>
                 <el-button size="small" @click="exportDetail">导出</el-button>
             </el-form-item>
         </el-form>
+        <statistics-box :dataList="statisticsDataList"></statistics-box>
         <!-- <router-link to="agentContractCreate" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
             <el-button size="small">新增</el-button>
         </router-link> -->
@@ -99,7 +100,11 @@
 <script>
 import { get, post, postWithErrorCallback, formPost } from "../../store/api";
 import { mapGetters } from 'vuex'
+import statisticsBox from '../../component/statisticsBox.vue'
 export default {
+    components: {
+        statisticsBox
+    },
     computed: {
         ...mapGetters({
             userInformation: 'userInformation'
@@ -119,6 +124,7 @@ export default {
             data: {},
             gridData: [],
             dialogTableVisible: false,
+            statisticsDataList: []
         }
     },
     mounted() {
@@ -128,9 +134,45 @@ export default {
             this.archiveList = data.ArchiveStatus
             // this.form.status = this.statusList[0].value
             this.query()
+            this.statisticsQuery()
         })
     },
     methods: {
+        searchHander() {
+            this.query();
+            this.statisticsQuery()
+        },
+        statisticsQuery() {
+            let param = {
+                status: this.form.status,
+                archiveStatus: this.form.archiveStatus,
+                companyName: this.form.companyName.trim(),
+                page: 1,
+                pageSize: this.pageSize,
+            };
+            post('/api/contract-web//agent-contract/agent-contracts-statistic', param).then(data => {
+                // todo 查询统计数据
+                let total = data.total //合同总数
+                let archiveNum = data.archiveNum //已归档合同总数
+                let unArchiveNum = data.unArchiveNum //未归档合同总数 
+            
+                this.statisticsDataList = [
+                    {
+                        title: '合同总数',
+                        value: total
+                    },
+                    {
+                        title: '已归档合同总数',
+                        value: archiveNum
+                    },
+                    {
+                        title: '未归档合同总数',
+                        value:  unArchiveNum
+                    }
+                ]
+            })
+            
+        },
         query(a) {
             if(isNaN(a)) {
                 a = 1
@@ -139,7 +181,7 @@ export default {
             let param = {
                 status: this.form.status,
                 archiveStatus: this.form.archiveStatus,
-                companyName: this.form.companyName,
+                companyName: this.form.companyName.trim(),
                 page: this.page,
                 pageSize: this.pageSize,
             };

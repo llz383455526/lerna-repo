@@ -1,267 +1,611 @@
 <template>
-    <div class="content" v-loading="isReady">
-        <el-form :inline="true">
-            <el-form-item label="服务公司" size="small" style="padding-top: 7px">
-                <el-select v-model="serviceCompanyId" placeholder="查看落地公司剩余票量" @change="getCompanyInfo">
-                    <el-option v-for="item in companyList" :key="item.value" :label="item.text":value="item.value"></el-option>
-                </el-select>
-            </el-form-item>
-            <div class="server-gongsi-piao-text" v-if="companyInfo" style="display: inline-block;vertical-align: middle;">
-                <span>专票剩余票数：{{companyInfo.leftZPCount}}</span>
-                <span>专票可开金额：{{companyInfo.leftZPAmount}}</span><br>
-                <span>普票剩余票数：{{companyInfo.leftPPCount}}</span>
-                <span>普票剩余金额：{{companyInfo.leftPPAmount}}</span>
-            </div>
-        </el-form>
+  <div
+    class="content"
+    v-loading="isReady"
+  >
+    <el-form :inline="true">
+      <el-form-item
+        label="服务公司"
+        size="small"
+        style="padding-top: 7px"
+      >
+        <el-select
+          v-model="serviceCompanyId"
+          placeholder="查看落地公司剩余票量"
+          @change="getCompanyInfo"
+        >
+          <el-option
+            v-for="item in companyList"
+            :key="item.value"
+            :label="item.text"
+            :value="item.value" 
+          />
+        </el-select>
+      </el-form-item>
+      <div
+        class="server-gongsi-piao-text"
+        v-if="companyInfo"
+        style="display: inline-block;vertical-align: middle;"
+      >
+        <span>专票剩余票数：{{ companyInfo.leftZPCount }}</span>
+        <span>专票可开金额：{{ companyInfo.leftZPAmount }}</span><br>
+        <span>普票剩余票数：{{ companyInfo.leftPPCount }}</span>
+        <span>普票剩余金额：{{ companyInfo.leftPPAmount }}</span>
+      </div>
+    </el-form>
 
-        <div class="title">申请开票列表</div>
-        <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
-            <el-form-item label="客户名称" size="small">
-                <el-input v-model="formSearch.customCompanyName"></el-input>
-            </el-form-item>
-            <el-form-item label="申请编号" size="small">
-                <el-input v-model="formSearch.orderNo"></el-input>
-            </el-form-item>
-            <el-form-item label="开票公司" size="small">
-                <el-select v-model="formSearch.serviceCompanyName" placeholder="请选择开票公司">
-                    <el-option v-for="item in companyList" :key="item.value" :label="item.text":value="item.text"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="开票金额" size="small">
-                <el-col :span="11">
-                    <el-input v-model="formSearch.amountStart"></el-input>
-                </el-col>
-                <el-col class="line" :span="2">-</el-col>
-                <el-col :span="11">
-                    <el-input v-model="formSearch.amountEnd"></el-input>
-                </el-col>
-            </el-form-item>
-            <el-form-item label="申请状态" size="small">
-                <el-select v-model="formSearch.status" placeholder="请选择" style="width:100%;">
-                    <el-option label="全部" value=""></el-option>
-                    <el-option v-for="item in InvoiceState" :key="item.value" :label="item.text" :value="item.value"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="发票类型" size="small">
-                <el-select v-model="formSearch.invoiceType" placeholder="请选择" style="width:100%;">
-                    <el-option label="全部" value=""></el-option>
-                    <el-option v-for="item in InvoiceType" :key="item.value" :label="item.text" :value="item.value"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="申请日期" size="small">
-                <el-date-picker
-                        v-model="dateValue"
-                        type="daterange"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd">
-                </el-date-picker>
-            </el-form-item>
-            <el-form-item size="small">
-                <el-button type="primary" @click="search" size="small">查询</el-button>
-                <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
-            </el-form-item>
-        </el-form>
-
-        <div class="title">发票申请列表</div>
-        <el-button type="primary" size="small" v-if="checkRight(this.permissions, 'invoice-web:/workflow/invoice-add')" @click="$refs.makeInvoice.transmit(true)">单张申请</el-button>
-        <router-link to="batchApply" v-if="checkRight(this.permissions, 'invoice-web:/workflow/invoice-import-submit')">
-            <el-button type="primary" size="small">批量申请</el-button>
-        </router-link>
-        <el-button size="small" style="margin-left: 240px" @click="isWait">待审批：{{wait}}</el-button>
-        <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
-         	<el-table-column label="操作" width="120">
-                <template slot-scope="scope">
-                    <el-button v-if="scope.row.cancelFlag == 0 && scope.row.isOperate" @click="showDetail(scope.row.id, true)" type="text" size="medium" style="padding:0;">作废</el-button>
-                </template>
-            </el-table-column>
-            <el-table-column prop="orderNo" label="申请编号" width="100">
-                <template slot-scope="scope">
-                    <el-button size="small" type="text" @click="showDetail(scope.row.id)">{{scope.row.orderNo}}</el-button>
-                </template>
-            </el-table-column>
-            <el-table-column prop="statusName" label="申请状态" width="120"></el-table-column>
-            <el-table-column prop="customCompanyName" label="客户名称" width="220"></el-table-column>
-            <el-table-column prop="purpose" label="发票用途" width="220"></el-table-column>
-            <el-table-column prop="fullName" label="发票类目" width="220"></el-table-column>
-            <el-table-column prop="amount" label="申请金额" width="120"></el-table-column>
-            <el-table-column prop="num" label="申请票数" width="120"></el-table-column>
-            <el-table-column prop="serviceCompanyName" label="开票公司" width="220"></el-table-column>
-            <el-table-column prop="invoiceTypeName" label="发票类型" width="120">
-                <template slot-scope="scope">
-                    <div class="bill common" v-if="scope.row.invoiceTypeName.indexOf('普通') > -1">普票</div>
-                    <div class="bill special" v-else>专票</div>
-                </template>
-            </el-table-column>
-            <el-table-column prop="createByName" label="申请人" width="120"></el-table-column>
-            <!--<el-table-column prop="realAmount" label="实开金额" width="120"></el-table-column>-->
-            <!--<el-table-column prop="realNum" label="实开票数" width="120"></el-table-column>-->
-            <!--<el-table-column prop="rejectAmount" label="拒开金额" width="120"></el-table-column>-->
-            <!--<el-table-column prop="rejectNum" label="拒开票数" width="120"></el-table-column>-->
-            <el-table-column prop="createTime" label="申请时间" width="220">
-                <template slot-scope="scope">
-                    <span>{{scope.row.createTime | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column prop="checkByName" label="审批人" width="120"></el-table-column>
-            <el-table-column prop="checkTime" label="审批时间" width="220">
-                <template slot-scope="scope">
-                    <span>{{scope.row.checkTime | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
-                </template>
-            </el-table-column>
-        </el-table>
-
-        <ayg-pagination v-if="tableList.total" :total="tableList.total"
-                        v-on:handleSizeChange="handleSizeChange"
-                        v-on:handleCurrentChange="handleCurrentChange" :currentPage="currentPage">
-        </ayg-pagination>
-
-        <el-dialog title="选择发票类型和开票公司" :visible.sync="dialogClientVisible" width="35%">
-            <el-form :rules="rulesClient" :model="formClient" ref="formClient">
-                <div class="input-container">
-                    <div class="label dialog-label">发票类型<span>*</span>
-                    </div>
-                    <div class="input">
-                        <el-form-item prop="invoiceType">
-                            <el-radio-group v-model="formClient.invoiceType">
-                                <el-radio v-for="item in InvoiceType" :key="item.value" :label="item.value">
-                                    {{item.text}}
-                                </el-radio>
-                            </el-radio-group>
-                        </el-form-item>
-                    </div>
-                </div>
-                <div class="input-container">
-                    <div class="label dialog-label">开票公司<span>*</span>
-                    </div>
-                    <div class="input">
-                        <el-form-item prop="serviceCompanyId">
-                            <el-select v-model="formClient.serviceCompanyId" placeholder="请选择开票公司">
-                                <el-option v-for="item in companyList" :key="item.value" :label="item.text"
-                                           :value="item.value"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </div>
-                </div>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogClientVisible=false;">取 消</el-button>
-                <el-button type="primary" @click="showClientForm('formClient')">确 定</el-button>
-            </div>
-        </el-dialog>
-
-        <el-dialog title="发票申请单" :visible.sync="dialogDetailVisible" width="50%">
-            <div class="detailContext">
-                <span>申请编号:</span>
-                <span>{{formDetail.orderNo}}</span>
-            </div>
-            <div class="detailContext">
-                <span>申请时间:</span>
-                <span>{{formDetail.createTime | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
-            </div>
-            <div class="detailContext">
-                <span>开票名称:</span>
-                <span>{{formDetail.customCompanyName}}</span>
-            </div>
-            <div class="detailContext">
-                <span>纳税人识别号:</span>
-                <span>{{formDetail.customTaxIdcd}}</span>
-            </div>
-            <el-button size="small" type="text" @click="dshow = !dshow">{{dshow ? '收起' : '详情'}}</el-button>
-            <template v-if="dshow">
-                <div class="detailContext">
-                    <span>公司地址:</span>
-                    <span>{{formDetail.customAddr}}</span>
-                </div>
-                <div class="detailContext">
-                    <span>公司电话:</span>
-                    <span>{{formDetail.customPhone}}</span>
-                </div>
-                <div class="detailContext">
-                    <span>开户行名称:</span>
-                    <span>{{formDetail.customBankName}}</span>
-                </div>
-                <div class="detailContext">
-                    <span>账号:</span>
-                    <span>{{formDetail.customBankAccount}}</span>
-                </div>
-            </template>
-            <div class="detailContext">
-                <span>剩余票数:</span>
-                <span><span class="red">{{formDetail.leftInvoiceNum}}</span>张</span>
-            </div>
-            <div class="detailContext">
-                <span>可开票金额:</span>
-                <span class="red">{{formDetail.leftInvoiceAmount}}</span>
-            </div>
-            <div class="detailContext">
-                <span>申请发票数:</span>
-                <span><span class="red">{{formDetail.applyInvoiceNum}}</span>张</span>
-            </div>
-            <div class="detailContext">
-                <span>开票类型:</span>
-                <span>{{formDetail.invoiceTypeName}}</span>
-            </div>
-            <div class="detailContext">
-                <span>开票金额合计:</span>
-                <span>{{formDetail.applyInvoiceAmount}}</span>
-            </div>
-            <div class="detailContext">
-                <span>发票用途:</span>
-                <span>{{formDetail.remark}}</span>
-            </div>
-
-            <el-table :data="formDetail.items" style="width: 100%;margin-top: 20px;" @selection-change="handleSelectionChange" height="450px">
-                <el-table-column type="selection" v-if="formDetail.status == '1' && !isCancel"></el-table-column>
-                <el-table-column type="index" :index="indexMethod" width="70"></el-table-column>
-                <el-table-column prop="fullName" label="开票类目"></el-table-column>
-                <el-table-column prop="amount" label="开票金额（含税）" width="150"></el-table-column>
-                <el-table-column prop="serviceCompanyName" label="开票公司" width="220"></el-table-column>
-                <el-table-column prop="statusName" label="状态"></el-table-column>
-            </el-table>
-
-            <div slot="footer" class="dialog-footer"> <!-- v-if="formDetail.status == '1' || isCancel" -->
-            	<el-button size="small" @click="dialogDetailVisible = false">关闭</el-button>
-                <template v-if="formDetail.isOperate">
-                    <template v-if="formDetail.status == '1' || !isCancel">
-                        <el-button size="small" @click="dialogDetailVisible = false;dialogRejectVisible = true" v-if="isCan">整单拒开</el-button>
-                        <el-button size="small" type="primary" @click="showOpenDialog" v-if="isCan">审核通过</el-button>
-                    </template>
-                    <template v-else>
-                        <el-button size="small" type="primary" @click="cancel">申请作废</el-button>
-                    </template>
-                </template>
-            </div>
-        </el-dialog>
-
-        <el-dialog title="拒开确认" :visible.sync="dialogRejectVisible" width="35%" :before-close="handleCloseReject">
-            <el-form>
-                <div class="input-container">
-                    <div class="label dialog-label">拒开原因</div>
-                    <div class="input">
-                        <el-form-item>
-                            <el-input type="textarea" :rows="5" v-model="formInvoice.memo"></el-input>
-                        </el-form-item>
-                    </div>
-                </div>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="formInvoice.memo = '';formInvoice.allReject=true;dialogRejectVisible=false;submitInvoice()">确认拒开</el-button>
-            </div>
-        </el-dialog>
-
-        <el-dialog title="开票确认" :visible.sync="dialogOpenVisible" width="35%" :before-close="handleCloseOpen">
-            <p>申请发票数：<span class="red">{{formOpen.lengthAll}}</span>张，确认开票数 <span
-                    class="red">{{formOpen.lengthChoose}}</span>张，</p>
-            <p>欠票 <span class="red">{{formOpen.lengthAll - formOpen.lengthChoose}}</span>张，欠票总金额为 <span class="red">{{formOpen.amount}}</span>
-            </p>
-            <h3>提交开票后，未勾选的部分将做欠票处理</h3>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="formInvoice.allReject=false;dialogOpenVisible=false;submitInvoice();">确认提交</el-button>
-            </div>
-        </el-dialog>
-        <make-invoice ref="makeInvoice"></make-invoice>
+    <div class="title">
+      申请开票列表
     </div>
+    <el-form
+      :inline="true"
+      :model="formSearch"
+      :rules="formSearch"
+      ref="formSearch"
+    >
+      <el-form-item
+        label="客户名称"
+        size="small"
+      >
+        <el-input v-model="formSearch.customCompanyName" />
+      </el-form-item>
+      <el-form-item
+        label="申请编号"
+        size="small"
+      >
+        <el-input v-model="formSearch.orderNo" />
+      </el-form-item>
+      <el-form-item
+        label="开票公司"
+        size="small"
+      >
+        <el-select
+          v-model="formSearch.serviceCompanyName"
+          placeholder="请选择开票公司"
+        >
+          <el-option
+            v-for="item in companyList"
+            :key="item.value"
+            :label="item.text"
+            :value="item.text" 
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item
+        label="开票金额"
+        size="small"
+      >
+        <el-col :span="11">
+          <el-input v-model="formSearch.amountStart" />
+        </el-col>
+        <el-col
+          class="line"
+          :span="2"
+        >
+          -
+        </el-col>
+        <el-col :span="11">
+          <el-input v-model="formSearch.amountEnd" />
+        </el-col>
+      </el-form-item>
+      <el-form-item
+        label="申请状态"
+        size="small"
+      >
+        <el-select
+          v-model="formSearch.status"
+          placeholder="请选择"
+          style="width:100%;"
+        >
+          <el-option
+            label="全部"
+            value="" 
+          />
+          <el-option
+            v-for="item in InvoiceState"
+            :key="item.value"
+            :label="item.text"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item
+        label="发票类型"
+        size="small"
+      >
+        <el-select
+          v-model="formSearch.invoiceType"
+          placeholder="请选择"
+          style="width:100%;"
+        >
+          <el-option
+            label="全部"
+            value=""
+          />
+          <el-option
+            v-for="item in InvoiceType"
+            :key="item.value"
+            :label="item.text"
+            :value="item.value" 
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item
+        label="申请日期"
+        size="small"
+      >
+        <el-date-picker
+          v-model="dateValue"
+          type="daterange"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd"
+        />
+      </el-form-item>
+      <el-form-item size="small">
+        <el-button
+          type="primary"
+          @click="search"
+          size="small"
+        >
+          查询
+        </el-button>
+        <el-button
+          size="small"
+          @click="resetForm('formSearch')"
+        >
+          清除
+        </el-button>
+      </el-form-item>
+    </el-form>
+
+    <div class="title">
+      发票申请列表
+    </div>
+    <el-button
+      type="primary"
+      size="small"
+      v-if="checkRight(this.permissions, 'invoice-web:/workflow/invoice-add')"
+      @click="$refs.makeInvoice.transmit(true)"
+    >
+      单张申请
+    </el-button>
+    <router-link
+      to="batchApply"
+      v-if="checkRight(this.permissions, 'invoice-web:/workflow/invoice-import-submit')"
+    >
+      <el-button
+        type="primary"
+        size="small"
+      >
+        批量申请
+      </el-button>
+    </router-link>
+    <el-button
+      type="primary"
+      size="small"
+      @click="exportList"
+    >
+      导出
+    </el-button>
+    <el-button
+      size="small"
+      style="margin-left: 240px"
+      @click="isWait"
+    >
+      待审批
+    </el-button>
+    <span style="color: #999">申请票数：{{ statistics.applyNum }}张，申请金额：{{ statistics.applyAmount | formatMoney }}元</span>
+    <el-table
+      :data="tableList.list"
+      @sort-change="sortChange"
+      style="width: 100%;margin-top: 20px;"
+    >
+      <el-table-column
+        label="操作"
+        width="120"
+      >
+        <template slot-scope="scope">
+          <el-button
+            v-if="(scope.row.status == 1 || scope.row.status == 2) && scope.row.createBy == userId"
+            @click="showDetail(scope.row.processInsId, scope.row.orderNo, scope.row.createBy, true)"
+            type="text"
+            size="medium"
+            style="padding:0;"
+          >
+            作废
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="orderNo"
+        label="申请编号"
+        width="100"
+      >
+        <template slot-scope="scope">
+          <el-button
+            size="small"
+            type="text"
+            @click="showDetail(scope.row.processInsId, scope.row.orderNo, scope.row.createBy)"
+          >
+            {{ scope.row.orderNo }}
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="statusName"
+        label="申请状态"
+        width="120"
+      />
+      <el-table-column
+        prop="customCompanyName"
+        label="客户名称"
+        width="220"
+      />
+      <el-table-column
+        prop="purpose"
+        label="发票用途"
+        width="220" 
+      />
+      <el-table-column
+        prop="fullName"
+        label="发票类目"
+        width="220" 
+      />
+      <el-table-column
+        sortable="custom"
+        prop="amount"
+        label="申请金额"
+        width="120" 
+      />
+      <el-table-column
+        prop="num"
+        label="申请票数"
+        width="120" 
+      />
+      <el-table-column
+        prop="serviceCompanyName"
+        label="开票公司"
+        width="220"
+      />
+      <el-table-column
+        prop="invoiceTypeName"
+        label="发票类型"
+        width="120"
+      >
+        <template slot-scope="scope">
+          <div
+            class="bill common"
+            v-if="scope.row.invoiceTypeName.indexOf('普通') > -1"
+          >
+            普票
+          </div>
+          <div
+            class="bill special"
+            v-else
+          >
+            专票
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="createByName"
+        label="申请人"
+        width="120" 
+      />
+      <!--<el-table-column prop="realAmount" label="实开金额" width="120"></el-table-column>-->
+      <!--<el-table-column prop="realNum" label="实开票数" width="120"></el-table-column>-->
+      <!--<el-table-column prop="rejectAmount" label="拒开金额" width="120"></el-table-column>-->
+      <!--<el-table-column prop="rejectNum" label="拒开票数" width="120"></el-table-column>-->
+      <el-table-column
+        sortable="custom"
+        prop="createTime"
+        label="申请时间"
+        width="220"
+      >
+        <template slot-scope="scope">
+          <span>{{ scope.row.createTime | formatTime('yyyy-MM-dd hh:mm:ss') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="checkByName"
+        label="审批人"
+        width="120"
+      />
+      <el-table-column
+        prop="checkTime"
+        label="审批时间"
+        width="220"
+      >
+        <template slot-scope="scope">
+          <span>{{ scope.row.checkTime | formatTime('yyyy-MM-dd hh:mm:ss') }}</span>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <ayg-pagination
+      v-if="tableList.total"
+      :total="tableList.total"
+      @handleSizeChange="handleSizeChange"
+      @handleCurrentChange="handleCurrentChange"
+      :current-page="currentPage"
+    />
+
+    <el-dialog
+      title="选择发票类型和开票公司"
+      :visible.sync="dialogClientVisible"
+      width="35%"
+    >
+      <el-form
+        :rules="rulesClient"
+        :model="formClient"
+        ref="formClient"
+      >
+        <div class="input-container">
+          <div class="label dialog-label">
+            发票类型<span>*</span>
+          </div>
+          <div class="input">
+            <el-form-item prop="invoiceType">
+              <el-radio-group v-model="formClient.invoiceType">
+                <el-radio
+                  v-for="item in InvoiceType"
+                  :key="item.value"
+                  :label="item.value"
+                >
+                  {{ item.text }}
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </div>
+        </div>
+        <div class="input-container">
+          <div class="label dialog-label">
+            开票公司<span>*</span>
+          </div>
+          <div class="input">
+            <el-form-item prop="serviceCompanyId">
+              <el-select
+                v-model="formClient.serviceCompanyId"
+                placeholder="请选择开票公司"
+              >
+                <el-option
+                  v-for="item in companyList"
+                  :key="item.value"
+                  :label="item.text"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </div>
+        </div>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="dialogClientVisible=false;">
+          取 消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="showClientForm('formClient')"
+        >
+          确 定
+        </el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      title="发票申请单"
+      :visible.sync="dialogDetailVisible"
+      width="50%"
+    >
+      <div class="detailContext">
+        <span>申请编号:</span>
+        <span>{{ formDetail.orderNo }}</span>
+      </div>
+      <div class="detailContext">
+        <span>申请时间:</span>
+        <span>{{ formDetail.createTime | formatTime('yyyy-MM-dd hh:mm:ss') }}</span>
+      </div>
+      <div class="detailContext">
+        <span>开票名称:</span>
+        <span>{{ formDetail.customCompanyName }}</span>
+      </div>
+      <div class="detailContext">
+        <span>纳税人识别号:</span>
+        <span>{{ formDetail.customTaxIdcd }}</span>
+      </div>
+      <el-button
+        size="small"
+        type="text"
+        @click="dshow = !dshow"
+      >
+        {{ dshow ? '收起' : '详情' }}
+      </el-button>
+      <template v-if="dshow">
+        <div class="detailContext">
+          <span>公司地址:</span>
+          <span>{{ formDetail.customAddr }}</span>
+        </div>
+        <div class="detailContext">
+          <span>公司电话:</span>
+          <span>{{ formDetail.customPhone }}</span>
+        </div>
+        <div class="detailContext">
+          <span>开户行名称:</span>
+          <span>{{ formDetail.customBankName }}</span>
+        </div>
+        <div class="detailContext">
+          <span>账号:</span>
+          <span>{{ formDetail.customBankAccount }}</span>
+        </div>
+      </template>
+      <div class="detailContext">
+        <span>剩余票数:</span>
+        <span><span class="red">{{ formDetail.leftInvoiceNum }}</span>张</span>
+      </div>
+      <div class="detailContext">
+        <span>可开票金额:</span>
+        <span class="red">{{ formDetail.leftInvoiceAmount }}</span>
+      </div>
+      <div class="detailContext">
+        <span>申请发票数:</span>
+        <span><span class="red">{{ formDetail.applyInvoiceNum }}</span>张</span>
+      </div>
+      <div class="detailContext">
+        <span>开票类型:</span>
+        <span>{{ formDetail.invoiceTypeName }}</span>
+      </div>
+      <div class="detailContext">
+        <span>开票金额合计:</span>
+        <span>{{ formDetail.applyInvoiceAmount }}</span>
+      </div>
+      <div class="detailContext">
+        <span>发票用途:</span>
+        <span>{{ formDetail.remark }}</span>
+      </div>
+
+      <el-table
+        :data="formDetail.items"
+        style="width: 100%;margin-top: 20px;"
+        @selection-change="handleSelectionChange"
+        height="450px"
+      >
+        <el-table-column
+          type="selection"
+          v-if="formDetail.status == '1' && !isCancel"
+        />
+        <el-table-column
+          type="index"
+          :index="indexMethod"
+          width="70" 
+        />
+        <el-table-column
+          prop="fullName"
+          label="开票类目"
+        />
+        <el-table-column
+          prop="amount"
+          label="开票金额（含税）"
+          width="150"
+        />
+        <el-table-column
+          prop="serviceCompanyName"
+          label="开票公司"
+          width="220"
+        />
+        <el-table-column
+          prop="statusName"
+          label="状态"
+        />
+      </el-table>
+
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <!-- v-if="formDetail.status == '1' || isCancel" -->
+        <el-button
+          size="small"
+          @click="dialogDetailVisible = false"
+        >
+          关闭
+        </el-button>
+        <template v-if="formDetail.isOperate">
+          <template v-if="formDetail.status == '1' || !isCancel">
+            <el-button
+              size="small"
+              @click="dialogDetailVisible = false;dialogRejectVisible = true"
+              v-if="isCan"
+            >
+              整单拒开
+            </el-button>
+            <el-button
+              size="small"
+              type="primary"
+              @click="showOpenDialog"
+              v-if="isCan"
+            >
+              审核通过
+            </el-button>
+          </template>
+          <template v-else>
+            <el-button
+              size="small"
+              type="primary"
+              @click="cancel"
+            >
+              申请作废
+            </el-button>
+          </template>
+        </template>
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      title="拒开确认"
+      :visible.sync="dialogRejectVisible"
+      width="35%"
+      :before-close="handleCloseReject"
+    >
+      <el-form>
+        <div class="input-container">
+          <div class="label dialog-label">
+            拒开原因
+          </div>
+          <div class="input">
+            <el-form-item>
+              <el-input
+                type="textarea"
+                :rows="5"
+                v-model="formInvoice.memo"
+              />
+            </el-form-item>
+          </div>
+        </div>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="formInvoice.memo = '';formInvoice.allReject=true;dialogRejectVisible=false;submitInvoice()">
+          确认拒开
+        </el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      title="开票确认"
+      :visible.sync="dialogOpenVisible"
+      width="35%"
+      :before-close="handleCloseOpen"
+    >
+      <p>
+        申请发票数：<span class="red">{{ formOpen.lengthAll }}</span>张，确认开票数 <span
+          class="red"
+        >{{ formOpen.lengthChoose }}</span>张，
+      </p>
+      <p>
+        欠票 <span class="red">{{ formOpen.lengthAll - formOpen.lengthChoose }}</span>张，欠票总金额为 <span class="red">{{ formOpen.amount }}</span>
+      </p>
+      <h3>提交开票后，未勾选的部分将做欠票处理</h3>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="formInvoice.allReject=false;dialogOpenVisible=false;submitInvoice();">
+          确认提交
+        </el-button>
+      </div>
+    </el-dialog>
+    <make-invoice ref="makeInvoice" />
+    <audit-invoice
+      :query="search"
+      ref="auditInvoice" 
+    />
+  </div>
 </template>
 
 <script>
@@ -269,10 +613,15 @@
     import {post, get} from '../../store/api';
     import {mapGetters} from 'vuex';
     import makeInvoice from '../workOrder/dialog/makeInvoice'
+    import auditInvoice from '../workOrder/dialog/auditInvoice'
+    import { workflow } from "src/api"
+    import {urlEncode} from '../../plugin/utils-functions'
+
     export default {
-        name: "list",
+        name: "List",
         components: {
-            makeInvoice
+            makeInvoice,
+            auditInvoice
         },
         data() {
             return {
@@ -293,6 +642,18 @@
                     invoiceType: '',
                     startAt: '',
                     endAt: '',
+                    approveInvoiceOrderParams: [
+                        {
+                            order: 0,
+                            sortProperty: 'create_time_',
+                            sortVal: 'desc'
+                        },
+                        {
+                            order: 1,
+                            sortProperty: 'amount_',
+                            sortVal: 'asc'
+                        }
+                    ]
                 },
                 pageSize: 10,
                 currentPage: parseInt(this.$route.query.page) || 1,
@@ -338,13 +699,17 @@
                 dshow: false,
                 isCancel: false,
                 wait: 0,
-                isReady: true
+                isReady: true,
+                statistics: {},
             }
         },
         computed: {
             ...mapGetters({
                 permissions: 'permissions'
-            })
+            }),
+            userId() {
+                return window.localStorage.getItem('userId')
+            }
         },
         mounted() {
             if(this.permissions) {
@@ -352,14 +717,14 @@
             }
             this.getWait()
             get('/api/invoice-web/invoice/invoice-proposer-list').then(data => {
-              this.proposerList = data
+                this.proposerList = data
             })
+            
         },
         watch: {
             permissions() {
-                console.log('right')
                 this.isCan = this.checkRight(this.permissions, 'invoice-web:/invoice/invoice-approve-submit')
-                console.log(this.isCan)
+                // console.log(this.isCan)
             }
         },
         methods: {
@@ -437,6 +802,7 @@
                     amountEnd: this.formSearch.amountEnd,
                     status: this.formSearch.status,
                     invoiceType: this.formSearch.invoiceType,
+                    approveInvoiceOrderParams: this.formSearch.approveInvoiceOrderParams,
                     startAt: startAt,
                     endAt: endAt,
                     page: pageInfo.page,
@@ -446,6 +812,18 @@
                     this.tableList = data
                     this.isReady = false
                 })
+                let isCreate = sessionStorage.getItem('isCreate')
+                // 如果是从创建跳过来的，延迟2秒再刷新一次
+                if(isCreate) {
+                    sessionStorage.removeItem('isCreate')
+                    setTimeout(() => {
+                        post('/api/invoice-web/invoice/invoice-approve-list', param).then(data => {
+                            this.tableList = data
+                            this.isReady = false
+                        })
+                    }, 2000)
+                }
+                this.getStatistics(param)
             },
             handleSizeChange(value) {
                 this.pageSize = value;
@@ -489,19 +867,47 @@
                     }
                 })
             },
-            showDetail(orderNo, isCancel) {
-                this.dialogDetailVisible = true;
-                this.formInvoice.orderNo = orderNo;
-                this.isCancel = isCancel
-                console.log(this.isCancel)
+            showDetail(processInsId, orderNo, userId, isCancel) {
+                // this.dialogDetailVisible = true;
+                // this.formInvoice.orderNo = orderNo;
+                // this.isCancel = isCancel
+                // console.log(this.isCancel)
 
-                let url = '/api/invoice-web/invoice/get-invoice-approve-info';
-                let param = {
-                    orderNo: orderNo
-                }
-                let self = this;
-                get(url, param).then(data => {
-                    self.formDetail = data;
+                // let url = '/api/invoice-web/invoice/get-invoice-approve-info';
+                // let param = {
+                //     orderNo: orderNo
+                // }
+                // let self = this;
+                // get(url, param).then(data => {
+                //     self.formDetail = data;
+                // })
+                // 这里要判断权限
+                /**
+                 * tag： 有审核权限
+                 */
+                const tag = !!this.$store.state.permissions['invoice-web:/workflow/invoice-approve-submit']
+                get(workflow.getTaskId, {processInsId}).then(res => {
+                    const param = {}
+                    param.businessId = res.businessId || orderNo
+                    param.id = res.processTaskId
+                    param.processInstanceId = processInsId
+                    // 判断是否点作废
+                    if(isCancel) {
+                        this.$refs.auditInvoice.transmit({
+                            show: true,
+                            param: param,
+                            look: true,
+                            isMe:  true
+                        })
+                    } else {
+                        this.$refs.auditInvoice.transmit({
+                            show: true,
+                            param: param,
+                            look: !tag,
+                            isMe:  false
+                        })
+                    }
+                    
                 })
             },
             reject() {
@@ -630,6 +1036,52 @@
                 this.resetForm('formSearch')
                 this.formSearch.status = '1'
                 this.search()
+            },
+            // 查询发票统计数据
+            getStatistics(data) {
+                post('/api/invoice-web/invoice/invoice-approve-statistics',data).then(res => {
+                    this.statistics = res
+                })
+            },
+            // 导出
+            exportList() {
+                const formSearch = JSON.parse(JSON.stringify(this.formSearch))
+                formSearch.startAt = this.dateValue[0]
+                formSearch.endAt = this.dateValue[1]
+                delete formSearch.approveInvoiceOrderParams
+                console.log(urlEncode(formSearch))
+                window.open(`/api/invoice-web/invoice/invoice-approve-export?${urlEncode(formSearch).substring(1)}`)
+                // get('/api/invoice-web/invoice/invoice-approve-export').then(res => {
+                //     // this.statistics = res
+                // })
+                
+            },
+            // 排序
+            sortChange({prop, order}) {
+                if(prop === 'amount') {
+                    this.formSearch.approveInvoiceOrderParams[0].order = 1
+                    this.formSearch.approveInvoiceOrderParams[1].order = 0
+                } else if(prop === 'createTime') {
+                    this.formSearch.approveInvoiceOrderParams[0].order = 0
+                    this.formSearch.approveInvoiceOrderParams[1].order = 1
+                }
+                if(order === 'ascending') {//升序
+                    if(prop === 'amount') { // 金额
+                        this.formSearch.approveInvoiceOrderParams[1].sortVal = 'asc'
+                    } else if(prop === 'createTime')  {
+                        this.formSearch.approveInvoiceOrderParams[0].sortVal = 'asc'
+                    }
+                } else if(order === 'descending') { // 降序
+                    if(prop === 'amount') { // 金额
+                        this.formSearch.approveInvoiceOrderParams[1].sortVal = 'desc'
+                    } else if(prop === 'createTime')  {
+                        this.formSearch.approveInvoiceOrderParams[0].sortVal = 'desc'
+                    }
+                }
+                this.requestAction({
+                    page: 1,
+                    pageSize: this.pageSize,
+                });
             }
         },
         created() {

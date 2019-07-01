@@ -31,12 +31,13 @@
                 </el-date-picker>
             </el-form-item>
             <el-form-item style="margin-top: -4px">
-                <el-button type="primary" @click="search" size="small">查询</el-button>
+                <el-button type="primary" @click="searchHander" size="small">查询</el-button>
                 <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
                 <el-button size="small" @click="exportDetail">导出</el-button>
             </el-form-item>
         </el-form>
         <el-button size="small" @click="routerPush('/main/contract/create')" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">新增</el-button>
+        <statistics-box :dataList="statisticsDataList"></statistics-box>
         <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
             <el-table-column prop="customerName" label="企业名称" width="200"></el-table-column>
             <el-table-column prop="serviceCompanyName" label="服务商名称" width="220"></el-table-column>
@@ -108,8 +109,11 @@
 import {post, get} from '../../store/api';
 import { setTimeout } from 'timers';
 import { mapGetters } from 'vuex'
-
+import statisticsBox from '../../component/statisticsBox.vue'
 export default {
+    components: {
+        statisticsBox
+    },
     computed: {
         ...mapGetters({
             userInformation: 'userInformation'
@@ -155,13 +159,57 @@ export default {
                 customerId: '',
                 customerName: '',
                 serviceCompanyId: ''
-            }
+            },
+            statisticsDataList: []
         }
     },
     methods: {
         resetForm(formName) {
             this.$refs[formName].resetFields();
             this.dateValue = '';
+        },
+        searchHander() {
+            this.search();
+            this.statisticsQuery();
+        },
+        statisticsQuery() {
+            let startAt = '';
+            let endAt = '';
+            if (this.dateValue) {
+                startAt = this.dateValue[0];
+                endAt = this.dateValue[1];
+            }
+            let param = {
+                startAt: startAt,
+                endAt: endAt,
+                customerName: this.formSearch.customerName.trim(),
+                serviceCompanyName: this.formSearch.serviceCompanyName.trim(),
+                settleType: this.formSearch.settleType,
+                archiveStatus: this.formSearch.archiveStatus,
+                page: 1,
+                pageSize: this.pageSize,
+            };
+            post('/api/contract-web/contract/customer-contracts-statistic', param).then(data => {
+                let total = data.total //合同总数
+                let archiveNum = data.archiveNum //已归档合同总数
+                let unArchiveNum = data.unArchiveNum //未归档合同总数 
+            
+                this.statisticsDataList = [
+                    {
+                        title: '合同总数',
+                        value: total
+                    },
+                    {
+                        title: '已归档合同总数',
+                        value: archiveNum
+                    },
+                    {
+                        title: '未归档合同总数',
+                        value:  unArchiveNum
+                    }
+                ]
+            })
+            
         },
         search() {
             this.currentPage = 1;
@@ -199,8 +247,8 @@ export default {
             let param = {
                 startAt: startAt,
                 endAt: endAt,
-                customerName: this.formSearch.customerName,
-                serviceCompanyName: this.formSearch.serviceCompanyName,
+                customerName: this.formSearch.customerName.trim(),
+                serviceCompanyName: this.formSearch.serviceCompanyName.trim(),
                 settleType: this.formSearch.settleType,
                 archiveStatus: this.formSearch.archiveStatus,
                 page: pageInfo.page,
@@ -320,6 +368,7 @@ export default {
             pageSize: this.pageSize,
         });
         this.getSearchOptions();
+        this.statisticsQuery()
         // this.getOptionCustomerCompanies();
         // this.getOptionServiceCompanies();
     }
