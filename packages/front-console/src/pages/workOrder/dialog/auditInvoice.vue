@@ -287,7 +287,7 @@
           </div>
           <div>收票人：{{ msg.expressLink.collector }}</div>
           <div>收票人电话：{{ msg.expressLink.collectorPhone }}</div>
-          <div>收票人地址：{{ msg.expressLink.collectorAddr }}</div>
+          <div>收票人地址：{{ msg.expressLink.addr }}</div>
         </template>
         <div class="title">
           寄送发票
