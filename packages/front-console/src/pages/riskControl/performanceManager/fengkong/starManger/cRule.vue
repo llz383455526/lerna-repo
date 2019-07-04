@@ -19,6 +19,8 @@
                         <el-col :span="6">
                             <span class="yulan" @click="previewClick(item)">下载</span>
                             &nbsp;&nbsp;&nbsp;
+                            <span v-if="item.canDelete" class="yulan" @click="removeBtnClick(item)">删除</span>
+                            &nbsp;&nbsp;&nbsp;
                             <span class="audit-state">{{ item.cuserBalanceStandardStateName }}</span>
                         </el-col>
                         <el-col class="time" :span="6">{{ item.cuserBalanceStandardUpdateTime }}</el-col>
@@ -40,6 +42,7 @@
 
 <script>
     import WPop from './pop'
+    import {post, get} from "../../../../../store/api"
 
     export default {
         name: "cRule",
@@ -55,6 +58,19 @@
             },
             previewClick(item) {
                 window.open('/api/sysmgr-web/file/download?downloadCode=' + item.cuserBalanceStandardDownloadCode)
+            },
+            removeBtnClick(item) {
+                this.$confirm('确定要删除嘛?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    get('/api/console-dlv/risk-level-approve/delete-balance-standard', {
+                        id: item.id
+                    }).then(() => {
+                        this.$emit('reload')
+                    })
+                }).catch(() => {});
             }
         }
     }

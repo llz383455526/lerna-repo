@@ -27,7 +27,6 @@
             <br>
             <w-c-performance :model="model" @reload="getDetailData" />
         </div>
-        <w-pop ref="WPop"/>
         <el-button size="small" @click="$router.go(-1)">返回</el-button>
     </div>
 </template>
@@ -35,7 +34,6 @@
 <script>
     import WContractRateChart from './contractRateChart'
     import WCPerformance from './cPerformance'
-    import WPop from './pop'
     import {post, get} from "../../../../../store/api"
     import WCRule from './cRule'
 
@@ -44,7 +42,6 @@
         components: {
             WContractRateChart,
             WCPerformance,
-            WPop,
             WCRule
         },
         data() {
@@ -81,9 +78,6 @@
             }
         },
         methods: {
-            popShowClick() {
-                this.$refs.WPop.show()
-            },
             getDetailData() {
                 get('/api/console-dlv/risk_level_degrade/risk-level-degrade-detail', {
                     companyId: this.$route.query.id

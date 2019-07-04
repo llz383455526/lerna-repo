@@ -37,7 +37,7 @@
                                 :on-remove="fileRemove"
                                 :auto-upload="false"
                                 :multiple="false"
-                                :accept="fileFormat.join(',')"
+                                :accept="accept"
                                 :file-list="fileList">
                                 <el-button size="small" type="primary">点击上传</el-button>
                                 <div slot="tip" class="el-upload__tip">
@@ -97,6 +97,9 @@
                 return this.serviceProviderslist.filter((item) => {
                     return item.isSel
                 })
+            },
+            accept() {
+                return this.fileFormat.join(',')
             }
         },
         methods: {
