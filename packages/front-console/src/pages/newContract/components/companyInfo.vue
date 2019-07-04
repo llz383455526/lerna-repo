@@ -436,7 +436,7 @@ export default {
 
 
         this.ruleForm.contracts.forEach(item => {
-            item.showServiceCompanyInfo = item.showServiceCompanyInfo === '1' ? true : false;
+            item.showServiceCompanyInfo = item.showServiceCompanyInfo === '1' || true ? true : false;
             let serviceCompanyRateList = item.quoteFeeContent.serviceCompanyRateList
             if(serviceCompanyRateList && serviceCompanyRateList.length) {
                 item.quoteFeeContent.serviceCompanyRateList = serviceCompanyRateList.filter(e => e.serviceCompanyId == item.serviceCompanyId)
