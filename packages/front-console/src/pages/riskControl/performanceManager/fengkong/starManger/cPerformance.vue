@@ -46,6 +46,8 @@
     </el-table>
     <w-pop
       url="/risk-level-approve/cuser-performance-upload"
+      :file-format="['.pdf', '.xls', '.xlsx', '.doc', '.docx', '.txt', '.csv', '.rar', '.zip']"
+      :file-size="32"
       @reload="$emit('reload')"
       title="C端绩费计算明细"
       file-suffix="计算明细"

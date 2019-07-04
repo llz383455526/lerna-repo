@@ -37,9 +37,13 @@
                                 :on-remove="fileRemove"
                                 :auto-upload="false"
                                 :multiple="false"
+                                :accept="fileFormat.join(',')"
                                 :file-list="fileList">
                                 <el-button size="small" type="primary">点击上传</el-button>
-                                <div slot="tip" class="el-upload__tip">如果服务商计算规则一致，可选多个服务一起上传</div>
+                                <div slot="tip" class="el-upload__tip">
+                                    <p>如果服务商计算规则一致，可选多个服务一起上传</p>
+                                    <p>{{ fileFormat.join(',') }}， 允许最大上传{{ fileSize }}M</p>
+                                </div>
                             </el-upload>
                         </el-col>
                         <el-col :span="12" v-if="upFileList.length">
@@ -68,7 +72,7 @@
     import {post, get, importPost} from "../../../../../store/api"
     export default {
         name: "PerformanceManagerStarMangerPop",
-        props: ['title', 'fileSuffix', 'url', 'attachmentKey'],
+        props: ['title', 'fileSuffix', 'url', 'attachmentKey', 'fileFormat', 'fileSize'],
         data() {
             return {
                 isShow: false,
@@ -125,6 +129,23 @@
             handleChange(file, files) {
                 if (files.length > 1) {
                     files.shift()
+                }
+                this.upFileModel = null
+                if (file.size > this.fileSize * 1024 * 1024) {
+                    this.$notify.error({
+                        title: '文件太大',
+                        message: `文件大小不能大于${this.fileSize}M`
+                    });
+                    files.shift()
+                    return
+                }
+                const filePrifix = '.' + file.name.split('.').pop()
+                if (this.fileFormat.indexOf(filePrifix) < 0) {
+                    this.$notify.error({
+                        title: '文件格式不正确',
+                    });
+                    files.shift()
+                    return;
                 }
                 var formData = new FormData()
                 formData.append('targetType', '')

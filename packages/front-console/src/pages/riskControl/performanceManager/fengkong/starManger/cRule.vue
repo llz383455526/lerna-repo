@@ -28,6 +28,8 @@
         </div>
         <w-pop
             @reload="$emit('reload')"
+            :file-format="['.pdf', '.xls', '.xlsx', '.doc', '.docx', '.txt', '.csv']"
+            :file-size="32"
             title="C端绩效计算规则"
             url="/risk-level-approve/cuser-balance-standard-upload"
             file-suffix="计算规则"
