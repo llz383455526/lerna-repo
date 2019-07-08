@@ -28,10 +28,7 @@ switch(env) {
 
 module.exports = {
     entry: {
-        app: ['babel-polyfill', './src/main.js'],
-	    /*vendor: [
-		    'babel-polyfill'
-	    ]*/
+        app: ['babel-polyfill', './src/main.js']
     },
     output: {
         path: assetsRoot,
@@ -40,7 +37,6 @@ module.exports = {
     },
     resolve: {
         extensions: ['.js', '.vue', '.less', '.css', '.scss'],
-        //fallback: [path.join(__dirname, '../node_modules')],
 	    modules: [path.join(__dirname, 'src'), 'node_modules'],
         alias: {
             'vue$': 'vue/dist/vue.common.js',
@@ -50,9 +46,6 @@ module.exports = {
             'pageComponent': path.resolve(__dirname, '../src/pageComponent'),
             'store': path.resolve(__dirname, '../src/store'),
         }
-    },
-    resolveLoader: {
-        //fallback: [path.join(__dirname, '../node_modules')]
     },
     module: {
     	rules: [{
