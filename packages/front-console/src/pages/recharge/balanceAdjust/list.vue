@@ -687,6 +687,7 @@
                 ThirdPaymentTypeList: [],
                 prevList: [],
                 showVModal: false,
+                windowOpener: ''
             };
         },
         watch: {
@@ -1311,6 +1312,7 @@
                 }
             },
             download() {
+                this.windowOpener = window.open()
                 get('/api/balance-web/recharge-order/download-recharge-certificate', {
                     rechargeOrderId: this.detail.id
                 }).then(data => {
@@ -1333,7 +1335,7 @@
                                 })
                                 this.showPro = false
                                 cancelAnimationFrame(this.frame)
-                                window.open(`/api/sysmgr-web/file/download?downloadCode=${data.downloadCode}`)
+                                this.windowOpener.location.href = `/api/sysmgr-web/file/download?downloadCode=${data.downloadCode}`
                             }
                             if(data.state == 40) {
                                 this.$message({

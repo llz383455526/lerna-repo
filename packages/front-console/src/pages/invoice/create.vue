@@ -595,9 +595,10 @@
 
                 // if (validData && validCategory) {
                 if (validData) {
+                    let windowOpener = window.open()
                     this.checkFormCategory().then(() => {
                         post(url, param).then(data => {
-                            window.open(data);
+                            windowOpener.location.href = data;
                         });
                     }).catch(() => {})
                 }

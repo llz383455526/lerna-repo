@@ -268,7 +268,8 @@ export default {
                     { required: true, message: '请输入备注', trigger: 'blur' }
                 ]
             },
-            realStep: []
+            realStep: [],
+            windowOpener: ''
         }
     },
     computed: {
@@ -374,6 +375,7 @@ export default {
             })
         },
         download() {
+            this.windowOpener = window.open()
             get('/api/balance-web/recharge-order/download-recharge-certificate', {
                 rechargeOrderId: this.detail.id
             }).then(data => {
@@ -396,7 +398,7 @@ export default {
                         })
                         this.showPro = false
                         cancelAnimationFrame(this.frame)
-                        window.open(`/api/sysmgr-web/file/download?downloadCode=${data.downloadCode}`)
+                        this.windowOpener.location.href = `/api/sysmgr-web/file/download?downloadCode=${data.downloadCode}`
                     }
                     if(data.state == 40) {
                         this.$message({

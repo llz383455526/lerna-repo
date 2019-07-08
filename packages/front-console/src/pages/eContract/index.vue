@@ -242,7 +242,8 @@
                 pro: 0,
                 frame: '',
                 date: 0,
-                isEnd: true
+                isEnd: true,
+                windowOpener: ''
 			}
 		},
 		mounted() {
@@ -286,6 +287,7 @@
                 return url
             },
             download() {
+                this.windowOpener = window.open()
                 let formSearch = JSON.parse(JSON.stringify(this.formSearch))
                 formSearch.manufacturer = 0
                 post(econtract.innerExport, formSearch, true).then(data => {
@@ -308,7 +310,7 @@
                             this.$message.success('导出成功!')
                             cancelAnimationFrame(this.frame)
                             this.showPro = false
-                            window.open(`${file.download}?processId=${this.processId}`)
+                            this.windowOpener.location.href = `${file.download}?processId=${this.processId}`
                         }
                         else if(data.status == 'Failed') {
                             this.$message({

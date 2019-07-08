@@ -211,9 +211,10 @@
         })
       },
       downloadMoBanBtnClick() {
+        let windowOpener = window.open();
         this.checkFaFangQuDao().then(() => {
           const url = `/api/console-dlv/company/salary-split/download-salary-order-item-template?appId=${this.applyForm.shangHuId}`
-          window.open(url)
+          windowOpener.location.href = url
         }).catch(() => {})
       },
       upload(a) {

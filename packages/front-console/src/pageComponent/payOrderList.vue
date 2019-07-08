@@ -117,6 +117,7 @@ export default {
             frame: '',
             delay: '',
             flowTableList: {},
+            windowOpener: ''
         }
     },
     computed: {
@@ -170,6 +171,7 @@ export default {
             })
         },
         download(a) {
+            this.windowOpener = window.open()
             get('/api/console-dlv/pay-order/download-pay-item-electronic-return', {
                 itemId: a.id
             }).then(data => {
@@ -192,7 +194,7 @@ export default {
                             })
                             this.showPro = false
                             cancelAnimationFrame(this.frame)
-                            window.open(`/api/sysmgr-web/file/download?downloadCode=${data.downloadCode}`)
+                            this.windowOpener.location.href = `/api/sysmgr-web/file/download?downloadCode=${data.downloadCode}`
                         }
                         if(data.state == 40) {
                             this.$message({

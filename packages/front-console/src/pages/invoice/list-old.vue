@@ -718,9 +718,9 @@
             },
             previewForm() {
                 let url = '/api/invoice-web/invoice/approve-preview';
+                let newWindow = window.open();
                 let param = this.formInvoice;
                 post(url, param).then(data => {
-                    let newWindow = window.open();
                     newWindow.location.href = data;
                 });
             },
