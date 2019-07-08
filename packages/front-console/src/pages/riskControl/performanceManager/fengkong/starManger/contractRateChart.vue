@@ -11,10 +11,15 @@
       initData() {
         // 基于准备好的dom，初始化echarts实例
         const myChart = ECharts.init(this.$refs.PerformanceManagerChert);
-
         const xTitles = []
         const XNums = []
           const list = [...this.model.companyRiskRateDataDTOList].reverse()
+          if (list.length > 0) {
+              const lastItem = list[list.length - 1]
+              if (lastItem.cuserQuarterSignRate === null) {
+                  list.pop()
+              }
+          }
           list.forEach((item) => {
           xTitles.push(`${item.year}/${item.month}`)
             let num = 0

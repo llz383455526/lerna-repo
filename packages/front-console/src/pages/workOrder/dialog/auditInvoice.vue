@@ -36,7 +36,7 @@
         <div style="padding-left: 20px">
           <p> 开票名称：{{ msg.customCompanyResult.name }}</p>
           <p> 纳税人识别号：{{ msg.customCompanyResult.taxIdcd }}</p>
-          <p> 地址、电话：{{ msg.customCompanyResult.addr }} {{ msg.customCompanyResult.collectorPhone }}</p>
+          <p> 地址、电话：{{ msg.customCompanyResult.addr }} {{ msg.customCompanyResult.phone }}</p>
           <p> 开户行及账号：{{ msg.customCompanyResult.bankName }} {{ msg.customCompanyResult.bankAccount }}</p>
         </div>
       </div> 
