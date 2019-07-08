@@ -215,8 +215,9 @@ export default {
       delay: '',
       proNum: 0,
       frame: '',
-        activeTab: 'all',
-        stateStatistics: []
+      activeTab: 'all',
+      stateStatistics: [],
+      windowOpener: ''
     };
   },
   computed: {
@@ -294,6 +295,7 @@ export default {
           this.$refs[name].resetFields();
       },
       download() {
+          this.windowOpener = window.open()
           get('/api/console-dlv/company/salary-online-order/download-batch-electronic-return', {
               orderId: this.data.id
           }).then(data => {
@@ -303,7 +305,7 @@ export default {
           })
       },
       downloadSalary(a) {
-          console.log(a.id)
+          this.windowOpener = window.open('')
           get('/api/console-dlv/company/salary-online-order/download-electronic-return', {
               salaryOrderItemId: a.id
           }).then(data => {
@@ -326,7 +328,7 @@ export default {
                         })
                         this.showPro = false
                         cancelAnimationFrame(this.frame)
-                        window.open(`/api/sysmgr-web/file/download?downloadCode=${data.downloadCode}`)
+                        this.windowOpener.location.href = `/api/sysmgr-web/file/download?downloadCode=${data.downloadCode}`
                     }
                     if(data.state == 40) {
                         this.$message({

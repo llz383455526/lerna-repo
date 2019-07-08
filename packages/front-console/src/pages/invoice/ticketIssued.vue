@@ -639,11 +639,11 @@
       },
       preview(a) {
         let url = '/api/invoice-web/invoice/open-paper-preview';
+        let newWindow = window.open();
         let length = this.mform.invoiceIds.length;
         if (length) {
           for (let i = 0; i < length; i++) {
             get(url + "?invoiceId=" + this.mform.invoiceIds[i]).then(data => {
-              let newWindow = window.open();
               newWindow.location.href = data;
             });
           }

@@ -181,7 +181,8 @@ export default {
       pro: 0,
       frame: '',
       date: 0,
-      isEnd: true
+      isEnd: true,
+      windowOpener: ''
     }
   },
   computed: {
@@ -251,6 +252,7 @@ export default {
     //     }
     //   }
     //   window.open(`/api/econtract/inner/export${url}`)
+      this.windowOpener = window.open()
       post(econtract.innerExport, this.form, true).then(data => {
             this.processId = data
             this.showPro = true
@@ -271,7 +273,7 @@ export default {
                     this.$message.success('导出成功!')
                     cancelAnimationFrame(this.frame)
                     this.showPro = false
-                    window.open(`${file.download}?processId=${this.processId}`)
+                    this.windowOpener.location.href = `${file.download}?processId=${this.processId}`
                 }
                 else if(data.status == 'Failed') {
                     this.$message({
