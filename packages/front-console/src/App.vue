@@ -2,18 +2,39 @@
     <transition name="router-fade" mode="out-in">
         <div class="route-container">
             <router-view></router-view>
+          <hm-browser-tip :visible="tipVisible" @cancel="tipVisible = false"></hm-browser-tip>
         </div>
     </transition>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import HmBrowserTip from './component/browserTip.vue'
+import { getBrowserInfo } from './plugin/utils-functions'
+
 export default {
+  components: {
+    HmBrowserTip,
+  },
+  data() {
+    return {
+      tipVisible: false,
+    }
+  },
   computed: {
     ...mapGetters({
       principalMenu: 'principalMenu',
       userInformation: 'userInformation',
-    })
+    }),
+    // 是否要提示浏览版本过低
+    needTip() {
+      const sys = getBrowserInfo()
+      // 非Chrome 或 Chrome < 40
+      if (sys.browser === 'chrome' && sys.ver.split('.')[0] >= 40) {
+        return false
+      }
+      return true
+    },
   },
   watch: {
     principalMenu(menu) {
@@ -37,6 +58,11 @@ export default {
             }
         }
       }
+    }
+  },
+  mounted() {
+    if (this.needTip) {
+      this.tipVisible = true
     }
   }
 };

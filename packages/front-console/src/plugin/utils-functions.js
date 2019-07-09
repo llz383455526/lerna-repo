@@ -45,8 +45,20 @@ let urlEncode = (param, key, encode) => {
   return paramStr;  
 };  
 
+// 获取浏览器信息
+let getBrowserInfo = () => {
+  const sys = {}
+  const ua = navigator.userAgent.toLowerCase()
+  const re = /(msie|firefox|chrome|opera|version).*?([\d.]+)/
+  const m = ua.match(re)
+  sys.browser = m[1].replace(/version/, "'safari")
+  // eslint-disable-next-line prefer-destructuring
+  sys.ver = m[2]
+  return sys
+}
+
 export {
 	formatTime,
-	urlEncode
-	
+	urlEncode,
+	getBrowserInfo,
 }
