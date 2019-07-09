@@ -4,7 +4,6 @@ let path = require('path')
 let config = require('../config')
 let utils = require('./utils')
 let autoprefixer = require('autoprefixer');
-let UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 let LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
 let projectRoot = path.resolve(__dirname, '../')
 
@@ -51,12 +50,15 @@ module.exports = {
     	rules: [{
 		    test: /\.vue$/,
 		    loader: 'vue-loader',
-		    include: projectRoot
+		    include: path.resolve(__dirname,'../src')
 	    }, {
 		    test: /\.js$/,
-		    loader: 'babel-loader?cacheDirectory',
-		    include: projectRoot,
-		    exclude: /node_modules/
+		    loader: 'babel-loader',
+		    include: [
+                path.resolve(__dirname,'../src'),
+                path.resolve(__dirname,'../node_modules/yb-tool')
+            ],
+            exclude: '/node_modules/'
 	    }, {
 		    test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
 		    use: {
