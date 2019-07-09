@@ -37,7 +37,12 @@
             </el-form-item>
             <el-form-item label="签约率">
                 <el-select v-model="searchForm.cuserSignRateParam" placeholder="">
-                    <el-option v-for="item in contractRateArr" :label="item.text" :value="item.value"></el-option>
+                    <el-option
+                        v-for="item in contractRateArr"
+                        :key="item.text"
+                        :label="item.text"
+                        :value="item.value">
+                    </el-option>
                 </el-select>
             </el-form-item>
             <el-form-item>

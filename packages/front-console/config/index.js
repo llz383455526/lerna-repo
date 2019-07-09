@@ -19,7 +19,7 @@ switch (process.env.NODE_SERVER_ENV) {
     break
 }
 
-console.log('proxypath = ', proxypath)
+proxypath && console.log('proxypath = ', proxypath)
 
 module.exports = {
     prod: {

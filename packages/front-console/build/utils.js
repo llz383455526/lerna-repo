@@ -11,7 +11,6 @@ exports.assetsPath = function(_path) {
 		default:
 			assetsSubDirectory = config.dev.assetsSubDirectory
 	}
-	console.log(assetsSubDirectory)
     //let assetsSubDirectory = process.env.NODE_ENV === 'prod' ? config.prod.assetsSubDirectory : config.dev.assetsSubDirectory
     return path.posix.join(assetsSubDirectory, _path)
 }

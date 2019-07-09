@@ -5,7 +5,6 @@ let config = require('../config')
 let utils = require('./utils')
 let autoprefixer = require('autoprefixer');
 let LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
-let projectRoot = path.resolve(__dirname, '../')
 
 let env = process.env.NODE_ENV
 
@@ -53,12 +52,12 @@ module.exports = {
 		    include: path.resolve(__dirname,'../src')
 	    }, {
 		    test: /\.js$/,
-		    loader: 'babel-loader',
+		    loader: 'babel-loader?cacheDirectory',
 		    include: [
                 path.resolve(__dirname,'../src'),
                 path.resolve(__dirname,'../node_modules/yb-tool')
             ],
-            exclude: '/node_modules/'
+            // exclude: /node_modules/
 	    }, {
 		    test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
 		    use: {
