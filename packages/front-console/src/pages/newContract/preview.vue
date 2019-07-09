@@ -115,8 +115,10 @@
                 </span>
               </div>
               <template v-if="contractForm.originalType == 20">
-                <div class="col-xs-12">代理商名称：{{ getText(contractForm.agentCompanyId, contractModel.agentList, 'companyId', 'companyName') }}</div>
-                <div class="col-xs-12">渠道经理：{{ contractModel.chargeByName }}</div>
+<!--                <div class="col-xs-12">代理商名称：{{ getText(contractForm.agentCompanyId, contractModel.agentList, 'companyId', 'companyName') }}</div>-->
+<!--                <div class="col-xs-12">渠道经理：{{ contractModel.chargeByName }}</div>-->
+                  <div class="col-xs-12">代理商名称：{{ contractForm.agentCompanyName }}</div>
+                  <div class="col-xs-12">渠道经理：{{ contractForm.angentChargeByName }}</div>
                 <div class="col-xs-12">代理推广费率：<show-close-service :detail="formItem"></show-close-service>
                 </div>
               </template>
@@ -283,10 +285,10 @@ export default {
         this.$store.dispatch('getServiceTypeList')
         let id = this.$route.query.id;
         this.contractModel.contractId = id;
-        let first = new Promise((res, rej) => {
+        // let first = new Promise((res, rej) => {
             this.contractModel.getContractDetail(id, () => {
                 this.contractForm = this.contractModel.contractForm
-
+                this.getCUserStandardInfoList()
                 this.contractForm.showSubjectInfo = this.contractForm.showSubjectInfo === '1' ? true : false;
                 // this.contractForm.contracts.forEach(item => {
                 //     item.showServiceCompanyInfo = item.showServiceCompanyInfo === '1' ? true : false;
@@ -300,15 +302,40 @@ export default {
                     }
                 })
             });
-        })
-        Promise.all([first, this.contractModel.getAgentList()]).then(() => {
-            this.contractModel.getChargeByName();
-        })
+        // })
+        // Promise.all([first, this.contractModel.getAgentList()]).then(() => {
+        //     this.contractModel.getChargeByName();
+        // })
 
         this.editType = this.$route.query.editType || 'new';
         this.contractModel.editType = this.$route.query.editType || 'new';
     },
     methods: {
+        getCUserStandardInfoList() {
+            let cUserStandardInfoList = []
+            if (!this.contractModel.contractForm.contracts) {
+                this.contractModel.contractForm.contracts = []
+            }
+            if (!this.contractModel.contractForm.cUserStandardInfoList) {
+                this.contractModel.contractForm.cUserStandardInfoList = []
+            }
+            cUserStandardInfoList = this.contractModel.contractForm.contracts.map((item) => {
+                return {
+                    serviceCompanyId: item.serviceCompanyId,
+                    serviceCompanyName: item.serviceCompanyName,
+                    attachments: []
+                }
+            })
+            cUserStandardInfoList.forEach((item1) => {
+                this.contractModel.contractForm.cUserStandardInfoList.forEach((item2) => {
+                    if (item1.serviceCompanyId === item2.serviceCompanyId) {
+                        item1.attachments = item2.attachments
+                    }
+                })
+            })
+            this.cUserStandardInfoList = cUserStandardInfoList
+            this.contractModel.contractForm.cUserStandardInfoList = cUserStandardInfoList
+        },
         hasInsurance() {
             if (!this.contractForm.contracts) return false
             return  this.contractForm.contracts.some((gongSi) => {

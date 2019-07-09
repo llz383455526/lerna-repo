@@ -31,17 +31,25 @@
                                 </el-table-column>
                             </el-table>
                         </div>
-                        <div class="col-xs-12" v-if="false">
+                        <div class="col-xs-12">
                             <h4 class="block green">C端绩效计算规则</h4>
-                            <template v-if="contractModel.contractForm.cUserStandardAttachmentModels">
-                                <div v-for="(v, k) in contractModel.contractForm.cUserStandardAttachmentModels">
-                                    <span>{{ v.displayname }}</span>
-                                    <a
-                                        href="javascript:;"
-                                        @click="jieSuanFileDown(v.downloadCode)"
-                                        style="margin-left:10px;">下载</a>
+                            <div class="jie-suan-biao-zhun-box">
+                                <div class="right-section" v-if="cWaitList.length > 0">
+                                    <span class="title">待上传落地公司</span>
+                                    <ul class="wait-list">
+                                        <li class="item" v-for="v in  cWaitList" :key="v.serviceCompanyId">{{ v.serviceCompanyName }}</li>
+                                    </ul>
                                 </div>
-                            </template>
+                                <div class="right-section" v-if="cAlreadyList.length">
+                                    <span class="title" style="color: #1D7CEE">已上传落地公司</span>
+                                    <el-row :gutter="20" v-for="(v, k) in cAlreadyList">
+                                        <el-col :span="12">{{ v.serviceCompanyName }}_计算规则.{{  v.attachments[0].displayname.split('.').pop() }}</el-col>
+                                        <el-col :span="12">
+                                            <el-button type="text" @click="handleDownload(v)">下载</el-button>
+                                        </el-col>
+                                    </el-row>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-xs-12">
                             <h4 class="block green">合同备注</h4>
@@ -69,6 +77,29 @@ export default {
             this.getAdd()
         }
     },
+    computed: {
+        // C端绩效待上传列表
+        cWaitList() {
+            if (this.contractModel.contractForm.cUserStandardInfoList) {
+                return this.contractModel.contractForm.cUserStandardInfoList.filter((item) => {
+                    return !item.attachments || item.attachments.length === 0
+                })
+            } else {
+                return  []
+            }
+
+        },
+        cAlreadyList() {
+            if (this.contractModel.contractForm.cUserStandardInfoList) {
+                return this.contractModel.contractForm.cUserStandardInfoList.filter((item) => {
+                    return item.attachments && item.attachments.length > 0
+                })
+            } else {
+                return  []
+            }
+
+        }
+    },
     methods: {
         getAdd() {
             this.contractModel.contractForm.receiveAddrList.forEach(element => {
@@ -82,8 +113,48 @@ export default {
         jieSuanFileDown (downloadCode) {
             window.location.href = '/api/sysmgr-web/file/download' +
                 '?downloadCode=' + downloadCode;
-        }
+        },
+        handleDownload (item) {
+            window.open('/api/sysmgr-web/file/download' +
+                '?downloadCode=' + item.attachments[0].downloadCode)
+        },
 
     }
 }
 </script>
+<style lang="scss" scoped>
+    .jie-suan-biao-zhun-box {
+        position: relative;
+        .form_input {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        .right-section {
+            padding-bottom: 20px;
+            position: relative;
+            padding-left: 180px;
+            >.title {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+            .wait-list {
+                list-style: none;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                flex-wrap: wrap;
+                .item {
+                    line-height: 20px;
+                    color: rgba(204, 204, 204, 1);
+                    font-size: 14px;
+                    padding: 2px;
+                    border: 1px dashed rgba(204, 204, 204, 1);
+                    margin: 0 10px 5px 0;
+                }
+            }
+        }
+    }
+</style>

@@ -682,6 +682,10 @@ export default {
                 {
                     text: '阿里网商',
                     value: 'alibank'
+                },
+                {
+                    text: '薪太软',
+                    value: 'xtr'
                 }
             ],
             checkValue: 'first',

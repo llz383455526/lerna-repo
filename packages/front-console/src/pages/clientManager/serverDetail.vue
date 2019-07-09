@@ -14,6 +14,7 @@
         <div class="content">
 	    	<div class="title">基本信息</div><el-button type="primary" style="margin-left: 120px;" size="small" @click="ashow = true">编辑</el-button>
 	    	<div class="box">
+                <!--common-->
 	    		<el-row :gutter="20">
         		    <el-col :span="10">
 	    				  <el-col :span="8" class="right">渠道别名</el-col><el-col :span="10">{{data.channelAlias }}</el-col>
@@ -30,7 +31,7 @@
 	    				  <el-col :span="8" class="right">单日限额（元）</el-col><el-col :span="10">{{data.dailyLimit}}</el-col>
 	    			</el-col>
         		</el-row>
-              <el-row :gutter="20">
+                <el-row :gutter="20">
         		    <el-col :span="10">
 	    				  <el-col :span="8" class="right">登录账号</el-col><el-col :span="10">{{data.loginAcctno}}</el-col>
 	    			</el-col>
@@ -38,6 +39,7 @@
 	    				  <el-col :span="8" class="right">渠道标识</el-col><el-col :span="10">{{data.id}}</el-col>
 	    			</el-col>
         		</el-row>
+                <!--custom-->
         		<template v-if="data.thirdpaySystemId == 'changjie'">
 	    			<el-row :gutter="20">
         			    <el-col :span="10">
@@ -298,91 +300,86 @@
 	    				</el-col>
         			</el-row>
 	    		</template>
-              <template v-if="data.thirdpaySystemId == 'hxb'">
-	    			<el-row :gutter="20">
-                      <el-col :span="10">
-	    					  <el-col :span="8" class="right">商户号</el-col><el-col :span="10">{{data['hxb.merchId']}}</el-col>
-	    				</el-col>
-        			    <el-col :span="10">
-	    					  <el-col :span="8" class="right">前置机地址</el-col><el-col :span="10">{{data['hxb.server']}}</el-col>
-	    				</el-col>
-        			</el-row>
-                    <el-row :gutter="20">
-        			    <el-col :span="10">
-	    					  <el-col :span="8" class="right">渠道标识</el-col><el-col :span="10">{{data['id']}}</el-col>
-	    				</el-col>
-        			</el-row>
-	    		</template>
-              <template v-if="data.thirdpaySystemId == 'yeepay'">
-	    			<el-row :gutter="20">
-                      <el-col :span="10">
-	    					  <el-col :span="8" class="right">商户号</el-col><el-col :span="10">{{data['yeepay.merchId']}}</el-col>
-	    				</el-col>
-        			    <el-col :span="10">
-	    					  <el-col :span="8" class="right">我方私钥</el-col><el-col :span="10">{{data['yeepay.privatekey']}}</el-col>
-	    				</el-col>
-        			</el-row>
-                    <el-row :gutter="20">
-        			    <el-col :span="10">
-	    					  <el-col :span="8" class="right">易宝公钥</el-col><el-col :span="10">{{data['yeepay.thirdPublickey']}}</el-col>
-	    				</el-col>
-        			</el-row>
-	    		</template>
-              <template v-if="data.thirdpaySystemId == 'lianlianpay'">
-	    			<el-row :gutter="20">
-                      <el-col :span="10">
-	    					  <el-col :span="8" class="right">商户号</el-col><el-col :span="10">{{data['lianlianpay.merchId']}}</el-col>
-	    				</el-col>
-        			    <el-col :span="10">
-	    					  <el-col :span="8" class="right">我方私钥</el-col><el-col :span="10">{{data['lianlianpay.privatekey']}}</el-col>
-	    				</el-col>
-        			</el-row>
-                    <el-row :gutter="20">
-        			    <el-col :span="10">
-	    					  <el-col :span="8" class="right">连连支付公钥</el-col><el-col :span="10">{{data['lianlianpay.thirdPublickey']}}</el-col>
-	    				</el-col>
-                      <el-col :span="10">
-	    					  <el-col :span="8" class="right">凭证sftp地址</el-col><el-col :span="10">{{data['lianlianpay.vou.sftp.host']}}</el-col>
-	    				</el-col>
-        			</el-row>
-                  </el-row>
-                    <el-row :gutter="20">
-        			    <el-col :span="10">
-	    					  <el-col :span="8" class="right">凭证sftp端口</el-col><el-col :span="10">{{data['lianlianpay.vou.sftp.port']}}</el-col>
-	    				</el-col>
-                      <el-col :span="10">
-	    					  <el-col :span="8" class="right">凭证sftp用户名</el-col><el-col :span="10">{{data['lianlianpay.vou.sftp.username']}}</el-col>
-	    				</el-col>
-        			</el-row>
-                  </el-row>
-                    <el-row :gutter="20">
-        			    <el-col :span="10">
-	    					  <el-col :span="8" class="right">凭证sftp密码</el-col><el-col :span="10">{{data['lianlianpay.vou.sftp.password']}}</el-col>
-	    				</el-col>
-                      <el-col :span="10">
-	    					  <el-col :span="8" class="right">对账sftp地址</el-col><el-col :span="10">{{data['lianlianpay.rec.sftp.host']}}</el-col>
-	    				</el-col>
-        			</el-row>
-                  </el-row>
-                    <el-row :gutter="20">
-        			    <el-col :span="10">
-	    					  <el-col :span="8" class="right">对账sftp端口</el-col><el-col :span="10">{{data['lianlianpay.rec.sftp.port']}}</el-col>
-	    				</el-col>
-                      <el-col :span="10">
-	    					  <el-col :span="8" class="right">对账sftp用户名</el-col><el-col :span="10">{{data['lianlianpay.rec.sftp.username']}}</el-col>
-	    				</el-col>
-        			</el-row>
-                  </el-row>
-                    <el-row :gutter="20">
-        			    <el-col :span="10">
-	    					  <el-col :span="8" class="right">对账sftp密码</el-col><el-col :span="10">{{data['lianlianpay.rec.sftp.password']}}</el-col>
-	    				</el-col>
-                      <el-col :span="10">
-	    					  <el-col :span="8" class="right">对账sftp目录</el-col><el-col :span="10">{{data['lianlianpay.rec.sftp.dir']}}</el-col>
-	    				</el-col>
-        			</el-row>
-	    		</template>
-              <template v-if="data.thirdpaySystemId == 'alibank'">
+                <template v-if="data.thirdpaySystemId == 'hxb'">
+                        <el-row :gutter="20">
+                        <el-col :span="10">
+                                <el-col :span="8" class="right">商户号</el-col><el-col :span="10">{{data['hxb.merchId']}}</el-col>
+                            </el-col>
+                            <el-col :span="10">
+                                <el-col :span="8" class="right">前置机地址</el-col><el-col :span="10">{{data['hxb.server']}}</el-col>
+                            </el-col>
+                        </el-row>
+                    </template>
+                <template v-if="data.thirdpaySystemId == 'yeepay'">
+                        <el-row :gutter="20">
+                        <el-col :span="10">
+                                <el-col :span="8" class="right">商户号</el-col><el-col :span="10">{{data['yeepay.merchId']}}</el-col>
+                            </el-col>
+                            <el-col :span="10">
+                                <el-col :span="8" class="right">我方私钥</el-col><el-col :span="10">{{data['yeepay.privatekey']}}</el-col>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="10">
+                                <el-col :span="8" class="right">易宝公钥</el-col><el-col :span="10">{{data['yeepay.thirdPublickey']}}</el-col>
+                            </el-col>
+                        </el-row>
+                    </template>
+                <template v-if="data.thirdpaySystemId == 'lianlianpay'">
+                        <el-row :gutter="20">
+                        <el-col :span="10">
+                                <el-col :span="8" class="right">商户号</el-col><el-col :span="10">{{data['lianlianpay.merchId']}}</el-col>
+                            </el-col>
+                            <el-col :span="10">
+                                <el-col :span="8" class="right">我方私钥</el-col><el-col :span="10">{{data['lianlianpay.privatekey']}}</el-col>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="10">
+                                <el-col :span="8" class="right">连连支付公钥</el-col><el-col :span="10">{{data['lianlianpay.thirdPublickey']}}</el-col>
+                            </el-col>
+                        <el-col :span="10">
+                                <el-col :span="8" class="right">凭证sftp地址</el-col><el-col :span="10">{{data['lianlianpay.vou.sftp.host']}}</el-col>
+                            </el-col>
+                        </el-row>
+                    </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="10">
+                                <el-col :span="8" class="right">凭证sftp端口</el-col><el-col :span="10">{{data['lianlianpay.vou.sftp.port']}}</el-col>
+                            </el-col>
+                        <el-col :span="10">
+                                <el-col :span="8" class="right">凭证sftp用户名</el-col><el-col :span="10">{{data['lianlianpay.vou.sftp.username']}}</el-col>
+                            </el-col>
+                        </el-row>
+                    </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="10">
+                                <el-col :span="8" class="right">凭证sftp密码</el-col><el-col :span="10">{{data['lianlianpay.vou.sftp.password']}}</el-col>
+                            </el-col>
+                        <el-col :span="10">
+                                <el-col :span="8" class="right">对账sftp地址</el-col><el-col :span="10">{{data['lianlianpay.rec.sftp.host']}}</el-col>
+                            </el-col>
+                        </el-row>
+                    </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="10">
+                                <el-col :span="8" class="right">对账sftp端口</el-col><el-col :span="10">{{data['lianlianpay.rec.sftp.port']}}</el-col>
+                            </el-col>
+                        <el-col :span="10">
+                                <el-col :span="8" class="right">对账sftp用户名</el-col><el-col :span="10">{{data['lianlianpay.rec.sftp.username']}}</el-col>
+                            </el-col>
+                        </el-row>
+                    </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="10">
+                                <el-col :span="8" class="right">对账sftp密码</el-col><el-col :span="10">{{data['lianlianpay.rec.sftp.password']}}</el-col>
+                            </el-col>
+                        <el-col :span="10">
+                                <el-col :span="8" class="right">对账sftp目录</el-col><el-col :span="10">{{data['lianlianpay.rec.sftp.dir']}}</el-col>
+                            </el-col>
+                        </el-row>
+                    </template>
+                <template v-if="data.thirdpaySystemId == 'alibank'">
 	    			<el-row :gutter="20">
                       <el-col :span="10">
 	    					  <el-col :span="8" class="right">商户号</el-col><el-col :span="10">{{data['alibank.merchId']}}</el-col>
@@ -407,6 +404,40 @@
 	    					  <el-col :span="8" class="right">账户</el-col><el-col :span="10">{{data['alibank.deposit.account']}}</el-col>
 	    				</el-col>
         			</el-row>
+	    		</template>
+                <template v-if="data.thirdpaySystemId == 'xtr'">
+	    			<el-row :gutter="20">
+                      <el-col :span="10">
+	    					  <el-col :span="8" class="right">商户号</el-col><el-col :span="10">{{data['xtr.merchId']}}</el-col>
+	    				</el-col>
+        			    <el-col :span="10">
+	    					  <el-col :span="8" class="right">渠道类型</el-col><el-col :span="10">{{data['xtr.channelType']}}</el-col>
+	    				</el-col>
+        			</el-row>
+                  <el-row :gutter="20">
+                      <el-col :span="10">
+	    					  <el-col :span="8" class="right">我方私钥</el-col><el-col :span="10">{{data['xtr.privatekey']}}</el-col>
+	    				</el-col>
+                      <el-col :span="10">
+	    					  <el-col :span="8" class="right">薪太软公钥</el-col><el-col :span="10">{{data['xtr.thirdPublickey']}}</el-col>
+	    				</el-col>
+        			</el-row>
+                  <el-row :gutter="20">
+                      <el-col :span="10">
+	    					  <el-col :span="8" class="right">付款账号</el-col><el-col :span="10">{{data['xtr.accountNumber']}}</el-col>
+                    </el-col>
+                    <el-col :span="10">
+                            <el-col :span="8" class="right">付款账户名称</el-col><el-col :span="10">{{data['xtr.acctName']}}</el-col>
+                    </el-col>
+                  </el-row>
+                  <el-row :gutter="20">
+                      <el-col :span="10">
+	    					  <el-col :span="8" class="right">发薪单位编号</el-col><el-col :span="10">{{data['xtr.companyId']}}</el-col>
+                    </el-col>
+                    <el-col :span="10">
+                            <el-col :span="8" class="right">发薪单位名称</el-col><el-col :span="10">{{data['xtr.companyName']}}</el-col>
+                    </el-col>
+                  </el-row>
 	    		</template>
         	</div>
           <div class="title">支付用户</div> <el-button type="primary" style="margin-left: 120px;" size="small" @click="addChannel">添加支付用户</el-button>
@@ -726,6 +757,35 @@
                       <el-input class="form_input" v-model="eform.alibank$deposit$account"></el-input>
                   </el-form-item>
               </template>
+              <template v-if="eform.thirdpaySystemId == 'xtr'">
+                  <el-form-item label="商户号" size="small" prop="xtr$merchId">
+                      <el-input class="form_input" v-model="eform.xtr$merchId"></el-input>
+                  </el-form-item>
+                  <el-form-item label="发薪单位编号" size="small" prop="xtr$companyId">
+                    <el-input class="form_input" v-model="eform.xtr$companyId"></el-input>
+                </el-form-item>
+                <el-form-item label="发薪单位名称" size="small" prop="xtr$companyName">
+                    <el-input class="form_input" v-model="eform.xtr$companyName"></el-input>
+                </el-form-item>
+                <el-form-item label="渠道类型" size="small" prop="xtr$channelType">
+                    <el-input class="form_input" v-model="eform.xtr$channelType"></el-input>
+                </el-form-item>
+                <el-form-item label="付款账号" size="small" prop="xtr$accountNumber">
+                    <el-input class="form_input" v-model="eform.xtr$accountNumber"></el-input>
+                </el-form-item>
+                <el-form-item label="付款账户名称" size="small" prop="xtr$acctName">
+                    <el-input class="form_input" v-model="eform.xtr$acctName"></el-input>
+                </el-form-item>
+                <el-form-item label="支付密码" size="small" prop="xtr$payPassword">
+                    <el-input class="form_input" v-model="eform.xtr$payPassword"></el-input>
+                </el-form-item>
+                <el-form-item label="我方私钥" size="small" prop="xtr$privatekey">
+                    <el-input class="form_input" v-model="eform.xtr$privatekey"></el-input>
+                </el-form-item>
+                <el-form-item label="薪太软公钥" size="small" prop="xtr$thirdPublickey">
+                    <el-input class="form_input" v-model="eform.xtr$thirdPublickey"></el-input>
+                </el-form-item>
+              </template>
 	    	  </el-form>
             <span class="form_footer" slot="footer">
                 <el-button @click="update" type="primary">保存</el-button>
@@ -737,7 +797,7 @@
                 <el-form-item label="用户名" prop="payeruserName">
 	    			  <el-input v-model="aform.payeruserName" size="small" type="primary"></el-input>
                 </el-form-item>
-                <el-form-item label="子账号" prop="thirdpayUserId" v-if="eform.thirdpaySystemId != 'changjie' && eform.thirdpaySystemId != 'wx' && eform.thirdpaySystemId != 'hxb' && eform.thirdpaySystemId != 'pingan'">
+                <el-form-item label="子账号" prop="thirdpayUserId" v-if="showThirdPayUser">
                     <el-input v-model="aform.thirdpayUserId" size="small" type="primary"></el-input>
                 </el-form-item>
                 <el-form-item label="备注" prop="memo">
@@ -816,6 +876,21 @@ export default {
       this.aform.channelId = this.form.channelId;
       this.getMsg();
       this.query();
+    },
+    computed: {
+        showThirdPayUser(){
+            let notShowThirdPayUserChannelIds = [
+                "changjie",
+                "wx",
+                "hxb",
+                "pingan",
+                "xtr"
+            ]
+
+            let result = notShowThirdPayUserChannelIds.filter(id => this.eform.thirdpaySystemId === id)
+            return !(result.length > 0)
+            // return eform.thirdpaySystemId != 'changjie' && eform.thirdpaySystemId != 'wx' && eform.thirdpaySystemId != 'hxb' && eform.thirdpaySystemId != 'pingan'
+        }
     },
     methods: {
         getMsg() {

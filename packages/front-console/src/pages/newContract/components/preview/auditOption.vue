@@ -65,7 +65,7 @@
         v-if="contractModel.actions[1] === 'reject'"
         @click="handleContract('reject')">审批不通过</el-button>
       <el-button size="small"
-        @click="backToList('list')">返回</el-button>
+        @click="backToList">返回</el-button>
     </div>
   </div>
 </template>
@@ -93,7 +93,8 @@ export default {
         }
     },
     methods: {
-        backToList(path) {
+        backToList() {
+            let path = this.$route.query.fromUrl || 'list'
             this.$router.replace({
                 path: path
             })

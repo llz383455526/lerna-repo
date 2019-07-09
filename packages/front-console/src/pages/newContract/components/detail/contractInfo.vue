@@ -23,32 +23,29 @@
                     <hr>
                     <h4 class="h4">合同证据链</h4>
                     <upload :list="contractModel.contractForm.receiveAttachments" style="width: 1100px;" @remove="handleRemove" @uploadSuccess="uploadSuccess"></upload>
-                    <template v-if="false">
+                    <template>
                         <h4 class="h4">C端绩效计算规则</h4>
                         <div class="jie-suan-biao-zhun-box">
-                            <el-upload class="form_input" :action="`/api/econtract/template/parsefile`" :auto-upload="false" :on-change="jieSuanBiaoZhunUpload" multiple :show-file-list="false">
-                                <el-button style="margin-left: 20px" size="small" type="primary" @click="index = key">上传附件</el-button>
-                            </el-upload>
-                            <el-table
-                                :data="contractModel.contractForm.cUserStandardAttachmentModels"
-                                style="margin-left: 275px"
-                            >
-                                <el-table-column
-                                    prop="displayname"
-                                    label="名称">
-                                </el-table-column>
-                                <el-table-column
-                                    prop="address"
-                                    width="100px"
-                                    label="操作">
-                                    <template slot-scope="scope">
-                                        <el-button type="text" size="small" @click="jieSuanFileRemove(scope)">删除</el-button>
-                                    </template>
-                                </el-table-column>
-                            </el-table>
+                            <el-button v-if="cWaitList.length > 0" class="form_input" style="margin-left: 20px" size="small" type="primary" @click="upFileBtnClick">上传附件</el-button>
+                            <div class="right-section" v-if="cWaitList.length > 0">
+                                <span class="title">待上传落地公司</span>
+                                <ul class="wait-list">
+                                    <li class="item" v-for="v in  cWaitList" :key="v.serviceCompanyId">{{ v.serviceCompanyName }}</li>
+                                </ul>
+                            </div>
+                            <div class="right-section" v-if="cAlreadyList.length">
+                                <span class="title" style="color: #1D7CEE">已上传落地公司</span>
+                                <el-row :gutter="20" v-for="(v, k) in cAlreadyList">
+                                    <el-col :span="12">{{ v.serviceCompanyName }}_计算规则.{{  v.attachments[0].displayname.split('.').pop() }}</el-col>
+                                    <el-col :span="12">
+                                        <el-button type="text" @click="handleDownload(v)">下载</el-button>
+                                        <el-button type="text" @click="jieSuanFileRemove(v)">删除</el-button>
+                                    </el-col>
+                                </el-row>
+                            </div>
                         </div>
                     </template>
-                    <br>
+                    <br><br>
                     <h4 class="h4">合同备注</h4>
                     <el-form-item>
                         <el-input style="width:1140px;" type="textarea" v-model="contractModel.contractForm.receiveMemo" maxlength="200"></el-input>
@@ -56,6 +53,7 @@
                 </el-form>
             </div>
         </div>
+        <w-pop ref="WPop" @upFinish="upFinish" :file-format="['.pdf', '.xls', '.xlsx', '.doc', '.docx', '.txt', '.csv']" :file-size="32"/>
     </div>
 </template>
 
@@ -63,16 +61,40 @@
 import {pcaa, pca} from 'area-data'
 import upload from './upload.vue'
 import { importPost } from "../../../../store/api"
+import WPop from './pop'
 export default {
-    props: ['contractModel'],
-    components: { upload },
+    props: ['contractModel', 'cUserStandardInfoList'],
+    components: { upload, WPop },
     data() {
         return {
              // 地区
             pcaa: pcaa
         }
     },
+    computed: {
+        // C端绩效待上传列表
+      cWaitList() {
+          return this.cUserStandardInfoList.filter((item) => {
+              return !item.attachments || item.attachments.length === 0
+          })
+      },
+        cAlreadyList() {
+            return this.cUserStandardInfoList.filter((item) => {
+                return item.attachments && item.attachments.length > 0
+            })
+        }
+    },
     methods: {
+        upFinish(list) {
+            this.$emit('jieSuanBiaoZhunChange', list)
+        },
+        // 上传文件按钮点击
+        upFileBtnClick() {
+            const p = {
+                servers: this.cWaitList
+            }
+            this.$refs.WPop.show(p)
+        },
         handleRemove(index) {
             this.contractModel.contractForm.receiveAttachments.splice(index, 1)
         },
@@ -80,39 +102,54 @@ export default {
             this.contractModel.contractForm.receiveAttachments.push(obj)
         },
         /**
-         * 结算标准文件改变的时候
-         */
-        jieSuanBiaoZhunUpload(file) {
-            let formData = new FormData();
-            formData.append('targetType', 'vci_attach');
-            formData.append('fileName', file.name);
-            formData.append('file', file.raw);
-            importPost('/api/sysmgr-web/file/upload', formData, true).then(data => {
-                this.$message({
-                    type: 'success',
-                    message: '上传成功！'
-                })
-                this.$emit('jieSuanBiaoZhunChange', {
-                    displayname: data.fileName,
-                    refId: data.referId,
-                    downloadCode: data.downloadCode
-                })
-            })
-        },
-        /**
          * 结算标准删除
          */
-        jieSuanFileRemove(row) {
-            this.contractModel.contractForm.cUserStandardAttachmentModels.splice(row.$index, 1)
-        }
+        jieSuanFileRemove(item) {
+            item.attachments = []
+        },
+        handleDownload (item) {
+            window.open('/api/sysmgr-web/file/download' +
+                '?downloadCode=' + item.attachments[0].downloadCode)
+        },
 
     }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
     .jie-suan-biao-zhun-box {
-        display: flex;
-        padding-right: 245px;
+        position: relative;
+        padding-left: 200px;
+        .form_input {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        .right-section {
+            padding-bottom: 20px;
+            position: relative;
+            padding-left: 180px;
+            >.title {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+            .wait-list {
+                list-style: none;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                flex-wrap: wrap;
+                .item {
+                    line-height: 20px;
+                    color: rgba(204, 204, 204, 1);
+                    font-size: 14px;
+                    padding: 2px;
+                    border: 1px dashed rgba(204, 204, 204, 1);
+                    margin: 0 10px 5px 0;
+                }
+            }
+        }
     }
 </style>
 

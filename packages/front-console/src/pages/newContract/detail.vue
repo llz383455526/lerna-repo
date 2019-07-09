@@ -1,6 +1,6 @@
 <template>
     <div>
-        <contract-info :contractModel="contractModel" @jieSuanBiaoZhunChange="jieSuanBiaoZhunChange"></contract-info>
+        <contract-info :contractModel="contractModel" @jieSuanBiaoZhunRemove="jieSuanBiaoZhunRemove" @jieSuanBiaoZhunChange="jieSuanBiaoZhunChange" :cUserStandardInfoList="cUserStandardInfoList"></contract-info>
         <div class="widget-box bg-white">
             <div class="widget-header">
                 <h4 class="widget-title">合同附件管理</h4>
@@ -101,7 +101,8 @@ export default {
     return {
       contractModel: new ContractModel(),
       contractForm: '',
-      index: ''
+      index: '',
+        cUserStandardInfoList: []
     }
   },
   components: {
@@ -113,6 +114,7 @@ export default {
     this.contractModel.getContractDetail(id, () => {
         this.contractForm = this.contractModel.contractForm
         this.contractModel.contractForm.cUserStandardAttachmentModels = []
+        this.getCUserStandardInfoList()
         this.checkCSign()
     })
   },
@@ -122,6 +124,31 @@ export default {
     }
   },
   methods: {
+      getCUserStandardInfoList() {
+          let cUserStandardInfoList = []
+          if (!this.contractModel.contractForm.contracts) {
+              this.contractModel.contractForm.contracts = []
+          }
+          if (!this.contractModel.contractForm.cUserStandardInfoList) {
+              this.contractModel.contractForm.cUserStandardInfoList = []
+          }
+          cUserStandardInfoList = this.contractModel.contractForm.contracts.map((item) => {
+              return {
+                  serviceCompanyId: item.serviceCompanyId,
+                  serviceCompanyName: item.serviceCompanyName,
+                  attachments: []
+              }
+          })
+          cUserStandardInfoList.forEach((item1) => {
+              this.contractModel.contractForm.cUserStandardInfoList.forEach((item2) => {
+                  if (item1.serviceCompanyId === item2.serviceCompanyId) {
+                      item1.attachments = item2.attachments
+                  }
+              })
+          })
+          this.cUserStandardInfoList = cUserStandardInfoList
+          this.contractModel.contractForm.cUserStandardInfoList = cUserStandardInfoList
+      },
       // 校验C端签约
       checkCSign() {
           if (this.isChange) {
@@ -138,7 +165,16 @@ export default {
          return true
       },
       jieSuanBiaoZhunChange(data) {
-          this.contractModel.contractForm.cUserStandardAttachmentModels.push(data)
+          this.cUserStandardInfoList.forEach((item1) => {
+              data.forEach((item2) => {
+                  if (item1.serviceCompanyId === item2.serviceCompanyId) {
+                      item1.attachments = item2.attachments
+                  }
+              })
+          })
+      },
+      jieSuanBiaoZhunRemove(index) {
+          this.cUserStandardInfoList[index].attachments = []
       },
     backToList (path) {
       this.$router.replace({

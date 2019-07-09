@@ -202,6 +202,25 @@
         </el-col>
       </el-row>
     </div>
+      <template v-if="checkRight(permissions, 'sysmgr-web:/agent-company/update-data-mask')">
+<!--          <template>-->
+          <div class="title">系统配置</div>
+          <div class="box">
+              <el-row :gutter="20">
+                  <el-col :span="12">
+                      <el-col :span="8" class="right">是否信息脱敏处理</el-col>
+                      <el-col :span="16" style="word-wrap: break-word;">
+                          <el-switch
+                              v-model="value"
+                              active-color="#13ce66"
+                              inactive-color="#ff4949"
+                              @change="handleChange">
+                          </el-switch>
+                      </el-col>
+                  </el-col>
+              </el-row>
+          </div>
+      </template>
     <div class="title">
       渠道合同
     </div>
@@ -314,14 +333,35 @@ import { get, post, postWithErrorCallback } from "../../store/api";
 export default {
     data() {
         return {
-            detail: ''
+            detail: '',
+            value: false,
         }
+    },
+    computed: {
+        permissions() {
+            return this.$store.state.permissions
+        },
+    },
+    methods: {
+        handleChange(value) {
+            // console.log(value)
+            post('/api/sysmgr-web/agent-company/update-data-mask', {
+                agentCompanyId: this.$route.query.id,
+                dataMask: value ? 1 : 0
+            })
+        },
     },
     mounted() {
         get('/api/contract-web/agent-company/detail', {
             companyId: this.$route.query.id
         }).then(data => {
             this.detail = data
+        })
+        get('/api/sysmgr-web/agent-company/get-agent-data-mask', {
+            companyId: this.$route.query.id
+        }).then(data => {
+            // console.log(data)
+            this.value = data === 1 ? true : false
         })
     }
 }

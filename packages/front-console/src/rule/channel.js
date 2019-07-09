@@ -833,5 +833,100 @@ module.exports = {
             message: '输入过长',
             trigger: 'blur'
         }
-    ]
+    ],
+    xtr$merchId: [{
+            required: true,
+            message: '请输入商户号',
+            trigger: 'blur'
+        },
+        {
+            max: 512,
+            message: '输入过长',
+            trigger: 'blur'
+        }
+    ],
+    xtr$companyId: [
+        {
+        required: true,
+        message: '请输入发薪单位编号',
+        trigger: 'blur'
+        },
+        {
+            max: 512,
+            message: '输入过长',
+            trigger: 'blur'
+        }
+    ],
+    xtr$companyName: [
+        {
+        required: true,
+        message: '请输入发薪单位名称',
+        trigger: 'blur'
+        },
+        {
+            max: 512,
+            message: '输入过长',
+            trigger: 'blur'
+        }
+    ],
+    xtr$channelType: [
+        {
+        message: '请输入渠道类型',
+        trigger: 'blur'
+        },
+        {
+            max: 512,
+            message: '输入过长',
+            trigger: 'blur'
+        }
+    ],
+    xtr$accountNumber: [
+        {
+        message: '请输入付款账号',
+        trigger: 'blur'
+        },
+        {
+            max: 512,
+            message: '输入过长',
+            trigger: 'blur'
+        }
+    ],
+    xtr$acctName: [
+        {
+        message: '请输入付款账户名称',
+        trigger: 'blur'
+        },
+        {
+            max: 512,
+            message: '输入过长',
+            trigger: 'blur'
+        }
+    ],
+    xtr$payPassword: [
+        {
+        required: false,
+        message: '请输入支付密码',
+        trigger: 'blur'
+        },
+        {
+            max: 512,
+            message: '输入过长',
+            trigger: 'blur'
+        }
+    ],
+    xtr$thirdPublickey: [
+        {
+        required: true,
+        message: '请输入薪太软公钥',
+        trigger: 'blur'
+        }
+    ],
+    xtr$privatekey: [
+        {
+        required: true,
+        message: '请输入我方私钥',
+        trigger: 'blur'
+        }
+    ],
+    
 }

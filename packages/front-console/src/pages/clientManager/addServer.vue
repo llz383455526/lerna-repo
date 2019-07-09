@@ -288,6 +288,35 @@
                     <el-input class="form_input" v-model="form.alibank$deposit$account"></el-input>
                 </el-form-item>
             </template>
+            <template v-if="form.thirdpaySystemId == 'xtr'">
+                <el-form-item label="商户号" size="small" prop="xtr$merchId">
+                    <el-input class="form_input" v-model="form.xtr$merchId"></el-input>
+                </el-form-item>
+                <el-form-item label="发薪单位编号" size="small" prop="xtr$companyId">
+                    <el-input class="form_input" v-model="form.xtr$companyId"></el-input>
+                </el-form-item>
+                <el-form-item label="发薪单位名称" size="small" prop="xtr$companyName">
+                    <el-input class="form_input" v-model="form.xtr$companyName"></el-input>
+                </el-form-item>
+                <el-form-item label="渠道类型" size="small" prop="xtr$channelType">
+                    <el-input class="form_input" v-model="form.xtr$channelType"></el-input>
+                </el-form-item>
+                <el-form-item label="付款账号" size="small" prop="xtr$accountNumber">
+                    <el-input class="form_input" v-model="form.xtr$accountNumber"></el-input>
+                </el-form-item>
+                <el-form-item label="付款账户名称" size="small" prop="xtr$acctName">
+                    <el-input class="form_input" v-model="form.xtr$acctName"></el-input>
+                </el-form-item>
+                <el-form-item label="支付密码" size="small" prop="xtr$payPassword">
+                    <el-input class="form_input" v-model="form.xtr$payPassword"></el-input>
+                </el-form-item>
+                <el-form-item label="我方私钥" size="small" prop="xtr$privatekey">
+                    <el-input class="form_input" v-model="form.xtr$privatekey"></el-input>
+                </el-form-item>
+                <el-form-item label="薪太软公钥" size="small" prop="xtr$thirdPublickey">
+                    <el-input class="form_input" v-model="form.xtr$thirdPublickey"></el-input>
+                </el-form-item>
+            </template>
             <el-form-item label="备注" prop="memo" size="small">
                 <el-input class="form_input" v-model="form.memo"></el-input>
             </el-form-item>
@@ -449,6 +478,19 @@ export default {
             'alibank$deposit$depositBankName': '',
             'alibank$deposit$accountName': '',
             'alibank$deposit$account': ''
+        })
+    }
+    if(this.form.thirdpaySystemId == 'xtr'){
+        this.form = Object.assign({}, this.form, {
+            "xtr$merchId":'', // 商户号
+            'xtr$companyId': '',    // 发薪单位编号
+            'xtr$companyName': '',  // 发薪单位名称
+            'xtr$channelType': '',  // 渠道类型
+            'xtr$accountNumber': '', // 付款账号
+            'xtr$acctName': '',     // 付款账户名称
+            'xtr$payPassword': '',     // 支付密码
+            'xtr$privatekey':'',      // 我方私钥
+            'xtr$thirdPublickey':''   // 薪太软公钥
         })
     }
   },
