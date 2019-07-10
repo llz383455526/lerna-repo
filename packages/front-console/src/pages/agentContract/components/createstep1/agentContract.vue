@@ -121,7 +121,7 @@ export default {
                     let curDate = new Date();
                     const curMonth = curDate.getMonth();
                     let curDay = curDate.getDate();
-                    let beginTime = new Date(curDate.getFullYear(), curMonth, '01').getTime()
+                    let beginTime = new Date(curDate.getFullYear(), curMonth - 1, '01').getTime()
                     return time.getTime() < beginTime;
                 }
             }
