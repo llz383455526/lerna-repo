@@ -154,7 +154,7 @@
 
 <script>
   import {get, post, formPost} from "../../../store/api";
-  import { DateFormat } from 'yb-tool'
+  import DateFormat from '../../../utils/date/format'
   export default {
     name: "index",
     data() {

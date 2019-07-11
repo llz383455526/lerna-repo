@@ -32,8 +32,7 @@
     "vue-resource": "^1.5.1",
     "vue-router": "^2.5.0",
     "vuex": "^2.3.1",
-    "vuex-router-sync": "^4.2.0",
-    "yb-tool": "^0.1.9"
+    "vuex-router-sync": "^4.2.0"
   },
   "devDependencies": {
     "@babel/plugin-syntax-nullish-coalescing-operator": "^7.0.0-beta.51",

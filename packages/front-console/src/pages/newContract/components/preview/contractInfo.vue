@@ -42,7 +42,7 @@
                                 </div>
                                 <div class="right-section" v-if="cAlreadyList.length">
                                     <span class="title" style="color: #1D7CEE">已上传落地公司</span>
-                                    <el-row :gutter="20" v-for="(v, k) in cAlreadyList">
+                                    <el-row :gutter="20" v-for="(v, k) in cAlreadyList" :key="v.serviceCompanyId">
                                         <el-col :span="12">{{ v.serviceCompanyName }}_计算规则.{{  v.attachments[0].displayname.split('.').pop() }}</el-col>
                                         <el-col :span="12">
                                             <el-button type="text" @click="handleDownload(v)">下载</el-button>
