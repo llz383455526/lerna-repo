@@ -247,6 +247,7 @@
 			}
 		},
 		mounted() {
+		    console.log('this.$route.query = ', this.$route.query)
             Object.assign(this.formSearch, this.$route.query)
             this.getTime()
 			this.getList()

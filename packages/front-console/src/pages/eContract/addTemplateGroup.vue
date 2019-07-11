@@ -315,6 +315,7 @@
                     this.remoteMethod(this.form.platformName).then(data => {
                         this.getBindStatus(true)
                     })
+                    this.setPlatformName()
 					// this.platform.push({
 					// 	extrSystemName: this.form.platformName,
 					// 	extrSystemId: this.form.platform,
@@ -472,17 +473,20 @@
 				// this.templateArr = []
 			},
 			'form.platform': function(a) {
-				this.platform.forEach(e => {
-					if(e.extrSystemId === a){
-						this.platformName = e.extrSystemName
-						this.form.companyId = e.extrSystemGroup
-						// console.log(this.form.companyId)
-					}
-				})
-				// this.templateArr = []
+			    this.setPlatformName()
 			}
 		},
 		methods: {
+		    // 设置商户名称
+            setPlatformName() {
+                this.platform.forEach(e => {
+                    if(e.extrSystemId === this.form.platform){
+                        this.platformName = e.extrSystemName
+                        this.form.companyId = e.extrSystemGroup
+                        // console.log(this.form.companyId)
+                    }
+                })
+            },
 			remoteMethod(a) {
                 return new Promise((resolve, reject) => {
                     if(a) {
@@ -492,6 +496,7 @@
                             pageSize: 10
                         }).then(data => {
                             this.platform = data
+                            this.setPlatformName()
                             resolve(data)
                         }).catch(err => {
                             reject(err)
@@ -657,11 +662,16 @@
 				this.templateModel.partys[i].params.push(a)
 			},
 			addTemplate() {
+			    console.log('addTemplate')
 				this.$refs['templateModel'].validate(valid => {
 					if(valid) {
 						let errMsg
 						let hasPeople,  hasCompany, hasServer
 						let templateModel = _.cloneDeep(this.templateModel)
+
+                        // templateModel.partys = [{
+                        //     userName: this.form.platform
+                        // }]
 
 						if(!this.file || !this.fileList.length) {
 							errMsg = '请上传文件！'

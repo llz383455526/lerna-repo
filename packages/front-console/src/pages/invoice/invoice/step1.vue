@@ -101,7 +101,7 @@
 
 <script>
   import {post, get} from '../../../store/api';
-  import { NumberComma } from 'yb-tool'
+  import NumberComma from '../../../utils/number/comma'
   export default {
     name: "step1",
     data() {

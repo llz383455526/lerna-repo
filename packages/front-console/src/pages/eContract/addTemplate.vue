@@ -447,6 +447,7 @@ export default {
         }
     },
     methods: {
+        // 设置商户名称
         remoteMethod(a) {
             return new Promise((resolve, reject) => {
                 if(a) {

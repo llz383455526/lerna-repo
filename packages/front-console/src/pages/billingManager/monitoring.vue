@@ -251,7 +251,6 @@
 <script>
   import {post, get} from '../../store/api';
   import {showNotify} from '../../plugin/utils-notify';
-  import { DateFormat } from 'yb-tool'
   const phoneReg = /^[1-9]\d*$/;
   const validatenumber = (rule, value, callback) => {
     if (value == '') {
@@ -333,7 +332,6 @@
             },
             // 录入数据
             inputData: [],
-            DateFormat: DateFormat,
             // 上传中的状态
             upLoading: false,
             // 上传的文件名

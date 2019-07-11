@@ -213,10 +213,12 @@ export default {
             }
         },
         record(a) {
+            console.log('a = ', a)
             sessionStorage.setItem('query', JSON.stringify({
                 orderId: a.orderId
             }))
-            this.$router.push(`index?${a.groupName ? 'templateGroupName' : 'templateName'}=${a.name || a.groupName}&isGroup=${a.groupName ? '1' :'0'}`)
+            const name = encodeURIComponent(a.name || a.groupName)
+            this.$router.push(`index?${a.groupName ? 'templateGroupName' : 'templateName'}=${name}&isGroup=${a.groupName ? '1' :'0'}`)
         },
         batch(a) {
             this.$router.push(`batchRecord?templateName=${a.name}`)
