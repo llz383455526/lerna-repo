@@ -293,9 +293,12 @@ export default {
                 // this.contractForm.contracts.forEach(item => {
                 //     item.showServiceCompanyInfo = item.showServiceCompanyInfo === '1' ? true : false;
                 // })
-                res()
+                // res()
                 // 根据服务商id过滤
                 this.contractForm.contracts.forEach(item => {
+                    if (!item.quoteFeeContent) {
+                        return
+                    }
                     let serviceCompanyRateList = item.quoteFeeContent.serviceCompanyRateList
                     if(serviceCompanyRateList && serviceCompanyRateList.length) {
                         item.quoteFeeContent.serviceCompanyRateList = serviceCompanyRateList.filter(e => e.serviceCompanyId == item.serviceCompanyId)
@@ -345,6 +348,7 @@ export default {
             })
         },
         getText(value, list, inputKey = 'value', outputKey = 'text') {
+            if (!list) return;
             if (!list.length) return;
             let obj = list.find((element) => {
                 return element[inputKey] == value

@@ -36,7 +36,7 @@
                 <el-button size="small" @click="exportDetail">导出</el-button>
             </el-form-item>
         </el-form>
-        <el-button size="small" @click="routerPush('/main/contract/create')" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">新增</el-button>
+<!--        <el-button size="small" @click="routerPush('/main/contract/create')" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">新增</el-button>-->
         <statistics-box :dataList="statisticsDataList"></statistics-box>
         <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
             <el-table-column prop="customerName" label="企业名称" width="200"></el-table-column>
@@ -60,8 +60,8 @@
             </el-table-column>
             <el-table-column label="操作" width="150">
                 <template slot-scope="scope">
-                    <el-button @click="handleLook(scope.row.id)" type="text">查看</el-button>
-                    <el-button @click="handleEdit(scope.row.id)" type="text" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">编辑</el-button>
+                    <el-button @click="handleLook(scope.row.id, scope.row.versionSeq)" type="text">查看</el-button>
+                    <el-button @click="handleEdit(scope.row.id, scope.row.versionSeq)" type="text" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">编辑</el-button>
                     <!-- <el-button @click="handleCopy(scope.row)" type="text" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">复制</el-button> -->
                     <el-button @click="handleFile(scope.row.id)" type="text" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">附件管理</el-button>
                     <el-button @click="handleView(scope.row.id)" type="text" v-if="scope.row.containVerson">历史版本</el-button>
@@ -271,17 +271,18 @@ export default {
                 this.searchOptions = data
             })
         },
-        handleLook(id) {
+        handleLook(id, versionSeq) {
             this.$router.push({
                 path: '/main/contract/preview',
-                query: {contractId: id}
+                query: {contractId: id, versionSeq}
             });
         },
-        handleEdit(id) {
+        handleEdit(id, versionSeq) {
             this.$router.push({
                 path: '/main/contract/create',
                 query: {
                     contractId: id,
+                    versionSeq,
                     page: this.$route.query.page
                 }
             });

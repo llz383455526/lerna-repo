@@ -140,8 +140,10 @@
             getAttachments() {
                 const id = this.$route.query.contractId || this.$route.query.originId
                 const versionSeq = this.$route.query.versionSeq
-                const url = this.$route.query.contractId ? '/api/contract-web/contract/contract-attachments' : '/api/contract-web/contract/attachment-infos';
-                const param = this.$route.query.contractId ? { contractId: id } : { contractId: id, versionSeq }
+                // const url = this.$route.query.contractId ? '/api/contract-web/contract/contract-attachments' : '/api/contract-web/contract/attachment-infos';
+                const url = '/api/contract-web/contract/attachment-infos'
+                // const param = this.$route.query.contractId ? { contractId: id } : { contractId: id, versionSeq }
+                const param = { contractId: id, versionSeq }
                 get(url, param).then(data => {
                     this.tableList = data
                 })

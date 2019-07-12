@@ -842,17 +842,19 @@
                 let formData = new FormData();
                 formData.append('fileName', file.name);
                 formData.append('file', file);
+                formData.append('contractId', this.$route.query.contractId)
                 this.formData = formData;
             },
             hanldleHttpRequest() {
-                let url = '/api/contract-web/file/upload';
+                // let url = '/api/contract-web/file/upload';
+                const url = '/api/contract-web/contract/upload-attachment'
                 formPost(url, this.formData).then(data => {
                     this.fileList.push(data);
                     this.referArr.push(data.referId);
                     showNotify('success', '上传成功!');
-                    if (this.$route.query.contractId) {
-                        this.updateAttachment(this.$route.query.contractId, data.referId);
-                    }
+                    // if (this.$route.query.contractId) {
+                    //     this.updateAttachment(this.$route.query.contractId, data.referId);
+                    // }
                 });
             },
             handleChange() {
@@ -930,8 +932,10 @@
                 })
             },
             queryAttachments(id) {
-                let url = '/api/contract-web/contract/contract-attachments';
-                get(url, {contractId: id}).then(data => {
+                // let url = '/api/contract-web/contract/contract-attachments';
+                const url = '/api/contract-web/contract/attachment-infos'
+                const versionSeq = this.$route.query.versionSeq
+                get(url, {contractId: id, versionSeq}).then(data => {
                     this.fileList = data;
                 });
             },

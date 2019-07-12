@@ -176,6 +176,7 @@ import { showConfirm } from "../../plugin/utils-message";
 
 export default {
     created() {
+        this.getActiveName()
         this.getStatusList()
         // 获取用户数据
         this.$store.dispatch("getAuth", { menuType: "console-admin" }).then(() => {
@@ -253,6 +254,10 @@ export default {
             post('/api/opencrm/workflow/list', options)
                 .then(result => {
                     this.tableList = result
+                    this.$router.push({
+                        path: 'list',
+                        query: options.example
+                    })
                 })
         },
         toPreview(id, type) {
@@ -324,6 +329,15 @@ export default {
                 this.statusList = result
             })
 
+        },
+        getActiveName() {
+            const { scope } = this.$route.query
+            const activeList = {
+                create: 'first',
+                process: 'second',
+                all: 'third',
+            }
+            this.activeName = activeList[scope]
         },
         handleClick(tab, event) {
             if (this.activeName === 'first') {

@@ -211,7 +211,7 @@ export default {
       pageIndex: 1,
       pageSize: 10,
       tableList: [],
-      dialogOutVisible: true,
+      dialogOutVisible: false,
       dialogVisible: false,
       dialogTitle: "",
       dialogType: "",
@@ -295,6 +295,15 @@ export default {
         userId: id
       }).then(result => {
         this.userDetail = result;
+        // console.log(this.systemList)
+          // 过滤没有枚举的数据
+        // this.userDetail.userProfiles = this.userDetail.userProfiles.filter((item) => {
+        //     if (this.systemList[item.platformType]) {
+        //         return item
+        //     }
+        // })
+          this.userDetail.userProfiles = this.userDetail.userProfiles.filter(item => item.platformType === 'console-company')
+          // console.log(this.userDetail)
       });
     },
     deleteProfile(profileId) {
@@ -370,7 +379,7 @@ export default {
         }).then(result => {
           this.roleList[systemType] = result;
           this.activeRoleList = result;
-          console.log(result)
+          // console.log(result)
         });
       } else this.activeRoleList = this.roleList[systemType];
     },

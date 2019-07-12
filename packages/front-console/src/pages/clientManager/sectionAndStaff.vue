@@ -391,7 +391,7 @@ export default {
           companyId: this.companyId,
         }).then(result => {
           this.roleList[e.value] = result
-          console.log(this.roleList)
+          // console.log(this.roleList)
           this.$forceUpdate()
         })
       })
@@ -591,6 +591,13 @@ export default {
       this.getstaffList();
     },
     staff_submit() {
+        // 遍历系统列表
+        // console.log(this.systemList)
+        // console.log(this.isAgentAll)
+        // console.log(this.selectedAppList)
+        // console.log(this.isProviderAll)
+        // console.log(this.isCompanyAll)
+        // console.log(this.isAgentAll)
       this.systemList.forEach((e, i) => {
         var userContextList = []
         if(this.isAppAll[e.value]) {
@@ -608,7 +615,7 @@ export default {
             })
           })
         }
-        console.log(this.isProviderAll, e.value)
+        // console.log(this.isProviderAll, e.value)
         if(this.isProviderAll[e.value]) {
           userContextList.push({
             isAllSubject: true,
@@ -654,13 +661,20 @@ export default {
             })
           })
         }
-        this.staff_form[i == 0 ? 'adminContextParam' : 'companyContextParam'].userContextList = userContextList
+        if (e.value == 'console-admin') {
+            this.staff_form['adminContextParam'].userContextList = userContextList
+        }
+        if (e.value == 'console-company') {
+            this.staff_form['companyContextParam'].userContextList = userContextList
+        }
+        // this.staff_form[i == 0 ? 'adminContextParam' : 'companyContextParam'].userContextList = userContextList
       })
       this.staff_list.forEach(e => {
         if(e.id == this.staff_form.leaderEmployeeId) {
           this.staff_form.leaderEmployeeName = e.name
         }
       })
+        // console.log(this.staff_form.companyContextParam)
       post(`/api/sysmgr-web/employee/${this.staff_form.id ? 'editEmployee' : 'createEmployee'}`, this.staff_form).then(data => {
         this.$message({
           type: 'success',
