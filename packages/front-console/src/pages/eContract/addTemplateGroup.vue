@@ -758,6 +758,7 @@
 							.then(result => {
 								templateModel.fname = result.fname
 								templateModel.furl = result.url
+                                templateModel.name = result.fname
                                 if(templateModel.isSign === '2') templateModel.partys = null
 								this.templateArr.push(templateModel)
 								this.dialogVisible = false
