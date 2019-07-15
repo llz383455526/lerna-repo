@@ -339,15 +339,19 @@
     data() {
         // 查重
         var validateCom = async (rule, value, callback) => {
-            if (value === '') {
-            callback(new Error('请选择服务商名称'));
+            if(this.changeMode) { // 编辑时跳过验证
+                 callback()
+            }
+            if (!value) {
+                callback(new Error('请选择服务商名称'));
             } else {
-            await get(invoiceApi.serviceDetail, {id: value}).then(res => {
-                if(res.id) {
+                await get(invoiceApi.serviceDetail, {id: value}).then(res => {
+                    if(res.id) {
                     callback(new Error('落地公司已存在'));
-                }
-            })
-            callback();
+                    } else {
+                        callback();
+                    }
+                })
             }
         };
       return {
