@@ -202,7 +202,7 @@ export default {
                 serviceCompanyName: '',
                 status: '',
                 moduleName: 'sale_contract',
-                subjectType: 'customer,oem'
+                subjectType: 'customer,oem,service_rule,external_agent'
             },
             statusList: [],
             activeName: 'first',
@@ -227,7 +227,7 @@ export default {
                 status: '',
                 moduleName: 'sale_contract',
                 scope: 'create',
-                subjectType: 'customer,oem'
+                subjectType: 'customer,oem,service_rule,external_agent'
             }
         },
         search() {

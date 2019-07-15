@@ -1,8 +1,21 @@
 <template>
   <div class="bg-white p15">
-    <el-form :model="companyForm" :rules="rules" ref="companyForm" label-width="200px" class="demo-companyForm">
-      <h4 class="ml50">企业信息</h4>
-      <el-form-item label="纳税人名称" prop="id" placeholder="请输入内容" width="200">
+    <el-form
+      :model="companyForm"
+      :rules="rules"
+      ref="companyForm"
+      label-width="200px"
+      class="demo-companyForm"
+    >
+      <h4 class="ml50">
+        企业信息
+      </h4>
+      <el-form-item
+        label="纳税人名称"
+        prop="id"
+        placeholder="请输入内容"
+        width="200"
+      >
         <el-autocomplete
           class="inline-input"
           v-model="companyForm.name"
@@ -10,28 +23,67 @@
           placeholder="请输入内容"
           style="width:100%;"
           @blur="calcuCompanyId"
-          @select="handleSelect" :disabled="changeMode">
-        </el-autocomplete>
+          @select="handleSelect"
+          :disabled="changeMode"
+        />
       </el-form-item>
-      <el-form-item label="纳税人识别号" prop="taxIdcd">
-        <el-input v-model="companyForm.taxIdcd"></el-input>
+      <el-form-item
+        label="纳税人识别号"
+        prop="taxIdcd"
+      >
+        <el-input v-model="companyForm.taxIdcd" />
       </el-form-item>
-      <el-form-item label="税盘类型" prop="taxType">
-        <el-radio-group v-model="companyForm.taxType" @change="calcuTaxType">
-          <el-radio label="JS">金税盘</el-radio>
-          <el-radio label="SK">税控盘</el-radio>
+      <el-form-item
+        label="税盘类型"
+        prop="taxType"
+      >
+        <el-radio-group
+          v-model="companyForm.taxType"
+          @change="calcuTaxType"
+        >
+          <el-radio label="JS">
+            金税盘
+          </el-radio>
+          <el-radio label="SK">
+            税控盘
+          </el-radio>
         </el-radio-group>
       </el-form-item>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="普票最大限额" prop="ppMaxAmount">
-            <el-select v-model="companyForm.ppMaxAmount" placeholder="请选择" style="width:100%;">
-              <el-option label="一千元" value="1000"></el-option>
-              <el-option label="一万元" value="10000"></el-option>
-              <el-option label="十万元" value="100000"></el-option>
-              <el-option label="一百万元" value="1000000"></el-option>
-              <el-option label="一千万元" value="10000000"></el-option>
-              <el-option label="一亿元" value="100000000"></el-option>
+          <el-form-item
+            label="普票最大限额"
+            prop="ppMaxAmount"
+          >
+            <el-select
+              v-model="companyForm.ppMaxAmount"
+              placeholder="请选择"
+              style="width:100%;"
+            >
+              <el-option
+                label="一千元"
+                value="1000"
+              />
+              <el-option
+                label="一万元"
+                value="10000" 
+              />
+              <el-option
+                label="十万元"
+                value="100000"
+              />
+              <el-option
+                label="一百万元"
+                value="1000000" 
+              />
+              <el-option
+                label="一千万元"
+                value="10000000"
+              />
+              <el-option
+                label="一亿元"
+                value="100000000"
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -43,14 +95,39 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="专票最大限额" prop="zpMaxAmount">
-            <el-select v-model="companyForm.zpMaxAmount" placeholder="请选择" style="width:100%;">
-              <el-option label="一千元" value="1000"></el-option>
-              <el-option label="一万元" value="10000"></el-option>
-              <el-option label="十万元" value="100000"></el-option>
-              <el-option label="一百万元" value="1000000"></el-option>
-              <el-option label="一千万元" value="10000000"></el-option>
-              <el-option label="一亿元" value="100000000"></el-option>
+          <el-form-item
+            label="专票最大限额"
+            prop="zpMaxAmount"
+          >
+            <el-select
+              v-model="companyForm.zpMaxAmount"
+              placeholder="请选择"
+              style="width:100%;"
+            >
+              <el-option
+                label="一千元"
+                value="1000"
+              />
+              <el-option
+                label="一万元"
+                value="10000"
+              />
+              <el-option
+                label="十万元"
+                value="100000"
+              />
+              <el-option
+                label="一百万元"
+                value="1000000" 
+              />
+              <el-option
+                label="一千万元"
+                value="10000000"
+              />
+              <el-option
+                label="一亿元"
+                value="100000000" 
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -60,68 +137,164 @@
             </el-form-item>
         </el-col> -->
       </el-row>
-      <el-form-item label="企业所在地" prop="addr1Code">
-        <el-cascader size="large" :options="options" v-model="companyForm.addr1Code" @change="calcuAddr1">
-        </el-cascader>
+      <el-form-item
+        label="企业所在地"
+        prop="addr1Code"
+      >
+        <el-cascader
+          size="large"
+          :options="options"
+          v-model="companyForm.addr1Code"
+          @change="calcuAddr1" 
+        />
       </el-form-item>
-      <el-form-item label="详细地址" prop="addr2">
-        <el-input v-model="companyForm.addr2"></el-input>
+      <el-form-item
+        label="详细地址"
+        prop="addr2"
+      >
+        <el-input v-model="companyForm.addr2" />
       </el-form-item>
-      <el-form-item label="电话" prop="phone">
-        <el-input v-model="companyForm.phone" :maxlength="13"></el-input>
+      <el-form-item
+        label="电话"
+        prop="phone"
+      >
+        <el-input
+          v-model="companyForm.phone"
+          :maxlength="13" 
+        />
       </el-form-item>
-      <el-form-item label="开户银行" prop="bankName">
-        <el-input v-model="companyForm.bankName"></el-input>
+      <el-form-item
+        label="开户银行"
+        prop="bankName"
+      >
+        <el-input v-model="companyForm.bankName" />
       </el-form-item>
-      <el-form-item label="银行账号" prop="bankAccount">
-        <el-input v-model="companyForm.bankAccount" :maxlength="50"></el-input>
+      <el-form-item
+        label="银行账号"
+        prop="bankAccount"
+      >
+        <el-input
+          v-model="companyForm.bankAccount"
+          :maxlength="50"
+        />
       </el-form-item>
       <el-row>
         <el-col :span="10">
-          <el-form-item label="收款人" prop="payee">
-            <el-input v-model="companyForm.payee" :maxlength="20"></el-input>
+          <el-form-item
+            label="收款人"
+            prop="payee"
+          >
+            <el-input
+              v-model="companyForm.payee"
+              :maxlength="20"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="7">
-          <el-form-item label="复核" prop="checker" label-width="100px">
-            <el-input v-model="companyForm.checker" :maxlength="20"></el-input>
+          <el-form-item
+            label="复核"
+            prop="checker"
+            label-width="100px"
+          >
+            <el-input
+              v-model="companyForm.checker"
+              :maxlength="20"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="7">
-          <el-form-item label="开票人" prop="drawer" label-width="100px">
-            <el-input v-model="companyForm.drawer" :maxlength="20"></el-input>
+          <el-form-item
+            label="开票人"
+            prop="drawer"
+            label-width="100px"
+          >
+            <el-input
+              v-model="companyForm.drawer"
+              :maxlength="20"
+            />
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="是否支持企业自主开票" prop="supportSelfInvoice">
+      <el-form-item
+        label="是否支持企业自主开票"
+        prop="supportSelfInvoice"
+      >
         <el-radio-group v-model="companyForm.supportSelfInvoice">
-          <el-radio label="是">是</el-radio>
-          <el-radio label="否">否</el-radio>
+          <el-radio label="是">
+            是
+          </el-radio>
+          <el-radio label="否">
+            否
+          </el-radio>
         </el-radio-group>
       </el-form-item>
       <template v-if="isShowSuccess">
-        <el-form-item label="开票渠道" prop="configType">
-          <el-radio v-model="companyForm.configType" :label="1">大象慧云</el-radio>
-          <el-radio v-model="companyForm.configType" :label="2">票加加</el-radio>
+        <el-form-item
+          label="开票渠道"
+          prop="configType"
+        >
+          <el-radio
+            v-model="companyForm.configType"
+            :label="1"
+          >
+            大象慧云
+          </el-radio>
+          <el-radio
+            v-model="companyForm.configType"
+            :label="2"
+          >
+            票加加
+          </el-radio>
         </el-form-item>
         <template v-if="companyForm.configType === 1">
-          <el-form-item label="安全凭证" prop="secretId">
-            <el-input class="form_input" v-model="companyForm.secretId"></el-input>
+          <el-form-item
+            label="安全凭证"
+            prop="secretId"
+          >
+            <el-input
+              class="form_input"
+              v-model="companyForm.secretId" 
+            />
           </el-form-item>
-          <el-form-item label="秘钥" prop="secretKey">
-            <el-input class="form_input" v-model="companyForm.secretKey"></el-input>
+          <el-form-item
+            label="秘钥"
+            prop="secretKey"
+          >
+            <el-input
+              class="form_input"
+              v-model="companyForm.secretKey" 
+            />
           </el-form-item>
-          <el-form-item label="受理点ID" prop="sldId">
-            <el-input class="form_input" v-model="companyForm.sldId"></el-input>
+          <el-form-item
+            label="受理点ID"
+            prop="sldId"
+          >
+            <el-input
+              class="form_input"
+              v-model="companyForm.sldId" 
+            />
           </el-form-item>
-          <el-form-item label="开票机号" prop="kpjh">
-            <el-input class="form_input" v-model="companyForm.kpjh"></el-input>
+          <el-form-item
+            label="开票机号"
+            prop="kpjh"
+          >
+            <el-input
+              class="form_input"
+              v-model="companyForm.kpjh"
+            />
           </el-form-item>
         </template>
       </template>
       <el-form-item>
-        <el-button type="primary" @click="submitForm('companyForm')">保存</el-button>
-        <el-button @click="routerPush('/main/billingManager/list')">取消</el-button>
+        <el-button
+          type="primary"
+          @click="submitForm('companyForm')"
+        >
+          保存
+        </el-button>
+        <el-button @click="routerPush('/main/billingManager/list')">
+          取消
+        </el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -160,13 +333,30 @@
   import {baseUrl} from '../../config/address';
   import {showNotify} from '../../plugin/utils-notify';
   import {regionData, CodeToText, TextToCode} from 'element-china-area-data'
+  import {invoiceApi} from '../../api'
 
   export default {
     data() {
+        // 查重
+        var validateCom = async (rule, value, callback) => {
+            if (value === '') {
+            callback(new Error('请选择服务商名称'));
+            } else {
+            await get(invoiceApi.serviceDetail, {id: value}).then(res => {
+                if(res.id) {
+                    callback(new Error('落地公司已存在'));
+                }
+            })
+            callback();
+            }
+        };
       return {
         rules: {
+        //   id: [
+        //     {required: true, message: '请选择服务商名称', trigger: 'blur'}
+        //   ],
           id: [
-            {required: true, message: '请选择服务商名称', trigger: 'blur'}
+            {validator: validateCom, trigger: 'blur'}
           ],
           taxIdcd: [
             {required: true, message: '请输入纳税人识别号', trigger: 'blur'}

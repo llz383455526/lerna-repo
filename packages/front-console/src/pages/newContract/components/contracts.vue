@@ -267,42 +267,43 @@ export default {
         },
         // 更新当前显示的服务类型
         upDataServerType() {
-            this.serverTypeMap = new Map()
-            this.ruleForm.contracts.forEach((item) => {
-                let set = null
+            // this.serverTypeMap = new Map()
+            // this.ruleForm.contracts.forEach((item) => {
+            //     let set = null
                 // 设置已经选择的服务类型集合
-                if (this.serverTypeMap.has(item.taxLandingId)) {
-                    set = this.serverTypeMap.get(item.taxLandingId)
-                } else {
-                    set = new Set()
-                    this.serverTypeMap.set(item.taxLandingId, set)
-                }
+                // if (this.serverTypeMap.has(item.taxLandingId)) {
+                //     set = this.serverTypeMap.get(item.taxLandingId)
+                // } else {
+                //     set = new Set()
+                //     this.serverTypeMap.set(item.taxLandingId, set)
+                // }
                 // 添加已经选中的
-                item.serviceTypeList.forEach((item2) => {
-                    if (item2.serviceId) {
-                        set.add(item2.serviceId)
-                    }
-                })
-            })
+                // item.serviceTypeList.forEach((item2) => {
+                //     if (item2.serviceId) {
+                //         set.add(item2.serviceId)
+                //     }
+                // })
+            // })
             this.ruleForm.contracts.forEach((item) => {
-                let set = this.serverTypeMap.get(item.taxLandingId)
+                // let set = this.serverTypeMap.get(item.taxLandingId)
                 // 已经选中的数据
-                const selArr = Array.from(set)
+                // const selArr = Array.from(set)
                 // 获取当前选中的数组集合
-                const serviceTypeListSet = new Set(item.serviceTypeList.map((item) => {
-                    return item.serviceId
-                }))
+                // const serviceTypeListSet = new Set(item.serviceTypeList.map((item) => {
+                //     return item.serviceId
+                // }))
                 // 排除掉当前选中的数组
-                const otherSelArr = selArr.filter((item1) => {
-                    return !serviceTypeListSet.has(item1)
-                })
+                // const otherSelArr = selArr.filter((item1) => {
+                //     return !serviceTypeListSet.has(item1)
+                // })
                 // 获取其他已经选中数据的集合
-                const otherSelSet = new Set(otherSelArr)
+                // const otherSelSet = new Set(otherSelArr)
                 // 排除掉已经选中的
-                let arr = this.allServiceTypeList.filter((item1) => {
-                    return !otherSelSet.has(item1.serviceId)
-                })
-                item.optionServiceTypeList = arr
+                // let arr = this.allServiceTypeList.filter((item1) => {
+                //     return !otherSelSet.has(item1.serviceId)
+                // })
+                // item.optionServiceTypeList = arr
+                item.optionServiceTypeList = this.allServiceTypeList
             })
             this.$forceUpdate()
         },
