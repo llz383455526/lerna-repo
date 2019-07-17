@@ -307,6 +307,9 @@
                 <el-form-item label="付款账户名称" size="small" prop="xtr$acctName">
                     <el-input class="form_input" v-model="form.xtr$acctName"></el-input>
                 </el-form-item>
+                <el-form-item label="开户支行名称" size="small" prop="xtr$depositBankName">
+                    <el-input class="form_input" v-model="form.xtr$depositBankName"></el-input>
+                </el-form-item>
                 <el-form-item label="支付密码" size="small" prop="xtr$payPassword">
                     <el-input class="form_input" v-model="form.xtr$payPassword"></el-input>
                 </el-form-item>
@@ -488,6 +491,7 @@ export default {
             'xtr$channelType': '',  // 渠道类型
             'xtr$accountNumber': '', // 付款账号
             'xtr$acctName': '',     // 付款账户名称
+            'xtr$depositBankName':'', // 开户支行名称
             'xtr$payPassword': '',     // 支付密码
             'xtr$privatekey':'',      // 我方私钥
             'xtr$thirdPublickey':''   // 薪太软公钥

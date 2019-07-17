@@ -902,6 +902,17 @@ module.exports = {
             trigger: 'blur'
         }
     ],
+    xtr$depositBankName: [
+        {
+            message: '请输入开户支行名称',
+            trigger: 'blur'
+        },
+        {
+            max:  1024,
+            message: '输入过长',
+            trigger: 'blur'
+        }
+    ],
     xtr$payPassword: [
         {
         required: false,
