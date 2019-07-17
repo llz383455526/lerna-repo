@@ -165,19 +165,19 @@ export default {
         })
         const RiskRuleType = [
             {
-                "value": "unit_limit",
+                "value": "unit_limit_max",
                 "text": "单笔收入限额"
             },
             {
-                "value": "month_limit",
+                "value": "month_limit_max",
                 "text": "单人月收入限额"
             },
             {
-                "value": "year_limit",
+                "value": "year_limit_max",
                 "text": "单人年收入限额"
             },
             {
-                "value": "day_limit",
+                "value": "day_limit_max",
                 "text": "单人日收入限额"
             }
         ]
