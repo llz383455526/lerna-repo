@@ -49,9 +49,11 @@ let urlEncode = (param, key, encode) => {
 let getBrowserInfo = () => {
   const sys = {}
   const ua = navigator.userAgent.toLowerCase()
-  const re = /(msie|firefox|chrome|opera|version).*?([\d.]+)/
+  const re = /(msie|firefox|chrome|opera|version|rv).*?([\d.]+)/
   const m = ua.match(re)
   sys.browser = m[1].replace(/version/, "'safari")
+  // 兼容IE11
+  sys.browser = m[1].replace(/rv/, "'msie")
   // eslint-disable-next-line prefer-destructuring
   sys.ver = m[2]
   return sys

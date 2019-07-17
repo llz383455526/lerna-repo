@@ -123,6 +123,11 @@ export default {
         color: $dark-grey;
         font-size: 12px;
         text-align: center;
+
+        .el-badge__content.is-fixed {
+            top: 7px;
+            right: 23px;
+        }
     }
     .browser-img{
         width: 66px;
