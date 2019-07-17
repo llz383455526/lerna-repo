@@ -1,32 +1,46 @@
 <template>
   <div>
-    <div style="margin:20px 0;" v-if="contractModel.status == 'completed'">
-      <el-button size="small" @click="backToList">返回</el-button>
+    <div style="margin:20px 0;"
+         v-if="contractModel.status == 'completed'">
+      <el-button size="small"
+                 @click="backToList">返回</el-button>
     </div>
-    <div style="margin:20px 0;" v-if="contractModel.status == 'init'">
-      <el-button size="small" type="primary" @click="toDetail(contractModel.contractId, 'watch')">送审</el-button>
-      <el-button size="small" type="info" @click="toCreate(contractModel.contractId, contractModel.workflowType)">编辑</el-button>
-      <el-button size="small" type="danger" @click="closeContract(contractModel.contractId)">删除</el-button>
-      <el-button size="small" @click="backToList">返回</el-button>
+    <div style="margin:20px 0;"
+         v-if="contractModel.status == 'init'">
+      <el-button size="small"
+                 type="primary"
+                 @click="toDetail(contractModel.contractId, 'watch')">送审</el-button>
+      <el-button size="small"
+                 type="info"
+                 @click="toCreate(contractModel.contractId, contractModel.workflowType)">编辑</el-button>
+      <el-button size="small"
+                 type="danger"
+                 @click="closeContract(contractModel.contractId)">删除</el-button>
+      <el-button size="small"
+                 @click="backToList">返回</el-button>
     </div>
     <div class="widget-box bg-white">
       <div class="widget-header">
         <h4 class="widget-title">创建合同 - {{ contractForm.customerName }}</h4>
       </div>
       <div class="widget-body">
-        <div class="widget-main" style="font-size: 16px;line-height: 30px;">
-          <div class="row" style="margin-bottom: 15px;">
+        <div class="widget-main"
+             style="font-size: 16px;line-height: 30px;">
+          <div class="row"
+               style="margin-bottom: 15px;">
             <div class="col-xs-12">
               <h4 class="block green">合同选项</h4>
             </div>
             <div class="col-xs-6">合同模板：{{ getText(contractForm.contractTplId, contractTplList) }}</div>
             <div class="col-xs-6">客户行业类型：{{ getText(contractForm.contractType, industryTypeList) }}</div>
             <div class="col-xs-6">客户从事：{{ contractForm.customIndustry }}</div>
-            <div class="col-xs-6" v-show="!isChange">合同期限：{{ contractForm.contractStartDate + ' - ' +
+            <div class="col-xs-6"
+                 v-show="!isChange">合同期限：{{ contractForm.contractStartDate + ' - ' +
               contractForm.contractEndDate }}</div>
             <div class="col-xs-6">版本生效时间：{{ contractForm.versionStartDate || contractForm.contractStartDate | formatTime('yyyy-MM') }}</div>
           </div>
-          <div class="row" style="margin-bottom: 15px;">
+          <div class="row"
+               style="margin-bottom: 15px;">
             <div class="col-xs-12">
               <h4 class="block green">销售信息</h4>
             </div>
@@ -39,7 +53,8 @@
             <div class="col-xs-6">客户类型：{{ contractForm.originalTypeName }}</div>
             <div class="col-xs-6">客户归属：{{ contractForm.originalName }}</div>
           </div>
-          <div class="row" style="margin-bottom: 15px;">
+          <div class="row"
+               style="margin-bottom: 15px;">
             <div class="col-xs-12">
               <h4 class="block green">客户企业及开票信息</h4>
             </div>
@@ -67,18 +82,23 @@
             <div class="col-xs-6">银行账号：{{ contractForm.customBankAccount }}</div>
             <div class="col-xs-12">发票类型：{{ getText(contractForm.invoiceType, contractModel.invoiceTypeList)
               }}
-              <el-checkbox v-model="contractForm.showSubjectInfo" disabled>合同中显示发票类型</el-checkbox>
+              <el-checkbox v-model="contractForm.showSubjectInfo"
+                           disabled>合同中显示发票类型</el-checkbox>
             </div>
           </div>
-          <div class="row" style="margin-bottom: 15px;">
+          <div class="row"
+               style="margin-bottom: 15px;">
             <div class="col-xs-12">
               <h4 class="block green">落地公司信息</h4>
             </div>
-            <div v-for="(formItem, key) in contractForm.contracts" :key="key">
+            <div v-for="(formItem, key) in contractForm.contracts"
+                 :key="key">
               <div class="col-xs-12">落地公司名称：{{ formItem.serviceCompanyName }}
-                <el-checkbox :value="formItem.showServiceCompanyInfo == true" disabled>合同中显示服务商收款账户信息</el-checkbox>
+                <el-checkbox :value="formItem.showServiceCompanyInfo == true"
+                             disabled>合同中显示服务商收款账户信息</el-checkbox>
               </div>
-              <div class="col-xs-12" v-if="formItem.startDate">合同期限：{{ formItem.startDate + ' 至 ' + formItem.endDate }}</div>
+              <div class="col-xs-12"
+                   v-if="formItem.startDate">合同期限：{{ formItem.startDate + ' 至 ' + formItem.endDate }}</div>
               <div class="col-xs-12">结算方式：{{ getText(formItem.settleType, contractModel.settleTypeList)
                 }}</div>
               <div class="col-xs-12">业务方案：{{ getText(formItem.goodsId, formItem.goodsList, 'id', 'name')
@@ -90,7 +110,8 @@
                 </show-service>
               </div>
               <div class="col-xs-12">服务类型：
-                <span v-for="(v, k) in formItem.serviceTypeList" :key="k">
+                <span v-for="(v, k) in formItem.serviceTypeList"
+                      :key="k">
                   {{ v.serviceName }}&nbsp;&nbsp;
                 </span>
               </div>
@@ -105,7 +126,8 @@
               <hr v-if="key+1 != contractForm.contracts.length">
             </div>
           </div>
-          <div class="row" style="margin-bottom: 15px;">
+          <div class="row"
+               style="margin-bottom: 15px;">
             <div class="col-xs-12">
               <h4 class="block green">合同附件条款</h4>
             </div>
@@ -116,16 +138,22 @@
             </template>
             <div class="col-xs-12">付款方式：{{ getText(contractForm.vciPayType, contractModel.VciPayTypeList)
               }}</div>
-            <div class="col-xs-12" v-if="contractForm.payAndInvoiceSame">付款方与收款方一致：{{ contractForm.payAndInvoiceSame == 1 ? '是' : '否' }}</div>
-            <div class="col-xs-12" v-if="contractForm.payAndInvoiceSame === '0'">甲方下属公司类型：{{
+            <div class="col-xs-12"
+                 v-if="contractForm.payAndInvoiceSame">付款方与收款方一致：{{ contractForm.payAndInvoiceSame == 1 ? '是' : '否' }}</div>
+            <div class="col-xs-12"
+                 v-if="contractForm.payAndInvoiceSame === '0'">甲方下属公司类型：{{
               getText(contractForm.customCompanyUnderType, contractModel.customCompanyUnderTypeList) }}</div>
-            <div class="col-xs-12" v-if="contractForm.payAndInvoiceSame === '0'">甲方下属公司清单：
-              <a href="javascript:;" @click="handleDownload(contractModel.contractForm.customUnderAttachList[0].downloadCode)">
-                {{ contractModel.contractForm.customUnderAttachList[0].displayname }}
+            <div class="col-xs-12"
+                 v-if="contractForm.payAndInvoiceSame === '0'">甲方下属公司清单：
+              <a href="javascript:;"
+                 @click="handleDownload(contractForm.customUnderAttachList[0].downloadCode)">
+                {{ contractForm.customUnderAttachList.length && contractForm.customUnderAttachList[0].displayname }}
               </a>
             </div>
           </div>
-          <div class="row" style="margin-bottom: 15px;" v-if="contractForm.signForm">
+          <div class="row"
+               style="margin-bottom: 15px;"
+               v-if="contractForm.signForm">
             <div class="col-xs-12">
               <h4 class="block green">C端签约设置</h4>
             </div>
@@ -135,8 +163,11 @@
             <div class="col-xs-12">C端签署方式：{{ contractForm.signMode == 1 ? '屏幕手签' : '勾选“我同意”并自动签' }}</div>
             <div class="col-xs-12">签约落地公司：
               <div class="inline">
-                <div v-for="e in contractForm.econtractServiceCompanyList" :key="e.serviceCompanyId">
-                  <el-checkbox :label="e.serviceCompanyName" checked disabled></el-checkbox>
+                <div v-for="e in contractForm.econtractServiceCompanyList"
+                     :key="e.serviceCompanyId">
+                  <el-checkbox :label="e.serviceCompanyName"
+                               checked
+                               disabled></el-checkbox>
                 </div>
               </div>
             </div>
@@ -144,31 +175,49 @@
         </div>
       </div>
     </div>
-    <div class="widget-box bg-white" style="margin-top:20px;">
+    <div class="widget-box bg-white"
+         style="margin-top:20px;">
       <div class="widget-header">
         <h4 class="widget-title">合同附件管理</h4>
-        <a href="javascript:;" class="ml20" @click="handleDownloadAll">打包下载全部附件</a>
+        <a href="javascript:;"
+           class="ml20"
+           @click="handleDownloadAll">打包下载全部附件</a>
       </div>
       <div class="widget-body">
-        <div class="widget-main" style="font-size: 16px;line-height: 30px;">
-          <div v-for="(formItem, key) in contractForm.contracts" :key="key">
-            <div class="row" style="margin-bottom: 15px;">
+        <div class="widget-main"
+             style="font-size: 16px;line-height: 30px;">
+          <div v-for="(formItem, key) in contractForm.contracts"
+               :key="key">
+            <div class="row"
+                 style="margin-bottom: 15px;">
               <div class="col-xs-4">{{ formItem.serviceCompanyName }}</div>
-              <div class="col-xs-4" v-if="!contractForm.approveType || contractForm.approveType === 'standard' || contractForm.approveType === 'partial'">
+              <div class="col-xs-4"
+                   v-if="!contractForm.approveType || contractForm.approveType === 'standard' || contractForm.approveType === 'partial'">
                 <div>系统合同附件：</div>
-                <div v-for="(el, index) in formItem.attachments" :key="index">
+                <div v-for="(el, index) in formItem.attachments"
+                     :key="index">
                   <div v-if="el.targetTypeName!='自定义附件'">{{ el.targetTypeName }}：{{ el.displayname }}
-                    <a href="javascript:;" @click="handlePrevFile(el.downloadCode)" style="margin-left:10px;">预览</a>
-                    <a href="javascript:;" @click="handleDownload(el.downloadCode)" style="margin-left:10px;">下载</a>
+                    <a href="javascript:;"
+                       @click="handlePrevFile(el.downloadCode)"
+                       style="margin-left:10px;">预览</a>
+                    <a href="javascript:;"
+                       @click="handleDownload(el.downloadCode)"
+                       style="margin-left:10px;">下载</a>
                   </div>
                 </div>
               </div>
-              <div class="col-xs-4" v-if="contractForm.approveType === 'partial' || contractForm.approveType === 'customer'">
+              <div class="col-xs-4"
+                   v-if="contractForm.approveType === 'partial' || contractForm.approveType === 'customer'">
                 <div>补充附件：</div>
-                <div v-for="(el, index) in contractForm.approveType === 'partial' ? formItem.partialAttachments : formItem.customerAttachments" :key="index">
+                <div v-for="(el, index) in contractForm.approveType === 'partial' ? formItem.partialAttachments : formItem.customerAttachments"
+                     :key="index">
                   <div v-if="el.targetTypeName=='自定义附件'">{{ el.displayname }}
-                    <a href="javascript:;" @click="handlePrevFile(el.downloadCode)" style="margin-left:10px;">预览</a>
-                    <a href="javascript:;" @click="handleDownload(el.downloadCode)" style="margin-left:10px;">下载</a>
+                    <a href="javascript:;"
+                       @click="handlePrevFile(el.downloadCode)"
+                       style="margin-left:10px;">预览</a>
+                    <a href="javascript:;"
+                       @click="handleDownload(el.downloadCode)"
+                       style="margin-left:10px;">下载</a>
                   </div>
                 </div>
               </div>
@@ -179,12 +228,21 @@
       </div>
     </div>
     <contractInfo :contractModel="contractModel"></contractInfo>
-    <auditOption :contractModel="contractModel" :editType="editType"></auditOption>
-    <div style="margin:20px 0;" v-if="contractModel.status == 'init'">
-      <el-button size="small" type="primary" @click="toDetail(contractModel.contractId, 'watch')">送审</el-button>
-      <el-button size="small" type="info" @click="toCreate(contractModel.contractId, contractModel.workflowType)">编辑</el-button>
-      <el-button size="small" type="danger" @click="closeContract(contractModel.contractId)">删除</el-button>
-      <el-button size="small" @click="backToList">返回</el-button>
+    <auditOption :contractModel="contractModel"
+                 :editType="editType"></auditOption>
+    <div style="margin:20px 0;"
+         v-if="contractModel.status == 'init'">
+      <el-button size="small"
+                 type="primary"
+                 @click="toDetail(contractModel.contractId, 'watch')">送审</el-button>
+      <el-button size="small"
+                 type="info"
+                 @click="toCreate(contractModel.contractId, contractModel.workflowType)">编辑</el-button>
+      <el-button size="small"
+                 type="danger"
+                 @click="closeContract(contractModel.contractId)">删除</el-button>
+      <el-button size="small"
+                 @click="backToList">返回</el-button>
     </div>
   </div>
 </template>
