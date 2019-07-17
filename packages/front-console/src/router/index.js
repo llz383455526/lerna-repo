@@ -160,6 +160,9 @@ let companyAudit = r => require.ensure([], () => r(require('../pages/landingComp
 let addCompany = r => require.ensure([], () => r(require('../pages/landingCompany/addCompany')), 'addCompany')
 let previewCompany = r => require.ensure([], () => r(require('../pages/landingCompany/previewCompany')), 'previewCompany')
 
+let taskList = r => require.ensure([], () => r(require('../pages/accounting/task-list.vue')), 'taskList');
+
+
 const documentList = () => import('../pages/management/documentList')
 const documentDetail = () => import('../pages/management/documentDetail')
 const documentCreate = () => import('../pages/management/documentCreate')
@@ -1560,6 +1563,16 @@ export default [{
                       }
                   },
               ],
+          },
+          {
+              path: 'accounting',
+              component: index,
+              children: [
+                  {
+                      path: 'task-list',
+                      component: taskList
+                  }
+              ]
           },
         ...workOrder
       ]
