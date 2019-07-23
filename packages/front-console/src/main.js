@@ -65,8 +65,10 @@ import {
     Cascader,
     Card,
     Alert,
+    Popover
 } from 'element-ui'
 
+Vue.use(Popover)
 Vue.use(Menu)
 Vue.use(Submenu)
 Vue.use(MenuItem)

@@ -31,7 +31,7 @@
         },
         data() {
             return {
-                navIndex: '1',
+                navIndex: '2',
             }
         },
     }
