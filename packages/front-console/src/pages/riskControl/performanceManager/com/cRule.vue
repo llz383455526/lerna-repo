@@ -19,12 +19,15 @@
                 label="上传时间">
             </el-table-column>
             <el-table-column
-                width="200px"
+                width="250px"
                 label="操作">
                 <template slot-scope="scope">
                     <el-button type="text" size="small" @click="preview(scope.row)">下载</el-button>
                     <el-button type="text" size="small" @click="cRuleStateClick(scope.row)">
-                        {{ scope.row.cuserBalanceStandardStateName }}
+                        <span v-if="scope.row.cuserBalanceStandardState === 'system_success'">系统审核通过</span>
+                        <span v-else-if="scope.row.cuserBalanceStandardState === 'system_fail'">系统审核不通过</span>
+                        <span v-else-if="scope.row.cuserBalanceStandardState.indexOf('success') >= 0">审核通过</span>
+                        <span v-else-if="scope.row.cuserBalanceStandardState.indexOf('fail') >= 0">审核不通过</span>
                         <i class="el-icon-edit"></i></el-button>
                 </template>
             </el-table-column>
