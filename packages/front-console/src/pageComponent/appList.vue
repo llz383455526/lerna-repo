@@ -4,7 +4,10 @@
         <el-table class="table" :data="tableData" border>
             <el-table-column prop="appName" label="商户名称"></el-table-column>
             <el-table-column label="商户状态">
-                <template slot-scope="scope">{{scope.row.statusName}}</template>
+                <template slot-scope="scope">
+                    {{scope.row.statusName}}&nbsp;&nbsp;
+                    <el-button type="text" @click="onLineAuditBtnClick(scope.row)"><i class="el-icon-setting"></i>上线审核</el-button>
+                </template>
             </el-table-column>
             <el-table-column prop="updateByName" label="更新人"></el-table-column>
             <el-table-column prop="updateTime" label="更新时间"></el-table-column>
@@ -51,6 +54,67 @@
             </div>
         </el-dialog>
         <auth-code @result="getAuthCode" ref="authCode"></auth-code>
+        <el-dialog
+            :visible.sync="onlineAuditIsShow"
+            width="800px">
+            <span slot="footer" class="dialog-footer">
+                <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+                <el-button size="small" type="primary" @click="dialogVisible = false">确 定</el-button>
+            </span>
+            <p v-if="popShangHu" slot="title" style="margin: 0px">
+                {{ popShangHu.appName }}&nbsp;&nbsp;&nbsp;&nbsp;
+                <el-switch v-model="popTitleSwitch"></el-switch>
+                <span>是否上线</span>
+            </p>
+            <div class="online-audit-pop-content">
+                <div class="section">
+                    <p class="gongsi-name">
+                        <span class="section-title">落地公司名称AA</span> &nbsp;&nbsp;
+                        <el-switch></el-switch>
+                    </p>
+                    <el-row :gutter="20" class="content">
+                        <el-col :span="6">
+                            &nbsp;
+                        </el-col>
+                        <el-col :span="6" class="flex-center-column">
+                            <span class="item-title">合同是否归档</span>
+                            <span class="item-data">是</span>
+                        </el-col>
+                        <el-col :span="6" class="flex-center-column">
+                            <span class="item-title">计算规则是否通过</span>
+                            <span class="item-data">是</span>
+                        </el-col>
+                        <el-col :span="6" class="flex-center-column">
+                            <span class="item-title">代理商名称</span>
+                            <span class="item-data">代理商名称DD</span>
+                        </el-col>
+                    </el-row>
+                </div>
+                <div class="section">
+                    <p class="gongsi-name">
+                        <span>落地公司名称AA</span> &nbsp;&nbsp;
+                        <el-switch></el-switch>
+                    </p>
+                    <el-row :gutter="20" class="content">
+                        <el-col :span="6">
+                            &nbsp;
+                        </el-col>
+                        <el-col :span="6" class="flex-center-column">
+                            <span class="item-title">合同是否归档</span>
+                            <span class="item-data">是</span>
+                        </el-col>
+                        <el-col :span="6" class="flex-center-column">
+                            <span class="item-title">计算规则是否通过</span>
+                            <span class="item-data">是</span>
+                        </el-col>
+                        <el-col :span="6" class="flex-center-column">
+                            <span class="item-title">代理商名称</span>
+                            <span class="item-data">代理商名称DD</span>
+                        </el-col>
+                    </el-row>
+                </div>
+            </div>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -99,7 +163,10 @@ export default {
                     { validator: reviewMemo, trigger: "blur" }
                 ]
             },
-            authCode: ''
+            authCode: '',
+            onlineAuditIsShow: false,
+            popShangHu: null,
+            popTitleSwitch: false
         }
     },
     watch:{
@@ -114,6 +181,11 @@ export default {
         this.init()
     },
     methods:{
+        onLineAuditBtnClick(item) {
+            console.log(item)
+            this.onlineAuditIsShow = true
+            this.popShangHu = item
+        },
         init() {
             this.authCode = localStorage.getItem('authCode')
             if(this.companyId) {
@@ -201,4 +273,33 @@ export default {
 .table {
   margin-top: 20px;
 }
+    .flex-center-column {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .section-title {
+        background-color: rgba(242, 242, 242, 1);
+        color: rgba(16, 16, 16, 1);
+        font-size: 18px;
+        text-align: center;
+        padding: 2px 15px;
+    }
+    .item-title {
+        color: rgba(16, 16, 16, 1);
+        font-weight: bold;
+        font-size: 16px;
+    }
+    .item-data {
+        margin-top: 20px;
+        color: #999;
+        font-size: 16px;
+    }
+    .section {
+        padding-top: 20px;
+    }
+    .section:nth-child(1) {
+        padding-top: 0px;
+    }
 </style>
