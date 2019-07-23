@@ -1,268 +1,51 @@
 <template>
     <div class="risk-control-performance-manager">
+        <p class="title">企业绩效管理</p>
+        <br/>
         <el-tabs v-model="navIndex">
-            <el-tab-pane label="企业绩效管理" name="0">
+            <el-tab-pane label="全部" name="0">
+                <nav-all></nav-all>
+            </el-tab-pane>
+            <el-tab-pane label="计算规则附件审核" name="1">
+                <nav-rule></nav-rule>
+            </el-tab-pane>
+            <el-tab-pane label="绩效明细附件待审核" name="2">
+                <nav-detail></nav-detail>
             </el-tab-pane>
         </el-tabs>
-        <el-form :inline="true" :model="searchForm" class="demo-form-inline" size="small">
-            <el-form-item label="企业名称">
-                <el-select v-model="searchForm.companyId" filterable placeholder="请选择">
-                    <el-option
-                        v-for="item in qiYeList"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id">
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="计算规则">
-                <el-select v-model="searchForm.cuserBalanceStandardState" filterable placeholder="请选择">
-                    <el-option
-                        v-for="item in ruleTypeArr"
-                        :key="item.value"
-                        :label="item.text"
-                        :value="item.value">
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="计算明细">
-                <el-select v-model="searchForm.cuserPerformanceState" filterable placeholder="请选择">
-                    <el-option
-                        v-for="item in ruleTypeArr"
-                        :key="item.value"
-                        :label="item.text"
-                        :value="item.value">
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="签约率">
-                <el-select v-model="searchForm.cuserSignRateParam" placeholder="">
-                    <el-option
-                        v-for="item in contractRateArr"
-                        :key="item.text"
-                        :label="item.text"
-                        :value="item.value">
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="searchBtnClick">查询</el-button>
-                <el-button @click="clearBtnClick">清空</el-button>
-            </el-form-item>
-        </el-form>
-        <el-table
-            :data="dataArr"
-            style="width: 100%">
-            <el-table-column
-                prop="companyName"
-                label="企业名称"
-                width="180">
-            </el-table-column>
-            <el-table-column
-                label="风控星级"
-                width="160">
-                <div style="display: flex;justify-content: flex-start;align-items: center" slot-scope="scope">
-                    <w-star :count="scope.row.riskLevel" style="display: inline-block" />
-                    &nbsp;
-                    <el-tooltip class="item" effect="dark" content="查看绩效明细" placement="top">
-                        <img @click="fengKongmingXiClick(scope.row)" style="width: 16px; cursor: pointer;" src="../../../assets/img/mingxi.png" alt="">
-                    </el-tooltip>&nbsp;
-                    <el-tooltip class="item" effect="dark" content="查看限额明细" placement="top">
-                        <img  @click="fengKongLimitClick(scope.row)" style="width: 16px; cursor: pointer;" src="../../../assets/img/xiane.png" alt="">
-                    </el-tooltip>
-                </div>
-            </el-table-column>
-            <el-table-column
-                label="计算规则状态">
-                <template slot-scope="scope">
-                    <el-badge :hidden="!scope.row.cuserBalanceStandardWaitApproveNum" :value="scope.row.cuserBalanceStandardWaitApproveNum" class="item">
-                        <span>{{ scope.row.cuserBalanceStandardStateName }}</span>
-                    </el-badge>
-                </template>
-            </el-table-column>
-            <el-table-column
-                label="计算明细状态">
-                <template slot-scope="scope">
-                    <el-badge :hidden="!scope.row.cuserPerformanceWaitApproveNum" :value="scope.row.cuserPerformanceWaitApproveNum" class="item">
-                        <span>{{ scope.row.cuserPerformanceStateName }}</span>
-                    </el-badge>
-                </template>
-            </el-table-column>
-            <el-table-column
-                label="签约率">
-                <template slot-scope="scope">
-                    <span>{{ scope.row.cuserSignRate || 0 }}%</span>
-                </template>
-            </el-table-column>
-            <el-table-column
-                width="300px"
-                label="审核记录">
-                <template slot-scope="scope">
-                    <span>{{ scope.row.approveName }}</span>
-                    <span v-if="scope.row.approveName && scope.row.approveTime">&nbsp;|&nbsp;</span>
-                    <span>{{ scope.row.approveTime }}</span>
-                </template>
-            </el-table-column>
-            <el-table-column
-                v-if="checkRight(permissions, 'console-dlv:/risk_level_degrade/refresh-company-risk-level')"
-                label="操作">
-                <template slot-scope="scope">
-                    <el-button type="text" size="small" @click="auditBtnClick(scope.row)">审核</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
-        <div class="clearfix" style="padding-top: 20px">
-            <el-pagination
-                style="float: right;"
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="pageData.page"
-                :page-sizes="[10, 20, 30, 40]"
-                :page-size="pageData.pageSize"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="pageData.total">
-            </el-pagination>
-        </div>
-        <w-issue-limit ref="WIssueLimit"/>
+
     </div>
 </template>
 
 <script>
-    import  WStar from '../../../component/star'
-    import {get, post} from "../../../store/api";
-    import WIssueLimit from './fengkong/issueLimit'
-    import { mapGetters } from 'vuex'
+    import NavAll from './com/navAll'
+    import NavRule from './com/navRule'
+    import NavDetail from './com/navDetail'
 
     export default {
         name: "RiskControlPerformanceManager",
         components: {
-            WStar,
-            WIssueLimit
+            NavAll,
+            NavRule,
+            NavDetail
         },
         data() {
             return {
-                navIndex: '0',
-                searchForm: {
-                    // 企业ID
-                    companyId: '',
-                    cuserBalanceStandardState: '',
-                    cuserPerformanceState: '',
-                    cuserSignRateParam: ''
-                },
-                dataArr: [],
-                pageData: {
-                    page: 1,
-                    pageSize: 10,
-                    total: 0
-                },
-                // 企业列表
-                qiYeList: [],
-                // 规则列表
-                ruleTypeArr: [],
-                // 签约率
-                contractRateArr: []
+                navIndex: '1',
             }
-        },
-        computed: {
-            ...mapGetters({
-                permissions: 'permissions',
-            }),
-        },
-        methods: {
-            auditBtnClick(item) {
-                this.$router.push({
-                    path: '/main/riskControl/performanceManagerDetail',
-                    query: {id: item.companyId}
-                })
-            },
-            clearBtnClick() {
-                this.searchForm = {
-                    companyId: '',
-                    cuserBalanceStandardState: '',
-                    cuserPerformanceState: '',
-                    cuserSignRateParam: ''
-                }
-                this.getListData()
-            },
-            searchBtnClick() {
-                this.pageData.page =  1
-                this.getListData()
-            },
-            handleSizeChange(pageSize) {
-                this.pageData.pageSize =  pageSize
-                this.getListData()
-            },
-            handleCurrentChange(page) {
-                this.pageData.page =  page
-                this.getListData()
-            },
-            getListData() {
-                post('/api/console-dlv/risk-level-approve/approve-list', {
-                    page: this.pageData.page,
-                    pageSize: this.pageData.pageSize,
-                    ...this.searchForm
-                }).then((data) => {
-                    this.dataArr = data.list
-                    this.pageData.total = data.total
-                })
-            },
-            getQiYeList() {
-                get('/api/sysmgr-web/commom/company?companyIdentity=custom').then(data => {
-                    this.qiYeList = data
-                })
-            },
-            getRuleType() {
-                get('/api/console-dlv/option/get-by-type', {
-                    type: 'RiskLevelState'
-                }).then(result => {
-                    this.ruleTypeArr = result
-                })
-            },
-            // 获取签约率数组
-            getContractRate() {
-                get('/api/console-dlv/option/get-by-type', {
-                    type: 'RiskLevelCuserSignApproveParam'
-                }).then(result => {
-                    this.contractRateArr = result
-                })
-            },
-            fengKongmingXiClick(item) {
-                this.$router.push({
-                    path: '/main/riskControl/performanceManagerStar',
-                    query: {
-                        id: item.companyId
-                    }
-                })
-            },
-            fengKongLimitClick(item) {
-                this.$refs.WIssueLimit.show(item)
-            },
-        },
-        mounted() {
-            this.getQiYeList()
-            this.getRuleType()
-            this.getListData()
-            this.getContractRate()
         },
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .risk-control-performance-manager {
+        >.title {
+            font-size: 22px;
+            margin: 0;
+        }
+        min-height: calc(100vh - 80px);
         padding: 15px;
         background-color: #fff;
-        .el-table {
-            .cell {
-                overflow: visible;
-            }
-        }
-        .el-badge__content {
-           background-color: #FAAE14;
-        }
-        .el-badge__content.is-fixed {
-            top: 12px;
-            right: -6px;
-        }
     }
 
 </style>
