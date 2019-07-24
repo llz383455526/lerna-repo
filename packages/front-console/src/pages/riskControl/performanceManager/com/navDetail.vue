@@ -29,7 +29,7 @@
                 </el-date-picker>
             </el-form-item>
             <el-form-item label="绩效规则附件状态">
-                <el-select multiple v-model="searchForm.cuserPerformanceStates" filterable placeholder="请选择">
+                <el-select style="width: 340px;" multiple v-model="searchForm.cuserPerformanceStates" filterable placeholder="请选择">
                     <el-option
                         v-for="item in riskSignRateDetailApproveState"
                         :key="item.value"
@@ -95,8 +95,7 @@
         <el-dialog
             title="审核"
             :visible.sync="shenHePop"
-            width="500px"
-            :before-close="handleClose">
+            width="500px">
             <el-radio v-model="shenHeRadio" label="admin_success">审核通过</el-radio>
             <el-radio v-model="shenHeRadio" label="admin_fail">审核不通过</el-radio>
             <span slot="footer" class="dialog-footer">
@@ -151,7 +150,7 @@
                     return
                 }
 
-                const api = true ?
+                const api = false ?
                     'https://yapi.aiyuangong.com/mock/34/risk-level-approve/cuser-performance-detail-approve'
                     :
                     '/api/console-dlv/risk-level-approve/cuser-performance-detail-approve'
@@ -167,13 +166,15 @@
                 window.open('/api/sysmgr-web/file/download?downloadCode=' + item.cuserPerformanceAttachment.downloadCode)
             },
             auditBtnClick(item) {
+                this.shenHeRadio = null
                 this.shenHePop = true
                 this.shenHeItem = item
             },
             searchBtnClick() {
                 if (this.searchMonth) {
                     this.searchForm.month = this.searchMonth.getMonth() + 1
-                    this.searchForm.year = this.searchMonth.getFullYear()
+                    this.searchForm.year = `${this.searchMonth.getFullYear()}`
+                    this.searchForm.month = `${this.searchForm.month > 9 ? '' : '0'}${this.searchForm.month}`
                 }
                 this.$refs.WPaging.clear()
             },
@@ -194,10 +195,10 @@
                 this.getListData()
             },
             getListData() {
-                const api = true ?
+                const api = false ?
                     'https://yapi.aiyuangong.com/mock/34/risk-level-approve/get-cuser-performance-wait-approve-list'
                     :
-                    '/api/console-dlv/risk-level-approve/get-cuser-performance-wait-approve-list'
+                    '/api/console-dlv/risk-level-approve/get-cuser-performance-list'
                 post(api, {
                     page: this.pageData.page,
                     pageSize: this.pageData.pageSize,

@@ -22,7 +22,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="计算规则附件状态">
-                <el-select v-model="searchForm.cuserBalanceStandardState" filterable placeholder="请选择">
+                <el-select style="width: 500px;" v-model="searchForm.cuserBalanceStandardStateList" filterable multiple placeholder="请选择">
                     <el-option
                         v-for="item in riskSignRateDetailApproveState"
                         :key="item.value"
@@ -49,6 +49,7 @@
                 <template slot-scope="scope">
                     <span>{{ scope.row.serviceCompanyName }}</span>
                     <el-popover
+                        v-if="scope.row.serviceTypeNames && scope.row.serviceTypeNames.length > 0"
                         placement="top-start"
                         width="200"
                         trigger="hover">
@@ -82,8 +83,7 @@
         <el-dialog
             title="审核"
             :visible.sync="shenHePop"
-            width="500px"
-            :before-close="handleClose">
+            width="500px">
             <el-radio v-model="shenHeRadio" label="admin_success">审核通过</el-radio>
             <el-radio v-model="shenHeRadio" label="admin_fail">审核不通过</el-radio>
             <span slot="footer" class="dialog-footer">
@@ -106,7 +106,7 @@
             return {
                 searchForm: {
                     customerCompanyId: '',
-                    cuserBalanceStandardState: '',
+                    cuserBalanceStandardStateList: [],
                     serviceCompanyId: ''
                 },
                 dataArr: [],
@@ -133,7 +133,7 @@
                     return
                 }
 
-                const api = true ?
+                const api = false ?
                     'https://yapi.aiyuangong.com/mock/34/risk-level-approve/cuser-balance-standard-detail-approve'
                     :
                     '/api/console-dlv/risk-level-approve/cuser-balance-standard-detail-approve'
@@ -146,10 +146,10 @@
                 })
             },
             downloadBtnClick(item) {
-                console.log(item)
                 window.open('/api/sysmgr-web/file/download?downloadCode=' + item.cuserBalanceStandardAttachment.downloadCode)
             },
             auditBtnClick(item) {
+                this.shenHeRadio = null
                 this.shenHePop = true
                 this.shenHeItem = item
             },
@@ -159,7 +159,7 @@
             clearBtnClick() {
                 this.searchForm = {
                     customerCompanyId: '',
-                    cuserBalanceStandardState: '',
+                    cuserBalanceStandardStateList: [],
                     serviceCompanyId: ''
                 }
                 this.$refs.WPaging.clear()
@@ -170,10 +170,10 @@
                 this.getListData()
             },
             getListData() {
-                const api = true ?
-                    'https://yapi.aiyuangong.com/mock/34/risk-level-approve/get-cuser-balance-standard-wait-approve-list'
+                const api = false ?
+                    'https://yapi.aiyuangong.com/mock/34/risk-level-approve/get-cuser-balance-standard-list'
                     :
-                    '/api/console-dlv/risk-level-approve/get-cuser-balance-standard-wait-approve-list'
+                    '/api/console-dlv/risk-level-approve/get-cuser-balance-standard-list'
                 post(api, {
                     page: this.pageData.page,
                     pageSize: this.pageData.pageSize,

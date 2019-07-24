@@ -6,7 +6,7 @@
             <el-table-column label="商户状态">
                 <template slot-scope="scope">
                     {{scope.row.statusName}}&nbsp;&nbsp;
-                    <el-button type="text" @click="onLineAuditBtnClick(scope.row)"><i class="el-icon-setting"></i>上线审核</el-button>
+<!--                    <el-button type="text" @click="onLineAuditBtnClick(scope.row)"><i class="el-icon-setting"></i>上线审核</el-button>-->
                 </template>
             </el-table-column>
             <el-table-column prop="updateByName" label="更新人"></el-table-column>
