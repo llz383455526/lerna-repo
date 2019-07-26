@@ -26,7 +26,10 @@
                 <p class="cell-title">
                     <span class="text">C端绩效计算规则</span>&nbsp;&nbsp;
                     <span style="color: rgb(26, 179, 148); cursor: pointer;" @click="cRuleStateClick">
-                        {{ model.companyRiskRateDTO.cuserBalanceStandardStateName }}
+                        <span v-if="model.companyRiskRateDTO.cuserBalanceStandardState === 'system_success'">系统审核通过</span>
+                        <span v-else-if="model.companyRiskRateDTO.cuserBalanceStandardState === 'system_fail'">系统审核不通过</span>
+                        <span v-else-if="model.companyRiskRateDTO.cuserBalanceStandardState.indexOf('success') >= 0">审核通过</span>
+                        <span v-else-if="model.companyRiskRateDTO.cuserBalanceStandardState.indexOf('fail') >= 0">审核不通过</span>
                         <i class="el-icon-edit"></i>
                     </span>
                 </p>
@@ -35,7 +38,10 @@
             <p class="cell-title">
                 <span class="text">C端绩效计算明细</span>&nbsp;&nbsp;
                 <span v-if="model.companyRiskRateDTO" style="color: rgb(26, 179, 148);cursor: pointer;" @click="cDetailStateClick">
-                    {{ model.companyRiskRateDTO.cuserPerformanceStateName }}
+                    <span v-if="model.companyRiskRateDTO.cuserPerformanceState === 'system_success'">系统审核通过</span>
+                    <span v-else-if="model.companyRiskRateDTO.cuserPerformanceState === 'system_fail'">系统审核不通过</span>
+                    <span v-else-if="model.companyRiskRateDTO.cuserPerformanceState.indexOf('success') >= 0">审核通过</span>
+                    <span v-else-if="model.companyRiskRateDTO.cuserPerformanceState.indexOf('fail') >= 0">审核不通过</span>
                     <i class="el-icon-edit"></i></span>
             </p>
             <w-c-detail :model="model" @reload="getDetailData"/>

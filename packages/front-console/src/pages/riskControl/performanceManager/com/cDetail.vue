@@ -42,7 +42,12 @@
                     <ul class="gongsi-list">
                         <li class="cell" v-for="(v, k) in scope.row.riskRateDataServiceDetailDTOList" :key="k">
                             <el-button type="text" size="small" @click="preview(v)">下载</el-button>
-                            <el-button type="text" size="small" @click="stateClick(v)">{{ v.cuserPerformanceStateName }}<i class="el-icon-edit"></i></el-button>
+                            <el-button type="text" size="small" @click="stateClick(v)">
+                                <span v-if="v.cuserPerformanceState === 'system_success'">系统审核通过</span>
+                                <span v-else-if="v.cuserPerformanceState === 'system_fail'">系统审核不通过</span>
+                                <span v-else-if="v.cuserPerformanceState.indexOf('success') >= 0">审核通过</span>
+                                <span v-else-if="v.cuserPerformanceState.indexOf('fail') >= 0">审核不通过</span>
+                                <i class="el-icon-edit"></i></el-button>
                         </li>
                     </ul>
                 </template>
