@@ -75,7 +75,7 @@
                 label="绩效规则附件状态">
             </el-table-column>
             <el-table-column
-                label="审合记录">
+                label="审核记录">
                 <template slot-scope="scope">
                     <span>{{ scope.row.cuserPerformanceUpdateName }}</span>
                     <span v-if="scope.row.cuserPerformanceUpdateName && scope.row.cuserPerformanceUpdateTime">&nbsp;|&nbsp;</span>
@@ -175,6 +175,9 @@
                     this.searchForm.month = this.searchMonth.getMonth() + 1
                     this.searchForm.year = `${this.searchMonth.getFullYear()}`
                     this.searchForm.month = `${this.searchForm.month > 9 ? '' : '0'}${this.searchForm.month}`
+                } else {
+                    this.searchForm.month = ''
+                    this.searchForm.year = ''
                 }
                 this.$refs.WPaging.clear()
             },
