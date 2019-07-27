@@ -6,10 +6,10 @@
             <el-tab-pane label="全部" name="0">
                 <nav-all v-if="navIndex === '0'"></nav-all>
             </el-tab-pane>
-            <el-tab-pane label="计算规则附件审核" name="1" v-if="checkRight(permissions, 'console-dlv:/api/console-dlv/risk-level-approve/cuser-balance-standard-detail-approve')">
+            <el-tab-pane label="计算规则附件审核" name="1" v-if="checkRight(permissions, 'console-dlv:/risk-level-approve/cuser-balance-standard-detail-approve')">
                 <nav-rule v-if="navIndex === '1'"></nav-rule>
             </el-tab-pane>
-            <el-tab-pane label="绩效明细附件待审核" name="2" v-if="checkRight(permissions, 'console-dlv:/api/console-dlv/risk-level-approve/cuser-performance-detail-approve')">
+            <el-tab-pane label="绩效明细附件待审核" name="2" v-if="checkRight(permissions, 'console-dlv:/risk-level-approve/cuser-performance-detail-approve')">
                 <nav-detail v-if="navIndex === '2'"></nav-detail>
             </el-tab-pane>
         </el-tabs>
