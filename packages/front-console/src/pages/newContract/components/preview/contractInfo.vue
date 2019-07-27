@@ -26,7 +26,7 @@
                                 <el-table-column label="文件名称" prop="displayname"></el-table-column>
                                 <el-table-column label="操作" width="100">
                                     <template slot-scope="scope">
-                                        <el-button type="text" size="medium" style="padding:0;" @click="handleDownload(scope.row.downloadCode)">下载</el-button>
+                                        <el-button type="text" size="medium" style="padding:0;" @click="contractLinkDownload(scope.row.downloadCode)">下载</el-button>
                                     </template>
                                 </el-table-column>
                             </el-table>
@@ -45,7 +45,7 @@
                                     <el-row :gutter="20" v-for="(v, k) in cAlreadyList" :key="v.serviceCompanyId">
                                         <el-col :span="12">{{ v.serviceCompanyName }}_计算规则.{{  v.attachments[0].displayname.split('.').pop() }}</el-col>
                                         <el-col :span="12">
-                                            <el-button type="text" @click="handleDownload(v)">下载</el-button>
+                                            <el-button type="text" @click="cRuleDownload(v)">下载</el-button>
                                         </el-col>
                                     </el-row>
                                 </div>
@@ -106,15 +106,16 @@ export default {
                 this.addr += element + ' - '
             });
         },
-        handleDownload (downloadCode) {
-            window.location.href = baseUrl + '/api/contract-web/file/download' +
+        contractLinkDownload (downloadCode) {
+            const url = '/api/contract-web/file/download' +
             '?downloadCode=' + downloadCode;
+            window.open(url)
         },
         jieSuanFileDown (downloadCode) {
             window.location.href = '/api/sysmgr-web/file/download' +
                 '?downloadCode=' + downloadCode;
         },
-        handleDownload (item) {
+        cRuleDownload (item) {
             window.open('/api/sysmgr-web/file/download' +
                 '?downloadCode=' + item.attachments[0].downloadCode)
         },

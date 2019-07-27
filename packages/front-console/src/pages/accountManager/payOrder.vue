@@ -6,6 +6,7 @@
             <el-tab-pane label="全部" name="first"></el-tab-pane>
             <el-tab-pane label="支付成功" name="second"></el-tab-pane>
             <el-tab-pane label="支付中" name="third"></el-tab-pane>
+            <el-tab-pane label="挂起" name="fifth"></el-tab-pane>
             <el-tab-pane label="支付失败" name="fourth"></el-tab-pane>
         </el-tabs>
 
@@ -71,7 +72,7 @@
 					@change="getDate">
 				</el-date-picker>
             </el-form-item>
-			<el-form-item label="发放时间:">
+			<el-form-item label="完成时间:">
                 <el-date-picker
 					v-model="paymentResTime"
 					type="daterange"
@@ -91,6 +92,9 @@
                 <el-button type="primary" @click="query">查询</el-button>
                 <el-button @click="clear">清除</el-button>
                 <el-button @click="exportXls" v-if="!userInformation || !userInformation.scrutator">导出xls</el-button>
+                <el-button
+                    v-if="activeTab === 'fifth' && checkRight(permissions, 'console-dlv:/pay-order/cancel-hang-up-order')"
+                    @click="cancelHangUpOrder">取消交易</el-button>
             </el-form-item>
         </el-form>
 
@@ -100,7 +104,8 @@
                     <i class="el-icon-question" style="margin-left:5px;color:#f56c6c;cursor:pointer;" title="所选条件下的发放成功和发放中的金额总数"></i>
                 </el-col>
                 <el-col :span="5">发成功金额： <span>{{moneyFlow.doneAmount | formatMoney}}</span></el-col>
-                <el-col :span="5">发放中金额： <span>{{moneyFlow.doingAmount | formatMoney}}</span></el-col>
+                <el-col :span="4">发放中金额： <span>{{moneyFlow.doingAmount | formatMoney}}</span></el-col>
+                <el-col :span="4">挂起金额： <span>{{moneyFlow.hangUpAmount | formatMoney}}</span></el-col>
 				<el-col :span="4"><span style="color: red">当前金额按照请求时间统计</span></el-col>
             </el-row>
         </div>
@@ -128,6 +133,7 @@
 					companyId: '',
 					serviceCompanyId: '',
 					state: '',
+                    // isHangUp: 0,
 					appId: '',
 					outOrderNo: '',
 					paymentThirdTypeName: '',
@@ -171,7 +177,8 @@
 		computed: {
 			...mapGetters({
 				userInformation: 'userInformation',
-				customNameList: 'customNameList'
+				customNameList: 'customNameList',
+                permissions: 'permissions',
 			})
 		},
 		mounted() {
@@ -245,6 +252,8 @@
 			},
 			handleTabClick(tab, event) {
 				let _tab = tab.name
+                delete(this.formSearch.isHangUp)
+
 				switch (_tab) {
 					case 'first':
 						this.formSearch.state = ''
@@ -253,14 +262,26 @@
 						this.formSearch.state = '30'
 						break
 					case 'third':
-						this.formSearch.state = '20'
+						// 支付中
+		                this.formSearch.state = '20'
+                        this.formSearch.isHangUp = 0
 						break
 					case 'fourth':
 						this.formSearch.state = '40'
 						break
+                    case 'fifth':
+                        // 挂起
+                        this.formSearch.state = '20'
+                        this.formSearch.isHangUp = 1
+                        break
 				}
 				this.query()
-            }
+            },
+            // 取消挂起订单
+            cancelHangUpOrder() {
+                // this.$refs.payOrderList.clearSelection()
+                this.$refs.payOrderList.showCancelModal()
+            },
 		}
 	}
 </script>

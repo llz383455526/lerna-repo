@@ -1,11 +1,17 @@
 <template>
     <div>
         <div class="table-container el-table el-table--fit el-table--border el-table--scrollable-x el-table--enable-row-transition">
-            <el-table :data="flowTableList.list" style="width: 100%">
-                <el-table-column prop="companyName" label="操作" width="140" fixed v-if="checkRight(permissions, 'console-dlv:/pay-order/download-pay-item-electronic-return')">
-                    <template slot-scope="scope">
-                        <el-button type="text" v-if="scope.row.supportCertificateDownload && scope.row.state == 30" @click="download(scope.row)">下载电子回单</el-button>
-                    </template>
+            <el-table
+                ref="flowTable"
+                :data="flowTableList.list"
+                @selection-change="handleSelectionChange"
+                style="width: 100%">
+                <el-table-column
+                    key="selection"
+                    v-if="canHandUpOrder"
+                    fixed
+                    type="selection"
+                    width="45">
                 </el-table-column>
 				<el-table-column prop="companyName" label="客户公司" width="140" fixed></el-table-column>
                 <el-table-column prop="appName" label="商户名称" width="140" fixed></el-table-column>
@@ -36,13 +42,13 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="stateName" label="交易状态" width="140"></el-table-column>
-                <el-table-column prop="paymentResDesc" label="失败原因" width="140">
+                <el-table-column prop="paymentResDesc" label="反馈结果" width="140">
                     <template slot-scope="scope">
                     <span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
                           :title="scope.row.paymentResDesc">{{scope.row.paymentResDesc}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="paymentResTime" label="发放时间" width="160">
+                <el-table-column prop="paymentResTime" label="完成时间" width="160">
                     <template slot-scope="scope">
                         <span>{{scope.row.paymentResTime | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
                     </template>
@@ -52,6 +58,11 @@
                 <el-table-column prop="notifyStateName" label="通知用户状态" width="120"></el-table-column>
                 <el-table-column prop="memo" label="款项属性" width="120"></el-table-column>
                 <el-table-column prop="stepName" label="当前步骤" width="120"></el-table-column>
+                <el-table-column key="ation" prop="ation" label="操作" width="140" fixed="right" v-if="checkRight(permissions, 'console-dlv:/pay-order/download-pay-item-electronic-return')">
+                    <template slot-scope="scope">
+                        <el-button type="text" v-if="scope.row.supportCertificateDownload && scope.row.state == 30" @click="download(scope.row)">下载电子回单</el-button>
+                    </template>
+                </el-table-column>
             </el-table>
         </div>
 
@@ -91,6 +102,7 @@ export default {
                 companyId: '',
                 serviceCompanyId: '',
                 state: '',
+                // isHangUp: 0,
                 appId: '',
                 outOrderNo: '',
                 paymentThirdTypeName: '',
@@ -117,14 +129,18 @@ export default {
             frame: '',
             delay: '',
             flowTableList: {},
-            windowOpener: ''
+            windowOpener: '',
+            cancelSelection: [],
         }
     },
     computed: {
         ...mapGetters({
             // flowTableList: 'flowTableList',
             permissions: 'permissions'
-        })
+        }),
+        canHandUpOrder() {
+            return this.formSearch.state == '20' && this.formSearch.isHangUp == 1 && this.checkRight(this.permissions, 'console-dlv:/pay-order/cancel-hang-up-order')
+        }
     },
     mounted() {
 		this.query()
@@ -139,6 +155,10 @@ export default {
                 if(k != 'page' && k != 'pageSize') {
                     this.form[k] = this.formSearch[k]
                 }
+            }
+            // 不是支付中状态不能传这个值
+            if (this.formSearch.isHangUp === undefined || this.formSearch.isHangUp === null) {
+                delete(this.form.isHangUp)
             }
             post('/api/console-dlv/pay-order/query-item', this.form).then(data => {
                 this.flowTableList = data.pageInfo
@@ -211,6 +231,53 @@ export default {
                     cancelAnimationFrame(this.frame)
                 })
             }
+        },
+        // 选项处理
+        handleSelectionChange(val) {
+            this.cancelSelection = val
+        },
+        // 清空选项
+        clearSelection() {
+            this.$refs.flowTable.clearSelection();
+        },
+        // 取消挂起订单
+        cancelHangUpOrder() {
+            const items = []
+            this.cancelSelection.forEach(item => {
+                items.push({
+                    appId: item.appId,
+                    outOrderNo: item.outOrderNo
+                })
+            })
+
+            post('/api/console-dlv/pay-order/cancel-hang-up-order', { items }, true).then(data => {
+                this.$message({
+                    type: 'success',
+                    message: '取消成功'
+                })
+                this.clearSelection()
+                this.query()
+            })
+        },
+        // 取消挂起订单对话框
+        showCancelModal() {
+            if (!this.cancelSelection.length) {
+                this.$message({
+                    type: 'warning',
+                    message: '请勾选需要取消的订单'
+                })
+                return
+            }
+            this.$confirm('部分已提交银行订单可能无法取消，请以订单最终状态为准。', '确定取消交易？', {
+                confirmButtonText: '确定',
+                cancelButtonText: '我再想想',
+                type: 'warning'
+            }).then(() => {
+                this.cancelHangUpOrder()
+            }).catch(() => {
+                this.clearSelection()
+            })
+
         }
     }
 }

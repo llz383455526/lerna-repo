@@ -3,9 +3,15 @@
     <div style="margin:30px 0 0;font-size:20px;">
       <div style="float:left;">部门及员工帐号</div>
       <div style="float:right;">
-        <el-form :inline="true" size="small" :model="staff_query_form" @submit.native.prevent ref="staff_query_form">
-          <el-form-item label="姓名/电话" prop="accountInfo">
-            <el-input v-model="staff_query_form.accountInfo" @keyup.enter.native="staff_query"></el-input>
+        <el-form :inline="true"
+                 size="small"
+                 :model="staff_query_form"
+                 @submit.native.prevent
+                 ref="staff_query_form">
+          <el-form-item label="姓名/电话"
+                        prop="accountInfo">
+            <el-input v-model="staff_query_form.accountInfo"
+                      @keyup.enter.native="staff_query"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button @click="staff_query">查询</el-button>
@@ -18,167 +24,302 @@
     <div class="box">
       <div>
         <span>组织结构管理</span>
-        <div class="t_right" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
-          <el-button type="primary" size="mini" @click="section_add">新增</el-button>
-          <el-button :class="{disabled : !curr}" type="primary" size="mini" @click="section_edit">编辑</el-button>
-          <el-button :class="{disabled : !curr}" type="primary" size="mini" @click="section_delete">删除</el-button>
+        <div class="t_right"
+             v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
+          <el-button type="primary"
+                     size="mini"
+                     @click="section_add">新增</el-button>
+          <el-button :class="{disabled : !curr}"
+                     type="primary"
+                     size="mini"
+                     @click="section_edit">编辑</el-button>
+          <el-button :class="{disabled : !curr}"
+                     type="primary"
+                     size="mini"
+                     @click="section_delete">删除</el-button>
         </div>
       </div>
-      <el-tree
-        ref="tree"
-        :data="root"
-        show-checkbox
-        node-key="id"
-        :highlight-current="true"
-        @check="choose"
-        :check-strictly="true"
-        :expand-on-click-node="false">
+      <el-tree ref="tree"
+               :data="root"
+               show-checkbox
+               node-key="id"
+               :highlight-current="true"
+               @check="choose"
+               :check-strictly="true"
+               :expand-on-click-node="false">
       </el-tree>
     </div>
     <div class="box right">
       <div>
         <span class="ot600">部门： {{curr.name}} 负责人： {{curr.leaderEmployeeName}}</span>
         <div class="t_right">
-          <el-button type="primary" size="mini" @click="staff_add">新增</el-button>
+          <el-button type="primary"
+                     size="mini"
+                     @click="staff_add">新增</el-button>
         </div>
       </div>
       <el-table :data="staff_query_data.list">
-        <el-table-column label="姓名" prop="name"></el-table-column>
-        <el-table-column label="手机" prop="mobile"></el-table-column>
-        <el-table-column label="邮箱" prop="email"></el-table-column>
-        <el-table-column label="归属部门" prop="belongOrgName"></el-table-column>
-        <el-table-column label="职位" prop="position"></el-table-column>
-        <el-table-column label="汇报对象" prop="leaderEmployeeName"></el-table-column>
-        <el-table-column label="注册时间" prop="createTime"></el-table-column>
+        <el-table-column label="姓名"
+                         prop="name"></el-table-column>
+        <el-table-column label="手机"
+                         prop="mobile"></el-table-column>
+        <el-table-column label="邮箱"
+                         prop="email"></el-table-column>
+        <el-table-column label="归属部门"
+                         prop="belongOrgName"></el-table-column>
+        <el-table-column label="职位"
+                         prop="position"></el-table-column>
+        <el-table-column label="汇报对象"
+                         prop="leaderEmployeeName"></el-table-column>
+        <el-table-column label="注册时间"
+                         prop="createTime"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="staff_edit(scope.row.id)">配置</el-button>
-            <el-button type="text" @click="changeState(scope.row.userInfoResult.id, !scope.row.userInfoResult.isEnable)">{{scope.row.userInfoResult.isEnable ? '停用' : '启用'}}</el-button>
-            <el-button type="text" @click="resetPassword(scope.row.userInfoResult.id)">重置密码</el-button>
+            <el-button type="text"
+                       @click="staff_edit(scope.row.id)">配置</el-button>
+            <el-button type="text"
+                       @click="changeState(scope.row.userInfoResult.id, !scope.row.userInfoResult.isEnable)">{{scope.row.userInfoResult.isEnable ? '停用' : '启用'}}</el-button>
+            <el-button type="text"
+                       @click="resetPassword(scope.row.userInfoResult.id)">重置密码</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <ayg-pagination
-        v-if="staff_query_data.total"
-        :total="staff_query_data.total"
-        v-on:handleSizeChange="staff_size_change"
-        :currentSize="staff_query_form.pageSize"
-        v-on:handleCurrentChange="staff_query"
-        :currentPage="staff_query_form.page">
+      <ayg-pagination v-if="staff_query_data.total"
+                      :total="staff_query_data.total"
+                      v-on:handleSizeChange="staff_size_change"
+                      :currentSize="staff_query_form.pageSize"
+                      v-on:handleCurrentChange="staff_query"
+                      :currentPage="staff_query_form.page">
       </ayg-pagination>
     </div>
-    <el-dialog title="新增" :visible.sync="section_show" width="550px" :before-close="section_clearn">
-      <el-form :model="section_form" :rules="section_rules" label-width="100px" size="small" ref="section_form">
-        <el-form-item label="部门名称" prop="name">
-          <el-input class="form_input" v-model="section_form.name"></el-input>
+    <el-dialog title="新增"
+               :visible.sync="section_show"
+               width="550px"
+               :before-close="section_clearn">
+      <el-form :model="section_form"
+               :rules="section_rules"
+               label-width="100px"
+               size="small"
+               ref="section_form">
+        <el-form-item label="部门名称"
+                      prop="name">
+          <el-input class="form_input"
+                    v-model="section_form.name"></el-input>
         </el-form-item>
-        <el-form-item label="上级部门" prop="pid">
-          <el-select class="form_input" v-model="section_form.pid" filterable>
-            <el-option v-for="(e, i) in list.filter(e => (curr && e.levelCode.indexOf(curr.levelCode) > -1) ? false : true )" :key="i" :value="e.id" :label="e.name"></el-option>
+        <el-form-item label="上级部门"
+                      prop="pid">
+          <el-select class="form_input"
+                     v-model="section_form.pid"
+                     filterable>
+            <el-option v-for="(e, i) in list.filter(e => (curr && e.levelCode.indexOf(curr.levelCode) > -1) ? false : true )"
+                       :key="i"
+                       :value="e.id"
+                       :label="e.name"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="部门负责人" prop="leaderEmployeeId">
-          <el-select class="form_input" v-model="section_form.leaderEmployeeId" filterable>
-            <el-option v-for="(e, i) in staff_list" :key="`s${i}`" :value="e.id" :label="e.name"></el-option>
+        <el-form-item label="部门负责人"
+                      prop="leaderEmployeeId">
+          <el-select class="form_input"
+                     v-model="section_form.leaderEmployeeId"
+                     filterable>
+            <el-option v-for="(e, i) in staff_list"
+                       :key="`s${i}`"
+                       :value="e.id"
+                       :label="e.name"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="备注" prop="memo">
-          <el-input class="form_input" v-model="section_form.memo"></el-input>
+        <el-form-item label="备注"
+                      prop="memo">
+          <el-input class="form_input"
+                    v-model="section_form.memo"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer">
-        <el-button size="small" @click="section_clearn(); section_show = false">取消</el-button>
-        <el-button size="small" @click="section_submit" type="primary">确定</el-button>
+        <el-button size="small"
+                   @click="section_clearn(); section_show = false">取消</el-button>
+        <el-button size="small"
+                   @click="section_submit"
+                   type="primary">确定</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="`${staff_form.id ? '编辑' : '新增'}`" :visible.sync="staff_show" width="800px" @opened="$forceUpdate()" :before-close="staff_clearn">
-      <el-form :model="staff_form" :rules="staff_rules" label-width="120px" size="small" ref="staff_form">
-        <el-form-item label="姓名" prop="name">
-          <el-input class="form_input" v-model="staff_form.name"></el-input>
+    <el-dialog :title="`${staff_form.id ? '编辑' : '新增'}`"
+               :visible.sync="staff_show"
+               width="800px"
+               @opened="$forceUpdate()"
+               :before-close="staff_clearn">
+      <el-form :model="staff_form"
+               :rules="staff_rules"
+               label-width="120px"
+               size="small"
+               ref="staff_form">
+        <el-form-item label="姓名"
+                      prop="name">
+          <el-input class="form_input"
+                    v-model="staff_form.name"></el-input>
         </el-form-item>
-        <el-form-item label="职位" prop="position">
-          <el-input class="form_input" v-model="staff_form.position"></el-input>
+        <el-form-item label="职位"
+                      prop="position">
+          <el-input class="form_input"
+                    v-model="staff_form.position"></el-input>
         </el-form-item>
-        <el-form-item label="手机号" prop="mobile">
-          <el-input class="form_input" v-model="staff_form.mobile"></el-input>
+        <el-form-item label="手机号"
+                      prop="mobile">
+          <el-input class="form_input"
+                    v-model="staff_form.mobile"></el-input>
         </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input class="form_input" v-model="staff_form.email"></el-input>
+        <el-form-item label="邮箱"
+                      prop="email">
+          <el-input class="form_input"
+                    v-model="staff_form.email"></el-input>
         </el-form-item>
-        <el-form-item label="归属部门" prop="belongOrgId" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
-          <el-select class="form_input" v-model="staff_form.belongOrgId" filterable @change="updata">
-            <el-option v-for="(e, i) in list" :key="`st${i}`" :value="e.id" :label="e.name"></el-option>
+        <el-form-item label="归属部门"
+                      prop="belongOrgId"
+                      v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
+          <el-select class="form_input"
+                     v-model="staff_form.belongOrgId"
+                     filterable
+                     @change="updata">
+            <el-option v-for="(e, i) in list"
+                       :key="`st${i}`"
+                       :value="e.id"
+                       :label="e.name"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="附属部门" prop="attachOrgIds" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'"> <!-- v-if="render"  -->
-          <treeselect class="form_input" v-model="staff_form.attachOrgIds" :key="render ? 1 : 2" :multiple="true" :flat="true" :options="setStaffDisabled()" @select="checkSelect" placeholder="请选择" ref="treeselect"></treeselect>
+        <el-form-item label="附属部门"
+                      prop="attachOrgIds"
+                      v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
+          <!-- v-if="render"  -->
+          <treeselect class="form_input"
+                      v-model="staff_form.attachOrgIds"
+                      :key="render ? 1 : 2"
+                      :multiple="true"
+                      :flat="true"
+                      :options="setStaffDisabled()"
+                      @select="checkSelect"
+                      placeholder="请选择"
+                      ref="treeselect"></treeselect>
         </el-form-item>
-        <el-form-item label="汇报对象(职员)" prop="leaderEmployeeId">
-          <el-select class="form_input" v-model="staff_form.leaderEmployeeId" filterable>
-            <el-option v-for="(e, i) in staff_list" :key="`sta${i}`" :value="e.id" :label="e.name" :disabled="e.disabled"></el-option>
+        <el-form-item label="汇报对象(职员)"
+                      prop="leaderEmployeeId">
+          <el-select class="form_input"
+                     v-model="staff_form.leaderEmployeeId"
+                     filterable>
+            <el-option v-for="(e, i) in staff_list"
+                       :key="`sta${i}`"
+                       :value="e.id"
+                       :label="e.name"
+                       :disabled="e.disabled"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="权限配置" v-if="systemList[0]">
-          <el-tabs v-model="power" type="border-card" @tab-click="activeName = 'first'">
-            <el-tab-pane v-for="(e, i) in systemList" :key="e.value" :label="labelName[i]" :name="e.value">
+        <el-form-item label="权限配置"
+                      v-if="systemList[0]">
+          <el-tabs v-model="power"
+                   type="border-card"
+                   @tab-click="activeName = 'first'">
+            <el-tab-pane v-for="(e, i) in systemList"
+                         :key="e.value"
+                         :label="labelName[i]"
+                         :name="e.value">
               <el-tabs v-model="activeName">
-                <el-tab-pane label="角色" name="first">
-                  <el-checkbox-group v-model="staff_form[power == systemList[0].value ? 'adminContextParam' : 'companyContextParam'].roleIds">
-                    <el-checkbox v-for="item in roleList[power]" :key="item.roleId" :label="item.roleId">{{item.roleName}}</el-checkbox>
+                <el-tab-pane label="角色"
+                             name="first">
+                  <!-- <el-checkbox-group v-model="staff_form[power == systemList[0].value ? 'adminContextParam' : 'companyContextParam'].roleIds"> -->
+                  <el-checkbox-group v-model="staff_form[sourceMap[power]].roleIds">
+                    <el-checkbox v-for="item in roleList[power]"
+                                 :key="item.roleId"
+                                 :label="item.roleId">{{item.roleName}}</el-checkbox>
                   </el-checkbox-group>
                 </el-tab-pane>
-                <el-tab-pane label="配置客户" name="fourth" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
+                <el-tab-pane label="配置客户"
+                             name="fourth"
+                             v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
                   <el-button @click="openDialog('新增客户', 'company')">新增</el-button>
-                  <el-checkbox v-model="isCompanyAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
-                  <div class="table-container" v-if="!isCompanyAll[power]">
+                  <el-checkbox v-model="isCompanyAll[power]"
+                               @change="$forceUpdate()"
+                               style="margin-left: 15px;"
+                               v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
+                  <div class="table-container"
+                       v-if="!isCompanyAll[power]">
                     <el-table :data="selectedCompanyList[power]">
-                      <el-table-column prop="fullName" label="名称"></el-table-column>
+                      <el-table-column prop="fullName"
+                                       label="名称"></el-table-column>
                       <el-table-column label="操作">
                         <template slot-scope="scope">
-                          <el-button @click="deleteSelection('company', scope.$index)" type="text" size="medium" style="padding:0;">删除</el-button>
+                          <el-button @click="deleteSelection('company', scope.$index)"
+                                     type="text"
+                                     size="medium"
+                                     style="padding:0;">删除</el-button>
                         </template>
                       </el-table-column>
                     </el-table>
                   </div>
                 </el-tab-pane>
-                <el-tab-pane label="配置商户" name="second">
+                <el-tab-pane label="配置商户"
+                             name="second">
                   <el-button @click="openDialog('新增商户', 'app')">新增</el-button>
-                  <el-checkbox v-model="isAppAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
-                  <div class="table-container" v-if="!isAppAll[power]">
+                  <el-checkbox v-model="isAppAll[power]"
+                               @change="$forceUpdate()"
+                               style="margin-left: 15px;"
+                               v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
+                  <div class="table-container"
+                       v-if="!isAppAll[power]">
                     <el-table :data="selectedAppList[power]">
-                      <el-table-column prop="appName" label="商户名称"></el-table-column>
-                      <el-table-column prop="companyName" label="企业名称"></el-table-column>
+                      <el-table-column prop="appName"
+                                       label="商户名称"></el-table-column>
+                      <el-table-column prop="companyName"
+                                       label="企业名称"></el-table-column>
                       <el-table-column label="操作">
                         <template slot-scope="scope">
-                          <el-button @click="deleteSelection('app', scope.$index)" type="text" size="medium" style="padding:0;">删除</el-button>
+                          <el-button @click="deleteSelection('app', scope.$index)"
+                                     type="text"
+                                     size="medium"
+                                     style="padding:0;">删除</el-button>
                         </template>
                       </el-table-column>
                     </el-table>
                   </div>
                 </el-tab-pane>
-                <el-tab-pane label="配置服务商" name="third" v-if="power == systemList[0].value">
+                <el-tab-pane label="配置服务商"
+                             name="third"
+                             v-if="power == systemList[0].value">
                   <el-button @click="openDialog('新增服务商', 'service')">新增</el-button>
-                  <el-checkbox v-model="isProviderAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
-                  <div class="table-container" v-if="!isProviderAll[power]">
+                  <el-checkbox v-model="isProviderAll[power]"
+                               @change="$forceUpdate()"
+                               style="margin-left: 15px;"
+                               v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
+                  <div class="table-container"
+                       v-if="!isProviderAll[power]">
                     <el-table :data="selectedServiceList[power]">
-                      <el-table-column prop="fullName" label="名称"></el-table-column>
+                      <el-table-column prop="fullName"
+                                       label="名称"></el-table-column>
                       <el-table-column label="操作">
                         <template slot-scope="scope">
-                          <el-button @click="deleteSelection('service', scope.$index)" type="text" size="medium" style="padding:0;">删除</el-button>
+                          <el-button @click="deleteSelection('service', scope.$index)"
+                                     type="text"
+                                     size="medium"
+                                     style="padding:0;">删除</el-button>
                         </template>
                       </el-table-column>
                     </el-table>
                   </div>
                 </el-tab-pane>
-                <el-tab-pane label="配置代理商" v-if="power == systemList[0].value && userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
+                <el-tab-pane label="配置代理商"
+                             v-if="power == systemList[0].value && userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
                   <el-button @click="openDialog('新增代理商', 'agent')">新增</el-button>
-                  <el-checkbox v-model="isAgentAll[power]" @change="$forceUpdate()" style="margin-left: 15px;" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
+                  <el-checkbox v-model="isAgentAll[power]"
+                               @change="$forceUpdate()"
+                               style="margin-left: 15px;"
+                               v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">全部</el-checkbox>
                   <div class="table-container">
                     <el-table :data="selectedAgentList[power]">
-                      <el-table-column prop="fullName" label="名称"></el-table-column>
+                      <el-table-column prop="fullName"
+                                       label="名称"></el-table-column>
                       <el-table-column label="操作">
                         <template slot-scope="scope">
-                          <el-button @click="deleteSelection('agent', scope.$index)" type="text" size="medium" style="padding:0;">删除</el-button>
+                          <el-button @click="deleteSelection('agent', scope.$index)"
+                                     type="text"
+                                     size="medium"
+                                     style="padding:0;">删除</el-button>
                         </template>
                       </el-table-column>
                     </el-table>
@@ -188,52 +329,86 @@
             </el-tab-pane>
           </el-tabs>
         </el-form-item>
-        <el-form-item label="备注" prop="memo">
-          <el-input class="form_input" v-model="staff_form.memo"></el-input>
+        <el-form-item label="备注"
+                      prop="memo">
+          <el-input class="form_input"
+                    v-model="staff_form.memo"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer">
-        <el-button size="small" @click="staff_clearn(); staff_show = false">取消</el-button>
-        <el-button size="small" @click="staff_submit" type="primary">确定</el-button>
+        <el-button size="small"
+                   @click="staff_clearn(); staff_show = false">取消</el-button>
+        <el-button size="small"
+                   @click="staff_submit"
+                   type="primary">确定</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="dialogTitle" :visible.sync="list_show" @close="selectionArr = {};" width="800px">
-        <el-form :inline="true" :model="list_form" ref="list_form" size="small"> <!-- @submit.native.prevent -->
-            <el-form-item label="名称" size="small" prop="name">
-                <el-input v-model="list_form.name"></el-input>
-            </el-form-item>
-            <el-form-item label="全称" size="small" prop="fullName">
-                <el-input v-model="list_form.fullName"></el-input>
-            </el-form-item>
-            <el-form-item style="margin-top: -4px">
-                <el-button type="primary" @click="query" size="small">查询</el-button>
-                <el-button size="small" @click="list_clearn">清除</el-button>
-            </el-form-item>
-        </el-form>
-        <div class="table-container">
-          <el-table v-if="dialogType === 'app'" ref="multipleTable" :data="tableList.list" height="250" @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="appName" label="商户名称"></el-table-column>
-            <el-table-column prop="companyName" label="公司名称"></el-table-column>
-          </el-table>
-          <el-table v-else-if="dialogType === 'service' || dialogType === 'company' || dialogType === 'agent'" ref="multipleTable" :data="tableList.list" height="250" @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="fullName" label="名称"></el-table-column>
-          </el-table>
-        </div>
-        <ayg-pagination
-          v-if="tableList.total"
-          :total="tableList.total"
-          v-on:handleSizeChange="sizeChange"
-          :currentSize="list_form.pageSize"
-          v-on:handleCurrentChange="query"
-          :currentPage="list_form.page">
-        </ayg-pagination>
+    <el-dialog :title="dialogTitle"
+               :visible.sync="list_show"
+               @close="selectionArr = {};"
+               width="800px">
+      <el-form :inline="true"
+               :model="list_form"
+               ref="list_form"
+               size="small">
+        <!-- @submit.native.prevent -->
+        <el-form-item label="名称"
+                      size="small"
+                      prop="name">
+          <el-input v-model="list_form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="全称"
+                      size="small"
+                      prop="fullName">
+          <el-input v-model="list_form.fullName"></el-input>
+        </el-form-item>
+        <el-form-item style="margin-top: -4px">
+          <el-button type="primary"
+                     @click="query"
+                     size="small">查询</el-button>
+          <el-button size="small"
+                     @click="list_clearn">清除</el-button>
+        </el-form-item>
+      </el-form>
+      <div class="table-container">
+        <el-table v-if="dialogType === 'app'"
+                  ref="multipleTable"
+                  :data="tableList.list"
+                  height="250"
+                  @selection-change="handleSelectionChange">
+          <el-table-column type="selection"
+                           width="55"></el-table-column>
+          <el-table-column prop="appName"
+                           label="商户名称"></el-table-column>
+          <el-table-column prop="companyName"
+                           label="公司名称"></el-table-column>
+        </el-table>
+        <el-table v-else-if="dialogType === 'service' || dialogType === 'company' || dialogType === 'agent'"
+                  ref="multipleTable"
+                  :data="tableList.list"
+                  height="250"
+                  @selection-change="handleSelectionChange">
+          <el-table-column type="selection"
+                           width="55"></el-table-column>
+          <el-table-column prop="fullName"
+                           label="名称"></el-table-column>
+        </el-table>
+      </div>
+      <ayg-pagination v-if="tableList.total"
+                      :total="tableList.total"
+                      v-on:handleSizeChange="sizeChange"
+                      :currentSize="list_form.pageSize"
+                      v-on:handleCurrentChange="query"
+                      :currentPage="list_form.page">
+      </ayg-pagination>
 
-        <div slot="footer" class="dialog-footer" style="margin-top: -30px;">
-          <el-button @click="list_show = false">取 消</el-button>
-          <el-button type="primary" @click="confirmSelection">选择勾选项</el-button>
-        </div>
+      <div slot="footer"
+           class="dialog-footer"
+           style="margin-top: -30px;">
+        <el-button @click="list_show = false">取 消</el-button>
+        <el-button type="primary"
+                   @click="confirmSelection">选择勾选项</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -366,6 +541,10 @@ export default {
       labelName: ['运营管理平台', '企业客户平台'],
       showAll: true, // 显示全选按钮
       companyId: '',
+        sourceMap: {
+            'console-company': 'companyContextParam',
+            'console-admin': 'adminContextParam'
+        }
     }
   },
   mounted() {
@@ -674,7 +853,7 @@ export default {
           this.staff_form.leaderEmployeeName = e.name
         }
       })
-        // console.log(this.staff_form.companyContextParam)
+        // console.log(this.staff_form)
       post(`/api/sysmgr-web/employee/${this.staff_form.id ? 'editEmployee' : 'createEmployee'}`, this.staff_form).then(data => {
         this.$message({
           type: 'success',
@@ -736,11 +915,22 @@ export default {
           data[k] && (this.staff_form[k] = data[k])
         }
         data.userInfoDetail.userProfiles.forEach((e, i) => {
-          var k = i == 0 ? 'adminContextParam' : 'companyContextParam', type = this.systemList[i] && this.systemList[i].value
+            // staff_form 不知道什么鬼 可能是不同平台分类的表单吧
+            // k 也不知道什么鬼 反正就是一个key吧
+            // 根据 返回的数据i 来做判断 这么相信后端我也是醉了
+            // 那我就用返回的平台类型做一个sourceMap吧
+            const k = this.sourceMap[e.platformType]
+            // console.log(k)
+            const type = e.platformType
+            if (!this.staff_form[k]) {
+                return
+            }
+        //   var k = i == 0 ? 'adminContextParam' : 'companyContextParam', type = this.systemList[i] && this.systemList[i].value
           this.staff_form[k].roleIds = []
           e.roles && e.roles.forEach(ev => {
             this.staff_form[k].roleIds.push(ev.id)
           })
+        //   console.log(this.staff_form)
           // 初始化
           this.isAppAll[type] = false
           this.isProviderAll[type] = false
@@ -961,7 +1151,7 @@ export default {
   }
 }
 </script>
-<style scoped> 
+<style scoped>
 .r_main {
   padding: 30px 30px;
   background-color: #fff;
