@@ -46,6 +46,7 @@
                         </el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
+                <performance-rules v-model="ruleForm.contracts"></performance-rules>
                 <br>
                 <template v-if="ruleForm.originalType == 20">
                     <el-form-item label="渠道经理" required>
@@ -61,6 +62,7 @@
                 </template>
             </div>
         </div>
+        <pre>{{ruleForm.contracts}}</pre>
 
         <el-dialog title="添加公司信息" :visible.sync="dialogVisible" width="700px">
             <el-form :inline="true" :model="appForm" label-width="150px" ref="appForm">
@@ -83,6 +85,7 @@ import _ from 'lodash'
 import { get } from '../../../store/api'
 import contractCreateItem from '../../../pageComponent/contractCreateItem'
 import contractCloseItem from '../../../pageComponent/contractCloseItem'
+import performanceRules from './performanceRules'
 import upload from './upload'
 import { mapGetters } from 'vuex'
 export default {
@@ -91,7 +94,8 @@ export default {
     components: {
         contractCreateItem,
         contractCloseItem,
-        upload
+        upload,
+        performanceRules
     },
     computed: {
         ...mapGetters({
