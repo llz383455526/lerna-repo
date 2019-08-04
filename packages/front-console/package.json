@@ -15,7 +15,7 @@
     "test": "gulp & node build/build.js"
   },
   "gitHooks": {
-    "post-commit": "node node_modules/hm-githook/index.js test_92"
+    "post-commit": "node node_modules/hm-githook/index.js dev_94"
   },
   "dependencies": {
     "@riophae/vue-treeselect": "^0.0.37",
