@@ -1,142 +1,137 @@
 <template>
   <div>
-    <el-form-item label="C端绩效计算规则">
-      <div style="width: 700px">
-        <el-table
-          :data="tableData"
-          :span-method="spanMethod"
-          border
-          stripe
-          size="mini"
-          style="width: 100%"
-        >
-          <el-table-column prop="file" label="附件协议文档" width="120">
-            <template slot-scope="scope">
-              <span>{{ scope.row.file }}</span>
-              <el-button type="text">下载</el-button>
-            </template>
-          </el-table-column>
-          <el-table-column prop="type" label="服务类型" width="120">
-            <template slot-scope="scope">
-              <span>{{ scope.row.type }}</span>
-              <el-button type="text" icon="el-icon-plus" size="mini" @click="postDialog = true">添加岗位</el-button>
-            </template>
-          </el-table-column>
-          <el-table-column prop="postName" label="岗位名称" width="150"></el-table-column>
-          <el-table-column prop="content" label="工作内容(岗位描述)" width="250"></el-table-column>
-          <el-table-column prop="rules" label="绩效费结算规则" width="250"></el-table-column>
-          <el-table-column prop="temp" label="绩效费结算明细模板" width="150">
-            <template slot-scope="scope">
-              <el-button type="text" size="mini">{{ scope.row.temp }}</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-    </el-form-item>
-    <post v-model="postDialog"></post>
+    <div style="width: 850px; overflow-x: auto;">
+    <table class="post-table">
+        <tr>
+        <th width="150">附件协议文档</th>
+        <th width="120">服务类型</th>
+        <th width="150">岗位名称</th>
+        <th width="250">工作内容(岗位描述)</th>
+        <th width="250">绩效费结算规则</th>
+        <th width="150">绩效费结算明细模板</th>
+        </tr>
+        <template v-for="(list, index) in serviceList">
+        <tr :key="index">
+            <td :rowspan="serviceList.length" v-if="index === 0" align="center">
+            <div class="content">《绩效规则-协议》</div>
+            <el-button type="text">下载</el-button>
+            </td>
+            <td align="center">
+            <div class="content">{{list.serviceName}}</div>
+            <el-button
+                type="text"
+                icon="el-icon-plus"
+                size="mini"
+                @click="addPost(index)"
+            >添加岗位</el-button>
+            </td>
+            <td align="center">
+            <div class="content">{{list.posName}}</div>
+            </td>
+            <td>
+            <div class="content">{{list.description}}</div>
+            </td>
+            <td>
+            <div class="content">{{list.performance}}</div>
+            </td>
+            <td align="center">
+            <div class="content">
+                <el-button
+                type="text"
+                size="mini"
+                @click="downFile(list.attachment)"
+                >{{list.attachment.displayname}}</el-button>
+            </div>
+            </td>
+        </tr>
+        </template>
+    </table>
+    </div>
+    <pre>{{serviceList}}</pre>
+    <post v-model="postDialog" @addServicePost="addServicePost"></post>
   </div>
 </template>
 
 <script>
-import post from './post/post'
+import post from "./post/post";
+import { baseUrl } from "../../../config/address";
 
 export default {
   name: "performanceRules",
   components: { post },
   props: {
-    value: {
+    positions: {
       type: Array,
       default() {
         return [];
       }
+    },
+    index: {
+      type: Number,
+      default: 0
     }
   },
   data() {
     return {
-      tableData: [
-        {
-          id: 1,
-          file: "《绩效规则-协议》",
-          type: "市场推广",
-          postName: "工程师",
-          content: "士大夫似的士大夫士大夫但是",
-          rules: "一天200，月结",
-          temp: "开发工程师_绩效明细模板.xlsx",
-          count: 3
-        },
-        {
-          id: 2,
-          file: "绩效规则",
-          type: "市场推广",
-          postName: "开发工程师",
-          content: "幸福的地方我",
-          rules: "一天200，月结",
-          temp: "开发工程师_绩效明细模板.xlsx"
-        },
-        {
-          id: 3,
-          file: "绩效规则",
-          type: "市场推广",
-          postName: "工程师",
-          content: "幸福的地方我",
-          rules: "一天200，月结",
-          temp: "开发工程师_绩效明细模板.xlsx"
-        },
-        {
-          id: 4,
-          file: "绩效规则",
-          type: "软件服务",
-          postName: "工程师",
-          content: "幸福的地方我",
-          rules: "一天200，月结",
-          temp: "开发工程师_绩效明细模板.xlsx",
-          count: 2
-        },
-        {
-          id: 5,
-          file: "绩效规则",
-          type: "软件服务",
-          postName: "工程师",
-          content: "幸福的地方我",
-          rules: "一天200，月结",
-          temp: "开发工程师_绩效明细模板.xlsx"
-        }
-      ],
       postDialog: false, // 添加岗位弹框
-      contracts: []
+      serviceList: [], // 岗位模板列表
+      serviceIndex: 0, // 选中的服务类型下标
+      // currentServiceId: 0 // 选中的服务类型
     };
   },
   computed: {
-    filterTable() {
-      return [];
-    }
   },
   watch: {
-    value: {
+    positions: {
       handler(val) {
-        this.contracts = val;
+        this.serviceList = val;
       },
       deep: true
     }
   },
+  created() {
+      this.serviceList = this.positions;
+  },
   methods: {
-    // 合并表格
-    spanMethod({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === 1) {
-        return {
-          rowspan: row.count || 0,
-          colspan: row.count ? 1 : 0
-        };
-      } else if (columnIndex === 0) {
-        return {
-          rowspan: rowIndex === 0 ? this.tableData.length : 0,
-          colspan: rowIndex === 0 ? 1 : 0
-        };
-      }
+    addServicePost(data) {
+        // const obj = this.serviceList[this.serviceIndex]
+        // this.serviceList.splice(this.serviceIndex + 1, 0, {
+        //     ...obj,
+        //     ...data
+        // })
+      this.$emit("change", this.index, this.serviceIndex, data);
+    },
+    addPost(index) {
+      this.postDialog = true;
+      this.serviceIndex = index;
+    },
+    downFile(attachment) {
+      window.open(
+        `${baseUrl}/api/contract-web/file/download?downloadCode=${attachment.downloadCode}`
+      );
     }
   }
 };
 </script>
 
 <style scope>
+.post-table {
+  color: #606266;
+  width: 1080px;
+  border-collapse: collapse;
+  border-left: 1px solid #ebeef5;
+  border-top: 1px solid #ebeef5;
+}
+.post-table tr th {
+  background: #fafafa;
+}
+.post-table tr th,
+.post-table tr td {
+  padding: 0 5px;
+  border-right: 1px solid #ebeef5;
+  border-bottom: 1px solid #ebeef5;
+}
+.content {
+  line-height: 1.5;
+}
 </style>

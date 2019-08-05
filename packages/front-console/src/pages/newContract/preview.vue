@@ -171,6 +171,7 @@
                 </div>
               </div>
             </div>
+            <div class="col-xs-12">接入【爱收入】发布岗位：{{ contractForm.joinIshouru === '1' ? '是' : '否' }}</div>
           </div>
         </div>
       </div>

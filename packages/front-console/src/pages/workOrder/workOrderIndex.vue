@@ -303,7 +303,7 @@
         >
           <el-tooltip placement="top">
             <div slot="content">
-              <div v-for="e in scope.row.salesName.split(',')">
+              <div v-for="(e, index) in scope.row.salesName.split(',')" :key="index">
                 {{ e }}
               </div>
             </div>
@@ -324,7 +324,7 @@
         >
           <el-tooltip placement="top">
             <div slot="content">
-              <div v-for="e in scope.row.deliveryName.split(',')">
+              <div v-for="(e, index) in scope.row.deliveryName.split(',')" :key="index">
                 {{ e }}
               </div>
             </div>
@@ -351,7 +351,7 @@
           >
             <el-tooltip placement="top">
               <div slot="content">
-                <div v-for="e in scope.row.currentProcessDeptName.split(',')">
+                <div v-for="(e, index) in scope.row.currentProcessDeptName.split(',')" :key="index">
                   {{ e }}
                 </div>
               </div>
@@ -372,7 +372,7 @@
           >
             <el-tooltip placement="top">
               <div slot="content">
-                <div v-for="e in scope.row.currentProcessorName.split(',')">
+                <div v-for="(e, index) in scope.row.currentProcessorName.split(',')"  :key="index">
                   {{ e }}
                 </div>
               </div>
@@ -396,6 +396,8 @@
       @handleSizeChange="sizeChange"
       @handleCurrentChange="query"
     />
+    <!-- 审核岗位弹框 -->
+    <post-audit v-model="postAuditDialog"></post-audit>
     <el-dialog
       title="创建工单"
       :visible.sync="show"
@@ -451,6 +453,7 @@ import knotty from './dialog/knotty'
 import { Loading } from 'element-ui'
 import insufficient from './dialog/insufficient'
 import serviceInsufficient from './dialog/serviceInsufficient'
+import postAudit from './dialog/postAudit'
 
 export default {
     components: {
@@ -460,7 +463,8 @@ export default {
         auditInvoice,
         knotty,
         insufficient,
-        serviceInsufficient
+        serviceInsufficient,
+        postAudit
     },
     data() {
         return {
@@ -546,7 +550,8 @@ export default {
                     value: 1
                 }
             ],
-            emergencyList: []
+            emergencyList: [],
+            postAuditDialog: false, // 岗位审核弹框
         }
     },
     computed: {

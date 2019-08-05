@@ -41,12 +41,15 @@
                 </el-form-item>
                 <el-form-item style="display: flex; padding-left: 100px;" :prop="'contracts.'+index+'.serviceTypeList'" label="服务类型" :rules="{required: true, message: '请选择服务类型', trigger: 'blur'}">
                     <el-checkbox-group @change="serverTypeChangeChange" v-model="formItem.serviceTypeList">
-                        <el-checkbox v-for="v in formItem.optionServiceTypeList" :label="v" :key="v.serviceId">
+                        <el-checkbox v-for="v in formItem.optionServiceTypeList" :label="v" :key="v.serviceId"
+                            @change="checked => changePositions(checked, index, v)">
                             {{ v.serviceName }}
                         </el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
-                <performance-rules v-model="ruleForm.contracts"></performance-rules>
+                <el-form-item label="C端绩效计算规则" :prop="`contracts[${index}].positions`" :rules="{required: true, validator: validatePost, trigger: 'change'}">
+                    <performance-rules :positions="formItem.positions" :index="index" @change="addPositions"></performance-rules>
+                </el-form-item>
                 <br>
                 <template v-if="ruleForm.originalType == 20">
                     <el-form-item label="渠道经理" required>
@@ -213,6 +216,51 @@ export default {
         }
     },
     methods: {
+        validatePost(rule, value, callback) {
+            const arr = value.some((item) => {
+                return item.posName === ''
+            })
+            if (!value.length || arr) {
+                callback(new Error('每个服务类型至少对应一个岗位'));
+            } else {
+                callback();
+            }
+        },
+        // 岗位模板数据
+        addPositions(index, pIndex, data) {
+            const obj = this.ruleForm.contracts[index].positions[pIndex]
+            console.log(obj)
+            // 根据当前模板是否有数据，选择是插入还是替换
+            this.ruleForm.contracts[index].positions.splice(obj.posName ? pIndex + 1 : pIndex, obj.posName ? 0 : 1, {
+                ...obj,
+                ...data
+            })
+            this.$forceUpdate()
+        },
+        // 根据选中的服务类型更改positions
+        changePositions(checked, index, v) {
+            const positions = this.ruleForm.contracts[index].positions
+            if (checked) {
+                this.ruleForm.contracts[index].positions.push({
+                    serviceId: v.serviceId,
+                    serviceName: v.serviceName,
+                    posName: '',
+                    description: '',
+                    performance: '',
+                    attachment: {
+                        refId: '',
+                        downloadCode: '',
+                        displayname: '',
+                        createByName: '',
+                        createTime: '',
+                    }
+                })
+            } else {
+                this.ruleForm.contracts[index].positions = positions.filter(item => item.serviceId !== v.serviceId)
+            }
+            this.$forceUpdate()
+        },
+        updatePositions() {},
         initData() {
             this.ruleForm.contracts.forEach((item) => {
                 // 设置落地公司ID
@@ -228,6 +276,9 @@ export default {
                 }).filter((item) => {
                     return item
                 })
+                item.positions = [
+                    // { serviceId: 10025, serviceName: '项目外包', description: "岗位内容岗位内容", performance: "绩效结算规则绩效", posName: "岗位名称", attachment: { displayname: '文件名称' } },
+                ]
             })
             this.upDataServerType()
         },
@@ -381,7 +432,8 @@ export default {
                 quoteRule: this.quoteRule,
                 quoteFeeContent: quoteFeeContent,
                 // 服务类型数组
-                serviceTypeList: []
+                serviceTypeList: [],
+                positions: [], // 岗位模板
             });
             this.dialogVisible = false;
             this.upDataServerType()

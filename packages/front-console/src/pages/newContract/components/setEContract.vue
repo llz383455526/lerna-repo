@@ -51,6 +51,18 @@
                 </div>
             </el-checkbox-group>
         </el-form-item>
+        <h3 class="green">爱收入发岗位</h3>
+        <el-form-item label="接入【爱收入】发布岗位" prop="passportType">
+            <el-radio-group v-model="contractForm.joinIshouru">
+                <el-radio label="1">是</el-radio>
+                <el-radio label="0">否</el-radio>
+            </el-radio-group>
+            <el-button class="ml100" type="text">
+                <i class="el-icon-question"></i>
+            </el-button>
+        </el-form-item>
+        <pre>{{contractForm}}</pre>
+
         <el-dialog title="短信示例" :visible.sync="show" width="550px">
             <div class="text_title">1.短信网页链接</div>
             <div>您有由爱员工测试 的服务商发起的合同等待签署，请点击链接
