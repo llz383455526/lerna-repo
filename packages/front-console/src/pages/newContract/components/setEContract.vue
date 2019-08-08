@@ -61,7 +61,7 @@
                 <i class="el-icon-question"></i>
             </el-button>
         </el-form-item>
-        <pre>{{contractForm}}</pre>
+        <!-- <pre>{{contractForm}}</pre> -->
 
         <el-dialog title="短信示例" :visible.sync="show" width="550px">
             <div class="text_title">1.短信网页链接</div>

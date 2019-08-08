@@ -7,7 +7,7 @@
     :visible.sync="postDialog"
     @close="closePostDialog"
   >
-    <el-form :model="form" :rules="rules" ref="form" size="mini" :inline="true">
+    <el-form :model="form" :rules="rules" ref="form" size="mini" :inline="true" v-if="postDialog">
       <el-form-item label="岗位名称：" prop="posName" :label-width="formLabelWidth">
         <el-input size="small" v-model="form.posName" class="input-width" placeholder="请输入岗位名称"></el-input>
       </el-form-item>
@@ -50,6 +50,7 @@
       <el-button size="small" @click="closePostDialog">取消</el-button>
       <el-button size="small" type="primary" @click="submitForm('form')">确定</el-button>
     </div>
+    <!-- <pre>{{form}}</pre> -->
   </el-dialog>
 </template>
 
@@ -115,7 +116,10 @@ export default {
             showNotify("error", "请上传绩效明细计算模板!");
             return
           }
+          console.log(this.form)
           this.$emit("addServicePost", this.form);
+          // this.$refs[formName].resetFields();
+          // this.form.attachment = { refId: '' }
           this.closePostDialog();
         } else {
           return false;

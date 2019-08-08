@@ -47,8 +47,8 @@
                         </el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
-                <el-form-item label="C端绩效计算规则" :prop="`contracts[${index}].positions`" :rules="{required: true, validator: validatePost, trigger: 'change'}">
-                    <performance-rules :positions="formItem.positions" :index="index" @change="addPositions"></performance-rules>
+                <el-form-item label="C端绩效计算规则" :prop="`contracts[${index}].servicePosList`" :rules="{required: true, validator: validatePost, trigger: 'change'}">
+                    <performance-rules :servicePosList="formItem.servicePosList" :index="index" @change="addPositions" @download="downloadRule"></performance-rules>
                 </el-form-item>
                 <br>
                 <template v-if="ruleForm.originalType == 20">
@@ -65,7 +65,7 @@
                 </template>
             </div>
         </div>
-        <pre>{{ruleForm.contracts}}</pre>
+        <!-- <pre>{{ruleForm.contracts}}</pre> -->
 
         <el-dialog title="添加公司信息" :visible.sync="dialogVisible" width="700px">
             <el-form :inline="true" :model="appForm" label-width="150px" ref="appForm">
@@ -85,7 +85,7 @@
 
 <script>
 import _ from 'lodash'
-import { get } from '../../../store/api'
+import { get, post } from '../../../store/api'
 import contractCreateItem from '../../../pageComponent/contractCreateItem'
 import contractCloseItem from '../../../pageComponent/contractCloseItem'
 import performanceRules from './performanceRules'
@@ -216,9 +216,24 @@ export default {
         }
     },
     methods: {
+        downloadRule() {
+            const datas = JSON.parse(JSON.stringify(this.ruleForm))
+            datas.contracts.forEach((item) => {
+                delete item.optionServiceTypeList
+            })
+            let param = {
+                datas,
+                instanceId: this.$route.query.id,
+                workflowType: this.$route.query.editType
+            };
+            post('/api/contract-web/contract/generate-position-attach', param).then(res => {
+                console.log(res)
+            })
+        },
+        // 验证岗位模板是否填写
         validatePost(rule, value, callback) {
             const arr = value.some((item) => {
-                return item.posName === ''
+                return item.positions[0].posName === ''
             })
             if (!value.length || arr) {
                 callback(new Error('每个服务类型至少对应一个岗位'));
@@ -228,35 +243,38 @@ export default {
         },
         // 岗位模板数据
         addPositions(index, pIndex, data) {
-            const obj = this.ruleForm.contracts[index].positions[pIndex]
-            console.log(obj)
+            const obj = this.ruleForm.contracts[index].servicePosList[pIndex].positions[0]
+            console.log(data)
             // 根据当前模板是否有数据，选择是插入还是替换
-            this.ruleForm.contracts[index].positions.splice(obj.posName ? pIndex + 1 : pIndex, obj.posName ? 0 : 1, {
-                ...obj,
-                ...data
-            })
+            if (obj.posName) {
+                this.ruleForm.contracts[index].servicePosList[pIndex].positions.push(data)
+            } else {
+                this.ruleForm.contracts[index].servicePosList[pIndex].positions.splice(0, 1, data)
+            }
             this.$forceUpdate()
         },
         // 根据选中的服务类型更改positions
         changePositions(checked, index, v) {
-            const positions = this.ruleForm.contracts[index].positions
+            const positions = this.ruleForm.contracts[index].servicePosList
             if (checked) {
-                this.ruleForm.contracts[index].positions.push({
+                this.ruleForm.contracts[index].servicePosList.push({
                     serviceId: v.serviceId,
                     serviceName: v.serviceName,
-                    posName: '',
-                    description: '',
-                    performance: '',
-                    attachment: {
-                        refId: '',
-                        downloadCode: '',
-                        displayname: '',
-                        createByName: '',
-                        createTime: '',
-                    }
+                    positions: [{
+                        posName: '',
+                        description: '',
+                        performance: '',
+                        attachment: {
+                            refId: '',
+                            downloadCode: '',
+                            displayname: '',
+                            createByName: '',
+                            createTime: '',
+                        }
+                    }]
                 })
             } else {
-                this.ruleForm.contracts[index].positions = positions.filter(item => item.serviceId !== v.serviceId)
+                this.ruleForm.contracts[index].servicePosList = positions.filter(item => item.serviceId !== v.serviceId)
             }
             this.$forceUpdate()
         },
@@ -276,9 +294,27 @@ export default {
                 }).filter((item) => {
                     return item
                 })
-                item.positions = [
-                    // { serviceId: 10025, serviceName: '项目外包', description: "岗位内容岗位内容", performance: "绩效结算规则绩效", posName: "岗位名称", attachment: { displayname: '文件名称' } },
-                ]
+                if (!item.servicePosList || item.servicePosList === 'undefined') {
+                    item.servicePosList = item.serviceTypeList.map((val) => {
+                        const obj = {
+                            serviceId: val.serviceId,
+                            serviceName: val.serviceName,
+                            positions: [{
+                                posName: '',
+                                description: '',
+                                performance: '',
+                                attachment: {
+                                    refId: '',
+                                    downloadCode: '',
+                                    displayname: '',
+                                    createByName: '',
+                                    createTime: '',
+                                }
+                            }]
+                        }
+                        return obj
+                    })
+                }
             })
             this.upDataServerType()
         },
@@ -433,7 +469,7 @@ export default {
                 quoteFeeContent: quoteFeeContent,
                 // 服务类型数组
                 serviceTypeList: [],
-                positions: [], // 岗位模板
+                servicePosList: [], // 岗位模板
             });
             this.dialogVisible = false;
             this.upDataServerType()
