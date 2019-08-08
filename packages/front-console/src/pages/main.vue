@@ -1,96 +1,118 @@
 <template>
-    <div class="main-container2">
-        <div class="top-menu">
-            <div class="menu-container">
-                    <el-menu v-if="principalMenu&&principalMenu.length!=0"
-                         :default-active="activeIndex"
-                         text-color="rgba(255, 255, 255, .7)"
-                         active-text-color="#fff"
-                         mode="horizontal"
-                         id="test"
-                         style="display:flex; flex-flow: row wrap;justify-content:flex-end;flex-grow:1;"
-                         @select="handleSelect" background-color="#0283fb">
-                    <div v-for="item in principalMenu" :key="item.orderSeq" style="display: inline-block">
-                        <el-menu-item v-if="item.children.length==0" :index="buildMenuIndex(item.orderSeq)">{{item.title}}</el-menu-item>
-                        <el-submenu :index="buildMenuIndex(item.orderSeq)" v-else>
-                            <template slot="title">{{item.title}}</template>
-                            <el-menu-item style="min-width: 140px" v-for="child in item.children" :key="child.orderSeq"
-                                          :index="buildMenuIndex(item.orderSeq,child.orderSeq)">{{child.title}}
-                            </el-menu-item>
-                        </el-submenu>
-                    </div>
-                </el-menu>
-                <div class="user-profile">
-                    <!-- <i @click="search" slot="prefix" class="el-input__icon el-icon-search"
+  <div class="main-container2">
+    <div class="top-menu">
+      <div class="menu-container">
+        <el-menu v-if="principalMenu&&principalMenu.length!=0"
+                 :default-active="activeIndex"
+                 text-color="rgba(255, 255, 255, .7)"
+                 active-text-color="#fff"
+                 mode="horizontal"
+                 id="test"
+                 style="display:flex; flex-flow: row wrap;justify-content:flex-end;flex-grow:1;"
+                 @select="handleSelect"
+                 background-color="#0283fb">
+          <div v-for="item in principalMenu"
+               :key="item.orderSeq"
+               style="display: inline-block">
+            <el-menu-item v-if="item.children.length==0"
+                          :index="buildMenuIndex(item.orderSeq)">{{item.title}}</el-menu-item>
+            <el-submenu :index="buildMenuIndex(item.orderSeq)"
+                        v-else>
+              <template slot="title">{{item.title}}</template>
+              <el-menu-item style="min-width: 140px"
+                            v-for="child in item.children"
+                            :key="child.orderSeq"
+                            :index="buildMenuIndex(item.orderSeq,child.orderSeq)">{{child.title}}
+              </el-menu-item>
+            </el-submenu>
+          </div>
+        </el-menu>
+        <div class="user-profile">
+          <!-- <i @click="search" slot="prefix" class="el-input__icon el-icon-search"
                     style="float: right;color: white;margin-top: 20px;cursor: pointer;display: none"></i> -->
-                    <img src="../image/ic-person-avatar.png" class="avator"/>
-                    <el-menu class="login-menu-wrap"
-                            text-color="rgba(255, 255, 255, .7)"
-                            active-text-color="#fff"
-                            mode="horizontal"
-                            @select="handleSelect"
-                            background-color="#0283fb">
-                        <el-submenu index="0">
-                            <template slot="title">{{userInformation.name}}</template>
-                            <!--<el-menu-item index="0-1" style="min-width: 100px">账户中心</el-menu-item>-->
-                            <el-menu-item index="modify-pass" style="min-width: 100px">修改密码</el-menu-item>
-                            <el-menu-item index="logout" style="min-width: 100px">退出登录</el-menu-item>
-                        </el-submenu>
-                    </el-menu>
-                </div>
-                
-                <!--<div @click="messageClick" style="float: right;cursor: pointer">-->
-                    <!--<el-badge :value="userTaskCount" :max="99" background-color="#3582e2"-->
-                              <!--style="margin-left:20px; margin-top: 18px;">-->
-                        <!--<i class="el-icon-bell" width="16" style="width: 16px;color: white"></i>-->
-                    <!--</el-badge>-->
-                <!--</div>-->
-                
-                
-            </div>
+          <img src="../image/ic-person-avatar.png"
+               class="avator" />
+          <el-menu class="login-menu-wrap"
+                   text-color="rgba(255, 255, 255, .7)"
+                   active-text-color="#fff"
+                   mode="horizontal"
+                   @select="handleSelect"
+                   background-color="#0283fb">
+            <el-submenu index="0">
+              <template slot="title">{{userInformation.name}}</template>
+              <!--<el-menu-item index="0-1" style="min-width: 100px">账户中心</el-menu-item>-->
+              <el-menu-item index="modify-pass"
+                            style="min-width: 100px">修改密码</el-menu-item>
+              <el-menu-item index="logout"
+                            style="min-width: 100px">退出登录</el-menu-item>
+            </el-submenu>
+          </el-menu>
         </div>
 
-        <div id="container">
-            <div id="mainContainer">
-                <router-view></router-view>
-            </div>
-        </div>
-        <el-dialog title="请填写信息" :before-close="closeClientDialog" :visible.sync="dialogClientVisible" width="30%">
-            <el-form :rules="clientFormRules" :model="clientForm" ref="clientForm">
-                <div class="input-container">
-                    <div class="label">原密码<span>*</span></div>
-                    <div class="input">
-                        <el-form-item prop="oldPassword">
-                            <el-input type="password" v-model="clientForm.oldPassword" placeholder="请输入原密码"></el-input>
-                        </el-form-item>
-                    </div>
-                </div>
+        <!--<div @click="messageClick" style="float: right;cursor: pointer">-->
+        <!--<el-badge :value="userTaskCount" :max="99" background-color="#3582e2"-->
+        <!--style="margin-left:20px; margin-top: 18px;">-->
+        <!--<i class="el-icon-bell" width="16" style="width: 16px;color: white"></i>-->
+        <!--</el-badge>-->
+        <!--</div>-->
 
-                <div class="input-container">
-                    <div class="label">新密码<span>*</span></div>
-                    <div class="input">
-                        <el-form-item prop="newPassword">
-                            <el-input type="password" v-model="clientForm.newPassword" placeholder="请输入新密码"></el-input>
-                        </el-form-item>
-                    </div>
-                </div>
-
-                <div class="input-container">
-                    <div class="label">确认新密码<span>*</span></div>
-                    <div class="input">
-                        <el-form-item prop="confirmPwd">
-                            <el-input type="password" v-model="clientForm.confirmPwd" placeholder="请输入新密码"></el-input>
-                        </el-form-item>
-                    </div>
-                </div>
-
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogClientVisible=false;resetForm('clientForm');">取 消</el-button>
-                <el-button type="primary" @click="submitClientForm">确 定</el-button>
-            </div>
-        </el-dialog>
+      </div>
     </div>
+
+    <div id="container">
+      <div id="mainContainer">
+        <router-view></router-view>
+      </div>
+    </div>
+    <el-dialog title="请填写信息"
+               :before-close="closeClientDialog"
+               :visible.sync="dialogClientVisible"
+               width="30%">
+      <el-form :rules="clientFormRules"
+               :model="clientForm"
+               ref="clientForm">
+        <div class="input-container">
+          <div class="label">原密码<span>*</span></div>
+          <div class="input">
+            <el-form-item prop="oldPassword">
+              <el-input type="password"
+                        v-model="clientForm.oldPassword"
+                        placeholder="请输入原密码"></el-input>
+            </el-form-item>
+          </div>
+        </div>
+
+        <div class="input-container">
+          <div class="label">新密码<span>*</span></div>
+          <div class="input">
+            <el-form-item prop="newPassword">
+              <el-input type="password"
+                        v-model="clientForm.newPassword"
+                        placeholder="请输入新密码"></el-input>
+            </el-form-item>
+          </div>
+        </div>
+
+        <div class="input-container">
+          <div class="label">确认新密码<span>*</span></div>
+          <div class="input">
+            <el-form-item prop="confirmPwd">
+              <el-input type="password"
+                        v-model="clientForm.confirmPwd"
+                        placeholder="请输入新密码"></el-input>
+            </el-form-item>
+          </div>
+        </div>
+
+      </el-form>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button @click="dialogClientVisible=false;resetForm('clientForm');">取 消</el-button>
+        <el-button type="primary"
+                   @click="submitClientForm">确 定</el-button>
+      </div>
+    </el-dialog>
+  </div>
 
 </template>
 
@@ -277,7 +299,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../../assets/sass/style";
+// @import "../../assets/sass/style";
 </style>
 
 <style lang="scss" scoped>
@@ -292,31 +314,30 @@ export default {
     flex-flow: row nowrap;
     justify-content: space-between;
 
-
     .user-profile {
+      flex: 0 0 auto;
+      display: flex;
+      flex-flow: row nowrap;
+      .login-menu-wrap {
+        .el-menu {
+          width: 80px;
+          .el-menu-item {
+            width: 100%;
+            min-width: unset;
+          }
+        }
+        .el-submenu__title {
+          padding: 0 30px;
+        }
+      }
+      .avator {
+        display: inline-block;
+        width: 28px;
+        height: 28px;
+        margin-top: 17px;
+        border-radius: 50%;
         flex: 0 0 auto;
-        display: flex;
-        flex-flow: row nowrap;
-        .login-menu-wrap {
-            .el-menu {
-                width: 80px;
-                .el-menu-item {
-                width: 100%;
-                min-width: unset;
-                }
-            }
-            .el-submenu__title {
-                padding: 0 30px;
-            }
-        }
-        .avator {
-            display:inline-block;
-            width: 28px;
-            height:28px;
-            margin-top: 17px;
-            border-radius: 50%;
-            flex: 0 0 auto;
-        }
+      }
     }
   }
 }
@@ -329,7 +350,7 @@ export default {
   top: -1px;
 
   #mainContainer {
-      min-height: calc(100vh -60);
+    min-height: calc(100vh -60);
     position: relative;
     max-width: 1366px;
     margin: 20px auto 0;
@@ -348,9 +369,8 @@ export default {
   top: 60px !important;
 }
 .el-dialog__body {
-	text-align: left;
+  text-align: left;
 }
-
 </style>
 
 

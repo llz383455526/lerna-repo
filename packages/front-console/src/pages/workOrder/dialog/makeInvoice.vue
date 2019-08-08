@@ -1,47 +1,290 @@
 <template>
-    <el-dialog title="选择落地公司和客户公司" :visible.sync="show" width="600px">
-        <el-form :model="form" :rules="rules" size="small" label-width="110px" ref="form">
-            <el-form-item label="客户公司" prop="customCompanyId">
-                <el-select class="form_input" v-model="form.customCompanyId" filterable @change="getServiceCompanyList">
-                    <el-option v-for="(e, i) in customCompanies" :key="i" :label="e.text" :value="e.value"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="落地公司" prop="serviceCompanyId">
-                <el-select class="form_input" v-model="form.serviceCompanyId" filterable> <!-- @change="getCustomCompany" -->
-                    <el-option v-for="(e, i) in serviceCompanyList" :key="i" :label="e.text" :value="e.value"></el-option>
-                </el-select>
-            </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="show = false">取消</el-button>
-            <el-button type="primary" @click="result">确认</el-button>
-        </span>
-    </el-dialog>
+  <el-dialog
+    title="选择业务类型"
+    :visible.sync="show"
+    width="630px"
+  >
+    <el-form
+      :model="form"
+      :rules="rules"
+      size="small"
+      label-width="130px"
+      ref="form"
+    >
+      <el-form-item
+        label="业务类型"
+        prop="businessType"
+      >
+        <el-radio-group
+          v-model="form.businessType"
+          @change="changeBusinessType"
+        >
+          <el-radio label="crowdSource">
+            普通众包
+          </el-radio>
+          <el-radio label="subcontract">
+            转包
+          </el-radio>
+          <el-radio label="preInvoice">
+            预开票
+          </el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <!-- 转包，预开票才有的 -->
+      <template v-if="form.businessType !== businessTypes[0]">
+        <el-form-item
+          label="原合同客户公司"
+          prop="customCompanyId"
+        >
+          <el-select
+            class="form_input"
+            placeholder="原合同客户公司"
+            v-model="form.customCompanyId"
+            filterable
+            @change="getServiceCompanyList"
+          >
+            <el-option
+              v-for="(e, i) in customCompanies"
+              :key="i"
+              :label="e.text"
+              :value="e.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="原合同落地公司"
+          prop="serviceCompanyId"
+        >
+          <el-select
+            class="form_input"
+            placeholder="原合同落地公司"
+            v-model="form.serviceCompanyId"
+            filterable
+          >
+            <el-option
+              v-for="(e, i) in serviceCompanyList"
+              :key="i"
+              :label="e.text"
+              :value="e.value"
+            />
+          </el-select>
+        </el-form-item>
+      </template>
+      <template v-if="form.businessType === businessTypes[0]">
+        <el-form-item
+          label="客户公司"
+          prop="customCompanyId"
+        >
+          <el-select
+            class="form_input"
+            v-model="form.customCompanyId"
+            filterable
+            @change="getServiceCompanyList"
+          >
+            <el-option
+              v-for="(e, i) in customCompanies"
+              :key="i"
+              :label="e.text"
+              :value="e.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="落地公司"
+          prop="serviceCompanyId"
+        >
+          <el-select
+            class="form_input"
+            v-model="form.serviceCompanyId"
+            filterable
+          >
+            <el-option
+              v-for="(e, i) in serviceCompanyList"
+              :key="i"
+              :label="e.text"
+              :value="e.value"
+            />
+          </el-select>
+        </el-form-item>
+      </template>
+      <!-- 两个落地公司 -->
+      <template v-if="form.businessType === businessTypes[1]">
+        <el-form-item
+          label="购买方公司"
+          prop="buyerCompanyId"
+        >
+          <el-select
+            class="form_input"
+            v-model="form.buyerCompanyId"
+            filterable
+          >
+            <el-option
+              v-for="(e, i) in allServiceCompanyList"
+              :key="i"
+              :label="e.text"
+              :value="e.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="开票公司"
+          prop="invoiceCompanyId"
+        >
+          <el-select
+            class="form_input"
+            v-model="form.invoiceCompanyId"
+            filterable
+          >
+            <el-option
+              v-for="(e, i) in allServiceCompanyList"
+              :key="i"
+              :label="e.text"
+              :value="e.value"
+            />
+          </el-select>
+        </el-form-item>
+      </template>
+      <!-- 预开票 -->
+      <template v-if="form.businessType === businessTypes[2]">
+        <el-form-item
+          label="客户公司"
+          prop="buyerCompanyId"
+        >
+          <el-select
+            disabled
+            class="form_input"
+            v-model="form.buyerCompanyId"
+          >
+            <el-option
+              v-for="(e, i) in customCompanies"
+              :key="i"
+              :label="e.text"
+              :value="e.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="落地公司"
+          prop="invoiceCompanyId"
+        >
+          <el-select
+            class="form_input"
+            v-model="form.invoiceCompanyId"
+            filterable
+            @change="() => {hasContract = false}"
+          >
+            <el-option
+              v-for="(e, i) in allServiceCompanyList"
+              :key="i"
+              :label="e.text"
+              :value="e.value"
+            />
+          </el-select>
+        </el-form-item>
+      </template>
+    </el-form>
+    <span
+      slot="footer"
+      class="dialog-footer"
+    >
+      <el-button @click="show = false">取消</el-button>
+      <el-button
+        type="primary"
+        @click="result"
+      >确认</el-button>
+    </span>
+  </el-dialog>
 </template>
 <script>
 import { get, post, importPost } from "src/store/api";
 import { invoiceApi } from "src/api";
+import { showNotify } from '../../../plugin/utils-notify'
+
 export default {
     data() {
+        /**
+         * 验证businessType为 2 时，购买和开票有一个至少是原合同的落地公司
+         * 验证businessType为 3 时，购买和开票有一个至少是原合同的落地公司
+         *  */
+        var validateServiceCompanyId = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请选择落地公司'));
+            } else {
+                if(this.form.businessType === this.businessTypes[1]) {
+                    // 如果和原合同一致，并且和InvoiceCompanyId不一致，则通过
+                    // 如果和原合同不一致，则去验证InvoiceCompanyId
+                    if (this.form.buyerCompanyId !== '' && this.form.invoiceCompanyId !== '') {
+                        this.$refs.form.validateField('buyerCompanyId');
+                    }
+                }
+                callback();
+            }
+        };
+        var validateBuyerCompanyId = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error(this.form.businessType === this.businessTypes[1]?'请输入购买方公司':'请选择客户公司'));
+            } else {
+                if(this.form.invoiceCompanyId !== '') {
+                    this.$refs.form.validateField('invoiceCompanyId');
+                }
+                 callback();
+            }
+        };
+        var validateInvoiceCompanyId = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error(this.form.businessType === this.businessTypes[1]?'请输入开票公司':'请选择落地公司'));
+            } else if (value === this.form.buyerCompanyId) {
+                callback(new Error('开票公司不能和购买方公司相同'));
+            } else if(this.form.businessType === this.businessTypes[1] && value !== this.form.serviceCompanyId && this.form.buyerCompanyId !== this.form.serviceCompanyId) {
+                callback(new Error('开票公司或者购买方公司至少有一个必须与原合同落地公司'));
+            } else if(this.hasContract) {
+                callback(new Error('客户与落地公司已签订合同，请选择“普通众包”业务'));
+            }
+             else {
+                callback();
+            }
+        };
         return {
             form: {
+                businessType: 'crowdSource',
                 customCompanyId: '',
-                serviceCompanyId: ''
+                serviceCompanyId: '',
+                buyerCompanyId: '', // 购买方公司
+                invoiceCompanyId: '' // 开票公司
             },
+            businessTypes: ['crowdSource', 'subcontract', 'preInvoice'],
+            hasContract: false, // 预开票时验证是否有合同关系
             rules: {
                 serviceCompanyId: [
-                    { required: true, message: "请选择落地公司", trigger: "change"}
+                    { validator: validateServiceCompanyId, trigger: "change"}
                 ],
                 customCompanyId: [
                     { required: true, message: "请选择客户公司", trigger: "change"}
+                ],
+                buyerCompanyId: [
+                    { validator: validateBuyerCompanyId, trigger: "change"}
+                ],
+                invoiceCompanyId: [
+                    { validator: validateInvoiceCompanyId, trigger: "change"}
                 ]
             },
             show: false,
             customCompanies: [],
-            serviceCompanyList: []
+            serviceCompanyList: [], // 和客户公司联动的公司
+            allServiceCompanyList: [], // 所有的螺钉公司
         }
     },
     methods: {
+        changeBusinessType(businessType) {
+            this.$refs.form.clearValidate()
+            if(businessType === this.businessTypes[1]) {
+                this.form.buyerCompanyId = this.form.invoiceCompanyId = ''
+            }
+            if(businessType === this.businessTypes[2]) {
+                this.form.buyerCompanyId = this.form.customCompanyId
+                this.form.invoiceCompanyId = ''
+            }
+        },
         transmit(a) {
             this.show = a
             // get(invoiceApi.getServiceCompany).then(data => {
@@ -54,20 +297,52 @@ export default {
         result() {
             this.$refs.form.validate(valid => {
                 if(valid) {
-                    this.show = false
-                    let str = ''
-                    for(let k in this.form) {
-                        str += `${str ? '&' : '?'}${k}=${this.form[k]}`
+                    // 如果是预开票，去查看是否有合同关系
+                    if(this.form.businessType === 'preInvoice') {
+                        post(invoiceApi.queryCompanyContract,
+                            {customerId: this.form.buyerCompanyId,serviceCompanyId: this.form.invoiceCompanyId})
+                        .then(res => {
+                            console.log(res)
+                            if(res) {
+                                this.hasContract = true
+                                this.$refs.form.validateField('invoiceCompanyId')
+                            } else {
+                                this.show = false
+                                let str = ''
+                                for(let k in this.form) {
+                                    str += `${str ? '&' : '?'}${k}=${this.form[k]}`
+                                }
+                               this.$router.push(`/main/workOrder/invoice_sheet/index${str}`)
+                            }
+                        })
+                    } else {
+                        this.show = false
+                        let str = ''
+                        for(let k in this.form) {
+                            str += `${str ? '&' : '?'}${k}=${this.form[k]}`
+                        }
+                        this.$router.push(`/main/workOrder/invoice_sheet/index${str}`)
                     }
-                    this.$router.push(`/main/workOrder/invoice_sheet/index${str}`)
                 }
             })
         },
         getServiceCompanyList() {
+            // 重置落地选择
+            this.form.serviceCompanyId = ''
+            // 预开票和原合同客户公司一致
+            if(this.form.businessType === this.businessTypes[2]) {
+                this.$refs.form.clearValidate('buyerCompanyId')
+                this.form.buyerCompanyId = this.form.customCompanyId
+            }
             get(invoiceApi.serviceCompanyOptions, {
                 customCompanyId: this.form.customCompanyId
             }).then(data => {
                 this.serviceCompanyList = data
+            })
+        },
+        getAllServiceCompanyList() {
+            get(invoiceApi.serviceCompanyOptions).then(data => {
+                this.allServiceCompanyList = data
             })
         }
         // getCustomCompany() {
@@ -77,11 +352,17 @@ export default {
         //         this.customCompanies = data
         //     })
         // }
+    },
+    created() {
+        this.getAllServiceCompanyList()
     }
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .form_input {
     width: 400px;
+    &.mini_form_input{
+        width: 193px;
+    }
 }
 </style>

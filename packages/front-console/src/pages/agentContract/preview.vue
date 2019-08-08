@@ -1,45 +1,29 @@
 <template>
   <div>
-    <contract-info
-      :contract-form="contractForm"
-      :contract-tpl-list="contractTplList"
-    />
-    <contract-annex 
-      :contract-form="contractForm"
-    />
-    <auditOption
-      :contract-form="contractForm"
-      :edit-type="editType" 
-    />
-    <div
-      style="margin:20px 0;"
-      v-if="contractForm.status == 'init'"
-    >
-      <el-button
-        size="small"
-        type="primary"
-        @click="toDetail"
-      >
+    <contract-info :contract-form="contractForm"
+                   :contract-tpl-list="contractTplList" />
+    <contract-annex :contract-form="contractForm" />
+    <auditOption :contract-form="contractForm"
+                 :edit-type="editType" />
+    <div style="margin:20px 0;"
+         v-if="contractForm.status == 'init'">
+      <el-button size="small"
+                 type="primary"
+                 @click="toDetail">
         送审
       </el-button>
-      <el-button
-        size="small"
-        type="info"
-        @click="toCreate"
-      >
+      <el-button size="small"
+                 type="info"
+                 @click="toCreate">
         编辑
       </el-button>
-      <el-button
-        size="small"
-        type="danger"
-        @click="closeContract"
-      >
+      <el-button size="small"
+                 type="danger"
+                 @click="closeContract">
         删除
       </el-button>
-      <el-button
-        size="small"
-        @click="backToList"
-      >
+      <el-button size="small"
+                 @click="backToList">
         返回
       </el-button>
     </div>
@@ -88,7 +72,7 @@ export default {
         // 获取详情
         this.contractModel.getDetail(id)
         // 获取合同模板列表
-        this.optionModel.getContractTplList()
+        // this.optionModel.getContractTplList()
     },
     methods: {
         getText(value, list, inputKey = 'value', outputKey = 'text') {
@@ -115,7 +99,7 @@ export default {
                 '?downloadCode=' + downloadCode;
         },
         handleDownloadAll() {
-            window.location.href = baseUrl + '/api/contract-web/contract/download-sales-flow-attachments?salesInstanceId=' + this.contractModel.contractId
+            window.location.href = baseUrl + '/api/contract-web/agent-residence-flow/agent-residence-attachments?instanceId=' + this.contractModel.contractId
         },
         toDetail() {
             this.$router.push({
@@ -154,9 +138,9 @@ export default {
 
 <style scoped>
 h4.block {
-    margin: 10px 0 16px;
+  margin: 10px 0 16px;
 }
 .inline {
-    display: inline-block;
+  display: inline-block;
 }
 </style>

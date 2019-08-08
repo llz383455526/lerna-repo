@@ -26,10 +26,16 @@
       <div class="title mb20 green_0">
         状态：{{ msg.statusName }}
       </div>
-      <div v-if="currentStpe.activityId == 'taskApply' || currentStpe.activityId == 'taskAudit'">
+      <div
+        v-if="msg.orderTitle"
+        class="title mb20 green_0"
+      >
+        业务类型：{{ businessTypes[msg.orderTitle.businessType] }}
+      </div>
+      <div v-if="currentStpe.activityId == 'taskApply' || currentStpe.activityId == 'taskInCrowdSourceAudit' || currentStpe.activityId == 'taskAudit'">
         剩余票量：<span class="red">{{ amount }}</span>张
       </div>
-      <div v-if="active === 3">
+      <div v-if="currentStpe.activityId == 'taskAudit'">
         <p class="title">
           购买方信息
         </p> 
@@ -62,17 +68,17 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="申请发票数"
-          v-if="currentStpe.activityId == 'taskApply' || currentStpe.activityId == 'taskAudit'"
-          :prop="currentStpe.activityId == 'taskApply' ? 'totalNum' : 'realNum'" 
-        />
-        <el-table-column
           label="寄送发票数"
-          v-else
+          v-if="currentStpe.activityId ==='taskMakeInvoice' || currentStpe.activityId ==='taskUploadInvoice'"
           prop="realNum" 
         />
+        <el-table-column
+          label="申请发票数"
+          v-else
+          prop="totalNum" 
+        />
       </el-table>
-      <template v-if="currentStpe.activityId == 'taskApply' || currentStpe.activityId == 'taskAudit' || currentStpe.activityId == 'taskCreate' || currentStpe.activityId == 'taskExceptionCheck'">
+      <template v-if="currentStpe.activityId == 'taskInCrowdSourceAudit' || currentStpe.activityId == 'taskApply' || currentStpe.activityId == 'taskAudit' || currentStpe.activityId == 'taskCreate' || currentStpe.activityId == 'taskExceptionCheck'">
         <el-table
           class="mt20"
           :data="msg.orderItems"
@@ -143,14 +149,14 @@
           </el-form-item>
           <el-form-item
             label="备注"
-            v-if="(currentStpe.activityId == 'taskApply' && !look) || (msg.busiRemark && look)"
+            v-if="(stepList[active - 1].activityId ==='taskAudit' && !look) || (msg.busiRemark && look)"
             prop="busiRemark"
           >
             <el-input
               class="form_input"
               v-model="form.busiRemark"
               type="textarea"
-              v-if="currentStpe.activityId == 'taskApply' && !look"
+              v-if="stepList[active - 1].activityId ==='taskAudit' && !look"
             />
             <template v-else-if="msg.busiRemark && look">
               {{ msg.busiRemark }}
@@ -158,7 +164,7 @@
           </el-form-item>
         </el-form>
       </template>
-      <template v-else-if="stepList.length == 5">
+      <template v-else-if="stepList.length == 5 || stepList.length == 6">
         <div class="title">
           上传发票扫描件
         </div>
@@ -370,10 +376,10 @@
         slot="footer"
         class="dialog-footer"
       >
-        <template v-if="stepList.length == 5 || look">
+        <template v-if="stepList.length == 5 || stepList.length == 6 || look">
           <el-button @click="show = false">关闭</el-button>
           <template v-if="!look">
-            <template v-if="currentStpe.activityId == 'taskApply'">
+            <template v-if="currentStpe.activityId == 'taskApply' || currentStpe.activityId == 'taskInCrowdSourceAudit'">
               <el-button @click="showReject">整单拒开</el-button>
               <el-button
                 type="primary"
@@ -393,10 +399,10 @@
               >确认</el-button>
             </template>
           </template>
-          <template v-else-if="(currentStpe.activityId == 'taskApply' || currentStpe.activityId == 'taskAudit') && isMe">
+          <template v-else-if="(currentStpe.activityId == 'taskApply' || currentStpe.activityId == 'taskInCrowdSourceAudit' || currentStpe.activityId == 'taskAudit') && isMe">
             <el-button
               type="primary"
-              v-if="param.taskName != '结束'"
+              v-if="param.finishedStatus === 'UNFINISHED'"
               @click="cancel"
             >取消申请</el-button>
           </template>
@@ -467,7 +473,11 @@ export default {
             realStep: [],
             targetId: '',
             inputForm: {},
-            invoiceApi
+            businessTypes: {
+                'crowdSource':'普通众包',
+                'subcontract':'转包',
+                'preInvoice':'预开票'
+            }
         }
     },
     mounted() {
@@ -503,7 +513,8 @@ export default {
                     //     data[0].default.splice(3, 0, data[2].data.defaultX[0])
                     // }
                     this.stepList = []
-                    data[0].default.forEach((e, i) => {
+                    const allSteps = data[0][this.param.insVariables.taskSteps || 'default']
+                    allSteps.forEach((e, i) => {
                         if(data[1][i] && data[1][i].activityId == 'taskProcessing') {
                             data[1].splice(i, 1)
                         }
@@ -554,7 +565,14 @@ export default {
             this.approveSubmit()
         },
         approveSubmit() {
-            postWaitbyTaskId(invoiceApi.approveSubmit, this.form).then(data => {
+            let url
+            if(this.stepList[this.active - 1].activityId ==='taskAudit') {
+                url = invoiceApi.approveSubmit
+            }
+            if(this.stepList[this.active - 1].activityId ==='taskInCrowdSourceAudit') {
+                url = invoiceApi.approveOutSubmit
+            }
+            postWaitbyTaskId(url, this.form).then(data => {
                 this.$message({
                     message: `${this.form.allReject ? '已拒开' : '审核通过'}！`,
                     type: 'success'

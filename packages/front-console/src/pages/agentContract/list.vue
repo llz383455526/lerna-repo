@@ -1,259 +1,176 @@
 <template>
   <div class="main-container">
     <div class="mb10">渠道入驻申请</div>
-    <el-tabs
-      v-model="activeName"
-      @tab-click="handleClick"
-    >
-      <el-tab-pane
-        label="我的申请"
-        name="first" 
-      />
-      <el-tab-pane
-        label="待处理申请"
-        name="second" 
-      />
-      <el-tab-pane
-        label="全部申请"
-        name="third"
-      />
+    <el-tabs v-model="activeName"
+             @tab-click="handleClick">
+      <el-tab-pane label="我的申请"
+                   name="first" />
+      <el-tab-pane label="待处理申请"
+                   name="second" />
+      <el-tab-pane label="全部申请"
+                   name="third" />
     </el-tabs>
 
-    <el-form
-      :inline="true"
-      :model="formSearch"
-      ref="formSearch"
-    >
-      <el-form-item
-        label="渠道名称"
-        size="small"
-        prop="customerName"
-      >
+    <el-form :inline="true"
+             :model="formSearch"
+             ref="formSearch">
+      <el-form-item label="渠道名称"
+                    size="small"
+                    prop="customerName">
         <el-input v-model="formSearch.name" />
       </el-form-item>
 
-      <el-form-item
-        label="合同类型"
-        size="small"
-      >
-        <el-select
-          v-model="formSearch.standardEnum"
-          placeholder="请选择"
-          style="width:100%;"
-        >
-          <el-option
-            v-for="item in standardEnum"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value" 
-          />
+      <el-form-item label="合同类型"
+                    size="small">
+        <el-select v-model="formSearch.standardEnum"
+                   placeholder="请选择"
+                   style="width:100%;">
+          <el-option v-for="item in standardEnum"
+                     :key="item.value"
+                     :label="item.label"
+                     :value="item.value" />
         </el-select>
       </el-form-item>
 
-      <el-form-item
-        label="申请状态"
-        size="small"
-        prop="status"
-      >
-        <el-select
-          v-model="formSearch.status"
-          placeholder="请选择"
-          style="width:100%;"
-        >
-          <el-option
-            v-for="item in statusList"
-            :key="item.value"
-            :label="item.text"
-            :value="item.value" 
-          />
+      <el-form-item label="申请状态"
+                    size="small"
+                    prop="status">
+        <el-select v-model="formSearch.status"
+                   placeholder="请选择"
+                   style="width:100%;">
+          <el-option v-for="item in statusList"
+                     :key="item.value"
+                     :label="item.text"
+                     :value="item.value" />
         </el-select>
       </el-form-item>
-      <el-form-item
-        label="申请主体"
-        size="small"
-        prop="status"
-        no-data-text="全部"
-      >
-        <el-select
-          v-model="formSearch.subjectType"
-          placeholder="请选择"
-          style="width:100%;"
-        >
-          <el-option
-            v-for="item in agentTypes"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value" 
-          />
+      <el-form-item label="申请主体"
+                    size="small"
+                    prop="status"
+                    no-data-text="全部">
+        <el-select v-model="formSearch.subjectType"
+                   placeholder="请选择"
+                   style="width:100%;">
+          <el-option v-for="item in agentTypes"
+                     :key="item.value"
+                     :label="item.label"
+                     :value="item.value" />
         </el-select>
       </el-form-item>
-      <el-form-item
-        label="申请类型"
-        size="small"
-        prop="operateEnum"
-      >
-        <el-select
-          v-model="formSearch.operateEnum"
-          placeholder="请选择"
-          style="width:100%;"
-        >
-          <el-option
-            v-for="item in operateEnum"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value" 
-          />
+      <el-form-item label="申请类型"
+                    size="small"
+                    prop="operateEnum">
+        <el-select v-model="formSearch.operateEnum"
+                   placeholder="请选择"
+                   style="width:100%;">
+          <el-option v-for="item in operateEnum"
+                     :key="item.value"
+                     :label="item.label"
+                     :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item style="margin-top: -4px">
-        <el-button
-          type="primary"
-          @click="search"
-          size="small"
-        >
+        <el-button type="primary"
+                   @click="search"
+                   size="small">
           查询
         </el-button>
-        <el-button
-          size="small"
-          @click="resetForm"
-        >
+        <el-button size="small"
+                   @click="resetForm">
           清除
         </el-button>
       </el-form-item>
     </el-form>
 
-    <el-button
-      size="small"
-      @click="$router.push({path:'create', query: { 'operateEnum': 1 }})"
-    >
+    <el-button size="small"
+               @click="$router.push({path:'create', query: { 'operateEnum': 1 }})">
       创建合同
     </el-button>
-    <el-button
-      size="small"
-      @click="$router.push({path:'create', query: { 'operateEnum': 2 }})"
-      v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'"
-    >
+    <el-button size="small"
+               @click="$router.push({path:'create', query: { 'operateEnum': 2 }})"
+               v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
       补签合同
     </el-button>
     <!-- <el-button size="small" @click="$router.push({path:'create_update'})">修改已有合同</el-button> -->
     <!-- <el-button size="small" @click="$router.push({path:'create',query:{workflowType:'create_ns_sale_contract'}})">新客户非标准合同</el-button> -->
-    <el-button
-      size="small"
-      @click="$router.push({path:'create', query: { 'operateEnum': 3 }})"
-      v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'"
-    >
+    <el-button size="small"
+               @click="$router.push({path:'create', query: { 'operateEnum': 3 }})"
+               v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">
       合同变更
     </el-button>
 
     <div class="table-container">
       <el-table :data="tableList.data">
-        <el-table-column
-          prop="id"
-          label="申请编号"
-        />
-        <el-table-column
-          prop="name"
-          label="渠道名称" 
-        />
-        <el-table-column
-          prop="agentTypeName"
-          label="申请主体" 
-        />
-        <el-table-column
-          prop="salesName"
-          label="渠道经理" 
-        />
-        <el-table-column
-          prop="createdByName"
-          label="申请人"
-        />
-        <el-table-column
-          prop="updatedAt"
-          label="提交时间"
-        />
-        <el-table-column
-          prop="standardEnumString"
-          label="合同类型"
-        />
+        <el-table-column prop="id"
+                         label="申请编号" />
+        <el-table-column prop="name"
+                         label="渠道名称" />
+        <el-table-column prop="agentTypeName"
+                         label="申请主体" />
+        <el-table-column prop="salesName"
+                         label="渠道经理" />
+        <el-table-column prop="createdByName"
+                         label="申请人" />
+        <el-table-column prop="updatedAt"
+                         label="提交时间" />
+        <el-table-column prop="standardEnumString"
+                         label="合同类型" />
         <!-- <el-table-column label="合同类型">
           <template slot-scope="scope">
             {{ workflowTypeList[scope.row.workflowType] || '非标合同' }}
           </template>
         </el-table-column> -->
-        <el-table-column
-          prop="curProcessUser"
-          label="当前处理人"
-        />
-        <el-table-column
-          prop="updatedAt"
-          label="最后审批时间"
-        />
-        <el-table-column
-          prop="operateEnumString"
-          label="申请类型"
-        />
-        <el-table-column
-          prop="statusName"
-          label="申请状态"
-        >
+        <el-table-column prop="curProcessUser"
+                         label="当前处理人" />
+        <el-table-column prop="updatedAt"
+                         label="最后审批时间" />
+        <el-table-column prop="operateEnumString"
+                         label="申请类型" />
+        <el-table-column prop="statusName"
+                         label="申请状态">
           <template slot-scope="scope">
             <span v-if="scope.row.statusName">{{ scope.row.statusName }}</span>
             <span v-else-if="scope.row.status === 'init'">待提交</span>
           </template>
         </el-table-column>
 
-        <el-table-column
-          label="操作"
-        >
+        <el-table-column label="操作"
+                         width="230">
           <template slot-scope="scope">
-            <el-button
-              v-if="scope.row.status != 'draft'"
-              @click="toPreview(scope.row.id, 'watch')"
-              type="text"
-              size="medium"
-              style="padding:0;"
-            >
-              查看
-            </el-button>
-            <el-button
-              v-if="scope.row.status === 'init' || scope.row.status === 'draft'"
-              @click="toCreate(scope.row)"
-              type="text"
-              size="medium"
-              style="padding:0;"
-            >
-              编辑
-            </el-button>
-            <el-button
-              v-if="scope.row.status === 'init' && scope.row.createdBy == userInformation.id"
-              @click="toDetail(scope.row)"
-              type="text"
-              size="medium"
-              style="padding:0;"
-            >
-              送审
-            </el-button>
-            <el-button
-              v-if="scope.row.status === 'draft' || scope.row.status === 'init'"
-              @click="closeContract(scope.row.id)"
-              type="text"
-              size="medium"
-              style="padding:0;"
-            >
-              删除
-            </el-button>
+            <el-button v-if="scope.row.status != 'draft'"
+                       @click="toPreview(scope.row.id, 'watch')"
+                       type="text"
+                       size="medium"
+                       style="padding:0;">查看</el-button>
+            <el-button v-if="scope.row.status === 'init' || scope.row.status === 'draft'"
+                       @click="toCreate(scope.row)"
+                       type="text"
+                       size="medium"
+                       style="padding:0;">编辑</el-button>
+            <el-button v-if="scope.row.status === 'init' && scope.row.createdBy == userInformation.id"
+                       @click="toDetail(scope.row)"
+                       type="text"
+                       size="medium"
+                       style="padding:0;">送审</el-button>
+            <el-button v-if="scope.row.status === 'draft' || scope.row.status === 'init'"
+                       @click="closeContract(scope.row.id)"
+                       type="text"
+                       size="medium"
+                       style="padding:0;">删除</el-button>
+            <el-button v-if="scope.row.boolCanWithdraw"
+                       @click="hanlderWithdraw(scope.row.id)"
+                       type="text"
+                       size="medium">撤回 </el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <ayg-pagination
-      v-if="tableList.total"
-      :total="tableList.total"
-      @handleSizeChange="handleSizeChange"
-      :current-size="pageSize"
-      @handleCurrentChange="handleCurrentChange"
-      :current-page="pageIndex"
-    />
+    <ayg-pagination v-if="tableList.total"
+                    :total="tableList.total"
+                    @handleSizeChange="handleSizeChange"
+                    :current-size="pageSize"
+                    @handleCurrentChange="handleCurrentChange"
+                    :current-page="pageIndex" />
   </div>
 </template>
 
@@ -415,6 +332,18 @@ export default {
                 this.formSearch.scope = 'all'
             }
             this.handleCurrentChange(1)
+        },
+        hanlderWithdraw(instanceId) {
+            showConfirm({
+                msg: '确认撤回合同？',
+                confirmCallback: () => {
+                    get('/api/opencrm/workflow/withdraw', { instanceId }).then(result => {
+                        console.log(result)
+                        showNotify('success', '撤回成功')
+                        this.getList()
+                    })
+                }
+            })
         }
     }
 }
@@ -422,13 +351,13 @@ export default {
 
 <style lang="scss" scoped>
 .main-container {
-    background-color: #fff;
-    padding: 15px;
-    margin-bottom: 30px;
+  background-color: #fff;
+  padding: 15px;
+  margin-bottom: 30px;
 }
 
 .table-container {
-    width: 100%;
-    margin-top: 20px;
+  width: 100%;
+  margin-top: 20px;
 }
 </style>

@@ -20,6 +20,7 @@ const mutations = {
 
     [types.LOGIN_ACTION](state, payload) {
         window.localStorage.setItem('userProfiles', payload.userProfiles[0].id)
+        window.localStorage.setItem('userId', payload.userId)
         document.cookie = `x-sec-profile=${payload.userProfiles[0].id}; path=/`
         document.cookie = `redash-profile=${payload.userProfiles[0].id};domain=.aiyuangong.com;path=/`
         state.userInformation = payload;

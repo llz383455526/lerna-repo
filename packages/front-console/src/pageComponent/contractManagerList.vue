@@ -152,7 +152,8 @@ export default {
                 templateId: '',
                 height: '',
                 width: '',
-                pageSize: ''
+                pageSize: '',
+                furl: ''
             },
             copyRules: {
                 platform: [
@@ -294,6 +295,7 @@ export default {
                         name: a.name,
                         url: a.templateId
                     })
+                    this.copyForm.furl = data.url
                     this.copyForm.fname = data.fname
                 })
             })

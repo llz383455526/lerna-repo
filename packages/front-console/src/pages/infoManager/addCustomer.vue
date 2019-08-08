@@ -118,12 +118,12 @@ export default {
   },
   methods: {
     change(a) {
-      this.nameList.forEach(function(e) {
+      this.nameList.forEach((e) => {
         if (e.companyName == a) {
           this.form.id = e.companyId;
-          console.log(e.companyId);
+          this.form.customType = 'internal';
         }
-      }, this);
+      });
     },
     save() {
       this.$refs['form'].validate(valid => {

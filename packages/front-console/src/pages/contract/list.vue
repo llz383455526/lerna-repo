@@ -1,108 +1,169 @@
 <template>
-    <div style="background-color:#fff;padding:15px;">
-        <div style="margin-bottom:30px;">合同管理</div>
-        <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
-            <el-form-item label="企业名称" size="small" prop="customerName">
-                <el-input v-model="formSearch.customerName"></el-input>
-            </el-form-item>
-            <el-form-item label="服务商名称" size="small" prop="serviceCompanyName">
-                <el-input v-model="formSearch.serviceCompanyName"></el-input>
-            </el-form-item>
-            <!-- <el-form-item label="结算周期" size="small" prop="settleType">
+  <div style="background-color:#fff;padding:15px;">
+    <div style="margin-bottom:30px;">合同管理</div>
+    <el-form :inline="true"
+             :model="formSearch"
+             :rules="formSearch"
+             ref="formSearch">
+      <el-form-item label="企业名称"
+                    size="small"
+                    prop="customerName">
+        <el-input v-model="formSearch.customerName"></el-input>
+      </el-form-item>
+      <el-form-item label="服务商名称"
+                    size="small"
+                    prop="serviceCompanyName">
+        <el-input v-model="formSearch.serviceCompanyName"></el-input>
+      </el-form-item>
+      <!-- <el-form-item label="结算周期" size="small" prop="settleType">
                 <el-select v-model="formSearch.settleType" placeholder="请选择" style="width:100%;">
                     <el-option v-for="item in searchOptions.SettleType" :key="item.value" :label="item.text" :value="item.value"></el-option>
                 </el-select>
             </el-form-item> -->
-            <el-form-item label="合同归档" size="small" prop="archiveStatus">
-                <el-select v-model="formSearch.archiveStatus" placeholder="请选择" style="width:100%;">
-                    <el-option label="全部" value=""></el-option>
-                    <el-option v-for="item in searchOptions.ArchiveStatus" :key="item.value" :label="item.text" :value="item.value"></el-option>
-                </el-select>
-            </el-form-item>
-            <br>
-            <el-form-item label="更新时间:" size="small">
-                <el-date-picker
-                        v-model="dateValue"
+      <el-form-item label="合同归档"
+                    size="small"
+                    prop="archiveStatus">
+        <el-select v-model="formSearch.archiveStatus"
+                   placeholder="请选择"
+                   style="width:100%;">
+          <el-option label="全部"
+                     value=""></el-option>
+          <el-option v-for="item in searchOptions.ArchiveStatus"
+                     :key="item.value"
+                     :label="item.text"
+                     :value="item.value"></el-option>
+        </el-select>
+      </el-form-item>
+      <br>
+      <el-form-item label="更新时间:"
+                    size="small">
+        <el-date-picker v-model="dateValue"
                         type="daterange"
                         :unlink-panels="true"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
                         value-format="yyyy-MM-dd">
-                </el-date-picker>
-            </el-form-item>
-            <el-form-item style="margin-top: -4px">
-                <el-button type="primary" @click="searchHander" size="small">查询</el-button>
-                <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
-                <el-button size="small" @click="exportDetail">导出</el-button>
-            </el-form-item>
-        </el-form>
-<!--        <el-button size="small" @click="routerPush('/main/contract/create')" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">新增</el-button>-->
-        <statistics-box :dataList="statisticsDataList"></statistics-box>
-        <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
-            <el-table-column prop="customerName" label="企业名称" width="200"></el-table-column>
-            <el-table-column prop="serviceCompanyName" label="服务商名称" width="220"></el-table-column>
-            <!-- <el-table-column prop="settleTypeName" label="结算周期"></el-table-column> -->
-            <el-table-column prop="serviceFeeName" label="服务费收费比例"></el-table-column>
-            <el-table-column prop="prePayFeeName" label="服务费是否预收" width="140"></el-table-column>
-            <el-table-column prop="contractStartDate" label="合同开始时间"></el-table-column>
-            <el-table-column prop="contractEndDate" label="合同结束时间"></el-table-column>
-            <el-table-column prop="archiveStatusName" label="合同归档"></el-table-column>
-            <el-table-column prop="versionSeq" label="合同版本">
-            	<template slot-scope="scope">
-                    <span>V{{scope.row.versionSeq}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column prop="versionStartDate" label="版本生效时间"></el-table-column>
-            <el-table-column prop="lastUpdateAt" label="更新时间" width="180">
-                <template slot-scope="scope">
-                    <span>{{scope.row.lastUpdateAt | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column label="操作" width="150">
-                <template slot-scope="scope">
-                    <el-button @click="handleLook(scope.row.id, scope.row.versionSeq)" type="text">查看</el-button>
-                    <el-button @click="handleEdit(scope.row.id, scope.row.versionSeq)" type="text" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">编辑</el-button>
-                    <!-- <el-button @click="handleCopy(scope.row)" type="text" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">复制</el-button> -->
-                    <el-button @click="handleFile(scope.row.id)" type="text" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">附件管理</el-button>
-                    <el-button @click="handleView(scope.row.id)" type="text" v-if="scope.row.containVerson">历史版本</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
-        <ayg-pagination
-            v-if="tableList.total"
-            :total="tableList.total"
-            v-on:handleSizeChange="handleSizeChange"
-            v-on:handleCurrentChange="handleCurrentChange"
-            :currentPage="currentPage">
-        </ayg-pagination>
-        <el-dialog :title="`复制${source.customerName}-${source.serviceCompanyName}合同`" :visible.sync="show" width="500px">
-            <el-form :model="copyForm" size="small" :rules="copyRules" label-width="100px" ref="copyForm">
-                <el-form-item label="企业名称" prop="customerId">
-                    <el-select v-model="copyForm.customerId" filterable class="input_full" @change="getCompanyName">
-                        <el-option v-for="item in customerCompaniesList" :key="item.companyId" :label="item.companyName" :value="item.companyId"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="服务商名称" prop="serviceCompanyId">
-                    <el-select v-model="copyForm.serviceCompanyId" filterable class="input_full">
-                        <el-option v-for="item in serviceCompaniesList" :key="item.companyId" :label="item.companyName" :value="item.companyId"></el-option>
-                    </el-select>
-                </el-form-item>
-                <span class="tip">
-                    *新合同的企业和服务商不支持修改
-                </span>
-                <el-form-item>
-                    <el-button @click="show=false">取消</el-button>
-                    <el-button @click="execute" type="primary">保存</el-button>
-                </el-form-item>
-            </el-form>
-        </el-dialog>
-    </div>
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item style="margin-top: -4px">
+        <el-button type="primary"
+                   @click="searchHander"
+                   size="small">查询</el-button>
+        <el-button size="small"
+                   @click="resetForm('formSearch')">清除</el-button>
+        <el-button size="small"
+                   @click="exportDetail">导出</el-button>
+      </el-form-item>
+    </el-form>
+    <!--        <el-button size="small" @click="routerPush('/main/contract/create')" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">新增</el-button>-->
+    <statistics-box :dataList="statisticsDataList"></statistics-box>
+    <el-table :data="tableList.list"
+              style="width: 100%;margin-top: 20px;">
+      <el-table-column prop="customerName"
+                       label="企业名称"
+                       width="200"></el-table-column>
+      <el-table-column prop="serviceCompanyName"
+                       label="服务商名称"
+                       width="220"></el-table-column>
+      <!-- <el-table-column prop="settleTypeName" label="结算周期"></el-table-column> -->
+      <el-table-column prop="serviceFeeName"
+                       label="服务费收费比例"></el-table-column>
+      <el-table-column prop="prePayFeeName"
+                       label="服务费是否预收"
+                       width="140"></el-table-column>
+      <el-table-column prop="contractStartDate"
+                       label="合同开始时间"></el-table-column>
+      <el-table-column prop="contractEndDate"
+                       label="合同结束时间"></el-table-column>
+      <el-table-column prop="archiveStatusName"
+                       label="合同归档"></el-table-column>
+      <el-table-column prop="versionSeq"
+                       label="合同版本">
+        <template slot-scope="scope">
+          <span>V{{scope.row.versionSeq}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="versionStartDate"
+                       label="版本生效时间"></el-table-column>
+      <el-table-column prop="lastUpdateAt"
+                       label="更新时间"
+                       width="180">
+        <template slot-scope="scope">
+          <span>{{scope.row.lastUpdateAt | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作"
+                       width="150">
+        <template slot-scope="scope">
+          <el-button @click="handleLook(scope.row)"
+                     type="text">查看</el-button>
+          <el-button @click="handleEdit(scope.row)"
+                     type="text"
+                     v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">编辑</el-button>
+          <!-- <el-button @click="handleCopy(scope.row)" type="text" v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">复制</el-button> -->
+          <!-- <el-button @click="handleFile(scope.row)"
+                     type="text"
+                     v-if="userInformation.userProfile && userInformation.userProfile.subjectType !== 'agent'">附件管理</el-button> -->
+          <el-button @click="handleView(scope.row.contractId)"
+                     type="text"
+                     v-if="scope.row.containVerson">历史版本</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <ayg-pagination v-if="tableList.total"
+                    :total="tableList.total"
+                    v-on:handleSizeChange="handleSizeChange"
+                    v-on:handleCurrentChange="handleCurrentChange"
+                    :currentPage="currentPage">
+    </ayg-pagination>
+    <el-dialog :title="`复制${source.customerName}-${source.serviceCompanyName}合同`"
+               :visible.sync="show"
+               width="500px">
+      <el-form :model="copyForm"
+               size="small"
+               :rules="copyRules"
+               label-width="100px"
+               ref="copyForm">
+        <el-form-item label="企业名称"
+                      prop="customerId">
+          <el-select v-model="copyForm.customerId"
+                     filterable
+                     class="input_full"
+                     @change="getCompanyName">
+            <el-option v-for="item in customerCompaniesList"
+                       :key="item.companyId"
+                       :label="item.companyName"
+                       :value="item.companyId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="服务商名称"
+                      prop="serviceCompanyId">
+          <el-select v-model="copyForm.serviceCompanyId"
+                     filterable
+                     class="input_full">
+            <el-option v-for="item in serviceCompaniesList"
+                       :key="item.companyId"
+                       :label="item.companyName"
+                       :value="item.companyId"></el-option>
+          </el-select>
+        </el-form-item>
+        <span class="tip">
+          *新合同的企业和服务商不支持修改
+        </span>
+        <el-form-item>
+          <el-button @click="show=false">取消</el-button>
+          <el-button @click="execute"
+                     type="primary">保存</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+  </div>
 </template>
 
 <style>
-    .el-time-spinner.has-seconds .el-time-spinner__wrapper:nth-child(2) {
-        margin-left: 0;
-    }
+.el-time-spinner.has-seconds .el-time-spinner__wrapper:nth-child(2) {
+  margin-left: 0;
+}
 </style>
 
 <script>
@@ -271,17 +332,19 @@ export default {
                 this.searchOptions = data
             })
         },
-        handleLook(id, versionSeq) {
+        handleLook(row) {
+            const { contractId, contractHisId, versionSeq } = row
             this.$router.push({
                 path: '/main/contract/preview',
-                query: {contractId: id, versionSeq}
+                query: { contractId, contractHisId, versionSeq }
             });
         },
-        handleEdit(id, versionSeq) {
+        handleEdit(row) {
+            const { contractId, versionSeq } = row
             this.$router.push({
                 path: '/main/contract/create',
                 query: {
-                    contractId: id,
+                    contractId,
                     versionSeq,
                     page: this.$route.query.page
                 }
@@ -301,19 +364,20 @@ export default {
                 this.$refs['copyForm'] && this.$refs['copyForm'].clearValidate()
             }, 30)
         },
-        handleFile(id) {
+        handleFile(row) {
+            const { contractId } = row
             this.$router.push({
                 path: '/main/contract/fileList',
                 query: {
-                    contractId: id,
+                    contractId,
                 }
             })
         },
-        handleView(id) {
+        handleView(contractId) {
             this.$router.push({
                 path: '/main/contract/historyList',
                 query: {
-                    contractId: id,
+                    contractId,
                 }
             })
         },
@@ -376,14 +440,14 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-    .input_full {
-        width: 300px;
-    }
-    .tip {
-        color: #999;
-        font-size: 14px;
-        margin-left: 100px;
-        padding-bottom: 22px;
-        display: block;
-    }
+.input_full {
+  width: 300px;
+}
+.tip {
+  color: #999;
+  font-size: 14px;
+  margin-left: 100px;
+  padding-bottom: 22px;
+  display: block;
+}
 </style>

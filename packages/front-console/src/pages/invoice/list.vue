@@ -207,7 +207,7 @@
       >
         <template slot-scope="scope">
           <el-button
-            v-if="(scope.row.status == 1 || scope.row.status == 2) && scope.row.createBy == userId"
+            v-if="(scope.row.status == 0 || scope.row.status == 1 || scope.row.status == 2) && scope.row.createBy == userId"
             @click="showDetail(scope.row.processInsId, scope.row.orderNo, scope.row.createBy, true)"
             type="text"
             size="medium"
@@ -891,6 +891,8 @@
                     param.businessId = res.businessId || orderNo
                     param.id = res.processTaskId
                     param.processInstanceId = processInsId
+                    param.insVariables = res.insVariables
+                    param.finishedStatus = res.status
                     // 判断是否点作废
                     if(isCancel) {
                         this.$refs.auditInvoice.transmit({

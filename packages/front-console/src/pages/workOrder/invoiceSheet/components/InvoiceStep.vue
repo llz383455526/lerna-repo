@@ -1,11 +1,12 @@
 <template>
-    <el-steps :active="1" align-center>
-        <el-step
-            v-for="item in stepInfo"
-            :key="item.activityId"
-            :title="item.activityName"
-        ></el-step>
-    </el-steps>
+  <el-steps :active="1"
+align-center>
+    <el-step
+      v-for="item in stepInfo"
+      :key="item.activityId"
+      :title="item.activityName"
+    />
+  </el-steps>
 </template>
 
 <script>

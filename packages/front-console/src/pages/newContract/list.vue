@@ -113,13 +113,8 @@
             <!-- {{ workflowTypeList[scope.row.workflowType] || '非标合同' }} -->
           </template>
         </el-table-column>
-        <el-table-column prop="workflowType"
-                         label="申请类型">
-          <template slot-scope="scope">
-            {{ scope.row.workflowType | formatWorkflowType }}
-            <!-- {{ workflowTypeList[scope.row.workflowType] || '非标合同' }} -->
-          </template>
-        </el-table-column>
+        <el-table-column prop="operateEnumString"
+                         label="申请类型" />
         <el-table-column prop="statusName"
                          label="申请状态">
           <template slot-scope="scope">
@@ -129,36 +124,32 @@
         </el-table-column>
 
         <el-table-column label="操作"
-                         width="200">
+                         width="230">
           <template slot-scope="scope">
             <el-button v-if="scope.row.status != 'draft'"
                        @click="toPreview(scope.row.id, 'watch')"
                        type="text"
                        size="medium"
-                       style="padding:0;">
-              查看
-            </el-button>
+                       style="padding:0;">查看</el-button>
             <el-button v-if="scope.row.status === 'init' || scope.row.status === 'draft'"
                        @click="toCreate(scope.row.id, scope.row.workflowType)"
                        type="text"
                        size="medium"
-                       style="padding:0;">
-              编辑
-            </el-button>
+                       style="padding:0;">编辑</el-button>
             <el-button v-if="scope.row.status === 'init' && scope.row.createdBy == userInformation.id"
                        @click="toDetail(scope.row.id, 'watch')"
                        type="text"
                        size="medium"
-                       style="padding:0;">
-              送审
-            </el-button>
+                       style="padding:0;">送审</el-button>
             <el-button v-if="scope.row.status === 'draft' || scope.row.status === 'init'"
                        @click="closeContract(scope.row.id)"
                        type="text"
                        size="medium"
-                       style="padding:0;">
-              删除
-            </el-button>
+                       style="padding:0;">删除</el-button>
+            <el-button v-if="scope.row.boolCanWithdraw"
+                       @click="hanlderWithdraw(scope.row.id)"
+                       type="text"
+                       size="medium">撤回 </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -194,21 +185,6 @@ export default {
         userInformation: "userInformation",
         auth: "auth",
       })
-    },
-    filters: {
-        formatWorkflowType(value) {
-            const isChange = value.indexOf('update') !== -1
-            const isAdd = value.indexOf('add') !== -1
-            let name
-            if (isChange) {
-                name = '变更'
-            } else if (isAdd) {
-                name = '补签'
-            } else {
-                name = '新增'
-            }
-            return name
-        }
     },
     data() {
         return {
@@ -322,7 +298,7 @@ export default {
                 path = 'create_change'
             } else if (isAdd) {
                 path = 'create_add'
-            } else {
+            } else { 
                 path = 'create'
             }
             this.$router.push({
@@ -377,6 +353,18 @@ export default {
                 this.formSearch.scope = 'all'
             }
             this.handleCurrentChange(1)
+        },
+        hanlderWithdraw(instanceId) {
+            showConfirm({
+                msg: '确认撤回合同？',
+                confirmCallback: () => {
+                    get('/api/opencrm/workflow/withdraw', { instanceId }).then(result => {
+                        console.log(result)
+                        showNotify('success', '撤回成功')
+                        this.getList()
+                    })
+                }
+            })
         }
     }
 }

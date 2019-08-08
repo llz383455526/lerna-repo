@@ -752,7 +752,7 @@ export default {
         handle(param, look = false, isMe = false) {
             get(workflow.getTaskId, {processInsId: param.processInstanceId }).then(res => {
                 param.id = res.processTaskId
-            
+                param.insVariables = res.insVariables
             switch (param.businessType) {
                 case 'invoice-flow':
                     this.$refs.auditInvoice.transmit({

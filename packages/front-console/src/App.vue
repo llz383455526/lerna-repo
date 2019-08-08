@@ -1,10 +1,12 @@
 <template>
-    <transition name="router-fade" mode="out-in">
-        <div class="route-container">
-            <router-view></router-view>
-          <hm-browser-tip :visible="tipVisible" @cancel="tipVisible = false"></hm-browser-tip>
-        </div>
-    </transition>
+  <transition name="router-fade"
+              mode="out-in">
+    <div class="route-container">
+      <router-view></router-view>
+      <hm-browser-tip :visible="tipVisible"
+                      @cancel="tipVisible = false"></hm-browser-tip>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -84,19 +86,20 @@ export default {
 }
 </style>
 <style lang="scss">
-@import './sass/style.scss';
-*{
+@import "./assets/sass/style.scss";
+* {
   box-sizing: border-box;
 }
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
 }
 .el-menu--horizontal .el-submenu .el-submenu__icon-arrow {
-    position: static;
-    vertical-align: middle;
-    margin-left: 8px;
-    margin-top: -3px;
+  position: static;
+  vertical-align: middle;
+  margin-left: 8px;
+  margin-top: -3px;
 }
 
 .el-step__head.is-process {
@@ -110,20 +113,22 @@ html, body {
   padding: 0px 10px;
 }
 .el-col {
-    word-break: break-all;
+  word-break: break-all;
 }
 .hidden_label .el-radio__label {
-    display: none;
+  display: none;
 }
 .el-select-dropdown {
-    width: 300px;
+  width: 300px;
 }
-    .wrap {
-        margin-top: 15px;background-color: #fff;padding: 15px;
-    }
-    .title {
-        margin: 0px 30px 30px;
-    }
+.wrap {
+  margin-top: 15px;
+  background-color: #fff;
+  padding: 15px;
+}
+.title {
+  margin: 0px 30px 30px;
+}
 </style>
 
 

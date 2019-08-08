@@ -87,8 +87,8 @@
       :rules="validateInvoiceInfo"
     >
       <invoice-table
-        :custom-company-id="formData.customCompanyId"
-        :service-company-id="formData.serviceCompanyId"
+        :custom-company-id="resultCustomeId"
+        :service-company-id="resultServiceId"
         @getIvoiceInfo="getIvoiceInfo"
       />
     </el-form-item>
@@ -178,7 +178,11 @@ export default {
             formData: {
                 "amount": '', //总金额
                 "customCompanyId": '50249', // 客户公司id
+                "businessType": "", // 业务类型
+                "buyerCompanyId": "", // 购买方公司
+                "invoiceCompanyId": "", // 开票公司
                 "invoiceType": "", // 发票类型
+                
                 "invoiceWorkOrderSubjectParams": [ // 发票类目集合
                     {
                         "amount": '', // 单价（含税）
@@ -212,6 +216,20 @@ export default {
                     { required: true, message: '请填写发票用途', trigger: 'blur' }
                 ]
             }
+        }
+    },
+    computed: {
+        resultCustomeId() {
+            const result = this.$route.query.businessType && this.$route.query.businessType !== "crowdSource"
+                ? this.formData.buyerCompanyId
+                : this.formData.customCompanyId
+            return result
+        },
+        resultServiceId() {
+            const result = this.$route.query.businessType && this.$route.query.businessType !== "crowdSource"
+                ? this.formData.invoiceCompanyId
+                : this.formData.serviceCompanyId
+            return result
         }
     },
     components: {
@@ -325,9 +343,10 @@ export default {
         }
     },
     created() {
-        this.formData.customCompanyId = this.$route.query.customCompanyId
-        this.formData.serviceCompanyId = this.$route.query.serviceCompanyId
-        // console.log(this.$attrs)
+        const keys = Object.keys(this.$route.query)
+        keys.forEach(i => {
+            this.formData[i] = this.$route.query[i]
+        })
     }
 }
 </script>

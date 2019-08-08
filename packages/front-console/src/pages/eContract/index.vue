@@ -20,7 +20,7 @@
                 <el-input v-model="formSearch.templateName"></el-input>
             </el-form-item>
 
-            <el-form-item label="合同模板组名称" size="small" prop="templateGroupName">
+            <el-form-item label="合同模板组名称" size="small" prop="templdaateGroupName">
                 <el-input v-model="formSearch.templateGroupName"></el-input>
             </el-form-item>
 
@@ -210,7 +210,7 @@
 				dateValue: [t, t],
 				tableList: [],
 				activeTab: 'first',
-				isRe: ['SIGNING', 'CREATE_ERR', 'AUTH_ERR', 'NOTIFY_ERR', 'SIGN_ERR', 'CLOSE_ERR', 'EXPIRED', 'REJECTED', 'AUTHING'],
+				isRe: ['SIGNING', 'CREATE_ERR', 'AUTH_ERR', 'NOTIFY_ERR', 'SIGN_ERR', 'CLOSE_ERR', 'AUTHING'],
 				certStates: [
 					{
 						text: '未上传',

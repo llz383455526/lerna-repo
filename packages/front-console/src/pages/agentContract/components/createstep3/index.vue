@@ -1,23 +1,31 @@
 <template>
+  <div>
+    <el-form>
+      <el-form-item label="请选择合同附件处理方式">
+        <el-radio-group v-model="approveType"
+                        @change="handleChange">
+          <el-radio label="standard">不需要修改合同附件</el-radio>
+          <el-radio label="partial">需要合同补充协议</el-radio>
+          <el-radio label="customer">需要独立合同附件</el-radio>
+        </el-radio-group>
+      </el-form-item>
+    </el-form>
+    <standard :contractAttachments="form.contract.datas.contractAttachments"
+              :contractId="form.contract.instanceId"
+              v-if="approveType === 'standard'"></standard>
+    <nonstandard :contractAttachments="partialAttachments"
+                 :contractId="form.contract.instanceId"
+                 v-if="approveType === 'partial'"></nonstandard>
+    <nonstandard :contractAttachments="customerAttachments"
+                 :contractId="form.contract.instanceId"
+                 v-if="approveType === 'customer'"></nonstandard>
     <div>
-        <el-form>
-            <el-form-item label="请选择合同附件处理方式">
-                <el-radio-group v-model="approveType" @change="handleChange">
-                    <el-radio label="standard">不需要修改合同附件</el-radio>
-                    <el-radio label="partial">需要合同补充协议</el-radio>
-                    <el-radio label="customer">需要独立合同附件</el-radio>
-                </el-radio-group>
-            </el-form-item>
-        </el-form>
-        <standard :contractAttachments="form.contract.datas.contractAttachments" :contractId="form.contractId" v-if="approveType === 'standard'"></standard>
-        <nonstandard :contractAttachments="partialAttachments" v-if="approveType === 'partial'"></nonstandard>
-        <nonstandard :contractAttachments="customerAttachments" v-if="approveType === 'customer'"></nonstandard>
-        <div>
-            <el-button @click="$router.push('list')">返回</el-button>
-            <!-- <el-button @click="form.saveDraft(), $router.push('list')">保存</el-button> -->
-            <el-button type="primary" @click="submitForm">送审</el-button>
-        </div>
+      <el-button @click="$router.push('list')">返回</el-button>
+      <!-- <el-button @click="form.saveDraft(), $router.push('list')">保存</el-button> -->
+      <el-button type="primary"
+                 @click="submitForm">送审</el-button>
     </div>
+  </div>
 </template>
 
 <script>

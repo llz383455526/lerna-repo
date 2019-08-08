@@ -1,44 +1,52 @@
 <template>
-    <div>
-        <div class="title">签约信息</div>
-        <el-table class="table" :data="contractData.list" border>
-            <el-table-column label="合同编号" prop="contractNo"></el-table-column>
-            <el-table-column label="签约服务商" prop="serviceCompanyName"></el-table-column>
-            <el-table-column label="服务费比例" prop="serviceFeeName"></el-table-column>
-            <el-table-column label="预收服务费" prop="prePayFeeName"></el-table-column>
-            <el-table-column label="发票类型" prop="invoiceTypeName"></el-table-column>
-            <el-table-column label="合同起止时间" prop="lastUpdateAt">
-                <template slot-scope="scope">{{scope.row.contractStartDate}} 至 {{scope.row.contractEndDate}}</template>
-            </el-table-column>
-            <el-table-column label="操作" prop="lastUpdateAt">
-            <template slot-scope="scope">
-                <router-link :to="`/main/contract/preview?contractId=${scope.row.id}&examine=1`">
-                    <el-button type="text">查看合同</el-button>
-                </router-link>
-                <span @click="setCurr(scope.row)">
-                    <el-upload
-                        action="/api/console-dlv/file/upload"
-                        :on-error="handleError"
-                        :before-upload="handleBeforeUpload"
-                        :http-request="hanldleHttpRequest"
-                        multiple
-                        accept=".pdf,.doc,.docx,.jpg,.png,.gif"
-                        :show-file-list="false">
-                        <el-button type="text">上传扫描件</el-button>
-                    </el-upload>
-                </span>
-            </template>
-            </el-table-column>
-        </el-table>
-        <ayg-pagination
-            v-if="contractData.total"
-            :total="contractData.total"
-            v-on:handleSizeChange="sizeChange"
-            :currentSize="form.pageSize"
-            v-on:handleCurrentChange="query"
-            :currentPage="form.page">
-        </ayg-pagination>
-    </div>
+  <div>
+    <div class="title">签约信息</div>
+    <el-table class="table"
+              :data="contractData.list"
+              border>
+      <el-table-column label="合同编号"
+                       prop="contractNo"></el-table-column>
+      <el-table-column label="签约服务商"
+                       prop="serviceCompanyName"></el-table-column>
+      <el-table-column label="服务费比例"
+                       prop="serviceFeeName"></el-table-column>
+      <el-table-column label="预收服务费"
+                       prop="prePayFeeName"></el-table-column>
+      <el-table-column label="发票类型"
+                       prop="invoiceTypeName"></el-table-column>
+      <el-table-column label="合同起止时间"
+                       prop="lastUpdateAt">
+        <template slot-scope="scope">{{scope.row.contractStartDate}} 至 {{scope.row.contractEndDate}}</template>
+      </el-table-column>
+      <el-table-column label="操作"
+                       prop="lastUpdateAt">
+        <template slot-scope="scope">
+          <!-- <router-link :to="`/main/contract/preview?contractId=${scope.row.id}&examine=1`"> -->
+          <el-button type="text"
+                     @click="handleLook(scope.row)">查看合同</el-button>
+          <!-- </router-link> -->
+          <span @click="setCurr(scope.row)">
+            <el-upload action="/api/console-dlv/file/upload"
+                       :on-error="handleError"
+                       :before-upload="handleBeforeUpload"
+                       :http-request="hanldleHttpRequest"
+                       multiple
+                       accept=".pdf,.doc,.docx,.jpg,.png,.gif"
+                       :show-file-list="false">
+              <el-button type="text">上传扫描件</el-button>
+            </el-upload>
+          </span>
+        </template>
+      </el-table-column>
+    </el-table>
+    <ayg-pagination v-if="contractData.total"
+                    :total="contractData.total"
+                    v-on:handleSizeChange="sizeChange"
+                    :currentSize="form.pageSize"
+                    v-on:handleCurrentChange="query"
+                    :currentPage="form.page">
+    </ayg-pagination>
+  </div>
 </template>
 <script>
 import { get, post, formPost, postButNoErrorToast, postWithErrorCallback } from "../store/api";
@@ -57,6 +65,13 @@ export default {
         }
     },
     methods: {
+        handleLook(row) {
+            const { contractId, contractHisId, versionSeq } = row
+            this.$router.push({
+                path: '/main/contract/preview',
+                query: { contractId, contractHisId, versionSeq }
+            });
+        },
         query(a) {
             if (isNaN(a)) {
                 a = 1;
@@ -107,7 +122,7 @@ export default {
                     type: 'success',
                     message: '上传成功！'
                 })
-                this.updateAttachment(this.curr.id, data.referId);
+                this.updateAttachment(this.curr.contractId, data.referId);
             });
         },
         updateAttachment(contractId, referId) {
@@ -127,9 +142,9 @@ export default {
 </script>
 <style scoped>
 .title {
-    display: inline-block;
-    margin: 20px 0px;
-    font-weight: bold;
+  display: inline-block;
+  margin: 20px 0px;
+  font-weight: bold;
 }
 .table {
   margin-top: 20px;

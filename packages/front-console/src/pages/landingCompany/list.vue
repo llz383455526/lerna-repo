@@ -15,9 +15,8 @@
         <el-button size="small" @click="routerPush('/main/landingCompany/create')">新建企业</el-button>
         <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
             <el-table-column prop="shortName" label="落地公司简称"></el-table-column>
-            <el-table-column prop="directName" label="是否直营"></el-table-column>
-            <el-table-column prop="address" label="地址"></el-table-column>
             <el-table-column prop="masterName" label="负责人"></el-table-column>
+            <el-table-column prop="directName" label="是否直营"></el-table-column>
             <el-table-column prop="registeredName" label="注册状态">
                 <template slot-scope="scope">
                     <span class="usable" v-if="scope.row.registeredName == '已注册'">{{scope.row.registeredName}}</span>
@@ -30,17 +29,23 @@
                     <span v-else>{{scope.row.testStatusName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="invoiceType" label="发票类型">
+            <el-table-column prop="address" label="状态"></el-table-column>
+            <!--
+            <el-table-column prop="address" label="地址"></el-table-column>
+            <el-table-column prop="invoiceType" label="发票类型" display="none">
                 <template slot-scope="scope">
                     <span v-for="e in scope.row.supportInvoiceTypeName">
                         <span>{{e}}</span><br/>
                     </span>
                 </template>
             </el-table-column>
+            -->
             <el-table-column label="操作" width="100" fixed="right">
                 <template slot-scope="scope">
                     <el-button @click="routerPush('/main/clientManager/serverManager',scope.row)" type="text" size="medium" style="padding:0;">管理
                     </el-button>
+                    <el-switch @click="routerPush('/main/clientManager/serverManager',scope.row)" type="text" size="medium" style="padding:0;">管理
+                    </el-switch>
                 </template>
             </el-table-column>
         </el-table>

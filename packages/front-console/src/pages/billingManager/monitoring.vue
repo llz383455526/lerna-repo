@@ -1,256 +1,601 @@
 <template>
-    <div class="billing-manager-monitoring">
-        <p>落地公司票量预测与监控</p>
-        <el-form :model="form" :inline="true" size="small" class="demo-form-inline" ref="form">
-            <el-form-item label="时间" prop="time">
-                <el-date-picker
-                    v-model="form.time"
-                    type="month"
-                    placeholder="选择月">
-                </el-date-picker>
-            </el-form-item>
-            <el-form-item label="税优地名称" prop="taxlandingId">
-                <el-select v-model="form.taxlandingId" filterable>
-                    <el-option v-for="e in landingList" :key="e.id" :label="e.taxLandingName" :value="e.id"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="落地公司" prop="serviceCompanyId">
-                <el-select v-model="form.serviceCompanyId" filterable>
-                    <el-option v-for="e in companyList" :key="e.value" :label="e.text" :value="e.value"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="searchBtnClick(true)">查询</el-button>
-                <el-button @click="$refs.form.resetFields()">清空</el-button>
-            </el-form-item>
-        </el-form>
-        <div>
-            <!-- <el-button type="success" @click="upFilBtnClick">录入销售预测票量</el-button> -->
-            <!-- <el-button type="info" @click="daoChuClick">导出</el-button> -->
-        </div>
-        <br>
-        <el-table :data="tableData.list" border style="width: 100%" height="640" class="custom-table">
-            <el-table-column prop="taxLandingName" align="center" header-align="center" label="税优地名称"></el-table-column>
-            <el-table-column prop="serviceCompanyName" align="center" header-align="center" label="落地公司名称"></el-table-column>
-            <el-table-column prop="periodInitialIssueAmount" align="center" header-align="center" label="期初待开金额" width="110px">
-                <template slot-scope="scope">
-                    {{scope.row.periodInitialIssueAmount | formatMoney}}
-                </template>
-            </el-table-column>
-            <el-table-column prop="payAmount" align="center" header-align="center" label="到款金额" width="110px">
-                <template slot-scope="scope">
-                    {{scope.row.payAmount | formatMoney}}
-                </template>
-            </el-table-column>
-            <el-table-column prop="issuedAmount" align="center" header-align="center" label="已开金额" width="110px">
-                <template slot-scope="scope">
-                    {{scope.row.issuedAmount | formatMoney}}
-                </template>
-            </el-table-column>
-            <el-table-column prop="issueAmount" align="center" header-align="center" label="待开金额" width="110px">
-                <template slot-scope="scope">
-                    {{scope.row.issueAmount | formatMoney}}
-                </template>
-            </el-table-column>
-            <el-table-column prop="periodfinalIssueAmount" align="center" header-align="center" label="期末待开金额" width="110px">
-                <template slot-scope="scope">
-                    {{scope.row.periodfinalIssueAmount | formatMoney}}
-                </template>
-            </el-table-column>
-            <el-table-column prop="name" align="center" header-align="center" label="期初剩余票量">
-                <div class="table-cell-item" slot-scope="scope">
-                    <span>专票：{{ scope.row.periodInitialZpNum }}</span>
-                    <span>普票：{{ scope.row.periodInitialPpNum }}</span>
-                </div>
-            </el-table-column>
-            <el-table-column prop="address" align="center" header-align="center" label="销售预计开票总数">
-                <div class="table-cell-item" slot-scope="scope">
-                    <span>专票：{{ scope.row.salesForecastZpNum }}</span>
-                    <span>普票：{{ scope.row.salesForecastPpNum }}</span>
-                </div>
-            </el-table-column>
-            <el-table-column prop="address" align="center" header-align="center" label="预计待开票数">
-                <div class="table-cell-item" slot-scope="scope">
-                    <span>专票：{{ scope.row.waitZpNum }}</span>
-                    <span>普票：{{ scope.row.waitPpNum }}</span>
-                </div>
-            </el-table-column>
-            <el-table-column prop="address" align="center" header-align="center" label="已开票数">
-                <div class="table-cell-item" slot-scope="scope">
-                    <span>专票：{{ scope.row.alreadyZpNum }}</span>
-                    <span>普票：{{ scope.row.alreadyPpNum }}</span>
-                </div>
-            </el-table-column>
-            <el-table-column prop="address" align="center" header-align="center" label="剩余票数">
-                <div class="table-cell-item" slot-scope="scope">
-                    <span>专票：{{ scope.row.surplusZpNum }}</span>
-                    <span>普票：{{ scope.row.surplusPpNum }}</span>
-                </div>
-            </el-table-column>
-            <el-table-column prop="address" align="center" header-align="center" label="预计待领票数">
-                <div class="table-cell-item" slot-scope="scope">
-                    <span>专票：{{ scope.row.forecastWaitZpNum <= 0 ? '--' :  scope.row.forecastWaitZpNum}}</span>
-                    <span>普票：{{ scope.row.forecastWaitPpNum <= 0 ? '--' : scope.row.forecastWaitPpNum}}</span>
-                </div>
-            </el-table-column>
-            <el-table-column prop="address" align="center" header-align="center" label="操作" width="160px">
-                <div class="table-cell-item option" slot-scope="scope">
-                    <router-link :to="`clientInvoiceDetail?serviceCompanyId=${scope.row.serviceCompanyId}&time=${form.time - 0}`" tag="span">查看客户开票明细</router-link>
-                    <span @click="addPiaoClick(scope.row)">添加票量</span>
-                    <span @click="lingQuJiLuBtnClick(scope.row)">领取记录</span>
-                </div>
-            </el-table-column>
-        </el-table>
-        <div class="clearfix" style="padding-top: 10px">
-            <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page.sync="form.page"
-                :page-sizes="[50, 100]"
-                :page-size="form.pageSize"
-                style="float: right"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="tableData.total">
-            </el-pagination>
-        </div>
-        <p style="color: #aaa">注：销售预计开票总数为预测业务流水的最少开票数，且不包含服务费开票数。</p>
-        <el-dialog title="本地上传" :visible.sync="upFilePopIsShow" width="800px">
-            <p>
-                请按照模板填写销售预测数据 <el-button size="mini" @click="upFileDownMoBanBtnClick">下载模板</el-button>*上传销售预测表格
-            </p>
-            <div v-if="inputData.length > 0">
-                <el-table :data="inputData" style="width: 100%">
-                <el-table-column prop="displayname" label="文件名称"></el-table-column>
-                <el-table-column prop="createTime" label="上传时间"></el-table-column>
-                <el-table-column label="操作">
-                    <template slot-scope="scope">
-                    <el-button @click="downloadFileBtnClick(scope.row)" type="text" size="small">下载文件</el-button>
-                    <el-button @click="removeFileBtnClick(scope.row)" type="text" size="small">重新上传</el-button>
-                    </template>
-                </el-table-column>
-                </el-table>
-                <p>注：重新上传会覆盖原文件的数据，请下载原文件，并在原文件的基础上修改数据</p>
-            </div>
-            <el-upload
-                v-else
-                drag
-                ref="popUpload"
-                accept=".xls, .xlsx"
-                action="/api/invoice-web/invoice-monitor/upload-sales-forecast"
-                :on-success="fileUpSuccess"
-                :on-error="upFileErr"
-                :data="{fileName: fileName}"
-                :multiple="false"
-                :on-change="fileChange"
-                :auto-upload="false">
-                <i class="el-icon-upload"></i>
-                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                <div class="el-upload__tip" slot="tip">请上传小于5M的xls或xlsx格式文件</div>
-            </el-upload>
-
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="upFilePopIsShow = false">取 消</el-button>
-                <el-button type="primary" :loading="upLoading" @click="upFilePopOkBtnClick">确 定</el-button>
-            </span>
-        </el-dialog>
-        <el-dialog title="添加票量" :visible.sync="addPiaoPopIsShow" @open="clearAdd" width="40%">
-            <el-form :rules="rulesAdd" :model="formAdd" ref="formAdd">
-                <div class="input-container">
-                    <div class="label dialog-label">月份<span>*</span></div>
-                    <div class="input">
-                        <el-form-item prop="month" size="small">
-                            <el-select v-model="formAdd.month">
-                                <el-option :value="new Date().getMonth() == 0 ? 12 : new Date().getMonth()"></el-option>
-                                <el-option :value="new Date().getMonth() + 1"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </div>
-                </div>
-                <div class="input-container">
-                    <div class="label dialog-label">发票类型<span>*</span></div>
-                    <div class="input">
-                        <el-form-item prop="invoiceType" size="small">
-                            <el-select v-model="formAdd.invoiceType" placeholder="请选择发票类型">
-                                <el-option label="增值税专用发票" value="ZP"></el-option>
-                                <el-option label="增值税普通发票" value="PP"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </div>
-                </div>
-                <div class="input-container">
-                    <div class="label dialog-label">添加票量数量<span>*</span></div>
-                    <div class="input">
-                        <el-form-item prop="addNum" size="small">
-                            <el-input v-model.number="formAdd.addNum"></el-input>
-                        </el-form-item>
-                    </div>
-                </div>
-                <div class="input-container">
-                    <div class="label dialog-label">添加备注<span>*</span></div>
-                    <div class="input">
-                        <el-form-item prop="remark" size="small">
-                            <el-input type="textarea" v-model="formAdd.remark"></el-input>
-                        </el-form-item>
-                    </div>
-                </div>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="addPiaoPopIsShow=false;" size="small">取 消</el-button>
-                <el-button type="primary" @click="addInvoice('formAdd')" size="small">确 定</el-button>
-            </div>
-        </el-dialog>
-        <el-dialog title="领票记录" :visible.sync="lingQuJiLuPopIsShow" width="80%" :lock-scroll="true" style="margin-top:-5vh">
-            <el-form :model="formSelect" ref="formSelect" :inline="true">
-                <el-form-item label="状态" size="small" style="float:left;">
-                    <el-select v-model="formSelect.selectStatus" placeholder="请选择" @change="handleRequest">
-                        <el-option label="全部" value="00"></el-option>
-                        <el-option label="有效" value="20"></el-option>
-                        <el-option label="无效" value="10"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item style="float:right">
-                    <el-button type="primary" @click="handleExcel()" size="small">导表</el-button>
-                </el-form-item>
-            </el-form>
-            <el-table :data="tableInvoice.list" style="width: 100%;text-align:left;">
-                <el-table-column prop="invoiceType" label="发票类型">
-                    <template slot-scope="scope">
-                        <div class="bill common" v-if="scope.row.invoiceType === 'PP'">普票</div>
-                        <div class="bill special" v-else>专票</div>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="addNum" label="领票数量"></el-table-column>
-                <el-table-column prop="maxNum" label="领取后票量" width="100"></el-table-column>
-                <el-table-column prop="remark" label="备注"></el-table-column>
-                <el-table-column prop="operatedBy" label="操作人"></el-table-column>
-                <el-table-column prop="operatedTime" label="操作时间" width="200"></el-table-column>
-                <el-table-column prop="statusName" label="状态"></el-table-column>
-                <el-table-column label="操作">
-                    <template slot-scope="scope" v-if="scope.row.status=='20'">
-                        <el-button @click="handleCancel(scope.row.id)" type="text" size="medium" style="padding:0;">作废
-                        </el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <div style="padding: 20px;text-align: right;background-color: white">
-                <el-pagination
-                    background
-                    @size-change="handleInvoiceSizeChange"
-                    @current-change="handleInvoiceCurrentChange"
-                    :current-page="currentInvoicePage"
-                    :page-sizes="[10, 20, 30, 40]"
-                    :page-size="tableInvoice.pageSize"
-                    layout="total, prev, pager, next, sizes, jumper"
-                    :total="tableInvoice.total">
-                </el-pagination>
-            </div>
-        </el-dialog>
+  <div class="billing-manager-monitoring">
+    <p>落地公司票量预测与监控</p>
+    <el-form
+      :model="form"
+      :inline="true"
+      size="small"
+      class="demo-form-inline"
+      ref="form"
+    >
+      <el-form-item
+        label="时间"
+        prop="time"
+      >
+        <el-date-picker
+          v-model="form.time"
+          type="month"
+          placeholder="选择月"
+        />
+      </el-form-item>
+      <el-form-item
+        label="税优地名称"
+        prop="taxlandingId"
+      >
+        <el-select
+          v-model="form.taxlandingId"
+          filterable
+        >
+          <el-option
+            v-for="e in landingList"
+            :key="e.id"
+            :label="e.taxLandingName"
+            :value="e.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item
+        label="落地公司"
+        prop="serviceCompanyId"
+      >
+        <el-select
+          v-model="form.serviceCompanyId"
+          filterable
+        >
+          <el-option
+            v-for="e in companyList"
+            :key="e.value"
+            :label="e.text"
+            :value="e.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          type="primary"
+          @click="searchBtnClick(true)"
+        >
+          查询
+        </el-button>
+        <el-button @click="$refs.form.resetFields()">
+          清空
+        </el-button>
+      </el-form-item>
+    </el-form>
+    <div>
+      <!-- <el-button type="success" @click="upFilBtnClick">录入销售预测票量</el-button> -->
+      <!-- <el-button type="info" @click="daoChuClick">导出</el-button> -->
     </div>
+    <br>
+    <el-table
+      :data="tableData.list"
+      border
+      style="width: 100%"
+      height="640"
+      class="custom-table"
+    >
+      <el-table-column
+        prop="taxLandingName"
+        align="center"
+        header-align="center"
+        label="税优地名称" 
+      />
+      <el-table-column
+        prop="serviceCompanyName"
+        align="center"
+        header-align="center"
+        label="落地公司名称" 
+      />
+      <el-table-column
+        prop="periodInitialIssueAmount"
+        align="center"
+        header-align="center"
+        label="期初待开金额"
+        width="110px"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.periodInitialIssueAmount | formatMoney }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="payAmount"
+        align="center"
+        header-align="center"
+        label="到款金额"
+        width="110px"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.payAmount | formatMoney }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="issuedAmount"
+        align="center"
+        header-align="center"
+        label="已开金额"
+        width="110px"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.issuedAmount | formatMoney }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="issueAmount"
+        align="center"
+        header-align="center"
+        label="待开金额"
+        width="110px"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.issueAmount | formatMoney }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="periodfinalIssueAmount"
+        align="center"
+        header-align="center"
+        label="期末待开金额"
+        width="110px"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.periodfinalIssueAmount | formatMoney }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="name"
+        align="center"
+        header-align="center"
+        label="期初剩余票量"
+      >
+        <div
+          class="table-cell-item"
+          slot-scope="scope"
+        >
+          <span>专票：{{ scope.row.periodInitialZpNum }}</span>
+          <span>普票：{{ scope.row.periodInitialPpNum }}</span>
+        </div>
+      </el-table-column>
+      <el-table-column
+        prop="address"
+        align="center"
+        header-align="center"
+        label="销售预计开票总数"
+      >
+        <div
+          class="table-cell-item"
+          slot-scope="scope"
+        >
+          <span>专票：{{ scope.row.salesForecastZpNum }}</span>
+          <span>普票：{{ scope.row.salesForecastPpNum }}</span>
+        </div>
+      </el-table-column>
+      <el-table-column
+        prop="address"
+        align="center"
+        header-align="center"
+        label="预计待开票数"
+      >
+        <div
+          class="table-cell-item"
+          slot-scope="scope"
+        >
+          <span>专票：{{ scope.row.waitZpNum }}</span>
+          <span>普票：{{ scope.row.waitPpNum }}</span>
+        </div>
+      </el-table-column>
+      <el-table-column
+        prop="address"
+        align="center"
+        header-align="center"
+        label="已开票数"
+      >
+        <div
+          class="table-cell-item"
+          slot-scope="scope"
+        >
+          <span>专票：{{ scope.row.alreadyZpNum }}</span>
+          <span>普票：{{ scope.row.alreadyPpNum }}</span>
+        </div>
+      </el-table-column>
+      <el-table-column
+        prop="address"
+        align="center"
+        header-align="center"
+        label="剩余票数"
+      >
+        <div
+          class="table-cell-item"
+          slot-scope="scope"
+        >
+          <span>专票：{{ scope.row.surplusZpNum }}</span>
+          <span>普票：{{ scope.row.surplusPpNum }}</span>
+        </div>
+      </el-table-column>
+      <el-table-column
+        prop="address"
+        align="center"
+        header-align="center"
+        label="预计待领票数"
+      >
+        <div
+          class="table-cell-item"
+          slot-scope="scope"
+        >
+          <span>专票：{{ scope.row.forecastWaitZpNum <= 0 ? '--' : scope.row.forecastWaitZpNum }}</span>
+          <span>普票：{{ scope.row.forecastWaitPpNum <= 0 ? '--' : scope.row.forecastWaitPpNum }}</span>
+        </div>
+      </el-table-column>
+      <el-table-column
+        prop="address"
+        align="center"
+        header-align="center"
+        label="操作"
+        width="160px"
+      >
+        <div
+          class="table-cell-item option"
+          slot-scope="scope"
+        >
+          <router-link
+            :to="`clientInvoiceDetail?serviceCompanyId=${scope.row.serviceCompanyId}&time=${form.time - 0}`"
+            tag="span"
+          >
+            查看客户开票明细
+          </router-link>
+          <span @click="addPiaoClick(scope.row)">调整票量</span>
+          <span @click="lingQuJiLuBtnClick(scope.row)">领取记录</span>
+        </div>
+      </el-table-column>
+    </el-table>
+    <div
+      class="clearfix"
+      style="padding-top: 10px"
+    >
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="form.page"
+        :page-sizes="[50, 100]"
+        :page-size="form.pageSize"
+        style="float: right"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="tableData.total"
+      />
+    </div>
+    <p style="color: #aaa">
+      注：销售预计开票总数为预测业务流水的最少开票数，且不包含服务费开票数。
+    </p>
+    <el-dialog
+      title="本地上传"
+      :visible.sync="upFilePopIsShow"
+      width="800px"
+    >
+      <p>
+        请按照模板填写销售预测数据 <el-button
+          size="mini"
+          @click="upFileDownMoBanBtnClick"
+        >
+          下载模板
+        </el-button>*上传销售预测表格
+      </p>
+      <div v-if="inputData.length > 0">
+        <el-table
+          :data="inputData"
+          style="width: 100%"
+        >
+          <el-table-column
+            prop="displayname"
+            label="文件名称"
+          />
+          <el-table-column
+            prop="createTime"
+            label="上传时间" 
+          />
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button
+                @click="downloadFileBtnClick(scope.row)"
+                type="text"
+                size="small"
+              >
+                下载文件
+              </el-button>
+              <el-button
+                @click="removeFileBtnClick(scope.row)"
+                type="text"
+                size="small"
+              >
+                重新上传
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <p>注：重新上传会覆盖原文件的数据，请下载原文件，并在原文件的基础上修改数据</p>
+      </div>
+      <el-upload
+        v-else
+        drag
+        ref="popUpload"
+        accept=".xls, .xlsx"
+        action="/api/invoice-web/invoice-monitor/upload-sales-forecast"
+        :on-success="fileUpSuccess"
+        :on-error="upFileErr"
+        :data="{fileName: fileName}"
+        :multiple="false"
+        :on-change="fileChange"
+        :auto-upload="false"
+      >
+        <i class="el-icon-upload" />
+        <div class="el-upload__text">
+          将文件拖到此处，或<em>点击上传</em>
+        </div>
+        <div
+          class="el-upload__tip"
+          slot="tip"
+        >
+          请上传小于5M的xls或xlsx格式文件
+        </div>
+      </el-upload>
+
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="upFilePopIsShow = false">取 消</el-button>
+        <el-button
+          type="primary"
+          :loading="upLoading"
+          @click="upFilePopOkBtnClick"
+        >确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- <el-dialog
+      title="添加票量"
+      :visible.sync="addPiaoPopIsShow"
+      @open="clearAdd"
+      width="40%"
+    >
+      <el-form
+        :rules="rulesAdd"
+        :model="formAdd"
+        ref="formAdd"
+      >
+        <div class="input-container">
+          <div class="label dialog-label">
+            月份<span>*</span>
+          </div>
+          <div class="input">
+            <el-form-item
+              prop="month"
+              size="small"
+            >
+              <el-select v-model="formAdd.month">
+                <el-option :value="new Date().getMonth() == 0 ? 12 : new Date().getMonth()" />
+                <el-option :value="new Date().getMonth() + 1" />
+              </el-select>
+            </el-form-item>
+          </div>
+        </div>
+        <div class="input-container">
+          <div class="label dialog-label">
+            发票类型<span>*</span>
+          </div>
+          <div class="input">
+            <el-form-item
+              prop="invoiceType"
+              size="small"
+            >
+              <el-select
+                v-model="formAdd.invoiceType"
+                placeholder="请选择发票类型"
+              >
+                <el-option
+                  label="增值税专用发票"
+                  value="ZP"
+                />
+                <el-option
+                  label="增值税普通发票"
+                  value="PP" 
+                />
+              </el-select>
+            </el-form-item>
+          </div>
+        </div>
+        <div class="input-container">
+          <div class="label dialog-label">
+            添加票量数量<span>*</span>
+          </div>
+          <div class="input">
+            <el-form-item
+              prop="addNum"
+              size="small"
+            >
+              <el-input v-model.number="formAdd.addNum" />
+            </el-form-item>
+          </div>
+        </div>
+        <div class="input-container">
+          <div class="label dialog-label">
+            添加备注<span>*</span>
+          </div>
+          <div class="input">
+            <el-form-item
+              prop="remark"
+              size="small"
+            >
+              <el-input
+                type="textarea"
+                v-model="formAdd.remark" 
+              />
+            </el-form-item>
+          </div>
+        </div>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          @click="addPiaoPopIsShow=false;"
+          size="small"
+        >
+          取 消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="addInvoice('formAdd')"
+          size="small"
+        >
+          确 定
+        </el-button>
+      </div>
+    </el-dialog> -->
+    <adjust-invoice-amount
+      :show.sync="addPiaoPopIsShow"
+      :id="formAdd.id"
+      @success="adjustInvoice"
+    />
+    <el-dialog
+      title="领票记录"
+      :visible.sync="lingQuJiLuPopIsShow"
+      width="80%"
+      :lock-scroll="true"
+      style="margin-top:-5vh"
+    >
+      <el-form
+        :model="formSelect"
+        ref="formSelect"
+        :inline="true"
+      >
+        <el-form-item
+          label="状态"
+          size="small"
+          style="float:left;"
+        >
+          <el-select
+            v-model="formSelect.selectStatus"
+            placeholder="请选择"
+            @change="handleRequest"
+          >
+            <el-option
+              label="全部"
+              value="00"
+            />
+            <el-option
+              label="有效"
+              value="20"
+            />
+            <el-option
+              label="无效"
+              value="10"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item style="float:right">
+          <el-button
+            type="primary"
+            @click="handleExcel()"
+            size="small"
+          >
+            导表
+          </el-button>
+        </el-form-item>
+      </el-form>
+      <el-table
+        :data="tableInvoice.list"
+        style="width: 100%;text-align:left;"
+      >
+        <el-table-column
+          prop="invoiceType"
+          label="发票类型"
+        >
+          <template slot-scope="scope">
+            <div
+              class="bill common"
+              v-if="scope.row.invoiceType === 'PP'"
+            >
+              普票
+            </div>
+            <div
+              class="bill special"
+              v-else
+            >
+              专票
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="addNum"
+          label="领票数量" 
+        />
+        <el-table-column
+          prop="operate"
+          label="调整类型" 
+        >
+          <template slot-scope="scope">
+            <span v-if="scope.row.operate === 'add'">添加</span>
+            <span v-if="scope.row.operate === 'sub'">减少</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="maxNum"
+          label="领取后票量"
+          width="100"
+        />
+        <el-table-column
+          prop="remark"
+          label="备注" 
+        />
+        <el-table-column
+          prop="operatedBy"
+          label="操作人" 
+        />
+        <el-table-column
+          prop="operatedTime"
+          label="操作时间"
+          width="200"
+        />
+        <el-table-column
+          prop="statusName"
+          label="状态"
+        />
+        <el-table-column label="操作">
+          <template
+            slot-scope="scope"
+            v-if="scope.row.status=='20'"
+          >
+            <el-button
+              @click="handleCancel(scope.row.id)"
+              type="text"
+              size="medium"
+              style="padding:0;"
+            >
+              作废
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div style="padding: 20px;text-align: right;background-color: white">
+        <el-pagination
+          background
+          @size-change="handleInvoiceSizeChange"
+          @current-change="handleInvoiceCurrentChange"
+          :current-page="currentInvoicePage"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="tableInvoice.pageSize"
+          layout="total, prev, pager, next, sizes, jumper"
+          :total="tableInvoice.total"
+        />
+      </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
   import {post, get} from '../../store/api';
   import {showNotify} from '../../plugin/utils-notify';
+  import adjustInvoiceAmount from '../../pageComponent/adjustInvoiceAmount.vue';
+
   const phoneReg = /^[1-9]\d*$/;
   const validatenumber = (rule, value, callback) => {
     if (value == '') {
@@ -264,7 +609,8 @@
     }
   };
   export default {
-    name: "monitoring",
+    name: "Monitoring",
+    components: {adjustInvoiceAmount},
     data() {
         return {
             form: {
@@ -508,6 +854,10 @@
         clearAdd() {
             this.$refs.formAdd && this.$refs.formAdd.resetFields()
             this.formAdd.month = new Date().getMonth() + 1
+        },
+        adjustInvoice() {
+            this.addPiaoPopIsShow = false;
+            this.searchBtnClick()
         }
     }
   }

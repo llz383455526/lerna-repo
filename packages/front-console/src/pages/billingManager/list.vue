@@ -1,125 +1,360 @@
 <template>
   <div style="background-color:#fff;padding:15px;">
-    <div style="margin-bottom:30px;">落地公司开票信息管理</div>
-    <el-form :inline="true" :model="formSearch" :rules="formSearch" ref="formSearch">
-      <el-form-item label="落地公司名称" size="small" prop="companyName">
-        <el-input v-model="formSearch.companyName"></el-input>
+    <div style="margin-bottom:30px;">
+      落地公司开票信息管理
+    </div>
+    <el-form
+      :inline="true"
+      :model="formSearch"
+      :rules="formSearch"
+      ref="formSearch"
+    >
+      <el-form-item
+        label="落地公司名称"
+        size="small"
+        prop="companyName"
+      >
+        <el-input v-model="formSearch.companyName" />
       </el-form-item>
-      <el-form-item label="状态" size="small" prop="companyName">
-        <el-select v-model="formSearch.status" placeholder="请选择状态">
-          <el-option label="有效" value="1"></el-option>
-          <el-option label="无效" value="0"></el-option>
+      <el-form-item
+        label="状态"
+        size="small"
+        prop="companyName"
+      >
+        <el-select
+          v-model="formSearch.status"
+          placeholder="请选择状态"
+        >
+          <el-option
+            label="有效"
+            value="1"
+          />
+          <el-option
+            label="无效"
+            value="0"
+          />
         </el-select>
       </el-form-item>
       <el-form-item style="margin-top: -4px">
-        <el-button type="primary" @click="search" size="small">查询</el-button>
-        <el-button @click="search" size="small">清除</el-button>
+        <el-button
+          type="primary"
+          @click="search"
+          size="small"
+        >
+          查询
+        </el-button>
+        <el-button
+          @click="search"
+          size="small"
+        >
+          清除
+        </el-button>
       </el-form-item>
     </el-form>
-    <el-button size="small" @click="routerPush('/main/billingManager/create')">添加落地公司信息</el-button>
+    <el-button
+      size="small"
+      @click="routerPush('/main/billingManager/create')"
+    >
+      添加落地公司信息
+    </el-button>
 
-    <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
-      <el-table-column label="操作" width="70" fixed>
+    <el-table
+      :data="tableList.list"
+      style="width: 100%;margin-top: 20px;"
+    >
+      <el-table-column
+        label="操作"
+        width="70"
+        fixed
+      >
         <template slot-scope="scope">
-          <el-button @click="handleEdit(scope.row.id)" type="text" size="medium" style="padding:0;">修改
+          <el-button
+            @click="handleEdit(scope.row.id)"
+            type="text"
+            size="medium"
+            style="padding:0;"
+          >
+            修改
           </el-button>
-          <el-button @click="enabledBtnClick(scope.row)" type="text" size="medium" style="padding:0;margin-left: 0">
+          <el-button
+            @click="enabledBtnClick(scope.row)"
+            type="text"
+            size="medium"
+            style="padding:0;margin-left: 0"
+          >
             {{ scope.row.status === '1' ? '禁用' : '启用' }}
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="状态" width="70">
+      <el-table-column
+        prop="name"
+        label="状态"
+        width="70"
+      >
         <template slot-scope="scope">
           {{ scope.row.status === '1' ? '有效' : '无效' }}
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="企业名称" width="220"></el-table-column>
-      <el-table-column prop="taxIdcd" label="纳税人识别号" width="200"></el-table-column>
-      <el-table-column prop="addr" label="企业所在地" width="500"></el-table-column>
-      <el-table-column prop="payee" label="收款人"></el-table-column>
-      <el-table-column prop="checker" label="复核"></el-table-column>
-      <el-table-column prop="drawer" label="开票人"></el-table-column>
-      <el-table-column prop="ppMaxAmount" label="普票最大限额" width="120"></el-table-column>
-      <el-table-column prop="zpMaxAmount" label="专票最大限额" width="120"></el-table-column>
-      <el-table-column prop="phone" label="电话" width="150"></el-table-column>
-      <el-table-column prop="bankName" label="开户行" width="150"></el-table-column>
-      <el-table-column prop="bankAccount" label="银行账号" width="200"></el-table-column>
-      <el-table-column prop="supportSelfInvoice" label="是否支持企业自主开票" width="200"></el-table-column>
+      <el-table-column
+        prop="name"
+        label="企业名称"
+        width="220"
+      />
+      <el-table-column
+        prop="taxIdcd"
+        label="纳税人识别号"
+        width="200"
+      />
+      <el-table-column
+        prop="addr"
+        label="企业所在地"
+        width="500"
+      />
+      <el-table-column
+        prop="payee"
+        label="收款人"
+      />
+      <el-table-column
+        prop="checker"
+        label="复核" 
+      />
+      <el-table-column
+        prop="drawer"
+        label="开票人" 
+      />
+      <el-table-column
+        prop="ppMaxAmount"
+        label="普票最大限额"
+        width="120"
+      />
+      <el-table-column
+        prop="zpMaxAmount"
+        label="专票最大限额"
+        width="120" 
+      />
+      <el-table-column
+        prop="phone"
+        label="电话"
+        width="150" 
+      />
+      <el-table-column
+        prop="bankName"
+        label="开户行"
+        width="150" 
+      />
+      <el-table-column
+        prop="bankAccount"
+        label="银行账号"
+        width="200"
+      />
+      <el-table-column
+        prop="supportSelfInvoice"
+        label="是否支持企业自主开票"
+        width="200" 
+      />
     </el-table>
-    <ayg-pagination v-if="tableList.total" :total="tableList.total"
-                    v-on:handleSizeChange="handleSizeChange"
-                    v-on:handleCurrentChange="handleCurrentChange" :currentPage="currentPage"></ayg-pagination>
+    <ayg-pagination
+      v-if="tableList.total"
+      :total="tableList.total"
+      @handleSizeChange="handleSizeChange"
+      @handleCurrentChange="handleCurrentChange"
+      :current-page="currentPage"
+    />
     <!-- 增加票量弹窗 s-->
-    <el-dialog title="添加票量" :visible.sync="dialogAddInvoiceVisible" width="40%">
-      <el-form :rules="rulesAdd" :model="formAdd" ref="formAdd">
+    <el-dialog
+      title="添加票量"
+      :visible.sync="dialogAddInvoiceVisible"
+      width="40%"
+    >
+      <el-form
+        :rules="rulesAdd"
+        :model="formAdd"
+        ref="formAdd"
+      >
         <div class="input-container">
-          <div class="label dialog-label">发票类型<span>*</span>
+          <div class="label dialog-label">
+            发票类型<span>*</span>
           </div>
           <div class="input">
-            <el-form-item prop="selectInvoiceType" size="small">
-              <el-select v-model="formAdd.selectInvoiceType" placeholder="请选择发票类型">
-                <el-option label="增值税专用发票" value="ZP"></el-option>
-                <el-option label="增值税普通发票" value="PP"></el-option>
+            <el-form-item
+              prop="selectInvoiceType"
+              size="small"
+            >
+              <el-select
+                v-model="formAdd.selectInvoiceType"
+                placeholder="请选择发票类型"
+              >
+                <el-option
+                  label="增值税专用发票"
+                  value="ZP" 
+                />
+                <el-option
+                  label="增值税普通发票"
+                  value="PP" 
+                />
               </el-select>
             </el-form-item>
           </div>
         </div>
         <div class="input-container">
-          <div class="label dialog-label">添加票量数量<span>*</span>
+          <div class="label dialog-label">
+            添加票量数量<span>*</span>
           </div>
           <div class="input">
-            <el-form-item prop="addInvoiceAmount" size="small">
-              <el-input v-model.number="formAdd.addInvoiceAmount"></el-input>
+            <el-form-item
+              prop="addInvoiceAmount"
+              size="small"
+            >
+              <el-input v-model.number="formAdd.addInvoiceAmount" />
             </el-form-item>
           </div>
         </div>
         <div class="input-container">
-          <div class="label dialog-label">添加备注<span>*</span>
+          <div class="label dialog-label">
+            添加备注<span>*</span>
           </div>
           <div class="input">
-            <el-form-item prop="addInvoiceComment" size="small">
-              <el-input type="textarea" v-model="formAdd.addInvoiceComment"></el-input>
+            <el-form-item
+              prop="addInvoiceComment"
+              size="small"
+            >
+              <el-input
+                type="textarea"
+                v-model="formAdd.addInvoiceComment" 
+              />
             </el-form-item>
           </div>
         </div>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogAddInvoiceVisible=false;" size="small">取 消</el-button>
-        <el-button type="primary" @click="addInvoice('formAdd')" size="small">确 定</el-button>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          @click="dialogAddInvoiceVisible=false;"
+          size="small"
+        >
+          取 消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="addInvoice('formAdd')"
+          size="small"
+        >
+          确 定
+        </el-button>
       </div>
     </el-dialog>
     <!-- 增加票量弹窗 e-->
     <!-- 领票记录弹窗 s-->
-    <el-dialog title="领票记录" :visible.sync="dialogInvoicelistVisible" width="80%" @close="closeInvoiceDialog"
-               :lock-scroll="true" style="margin-top:-5vh">
-      <el-form :model="formSelect" ref="formSelect" :inline="true">
-        <el-form-item label="状态" size="small" style="float:left;">
-          <el-select v-model="formSelect.selectStatus" placeholder="请选择" @change="handleRequest()">
-            <el-option label="全部" value="00"></el-option>
-            <el-option label="有效" value="20"></el-option>
-            <el-option label="无效" value="10"></el-option>
+    <el-dialog
+      title="票量调整记录"
+      :visible.sync="dialogInvoicelistVisible"
+      width="80%"
+      @close="closeInvoiceDialog"
+      :lock-scroll="true"
+      style="margin-top:-5vh"
+    >
+      <el-form
+        :model="formSelect"
+        ref="formSelect"
+        :inline="true"
+      >
+        <el-form-item
+          label="状态"
+          size="small"
+          style="float:left;"
+        >
+          <el-select
+            v-model="formSelect.selectStatus"
+            placeholder="请选择"
+            @change="handleRequest()"
+          >
+            <el-option
+              label="全部"
+              value="00"
+            />
+            <el-option
+              label="有效"
+              value="20"
+            />
+            <el-option
+              label="无效"
+              value="10" 
+            />
           </el-select>
         </el-form-item>
         <el-form-item style="float:right">
-          <el-button type="primary" @click="handleExcel()" size="small">导表</el-button>
+          <el-button
+            type="primary"
+            @click="handleExcel()"
+            size="small"
+          >
+            导表
+          </el-button>
         </el-form-item>
       </el-form>
-      <el-table :data="tableInvoiceList.list" style="width: 100%;text-align:left;">
-        <el-table-column prop="invoiceType" label="发票类型">
+      <el-table
+        :data="tableInvoiceList.list"
+        style="width: 100%;text-align:left;"
+      >
+        <el-table-column
+          prop="invoiceType"
+          label="发票类型"
+        >
           <template slot-scope="scope">
-            <div class="bill common" v-if="scope.row.invoiceType.indexOf('普票') > -1">普票</div>
-            <div class="bill special" v-else>专票</div>
+            <div
+              class="bill common"
+              v-if="scope.row.invoiceType.indexOf('普票') > -1"
+            >
+              普票
+            </div>
+            <div
+              class="bill special"
+              v-else
+            >
+              专票
+            </div>
           </template>
         </el-table-column>
-        <el-table-column prop="addNum" label="领票数量"></el-table-column>
-        <el-table-column prop="maxNum" label="领取后票量" width="100"></el-table-column>
-        <el-table-column prop="remark" label="备注"></el-table-column>
-        <el-table-column prop="operatedBy" label="操作人"></el-table-column>
-        <el-table-column prop="operatedTime" label="操作时间" width="200"></el-table-column>
-        <el-table-column prop="statusName" label="状态"></el-table-column>
+        <el-table-column
+          prop="addNum"
+          label="调整数量"
+        />
+        <el-table-column
+          prop="maxNum"
+          label="调整后票量"
+          width="100"
+        />
+        <el-table-column
+          prop="remark"
+          label="调整原因" 
+        />
+        <el-table-column
+          prop="operatedBy"
+          label="操作人" 
+        />
+        <el-table-column
+          prop="operatedTime"
+          label="操作时间"
+          width="200" 
+        />
+        <el-table-column
+          prop="statusName"
+          label="状态" 
+        />
         <el-table-column label="操作">
-          <template slot-scope="scope" v-if="scope.row.status=='20'">
-            <el-button @click="handleCancel(scope.row.id)" type="text" size="medium" style="padding:0;">作废
+          <template
+            slot-scope="scope"
+            v-if="scope.row.status=='20'"
+          >
+            <el-button
+              @click="handleCancel(scope.row.id)"
+              type="text"
+              size="medium"
+              style="padding:0;"
+            >
+              作废
             </el-button>
           </template>
         </el-table-column>
@@ -134,8 +369,8 @@
           :page-sizes="[10, 20, 30, 40]"
           :page-size="pageInvoiceSize || 10"
           layout="total, prev, pager, next, sizes, jumper"
-          :total="tableInvoiceList.total">
-        </el-pagination>
+          :total="tableInvoiceList.total"
+        />
       </div>
     </el-dialog>
     <!-- 领票记录弹窗 e-->

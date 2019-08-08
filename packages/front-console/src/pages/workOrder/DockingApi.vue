@@ -1,6 +1,6 @@
 <template>
-    <div class="main">
-        <!-- <div class="title">待受理</div>
+  <div class="main">
+    <!-- <div class="title">待受理</div>
         <el-table :data="[]">
             <el-table-column label="工单单号"></el-table-column>
             <el-table-column label="工单状态"></el-table-column>
@@ -16,40 +16,46 @@
             <el-table-column label="创建时间"></el-table-column>
             <el-table-column label="创建人"></el-table-column>
         </el-table> -->
-        <el-button @click="$router.back()">账户开通  / 技术对接</el-button>
-        <el-steps :active="active" align-center class="mb20">
-            <el-step v-for="e in stepList" :key="e.activityId" :title="e.activityName" :description="e.userName"></el-step>
-        </el-steps>
-        <!-- <el-steps :active="active" align-center class="mb20">
+    <el-button @click="$router.back()">账户开通 / 技术对接</el-button>
+    <el-steps :active="active"
+              align-center
+              class="mb20">
+      <el-step v-for="e in stepList"
+               :key="e.activityId"
+               :title="e.activityName"
+               :description="e.userName"></el-step>
+    </el-steps>
+    <!-- <el-steps :active="active" align-center class="mb20">
             <el-step title="创建" description="销售部：陈英"></el-step>
             <el-step title="技术对接" description="产研中心：陈冰"></el-step>
             <el-step title="商户审核" description="交付部：叶家宝"></el-step>
         </el-steps> -->
-        <div class="title">基本信息</div>
-        <el-row>
-            <el-col :span="12">企业名称：{{msg.fullName}}</el-col>
-            <el-col :span="12">Company ID：{{msg.id}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="12">企业简称：{{msg.name}}</el-col>
-            <el-col :span="12">创建人：{{msg.createByName}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col class="flex" :span="12">代理商名称：{{msg.agentCompanyName}}</el-col>
-            <el-col :span="12">更新人：{{msg.updateByName}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="12">客户类型：{{msg.originalTypeName}}</el-col>
-            <el-col :span="12">更新时间：{{msg.updateTime}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="12">客户归属：{{msg.originalName}}</el-col>
-            <el-col :span="12">注册日期：{{msg.registerDate}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="12">企业类型：{{msg.originalTypeName}}</el-col>
-        </el-row>
-        <!-- <template v-if="active == 1">
+    <div class="title">基本信息</div>
+    <el-row>
+      <el-col :span="12">企业名称：{{msg.fullName}}</el-col>
+      <el-col :span="12">Company ID：{{msg.id}}</el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">企业简称：{{msg.name}}</el-col>
+      <el-col :span="12">创建人：{{msg.createByName}}</el-col>
+    </el-row>
+    <el-row>
+      <el-col class="flex"
+              :span="12">代理商名称：{{msg.agentCompanyName}}</el-col>
+      <el-col :span="12">更新人：{{msg.updateByName}}</el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">客户类型：{{msg.originalTypeName}}</el-col>
+      <el-col :span="12">更新时间：{{msg.updateTime}}</el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">客户归属：{{msg.originalName}}</el-col>
+      <el-col :span="12">注册日期：{{msg.registerDate}}</el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">企业类型：{{msg.originalTypeName}}</el-col>
+    </el-row>
+    <!-- <template v-if="active == 1">
             <el-row>
                 <el-col :span="12">关联销售：伍淑宜</el-col>
             </el-row>
@@ -76,89 +82,124 @@
             <div class="title">已上线商户</div>
             <app-list :companyId="row.customerCompanyId"></app-list>
         </template> -->
-        <!-- <template v-else> -->
-        <el-row>
-            <el-col :span="12">关联销售：<el-button class="mt20" size="small" type="primary" @click="addSale">添加</el-button></el-col>
-        </el-row>
-        <el-table :data="saleList">
-            <el-table-column label="姓名" prop="name"></el-table-column>
-            <el-table-column label="手机号" prop="mobilephone"></el-table-column>
-            <el-table-column label="操作">
+    <!-- <template v-else> -->
+    <el-row>
+      <el-col :span="12">关联销售：
+        <!-- <el-button class="mt20" size="small" type="primary" @click="addSale">添加</el-button> -->
+      </el-col>
+    </el-row>
+    <el-table :data="saleList">
+      <el-table-column label="姓名"
+                       prop="name"></el-table-column>
+      <el-table-column label="手机号"
+                       prop="mobilephone"></el-table-column>
+      <!-- <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button type="text" @click="deleteSale(scope.$index)">删除</el-button>
                 </template>
-            </el-table-column>
-        </el-table>
-        <el-row>
-            <el-col :span="12">关联交付：<el-button class="mt20" size="small" type="primary" @click="chooseDelivery">添加</el-button></el-col>
-        </el-row>
-        <el-table :data="deliverList">
-            <el-table-column label="姓名" prop="name"></el-table-column>
-            <el-table-column label="手机号" prop="mobilephone"></el-table-column>
-            <el-table-column label="操作">
-                <template slot-scope="scope">
-                    <el-button type="text" @click="deleteDelivery(scope.$index)">删除</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
-        <div class="red mb20" v-if="!deliverList.length">*关联交付未配置</div>
-        <!-- </template> -->
-        <div class="title">申请上线</div>
-        <el-row>
-            <el-col :span="24">商户名称：{{appMsg.appName}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="24">商户appid：{{appMsg.appId}}</el-col>
-        </el-row>
-        <el-row>
-            <el-col class="flex" :span="24">服务公司：
-                <div>
-                    <template v-if="appMsg.serviceCompanyList">
-                        <el-checkbox v-for="e in appMsg.serviceCompanyList" :key="e.serviceCompanyId" checked disabled>{{e.serviceCompanyName}}</el-checkbox>
-                    </template>
-                </div>
-            </el-col>
-        </el-row>
-        <template v-if="appMsg.isFromOutApp == 1">
-            <div class="title">appid配置（客户提供</div>
-            <el-row>
-                <el-col :span="24">客户异步通知appId：{{appMsg.notifyAppId}}</el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="24">Rsa公钥：{{appMsg.appRsaPublickKey}}</el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="24">IP白名单（固定IP）：{{appMsg.allowIp}}</el-col>
-            </el-row>
-            <el-row>
-                <el-col :span="24">工资单笔异步通知接口：{{appMsg.notifyUrl}}</el-col>
-            </el-row>
+            </el-table-column> -->
+    </el-table>
+    <el-row>
+      <el-col :span="12">关联交付：<el-button class="mt20"
+                   size="small"
+                   type="primary"
+                   @click="chooseDelivery">添加</el-button>
+      </el-col>
+    </el-row>
+    <el-table :data="deliverList">
+      <el-table-column label="姓名"
+                       prop="name"></el-table-column>
+      <el-table-column label="手机号"
+                       prop="mobilephone"></el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button type="text"
+                     @click="deleteDelivery(scope.$index)">删除</el-button>
         </template>
-        <!-- 添加渠道 -->
-        <payment-channel class="mt20" :data="appMsg" :appId="row.businessId" :query="getAppDetail" ref="paymentChannel"></payment-channel>
-        <div class="red mb20" v-if="withoutList.length">*
-            <span class="mr5" v-for="e in withoutList">{{e.serviceCompanyName}}</span>
-            支付渠道未配置</div>
-        <!-- 电子签约 -->
-        <div class="title">电子签约合同</div>
-        <contract-manager-list :list="contractList" :query="getContractList"></contract-manager-list>
-        <div class="red mb20" v-if="contractList && !contractList.length">*{{msg.fullName}} 电子签约合同缺失</div>
-        <!-- 发放记录 -->
-        <!-- <template v-if="active == 1">
+      </el-table-column>
+    </el-table>
+    <div class="red mb20"
+         v-if="!deliverList.length">*关联交付未配置</div>
+    <!-- </template> -->
+    <div class="title">申请上线</div>
+    <el-row>
+      <el-col :span="24">商户名称：{{appMsg.appName}}</el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="24">商户appid：{{appMsg.appId}}</el-col>
+    </el-row>
+    <el-row>
+      <el-col class="flex"
+              :span="24">服务公司：
+        <div>
+          <template v-if="appMsg.serviceCompanyList">
+            <el-checkbox v-for="e in appMsg.serviceCompanyList"
+                         :key="e.serviceCompanyId"
+                         checked
+                         disabled>{{e.serviceCompanyName}}</el-checkbox>
+          </template>
+        </div>
+      </el-col>
+    </el-row>
+    <template v-if="appMsg.isFromOutApp == 1">
+      <div class="title">appid配置（客户提供</div>
+      <el-row>
+        <el-col :span="24">客户异步通知appId：{{appMsg.notifyAppId}}</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">Rsa公钥：{{appMsg.appRsaPublickKey}}</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">IP白名单（固定IP）：{{appMsg.allowIp}}</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">工资单笔异步通知接口：{{appMsg.notifyUrl}}</el-col>
+      </el-row>
+    </template>
+    <!-- 添加渠道 -->
+    <payment-channel class="mt20"
+                     :data="appMsg"
+                     :appId="row.businessId"
+                     :query="getAppDetail"
+                     ref="paymentChannel"></payment-channel>
+    <div class="red mb20"
+         v-if="withoutList.length">*
+      <span class="mr5"
+            v-for="(e, key) in withoutList"
+            :key="key">{{e.serviceCompanyName}}</span>
+      支付渠道未配置</div>
+    <!-- 电子签约 -->
+    <div class="title">电子签约合同</div>
+    <contract-manager-list :list="contractList"
+                           :query="getContractList"></contract-manager-list>
+    <div class="red mb20"
+         v-if="contractList && !contractList.length">*{{msg.fullName}} 电子签约合同缺失</div>
+    <!-- 发放记录 -->
+    <!-- <template v-if="active == 1">
             <el-button size="small" type="primary" @click="exportXls">导出</el-button>
             <pay-order-list :formSearch="payOrderForm" ref="payOrderList"></pay-order-list>
         </template>
         <template v-else> -->
-        <sign-list @result="getSignListLength" ref="signList"></sign-list>
-        <div class="red mb20" v-if="!signListLength">*{{msg.fullName}} 合同附件缺失</div>
-        <!-- </template> -->
-        <div class="footer mt20">
-            <el-button :class="!deliverList.length || withoutList.length || (contractList && !contractList.length) || !signListLength ? 'disable' : ''" v-if="active != 3" size="small" type="primary" @click="showDredgeAccount">下一步</el-button>
-        </div>
-        <dredge-account @change="accountChange" :row="row" ref="dredgeAccount"></dredge-account>
-        <select-sale @result="saleResult" ref="selectSale"></select-sale>
-        <select-delivery @result="deliveryResult" ref="selectDelivery"></select-delivery>
+    <sign-list @result="getSignListLength"
+               ref="signList"></sign-list>
+    <div class="red mb20"
+         v-if="!signListLength">*{{msg.fullName}} 合同附件缺失</div>
+    <!-- </template> -->
+    <div class="footer mt20">
+      <el-button :class="!deliverList.length || withoutList.length || (contractList && !contractList.length) || !signListLength ? 'disable' : ''"
+                 v-if="active != 3"
+                 size="small"
+                 type="primary"
+                 @click="showDredgeAccount">下一步</el-button>
     </div>
+    <dredge-account @change="accountChange"
+                    :row="row"
+                    ref="dredgeAccount"></dredge-account>
+    <select-sale @result="saleResult"
+                 ref="selectSale"></select-sale>
+    <select-delivery @result="deliveryResult"
+                     ref="selectDelivery"></select-delivery>
+  </div>
 </template>
 <script>
 import { get, post, importPost } from "../../store/api"
@@ -372,30 +413,30 @@ export default {
   padding: 20px 30px;
 }
 .title {
-    font-weight: bold;
-    margin: 20px 0px;
+  font-weight: bold;
+  margin: 20px 0px;
 }
 .mb20 {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 .mt20 {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 .footer {
-    display: flex;
-    justify-content: flex-end;
+  display: flex;
+  justify-content: flex-end;
 }
 .red {
-    color: red;
+  color: red;
 }
 .disable {
-    cursor: not-allowed;
-    filter: grayscale(0.8);
+  cursor: not-allowed;
+  filter: grayscale(0.8);
 }
 .flex {
-    display: flex;
+  display: flex;
 }
 .mr5 {
-    margin-right: 5px;
+  margin-right: 5px;
 }
 </style>

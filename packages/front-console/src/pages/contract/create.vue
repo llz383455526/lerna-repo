@@ -134,7 +134,7 @@
               <el-radio v-for="e in originals" v-model="contractForm.original" :key="e.value" :label="e.value" disabled>{{e.text}}</el-radio>
             </el-form-item>
             <h4 class="ml50 mt50">合同文件</h4>
-            <el-upload
+            <!-- <el-upload
                 class="upload-demo ml50"
                 :action="uploadUrl"
                 :on-success="handleSuccess"
@@ -146,7 +146,7 @@
                 :show-file-list="false"
                 :file-list="fileList">
                 <el-button size="small" type="primary">点击上传</el-button>
-            </el-upload>
+            </el-upload> -->
             <div class="pl50 mb50">
                 <el-table :data="fileList">
                     <el-table-column prop="fileName" label="文件名称"></el-table-column>

@@ -1,305 +1,664 @@
 <template>
-    <div class="r_main">
-        <div style="margin:30px 20px;font-size:20px">{{msg.serviceCompanyInfo.name}}<el-button size="small" @click="back" style="margin-left:30px">返回</el-button></div>
-        <div class="content">
-            <el-card class="box-card">
-                <div slot="header">
-                    <span>基本信息</span>
-                    <el-button type="primary" style="margin-left: 20px;" size="small" @click="routerPush('/main/landingCompany/create')">编辑</el-button>
-                </div>
-                <div class="text">
-                    <div class="box">
-                        <el-row :gutter="20">
-                            <el-col :span="10">
-                                <el-col :span="8" class="right">公司全称</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.name}}</el-col>
-                            </el-col>
-                            <el-col :span="10">
-                                <el-col :span="8" class="right">支持开票类型</el-col>
-                                <el-col :span="15"><span>{{msg.serviceCompanyInfo.supportInvoiceTypeName}}</span></el-col>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">
-                            <el-col :span="10">
-                                <el-col :span="8" class="right">公司简称</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.shortName}}</el-col>
-                            </el-col>
-                            <el-col :span="10">
-                                <el-col :span="8" class="right">法人姓名</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.corporateName}}</el-col>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">
-                            <el-col :span="10">
-                                <el-col :span="8" class="right">所在省市</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.provinceName}} {{msg.serviceCompanyInfo.cityName}}</el-col>
-                            </el-col>
-                            <el-col :span="10">
-                                <el-col :span="8" class="right">法人证件号</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.corporateIdentity}}</el-col>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">
-                            <el-col :span="10">
-                                <el-col :span="8" class="right">是否直营</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.directName}}</el-col>
-                            </el-col>
-                            <el-col :span="10">
-                                <el-col :span="8" class="right">纳税人识别号</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.taxIdcd}}</el-col>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">
-                            <el-col :span="10">
-                                <el-col :span="8" class="right">负责人</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.masterName}}</el-col>
-                            </el-col>
-                            <el-col :span="10">
-                                <el-col :span="8" class="right">公司详细地址</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.address}}</el-col>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">
-                            <el-col :span="10">
-                                <el-col :span="8" class="right">注册状态</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.registeredName}}</el-col>
-                            </el-col>
-                            <el-col :span="10">
-                                <el-col :span="8" class="right">联系电话</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.telephone}}</el-col>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">
-                            <el-col :span="10">
-                                <el-col :span="8" class="right">注册日期</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.registrationAt}}</el-col>
-                            </el-col>
-                            <el-col :span="10">
-                                <el-col :span="8" class="right">公司开户行</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.bankName}}</el-col>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">
-                            <el-col :span="10">
-                                <el-col :span="8" class="right">银行账号</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.bankAccount}}</el-col>
-                            </el-col>
-                            <el-col :span="10">
-                                <el-col :span="8" class="right">税优地</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.taxLandingName}}</el-col>
-                            </el-col>
-                        </el-row>
-                        <el-row :gutter="20">
-                            <el-col :span="10">
-                                <el-col :span="10" class="right">是否有业务（用于合同）</el-col>
-                                <el-col :span="10">{{msg.serviceCompanyInfo.businessedName}}</el-col>
-                            </el-col>
-                        </el-row>
-                    </div>
-                </div>
-            </el-card>
-            <!-- 公司业务状态及备注 s-->
-            <el-card class="box-card">
-                <div slot="header">
-                    <span>公司业务状态及备注</span>
-                </div>
-                <div class="text">
-                    <el-tabs v-model="checkValue">
-                        <el-tab-pane label="票据状态" name="first">
-                            <div v-if="this.invoice">
-                                <el-button type="primary" style="margin-left: 20px;" size="small" @click="dialogAddInvoiceVisible = true">添加票量</el-button>
-                                <el-button type="primary" style="margin-left: 20px;" size="small" @click="dialogInvoicelistVisible = true;handleRequest();">领票记录</el-button>
-                                <el-button type="primary" style="margin-left: 20px;" size="small" @click="handleEdit">修改</el-button>
-                                <div style="width:60%">
-                                    <p class="fp" style="margin-left: 20px;">增值税普通发票量</p>
-                                    <p class="fp">剩余票量:{{invoice.surplusPpNum}}</p>
-                                    <p class="fp">最大限额：{{invoice.ppMaxAmount}}</p><br/>
-                                    <p class="fp" style="margin-left: 20px;">增值税专用发票量</p>
-                                    <p class="fp">剩余票量:{{invoice.surplusZpNum}}</p>
-                                    <p class="fp">最大限额：{{invoice.zpMaxAmount}}</p>
-                                </div>
-                            </div>
-                            <div v-else>
-                                <el-button type="primary" style="margin-left: 20px;" size="small" @click="addLanding">添加落地公司信息</el-button>
-                            </div>
-                        </el-tab-pane>
-                        <el-tab-pane label="穿行测试" name="second">
-                            <el-button type="primary" style="margin-left: 20px;margin-bottom:20px" size="small" @click="handleChangeTest">{{testStatusWord}}</el-button>
-                            <br/>
-                            <el-form v-model="testForm" label-width="80px">
-                                <el-form-item v-for="(e, i) in msg.testInfoList" :key="i" :label="e.serviceName" size="small" class="form_input">
-                                    <el-select :disabled="testCanModify" v-model="e.status">
-                                        <el-option v-for="o in testData" :value="o.id" :label="o.name" :key="o.id"></el-option>
-                                    </el-select>
-                                </el-form-item>
-                            </el-form>
-                        </el-tab-pane>
-                        <el-tab-pane label="管理备注" name="third">
-                            <el-button type="primary" style="margin-left: 20px;" size="small" @click="addMemoShow=true">添加备注</el-button>
-                            <br/>
-                            <el-table class="table" :data="memoList.list" border="">
-                                <el-table-column prop="content" label="备注信息"></el-table-column>
-                                <el-table-column prop="createdByName" label="添加人"></el-table-column>
-                                <el-table-column prop="updatedAt" label="更新日期"></el-table-column>
-                                <el-table-column label="操作">
-                                    <template slot-scope="scope">
-                                        <el-button @click="editMemo(scope.row)" type="text">
-                                            编辑
-                                        </el-button>
-                                        <el-button @click="deleteMemo(scope.row.id)" type="text">
-                                            删除
-                                        </el-button>
-                                    </template>
-                                </el-table-column>
-                            </el-table>
-                            <div class="page">
-                                <el-pagination background layout="prev, pager, next" :page-size="memoList.pageSize" :total="memoList.total" @current-change="getMemoList" :currentPage="memoList.pageNum">
-                                </el-pagination>
-                            </div>
-                        </el-tab-pane>
-                    </el-tabs>
-                </div>
-            </el-card>
-            <!-- 税优地业务方案管理 s-->
-            <el-card class="box-card">
-                <div slot="header">
-                    <span>税优地业务方案管理</span>
-                </div>
-                <div class="text">
-                    <el-button type="primary" size="small" @click="toScheme">新增方案</el-button>
-                    <el-table v-if="schemeData.list" :data="schemeData.list">
-                        <el-table-column label="方案名称" prop="name"></el-table-column>
-                        <el-table-column label="适用行业">
-                            <template slot-scope="scope">
-                                <div v-if="scope.row.industies" v-for="e in scope.row.industies">
-                                    {{e.text}}
-                                </div>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="服务类型">
-                            <template slot-scope="scope">
-                                <div v-if="scope.row.serviceTypes" v-for="e in scope.row.serviceTypes" :key="e.id">
-                                    {{e.serviceName}}
-                                    <!-- （{{e.taxRate}}%） -->
-                                </div>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="销售结算成本">
-                            <template slot-scope="scope">
-                                <div v-if="scope.row.costs" v-for="e in scope.row.costs" :key="e.id">
-                                    {{e.name}}：{{e.rate}}%
-                                </div>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="合伙人分佣">
-                            <template slot-scope="scope">
-                                <div v-if="scope.row.commission">
-                                    {{scope.row.commission.name}} * {{scope.row.commission.rate}}%
-                                </div>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="操作">
-                            <template slot-scope="scope">
-                                <el-button type="text" @click="toScheme(scope.row.id)">修改</el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                    <div class="page">
-      	                <el-pagination
-      	                    background
-      	                    layout="prev, pager, next"
-      	                    :page-size="schemeForm.pageSize"
-      	                    :total="schemeData.total"
-      	                    @current-change="getSchemeList"
-      	                    :currentPage="schemeForm.pageNo">
-      	                </el-pagination>
-                    </div>
-                </div>
-            </el-card>
-            <!-- 税优地业务方案管理 e-->
-            <el-card class="box-card">
-                <div slot="header">
-                    <span>银行账号</span>
-                    <el-button type="primary" style="margin-left: 20px;" size="small" @click="bankAccountShow = true">新增</el-button>
-                    <span style="font-size:14px;color:red;margin-left:10px">爱员工平台将会以此默认账号进行结算</span>
-                </div>
-                <div class="text">
-                    <el-table class="table" :data="banklist.list" border="">
-                        <el-table-column prop="bankAccount" label="账号"></el-table-column>
-                        <el-table-column prop="bankAccountName" label="账户名称"></el-table-column>
-                        <el-table-column prop="bankName" label="银行"></el-table-column>
-                        <el-table-column prop="bankBranchName" label="开户行"></el-table-column>
-                        <el-table-column prop="isDefaultName" label="默认账号"></el-table-column>
-                        <el-table-column label="操作">
-                            <template slot-scope="scope">
-                                <el-button @click="setDefault(scope.row)" type="text" v-if="scope.row.default == false">
-                                    设为默认
-                                </el-button>
-                                <el-button @click="updateBank(scope.row)" type="text">
-                                    修改
-                                </el-button>
-                                <el-button @click="bankDelete(scope.row.id)" type="text">
-                                    删除
-                                </el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                    <div class="page">
-                        <el-pagination background layout="prev, pager, next" :page-size="banklist.pageSize" :total="banklist.total" @current-change="getBankList" :currentPage="banklist.pageNum">
-                        </el-pagination>
-                    </div>
-                </div>
-            </el-card>
-            <!-- 银行账号 e-->
-
-            <el-card class="box-card">
-                <div slot="header">
-                    <span>账号渠道</span>
-                    <el-button style="margin-left: 20px;" size="small" type="primary" @click="eshow = true">新增</el-button>
-                </div>
-                <div class="text">
-                    <el-table class="table" :data="tableData" border="">
-                        <el-table-column prop="channelAlias" label="渠道别名"></el-table-column>
-                        <el-table-column prop="thirdpaySystemId" label="渠道类型"></el-table-column>
-                        <el-table-column prop="keywordsMap" label="关键标识">
-                            <template slot-scope="scope">
-                                <div v-for="(e, k) in scope.row.keywordsMap" v-if="e">
-                                    {{k}}：{{e}}
-                                </div>
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="orderLimit" label="单笔限额（元）">
-                            <template slot-scope="scope">
-                                {{scope.row.orderLimit | formatMoney}}
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="dailyLimit" label="单日限额（元）">
-                            <template slot-scope="scope">
-                                {{scope.row.dailyLimit | formatMoney}}
-                            </template>
-                        </el-table-column>
-                        <el-table-column prop="memo" label="备注"></el-table-column>
-                        <el-table-column label="操作">
-                            <template slot-scope="scope">
-                                <el-button @click="edit(scope.row)" type="text">
-                                    管理
-                                </el-button>
-                                <el-button @click="channelDelete(scope.row)" type="text">
-                                    删除
-                                </el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                    <div class="page">
-                        <el-pagination background layout="prev, pager, next" :page-size="form.pageSize" :total="total" @current-change="query" :currentPage="form.pageNo">
-                        </el-pagination>
-                    </div>
-                </div>
-            </el-card>
+  <div class="r_main">
+    <div style="margin:30px 20px;font-size:20px">
+      {{ msg.serviceCompanyInfo.name }}<el-button
+        size="small"
+        @click="back"
+        style="margin-left:30px"
+      >
+        返回
+      </el-button>
+    </div>
+    <div class="content">
+      <el-card class="box-card">
+        <div slot="header">
+          <span>基本信息</span>
+          <el-button
+            type="primary"
+            style="margin-left: 20px;"
+            size="small"
+            @click="routerPush('/main/landingCompany/create')"
+          >
+            编辑
+          </el-button>
         </div>
+        <div class="text">
+          <div class="box">
+            <el-row :gutter="20">
+              <el-col :span="10">
+                <el-col
+                  :span="8"
+                  class="right"
+                >
+                  公司全称
+                </el-col>
+                <el-col :span="10">
+                  {{ msg.serviceCompanyInfo.name }}
+                </el-col>
+              </el-col>
+              <el-col :span="10">
+                <el-col
+                  :span="8"
+                  class="right"
+                >
+                  支持开票类型
+                </el-col>
+                <el-col :span="15">
+                  <span>{{ msg.serviceCompanyInfo.supportInvoiceTypeName }}</span>
+                </el-col>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="10">
+                <el-col
+                  :span="8"
+                  class="right"
+                >
+                  公司简称
+                </el-col>
+                <el-col :span="10">
+                  {{ msg.serviceCompanyInfo.shortName }}
+                </el-col>
+              </el-col>
+              <el-col :span="10">
+                <el-col
+                  :span="8"
+                  class="right"
+                >
+                  法人姓名
+                </el-col>
+                <el-col :span="10">
+                  {{ msg.serviceCompanyInfo.corporateName }}
+                </el-col>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="10">
+                <el-col
+                  :span="8"
+                  class="right"
+                >
+                  所在省市
+                </el-col>
+                <el-col :span="10">
+                  {{ msg.serviceCompanyInfo.provinceName }} {{ msg.serviceCompanyInfo.cityName }}
+                </el-col>
+              </el-col>
+              <el-col :span="10">
+                <el-col
+                  :span="8"
+                  class="right"
+                >
+                  法人证件号
+                </el-col>
+                <el-col :span="10">
+                  {{ msg.serviceCompanyInfo.corporateIdentity }}
+                </el-col>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="10">
+                <el-col
+                  :span="8"
+                  class="right"
+                >
+                  是否直营
+                </el-col>
+                <el-col :span="10">
+                  {{ msg.serviceCompanyInfo.directName }}
+                </el-col>
+              </el-col>
+              <el-col :span="10">
+                <el-col
+                  :span="8"
+                  class="right"
+                >
+                  纳税人识别号
+                </el-col>
+                <el-col :span="10">
+                  {{ msg.serviceCompanyInfo.taxIdcd }}
+                </el-col>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="10">
+                <el-col
+                  :span="8"
+                  class="right"
+                >
+                  负责人
+                </el-col>
+                <el-col :span="10">
+                  {{ msg.serviceCompanyInfo.masterName }}
+                </el-col>
+              </el-col>
+              <el-col :span="10">
+                <el-col
+                  :span="8"
+                  class="right"
+                >
+                  公司详细地址
+                </el-col>
+                <el-col :span="10">
+                  {{ msg.serviceCompanyInfo.address }}
+                </el-col>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="10">
+                <el-col
+                  :span="8"
+                  class="right"
+                >
+                  注册状态
+                </el-col>
+                <el-col :span="10">
+                  {{ msg.serviceCompanyInfo.registeredName }}
+                </el-col>
+              </el-col>
+              <el-col :span="10">
+                <el-col
+                  :span="8"
+                  class="right"
+                >
+                  联系电话
+                </el-col>
+                <el-col :span="10">
+                  {{ msg.serviceCompanyInfo.telephone }}
+                </el-col>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="10">
+                <el-col
+                  :span="8"
+                  class="right"
+                >
+                  注册日期
+                </el-col>
+                <el-col :span="10">
+                  {{ msg.serviceCompanyInfo.registrationAt }}
+                </el-col>
+              </el-col>
+              <el-col :span="10">
+                <el-col
+                  :span="8"
+                  class="right"
+                >
+                  公司开户行
+                </el-col>
+                <el-col :span="10">
+                  {{ msg.serviceCompanyInfo.bankName }}
+                </el-col>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="10">
+                <el-col
+                  :span="8"
+                  class="right"
+                >
+                  银行账号
+                </el-col>
+                <el-col :span="10">
+                  {{ msg.serviceCompanyInfo.bankAccount }}
+                </el-col>
+              </el-col>
+              <el-col :span="10">
+                <el-col
+                  :span="8"
+                  class="right"
+                >
+                  税优地
+                </el-col>
+                <el-col :span="10">
+                  {{ msg.serviceCompanyInfo.taxLandingName }}
+                </el-col>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="10">
+                <el-col
+                  :span="10"
+                  class="right"
+                >
+                  是否有业务（用于合同）
+                </el-col>
+                <el-col :span="10">
+                  {{ msg.serviceCompanyInfo.businessedName }}
+                </el-col>
+              </el-col>
+            </el-row>
+          </div>
+        </div>
+      </el-card>
+      <!-- 公司业务状态及备注 s-->
+      <el-card class="box-card">
+        <div slot="header">
+          <span>公司业务状态及备注</span>
+        </div>
+        <div class="text">
+          <el-tabs v-model="checkValue">
+            <el-tab-pane
+              label="票据状态"
+              name="first"
+            >
+              <div v-if="this.invoice">
+                <el-button
+                  type="primary"
+                  style="margin-left: 20px;"
+                  size="small"
+                  @click="dialogAddInvoiceVisible = true"
+                >
+                  调整票量
+                </el-button>
+                <el-button
+                  type="primary"
+                  style="margin-left: 20px;"
+                  size="small"
+                  @click="dialogInvoicelistVisible = true;handleRequest();"
+                >
+                  票量调整记录
+                </el-button>
+                <el-button
+                  type="primary"
+                  style="margin-left: 20px;"
+                  size="small"
+                  @click="handleEdit"
+                >
+                  修改
+                </el-button>
+                <div style="width:60%">
+                  <p
+                    class="fp"
+                    style="margin-left: 20px;"
+                  >
+                    增值税普通发票量
+                  </p>
+                  <p class="fp">
+                    剩余票量:{{ invoice.surplusPpNum }}
+                  </p>
+                  <p class="fp">
+                    最大限额：{{ invoice.ppMaxAmount }}
+                  </p><br>
+                  <p
+                    class="fp"
+                    style="margin-left: 20px;"
+                  >
+                    增值税专用发票量
+                  </p>
+                  <p class="fp">
+                    剩余票量:{{ invoice.surplusZpNum }}
+                  </p>
+                  <p class="fp">
+                    最大限额：{{ invoice.zpMaxAmount }}
+                  </p>
+                </div>
+              </div>
+              <div v-else>
+                <el-button
+                  type="primary"
+                  style="margin-left: 20px;"
+                  size="small"
+                  @click="addLanding"
+                >
+                  添加落地公司信息
+                </el-button>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane
+              label="穿行测试"
+              name="second"
+            >
+              <el-button
+                type="primary"
+                style="margin-left: 20px;margin-bottom:20px"
+                size="small"
+                @click="handleChangeTest"
+              >
+                {{ testStatusWord }}
+              </el-button>
+              <br>
+              <el-form
+                v-model="testForm"
+                label-width="80px"
+              >
+                <el-form-item
+                  v-for="(e, i) in msg.testInfoList"
+                  :key="i"
+                  :label="e.serviceName"
+                  size="small"
+                  class="form_input"
+                >
+                  <el-select
+                    :disabled="testCanModify"
+                    v-model="e.status"
+                  >
+                    <el-option
+                      v-for="o in testData"
+                      :value="o.id"
+                      :label="o.name"
+                      :key="o.id"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-form>
+            </el-tab-pane>
+            <el-tab-pane
+              label="管理备注"
+              name="third"
+            >
+              <el-button
+                type="primary"
+                style="margin-left: 20px;"
+                size="small"
+                @click="addMemoShow=true"
+              >
+                添加备注
+              </el-button>
+              <br>
+              <el-table
+                class="table"
+                :data="memoList.list"
+                border=""
+              >
+                <el-table-column
+                  prop="content"
+                  label="备注信息" 
+                />
+                <el-table-column
+                  prop="createdByName"
+                  label="添加人"
+                />
+                <el-table-column
+                  prop="updatedAt"
+                  label="更新日期"
+                />
+                <el-table-column label="操作">
+                  <template slot-scope="scope">
+                    <el-button
+                      @click="editMemo(scope.row)"
+                      type="text"
+                    >
+                      编辑
+                    </el-button>
+                    <el-button
+                      @click="deleteMemo(scope.row.id)"
+                      type="text"
+                    >
+                      删除
+                    </el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <div class="page">
+                <el-pagination
+                  background
+                  layout="prev, pager, next"
+                  :page-size="memoList.pageSize"
+                  :total="memoList.total"
+                  @current-change="getMemoList"
+                  :current-page="memoList.pageNum"
+                />
+              </div>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
+      </el-card>
+      <!-- 税优地业务方案管理 s-->
+      <el-card class="box-card">
+        <div slot="header">
+          <span>税优地业务方案管理</span>
+        </div>
+        <div class="text">
+          <el-button
+            type="primary"
+            size="small"
+            @click="toScheme"
+          >
+            新增方案
+          </el-button>
+          <el-table
+            v-if="schemeData.list"
+            :data="schemeData.list"
+          >
+            <el-table-column
+              label="方案名称"
+              prop="name" 
+            />
+            <el-table-column label="适用行业">
+              <template slot-scope="scope">
+                <div
+                  v-if="scope.row.industies"
+                  v-for="e in scope.row.industies"
+                >
+                  {{ e.text }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="服务类型">
+              <template slot-scope="scope">
+                <div
+                  v-if="scope.row.serviceTypes"
+                  v-for="e in scope.row.serviceTypes"
+                  :key="e.id"
+                >
+                  {{ e.serviceName }}
+                  <!-- （{{e.taxRate}}%） -->
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="销售结算成本">
+              <template slot-scope="scope">
+                <div
+                  v-if="scope.row.costs"
+                  v-for="e in scope.row.costs"
+                  :key="e.id"
+                >
+                  {{ e.name }}：{{ e.rate }}%
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="合伙人分佣">
+              <template slot-scope="scope">
+                <div v-if="scope.row.commission">
+                  {{ scope.row.commission.name }} * {{ scope.row.commission.rate }}%
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button
+                  type="text"
+                  @click="toScheme(scope.row.id)"
+                >
+                  修改
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="page">
+            <el-pagination
+              background
+              layout="prev, pager, next"
+              :page-size="schemeForm.pageSize"
+              :total="schemeData.total"
+              @current-change="getSchemeList"
+              :current-page="schemeForm.pageNo"
+            />
+          </div>
+        </div>
+      </el-card>
+      <!-- 税优地业务方案管理 e-->
+      <el-card class="box-card">
+        <div slot="header">
+          <span>银行账号</span>
+          <el-button
+            type="primary"
+            style="margin-left: 20px;"
+            size="small"
+            @click="bankAccountShow = true"
+          >
+            新增
+          </el-button>
+          <span style="font-size:14px;color:red;margin-left:10px">爱员工平台将会以此默认账号进行结算</span>
+        </div>
+        <div class="text">
+          <el-table
+            class="table"
+            :data="banklist.list"
+            border=""
+          >
+            <el-table-column
+              prop="bankAccount"
+              label="账号"
+            />
+            <el-table-column
+              prop="bankAccountName"
+              label="账户名称" 
+            />
+            <el-table-column
+              prop="bankName"
+              label="银行" 
+            />
+            <el-table-column
+              prop="bankBranchName"
+              label="开户行"
+            />
+            <el-table-column
+              prop="isDefaultName"
+              label="默认账号"
+            />
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button
+                  @click="setDefault(scope.row)"
+                  type="text"
+                  v-if="scope.row.default == false"
+                >
+                  设为默认
+                </el-button>
+                <el-button
+                  @click="updateBank(scope.row)"
+                  type="text"
+                >
+                  修改
+                </el-button>
+                <el-button
+                  @click="bankDelete(scope.row.id)"
+                  type="text"
+                >
+                  删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="page">
+            <el-pagination
+              background
+              layout="prev, pager, next"
+              :page-size="banklist.pageSize"
+              :total="banklist.total"
+              @current-change="getBankList"
+              :current-page="banklist.pageNum"
+            />
+          </div>
+        </div>
+      </el-card>
+      <!-- 银行账号 e-->
 
-        <!-- 业务方案管理对话框 S -->
-        <!-- <el-dialog title="新建落地公司业务方案" :visible.sync="businessShow" width="60%" style="text-align:left;">
+      <el-card class="box-card">
+        <div slot="header">
+          <span>账号渠道</span>
+          <el-button
+            style="margin-left: 20px;"
+            size="small"
+            type="primary"
+            @click="eshow = true"
+          >
+            新增
+          </el-button>
+        </div>
+        <div class="text">
+          <el-table
+            class="table"
+            :data="tableData"
+            border=""
+          >
+            <el-table-column
+              prop="channelAlias"
+              label="渠道别名"
+            />
+            <el-table-column
+              prop="thirdpaySystemId"
+              label="渠道类型" 
+            />
+            <el-table-column
+              prop="keywordsMap"
+              label="关键标识"
+            >
+              <template slot-scope="scope">
+                <div
+                  v-for="(e, k) in scope.row.keywordsMap"
+                  v-if="e"
+                >
+                  {{ k }}：{{ e }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="orderLimit"
+              label="单笔限额（元）"
+            >
+              <template slot-scope="scope">
+                {{ scope.row.orderLimit | formatMoney }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="dailyLimit"
+              label="单日限额（元）"
+            >
+              <template slot-scope="scope">
+                {{ scope.row.dailyLimit | formatMoney }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="memo"
+              label="备注" 
+            />
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button
+                  @click="edit(scope.row)"
+                  type="text"
+                >
+                  管理
+                </el-button>
+                <el-button
+                  @click="channelDelete(scope.row)"
+                  type="text"
+                >
+                  删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="page">
+            <el-pagination
+              background
+              layout="prev, pager, next"
+              :page-size="form.pageSize"
+              :total="total"
+              @current-change="query"
+              :current-page="form.pageNo"
+            />
+          </div>
+        </div>
+      </el-card>
+    </div>
+
+    <!-- 业务方案管理对话框 S -->
+    <!-- <el-dialog title="新建落地公司业务方案" :visible.sync="businessShow" width="60%" style="text-align:left;">
             <el-form label-width="130px" :rules="111" :model="business" ref="cform">
                 <el-form-item label="选择方案类型" prop="schemeName" size="small">
                     <el-input v-model="business.schemeName" class="f_input"></el-input>
@@ -371,38 +730,99 @@
               <el-button @click="businessShow = false" size="small">关闭</el-button>
           </span>
         </el-dialog> -->
-        <!-- 业务方案管理对话框 E -->
+    <!-- 业务方案管理对话框 E -->
         
-        <!-- 银行账号对话框 S -->
-        <el-dialog title="新增银行账号" :visible.sync="bankAccountShow" width="85%;text-align:left;" @close="bankClearData">
-            <el-form label-width="130px" :rules="crules" :model="bankAccount" ref="bankAccount">
-                <el-form-item label="账号" prop="bankAccount" size="small">
-                    <el-input v-model="bankAccount.bankAccount" class="f_input"></el-input>
-                </el-form-item>
-                <el-form-item label="账户名称" prop="bankAccountName" size="small">
-                    <el-input v-model="bankAccount.bankAccountName" class="f_input"></el-input>
-                </el-form-item>
-                <el-form-item label="银行" prop="bankName" size="small">
-                    <el-input v-model="bankAccount.bankName" class="f_input"></el-input>
-                </el-form-item>
-                <el-form-item label="开户行" prop="bankBranchName" size="small">
-                    <el-input v-model="bankAccount.bankBranchName" class="f_input"></el-input>
-                </el-form-item>
-                <el-form-item label="是否默认" prop="default" size="small">
-                    <el-select v-model="bankAccount.default" placeholder="请选择" class="f_input">
-                        <el-option v-for="item in bankStatus" :label="item.text" :value="item.value" :key="item.value"></el-option>
-                    </el-select>
-                </el-form-item>
-            </el-form>
-            <span class="form_footer" slot="footer">
-              <el-button @click="bankUpDate('bankAccount')" type="primary" size="small">保存</el-button>
-              <el-button @click="bankAccountShow = false" size="small">关闭</el-button>
-          </span>
-        </el-dialog>
-        <!-- 银行账号对话框 E -->
+    <!-- 银行账号对话框 S -->
+    <el-dialog
+      title="新增银行账号"
+      :visible.sync="bankAccountShow"
+      width="85%;text-align:left;"
+      @close="bankClearData"
+    >
+      <el-form
+        label-width="130px"
+        :rules="crules"
+        :model="bankAccount"
+        ref="bankAccount"
+      >
+        <el-form-item
+          label="账号"
+          prop="bankAccount"
+          size="small"
+        >
+          <el-input
+            v-model="bankAccount.bankAccount"
+            class="f_input" 
+          />
+        </el-form-item>
+        <el-form-item
+          label="账户名称"
+          prop="bankAccountName"
+          size="small"
+        >
+          <el-input
+            v-model="bankAccount.bankAccountName"
+            class="f_input"
+          />
+        </el-form-item>
+        <el-form-item
+          label="银行"
+          prop="bankName"
+          size="small"
+        >
+          <el-input
+            v-model="bankAccount.bankName"
+            class="f_input"
+          />
+        </el-form-item>
+        <el-form-item
+          label="开户行"
+          prop="bankBranchName"
+          size="small"
+        >
+          <el-input
+            v-model="bankAccount.bankBranchName"
+            class="f_input" 
+          />
+        </el-form-item>
+        <el-form-item
+          label="是否默认"
+          prop="default"
+          size="small"
+        >
+          <el-select
+            v-model="bankAccount.default"
+            placeholder="请选择"
+            class="f_input"
+          >
+            <el-option
+              v-for="item in bankStatus"
+              :label="item.text"
+              :value="item.value"
+              :key="item.value"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span
+        class="form_footer"
+        slot="footer"
+      >
+        <el-button
+          @click="bankUpDate('bankAccount')"
+          type="primary"
+          size="small"
+        >保存</el-button>
+        <el-button
+          @click="bankAccountShow = false"
+          size="small"
+        >关闭</el-button>
+      </span>
+    </el-dialog>
+    <!-- 银行账号对话框 E -->
 
-        <!-- 增加票量弹窗 s-->
-        <el-dialog title="添加票量" :visible.sync="dialogAddInvoiceVisible" width="40%">
+    <!-- 增加票量弹窗 s-->
+    <!-- <el-dialog title="添加票量" :visible.sync="dialogAddInvoiceVisible" width="40%">
             <el-form :rules="rulesAdd" :model="formAdd" ref="formAdd">
                 <div class="input-container">
                     <div class="label dialog-label text-label">月份<span>*</span>
@@ -451,80 +871,221 @@
                 <el-button @click="dialogAddInvoiceVisible=false;" size="small">取 消</el-button>
                 <el-button type="primary" @click="addInvoice('formAdd')" size="small">确 定</el-button>
             </div>
-        </el-dialog>
-        <!-- 增加票量弹窗 e-->
+        </el-dialog> -->
+    <adjust-invoice-amount
+      :show.sync="dialogAddInvoiceVisible"
+      :id="form.companyId"
+      @success="adjustInvoice"
+    />
+    <!-- 增加票量弹窗 e-->
         
-        <!-- 领票记录弹窗 s-->
-        <el-dialog title="领票记录" :visible.sync="dialogInvoicelistVisible" width="80%" @close="closeInvoiceDialog" :lock-scroll="true" style="margin-top:-5vh">
-            <el-form v-model="formSelect" ref="formSelect" :inline="true">
-                <el-form-item label="状态" size="small" style="float:left;">
-                    <el-select v-model="formSelect.selectStatus" placeholder="请选择" @change="handleRequest()">
-                        <el-option label="全部" value="00"></el-option>
-                        <el-option label="有效" value="20"></el-option>
-                        <el-option label="无效" value="10"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item style="float:right">
-                    <el-button type="primary" @click="handleExcel" size="small">导表</el-button>
-                </el-form-item>
-            </el-form>
-            <el-table :data="tableInvoiceList.list" style="width: 100%;text-align:left;">
-                <el-table-column prop="invoiceType" label="发票类型">
-                    <template slot-scope="scope">
-                        <div class="bill common" v-if="scope.row.invoiceType.indexOf('普票') > -1">普票</div>
-                        <div class="bill special" v-else>专票</div>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="addNum" label="领票数量"></el-table-column>
-                <el-table-column prop="maxNum" label="领取后票量" width="100"></el-table-column>
-                <el-table-column prop="remark" label="备注"></el-table-column>
-                <el-table-column prop="operatedBy" label="操作人"></el-table-column>
-                <el-table-column prop="operatedTime" label="操作时间" width="200"></el-table-column>
-                <el-table-column prop="statusName" label="状态"></el-table-column>
-                <el-table-column label="操作">
-                    <template slot-scope="scope" v-if="scope.row.status=='20'">
-                        <el-button @click="handleCancel(scope.row.id)" type="text" size="medium" style="padding:0;">作废
-                        </el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <div style="padding: 20px;text-align: right;background-color: white">
-                <el-pagination
-                    background
-                    v-if="tableInvoiceList.total > 10"
-                    @size-change="handleInvoiceSizeChange"
-                    @current-change="handleInvoiceCurrentChange"
-                    :current-page="currentInvoicePage"
-                    :page-sizes="[10, 20, 30, 40]"
-                    :page-size="pageInvoiceSize || 10"
-                    layout="total, prev, pager, next, sizes, jumper"
-                    :total="tableInvoiceList.total">
-                </el-pagination>
+    <!-- 领票记录弹窗 s-->
+    <el-dialog
+      title="票量调整记录"
+      :visible.sync="dialogInvoicelistVisible"
+      width="80%"
+      @close="closeInvoiceDialog"
+      :lock-scroll="true"
+      style="margin-top:-5vh"
+    >
+      <el-form
+        v-model="formSelect"
+        ref="formSelect"
+        :inline="true"
+      >
+        <el-form-item
+          label="状态"
+          size="small"
+          style="float:left;"
+        >
+          <el-select
+            v-model="formSelect.selectStatus"
+            placeholder="请选择"
+            @change="handleRequest()"
+          >
+            <el-option
+              label="全部"
+              value="00" 
+            />
+            <el-option
+              label="有效"
+              value="20"
+            />
+            <el-option
+              label="无效"
+              value="10" 
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item style="float:right">
+          <el-button
+            type="primary"
+            @click="handleExcel"
+            size="small"
+          >
+            导表
+          </el-button>
+        </el-form-item>
+      </el-form>
+      <el-table
+        :data="tableInvoiceList.list"
+        style="width: 100%;text-align:left;"
+      >
+        <el-table-column
+          prop="invoiceType"
+          label="发票类型"
+        >
+          <template slot-scope="scope">
+            <div
+              class="bill common"
+              v-if="scope.row.invoiceType.indexOf('普票') > -1"
+            >
+              普票
             </div>
-        </el-dialog>
-        <!-- 领票记录弹窗 e-->
+            <div
+              class="bill special"
+              v-else
+            >
+              专票
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="addNum"
+          label="调整数量" 
+        />
+        <el-table-column
+          prop="operate"
+          label="调整类型" 
+        >
+          <template slot-scope="scope">
+            <span v-if="scope.row.operate === 'add'">添加</span>
+            <span v-if="scope.row.operate === 'sub'">减少</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="maxNum"
+          label="调整后票量"
+          width="100" 
+        />
+        <el-table-column
+          prop="remark"
+          label="调整原因"
+        />
+        <el-table-column
+          prop="operatedBy"
+          label="操作人" 
+        />
+        <el-table-column
+          prop="operatedTime"
+          label="操作时间"
+          width="200"
+        />
+        <el-table-column
+          prop="statusName"
+          label="状态"
+        />
+        <el-table-column label="操作">
+          <template
+            slot-scope="scope"
+            v-if="scope.row.status=='20'"
+          >
+            <el-button
+              @click="handleCancel(scope.row.id)"
+              type="text"
+              size="medium"
+              style="padding:0;"
+            >
+              作废
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div style="padding: 20px;text-align: right;background-color: white">
+        <el-pagination
+          background
+          v-if="tableInvoiceList.total > 10"
+          @size-change="handleInvoiceSizeChange"
+          @current-change="handleInvoiceCurrentChange"
+          :current-page="currentInvoicePage"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="pageInvoiceSize || 10"
+          layout="total, prev, pager, next, sizes, jumper"
+          :total="tableInvoiceList.total"
+        />
+      </div>
+    </el-dialog>
+    <!-- 领票记录弹窗 e-->
         
-        <!-- 备注管理弹窗 s-->
-        <el-dialog title="添加备注" :visible.sync="addMemoShow" width="40%">
-            <el-form label-width="80px" :rules="rulesMemoAdd" :model="formMemoAdd" ref="formMemoAdd">
-               <el-form-item label="备注信息" prop="content" size="small">
-                    <el-input type="textarea" v-model="formMemoAdd.content"></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="addMemoShow=false;" size="small">取 消</el-button>
-                <el-button type="primary" @click="updateMemo('formMemoAdd')" size="small">确 定</el-button>
-            </div>
-        </el-dialog>
-        <!-- 备注管理弹窗 e-->
+    <!-- 备注管理弹窗 s-->
+    <el-dialog
+      title="添加备注"
+      :visible.sync="addMemoShow"
+      width="40%"
+    >
+      <el-form
+        label-width="80px"
+        :rules="rulesMemoAdd"
+        :model="formMemoAdd"
+        ref="formMemoAdd"
+      >
+        <el-form-item
+          label="备注信息"
+          prop="content"
+          size="small"
+        >
+          <el-input
+            type="textarea"
+            v-model="formMemoAdd.content"
+          />
+        </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button
+          @click="addMemoShow=false;"
+          size="small"
+        >
+          取 消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="updateMemo('formMemoAdd')"
+          size="small"
+        >
+          确 定
+        </el-button>
+      </div>
+    </el-dialog>
+    <!-- 备注管理弹窗 e-->
 
-        <el-dialog title="请选择渠道" :visible.sync="eshow" width="70%">
-            <el-button size="small" type="primary" v-for="e in channels" :key="e.value" @click="add(e.value)">{{e.text}}</el-button>
-            <span class="form_footer" slot="footer">
-              <el-button @click="eshow = false" size="small">取消</el-button>
-          </span>
-        </el-dialog>
-    </div>
+    <el-dialog
+      title="请选择渠道"
+      :visible.sync="eshow"
+      width="70%"
+    >
+      <el-button
+        size="small"
+        type="primary"
+        v-for="e in channels"
+        :key="e.value"
+        @click="add(e.value)"
+      >
+        {{ e.text }}
+      </el-button>
+      <span
+        class="form_footer"
+        slot="footer"
+      >
+        <el-button
+          @click="eshow = false"
+          size="small"
+        >取消</el-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
 <script>
 import {
@@ -539,7 +1100,10 @@ import { createUser } from "../../service/userApi";
 import {showNotify} from '../../plugin/utils-notify';
 import { setTimeout } from 'timers';
 var baseUrl = require("../../config/address.js").baseUrl;
+import adjustInvoiceAmount from '../../pageComponent/adjustInvoiceAmount.vue';
+
 export default {
+    components: { adjustInvoiceAmount },
     data() {
         var numReg = /^[1-9]\d*$/;
         var validatenumber = (rule, value, callback) => {
@@ -943,7 +1507,7 @@ export default {
                     if(this.oldTest[i].status != this.msg.testInfoList[i].status){
                         this.testForm.push({'serviceCode':this.msg.testInfoList[i].serviceCode,'status':this.msg.testInfoList[i].status});
                     }
-                };
+                }
                 let param = {
                     companyId:this.form.companyId,
                     serviceTestParamList:this.testForm,
@@ -1152,6 +1716,11 @@ export default {
         toScheme(id) {
             sessionStorage.setItem('taxLandingId', this.msg.serviceCompanyInfo.taxLandingId)
             this.$router.push(`scheme${isNaN(id) ? '' : `?id=${id}`}`)
+        },
+        adjustInvoice() {
+            this.dialogAddInvoiceVisible = false
+            this.addPiaoPopIsShow = false;
+            this.searchBtnClick()
         }
     }
 };
