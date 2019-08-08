@@ -16,7 +16,7 @@
                 <div class="content">《绩效规则-协议》</div>
                 <el-button type="text" @click="download">下载</el-button>
               </td>
-              <td align="center">
+              <td align="center" :rowspan="list.positions.length" v-if="i === 0">
                 <div class="content">{{list.serviceName}}</div>
                 <el-button type="text" icon="el-icon-plus" size="mini" @click="addPost(index)">添加岗位</el-button>
               </td>

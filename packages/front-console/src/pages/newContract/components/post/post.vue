@@ -117,10 +117,13 @@ export default {
             return
           }
           console.log(this.form)
-          this.$emit("addServicePost", this.form);
-          // this.$refs[formName].resetFields();
-          // this.form.attachment = { refId: '' }
-          this.closePostDialog();
+          const form = Object.assign({}, this.form)
+          this.$emit("addServicePost", form);
+          setTimeout(() => {
+            this.$refs['form'].resetFields();
+            this.form.attachment = { refId: '' }
+            this.closePostDialog();
+          }, 0)
         } else {
           return false;
         }
