@@ -86,6 +86,7 @@
 <script>
 import _ from 'lodash'
 import { get, post } from '../../../store/api'
+import { baseUrl } from "../../../config/address";
 import contractCreateItem from '../../../pageComponent/contractCreateItem'
 import contractCloseItem from '../../../pageComponent/contractCloseItem'
 import performanceRules from './performanceRules'
@@ -229,6 +230,7 @@ export default {
             };
             post('/api/contract-web/contract/generate-position-attach', param).then(res => {
                 console.log(res)
+                window.open(`${baseUrl}/api/contract-web/file/download?downloadCode=${res.downloadCode}`);
             })
         },
         // 验证岗位模板是否填写
