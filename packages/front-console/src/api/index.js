@@ -5,5 +5,6 @@ import {contract} from './contract'
 import {econtract} from './econtract'
 import {balance} from './balance'
 import {file} from './file'
+import {asr} from './asr'
 
-export { invoiceApi, workflow, sysmgr, contract, econtract, balance, file }
+export { invoiceApi, workflow, sysmgr, contract, econtract, balance, file, asr }

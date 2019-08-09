@@ -43,6 +43,7 @@ module.exports = {
         assetsSubDirectory: 'static',
         assetsPublicPath: '/',
         context: [ //代理路径
+            '/asr',
 	        '/api'
         ],
         proxypath: proxypath,

@@ -397,7 +397,7 @@
       @handleCurrentChange="query"
     />
     <!-- 审核岗位弹框 -->
-    <post-audit v-model="postAuditDialog"></post-audit>
+    <post-audit v-model="postAuditDialog" @change="query" ref="postDialog"></post-audit>
     <el-dialog
       title="创建工单"
       :visible.sync="show"
@@ -808,6 +808,10 @@ export default {
                         look
                     })
                     break;
+                case 'asr-create-job':
+                    // 合规通 爱收入岗位模板弹框
+                    this.$refs.postDialog.query({ processInstanceId: param.processInstanceId, businessId: param.businessId, taskId: res.id })
+                    this.postAuditDialog = true
                 default:
                     break;
             }

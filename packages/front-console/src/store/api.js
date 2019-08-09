@@ -95,7 +95,8 @@ function getButNoErrorToast(url, param) {
 function ajaxAction(requestType, url, param, resolve, reject, showToast, needCallback, withLoading) {
     ajax(requestType, url, param, res => {
         if(!withLoading) hideLoading()
-        if (res.code === 200) {
+        // php接口成功code是0
+        if (res.code === 200 || res.code === 0) {
             resolve(res.data);
         } else {
             if (res.status === 0) {

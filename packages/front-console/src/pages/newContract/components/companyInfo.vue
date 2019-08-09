@@ -216,6 +216,7 @@ export default {
         }
     },
     methods: {
+        // 下载 绩效规则-协议
         downloadRule() {
             const datas = JSON.parse(JSON.stringify(this.ruleForm))
             datas.contracts.forEach((item) => {
@@ -244,7 +245,7 @@ export default {
         // 岗位模板数据
         addPositions(index, pIndex, data) {
             const obj = this.ruleForm.contracts[index].servicePosList[pIndex].positions[0]
-            console.log(data)
+            // console.log(data)
             // 根据当前模板是否有数据，选择是插入还是替换
             if (obj.posName) {
                 this.ruleForm.contracts[index].servicePosList[pIndex].positions.push(data)
@@ -294,6 +295,7 @@ export default {
                 }).filter((item) => {
                     return item
                 })
+                // 初始设置岗位模板数据
                 if (!item.servicePosList || item.servicePosList === 'undefined') {
                     item.servicePosList = item.serviceTypeList.map((val) => {
                         const obj = {
