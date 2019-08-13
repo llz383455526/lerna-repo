@@ -101,6 +101,7 @@ import contractCreateItem from '../../../pageComponent/contractCreateItem'
 import contractCloseItem from '../../../pageComponent/contractCloseItem'
 import performanceRules from './performanceRules'
 import upload from './upload'
+import { baseUrl } from "../../../config/address";
 import { mapGetters } from 'vuex'
 export default {
     name: "companyInfo",
