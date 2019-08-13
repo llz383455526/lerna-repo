@@ -281,7 +281,6 @@ export default {
             }
             this.$forceUpdate()
         },
-        updatePositions() {},
         initData() {
             this.ruleForm.contracts.forEach((item) => {
                 // 设置落地公司ID
@@ -298,7 +297,7 @@ export default {
                     return item
                 })
                 // 初始设置岗位模板数据
-                if (!item.servicePosList || item.servicePosList === 'undefined') {
+                if (!item.servicePosList || !item.servicePosList.length) {
                     item.servicePosList = item.serviceTypeList.map((val) => {
                         const obj = {
                             serviceId: val.serviceId,
