@@ -59,7 +59,7 @@
                         </el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
-                <el-form-item label="C端绩效计算规则123" :prop="`contracts[${index}].servicePosList`" :rules="{required: true, validator: validatePost, trigger: 'change'}">
+                <el-form-item label="C端绩效计算规则13" :prop="`contracts[${index}].servicePosList`" :rules="{required: true, validator: validatePost, trigger: 'change'}">
                     <performance-rules :servicePosList="formItem.servicePosList" :index="index" @change="addPositions" @download="downloadRule"></performance-rules>
                 </el-form-item>
                 <br>
