@@ -259,6 +259,8 @@ export default {
         // 根据选中的服务类型更改positions
         changePositions(checked, index, v) {
             const positions = this.ruleForm.contracts[index].servicePosList
+            const len = this.ruleForm.contracts[index].serviceTypeList.length
+            if (len > 5) return
             if (checked) {
                 this.ruleForm.contracts[index].servicePosList.push({
                     serviceId: v.serviceId,

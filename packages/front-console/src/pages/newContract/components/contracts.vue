@@ -59,7 +59,7 @@
                         </el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
-                <el-form-item label="C端绩效计算规则123" :prop="`contracts[${index}].servicePosList`" :rules="{required: true, validator: validatePost, trigger: 'change'}">
+                <el-form-item label="C端绩效计算规则" :prop="`contracts[${index}].servicePosList`" :rules="{required: true, validator: validatePost, trigger: 'change'}">
                     <performance-rules :servicePosList="formItem.servicePosList" :index="index" @change="addPositions" @download="downloadRule"></performance-rules>
                 </el-form-item>
                 <br>
@@ -260,6 +260,8 @@ export default {
         // 根据选中的服务类型更改positions
         changePositions(checked, index, v) {
             const positions = this.ruleForm.contracts[index].servicePosList
+            const len = this.ruleForm.contracts[index].serviceTypeList.length
+            if (len > 5) return
             if (checked) {
                 this.ruleForm.contracts[index].servicePosList.push({
                     serviceId: v.serviceId,
