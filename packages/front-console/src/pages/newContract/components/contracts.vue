@@ -60,7 +60,7 @@
                     </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label="C端绩效计算规则" :prop="`contracts[${index}].servicePosList`" :rules="{required: true, validator: validatePost, trigger: 'change'}">
-                    <performance-rules :servicePosList="formItem.servicePosList" :index="index" @change="addPositions" @download="downloadRule"></performance-rules>
+                    <performance-rules :servicePosList="formItem.servicePosList" :index="index" @change="addPositions" @remove="removePost" @download="downloadRule"></performance-rules>
                 </el-form-item>
                 <br>
                 <template v-if="ruleForm.originalType == 20">
@@ -244,6 +244,32 @@ export default {
                 callback(new Error('每个服务类型至少对应一个岗位'));
             } else {
                 callback();
+            }
+        },
+        // 删除岗位
+        removePost(cindex, index, i) {
+            const servicePost = this.ruleForm.contracts[cindex].servicePosList[index]
+            if (servicePost.positions.length === 1) {
+                this.ruleForm.contracts[cindex].servicePosList[index].positions = [
+                    {
+                        serviceId: servicePost.serviceId,
+                        serviceName: servicePost.serviceName,
+                        positions: [{
+                            posName: '',
+                            description: '',
+                            performance: '',
+                            attachment: {
+                                refId: '',
+                                downloadCode: '',
+                                displayname: '',
+                                createByName: '',
+                                createTime: '',
+                            }
+                        }]
+                    }
+                ]
+            } else {
+                this.ruleForm.contracts[cindex].servicePosList[index].positions.splice(i, 1)
             }
         },
         // 岗位模板数据
