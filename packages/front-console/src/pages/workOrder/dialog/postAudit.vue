@@ -40,7 +40,7 @@
         ></el-input>
       </el-form-item>
     </el-form>
-    <div slot="footer">
+    <div slot="footer" v-if="detail && !detail.IsEnable">
       <el-button size="small" type="primary" @click="pass('form')">通过</el-button>
       <el-button size="small" @click="refuse('form')">拒绝</el-button>
     </div>
