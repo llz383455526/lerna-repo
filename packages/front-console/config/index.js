@@ -1,4 +1,4 @@
-let path = require('path')
+const path = require('path')
 
 let proxypath = null
 
@@ -15,38 +15,36 @@ switch (process.env.NODE_SERVER_ENV) {
   case '92':
     proxypath = 'https://openadmintest92.aiyuangong.com'
     break
-  default :
+  default:
     break
 }
-
-proxypath && console.log('proxypath = ', proxypath)
+console.log('proxypath = ', proxypath)
 
 module.exports = {
-    prod: {
-        env: {
-            NODE_ENV: 'prod'
-        },
-        index: path.resolve(__dirname, '../product/index.html'),
-        assetsRoot: path.resolve(__dirname, '../product'),
-        assetsSubDirectory: 'static',
-        assetsPublicPath: '/',
-        productionSourceMap: true,
-        productionGzip: true,
-        productionGzipExtensions: ['js', 'css'],
-	    cssSourceMap: true
+  prod: {
+    env: {
+      NODE_ENV: 'prod',
     },
-    dev: {
-        env: {
-            NODE_ENV: '"development"'
-        },
-        port: 8022,
-        assetsSubDirectory: 'static',
-        assetsPublicPath: '/',
-        context: [ //代理路径
-            '/asr',
-	        '/api'
-        ],
-        proxypath: proxypath,
-        cssSourceMap: false
-    }
+    index: path.resolve(__dirname, '../product/index.html'),
+    assetsRoot: path.resolve(__dirname, '../product'),
+    assetsSubDirectory: 'static',
+    assetsPublicPath: '/',
+    productionSourceMap: true,
+    productionGzip: true,
+    productionGzipExtensions: ['js', 'css'],
+    cssSourceMap: true,
+  },
+  dev: {
+    env: {
+      NODE_ENV: '"development"',
+    },
+    port: 8022,
+    assetsSubDirectory: 'static',
+    assetsPublicPath: '/',
+    context: [ // 代理路径
+      '/api',
+    ],
+    proxypath,
+    cssSourceMap: false,
+  },
 }

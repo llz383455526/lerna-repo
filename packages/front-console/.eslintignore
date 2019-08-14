@@ -1,0 +1,9 @@
+node_modules
+public
+dist
+product
+src/**/*.js
+src/**/*.vue
+build/*.js
+# !src/pages/clientManager/addServer.vue
+# !src/component/paging/*.vue

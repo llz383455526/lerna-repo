@@ -1,33 +1,13 @@
-var gulp = require('gulp')
-var del = require('del')
+const { src, dest, series } = require('gulp')
+const del = require('del')
 
-gulp.task('clean', function() {
-	return del('./product/assets')
-})
+function clean(cb) {
+  del('./product/assets/**')
+  cb()
+}
 
-gulp.task('assets', function() {
-	return gulp.src(['./assets/**/*'])
-		.pipe(gulp.dest('./product/assets/'))
-})
-
-gulp.task('default', ['clean'], function() {
-	gulp.start('assets')
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function copyAssets(cb) {
+  src(['./assets/**/*']).pipe(dest('./product/assets/'))
+  cb()
+}
+exports.default = series(clean, copyAssets)

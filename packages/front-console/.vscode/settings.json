@@ -1,5 +1,5 @@
 {
-    "editor.tabSize": 2,
-    "git.ignoreLimitWarning": true,
-    "editor.detectIndentation": false
+  "editor.tabSize": 2,
+  "git.ignoreLimitWarning": true,
+	"editor.detectIndentation": false
 }
