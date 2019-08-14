@@ -26,13 +26,13 @@
                 <td>
                     <div :class="['content', postListStatus[index][i].content && 'close']">{{item.description}}</div>
                     <el-button type="text" size="mini"
-                        v-if="item.description.length > 30"
+                        v-if="item.description && item.description.length > 30"
                         @click="expandContent(index, i)">{{postListStatus[index][i].content ? '展开' : '收起'}}</el-button>
                 </td>
                 <td>
                     <div :class="['content', postListStatus[index][i].rule && 'close']">{{item.performance}}</div>
                     <el-button type="text" size="mini"
-                        v-if="item.performance.length > 30"
+                        v-if="item.performance && item.performance.length > 30"
                         @click="expandRule(index, i)">{{postListStatus[index][i].rule ? '展开' : '收起'}}</el-button>
                 </td>
                 <td align="center">
@@ -118,7 +118,11 @@ export default {
       this.serviceIndex = index;
     },
     remove(index, i) {
-      this.$emit("remove", this.index, index, i);
+        // if (this.postListStatus[index][i].length > 0) {
+        //     this.postListStatus[index].splice(i, 1)
+        // }
+        this.$emit("remove", this.index, index, i);
+        // this.initDepth(this.serviceList)
     },
     downFile(attachment) {
       window.open(
