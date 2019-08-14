@@ -810,7 +810,7 @@ export default {
                     break;
                 case 'asr-create-job':
                     // 合规通 爱收入岗位模板弹框
-                    this.$refs.postDialog.query({ processInstanceId: param.processInstanceId, businessId: param.businessId, taskId: res.id })
+                    this.$refs.postDialog.query({ processInstanceId: param.processInstanceId, businessId: param.businessId, taskId: res.processTaskId })
                     this.postAuditDialog = true
                 default:
                     break;
