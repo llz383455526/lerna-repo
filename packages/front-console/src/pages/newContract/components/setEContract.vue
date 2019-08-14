@@ -52,14 +52,16 @@
             </el-checkbox-group>
         </el-form-item>
         <h3 class="green">爱收入发岗位</h3>
-        <el-form-item label="接入【爱收入】发布岗位" prop="passportType">
+        <el-form-item label="接入【爱收入】发布岗位" required prop="joinIshouru">
             <el-radio-group v-model="contractForm.joinIshouru">
                 <el-radio label="1">是</el-radio>
                 <el-radio label="0">否</el-radio>
             </el-radio-group>
-            <el-button class="ml100" type="text">
-                <i class="el-icon-question"></i>
-            </el-button>
+            <el-tooltip class="item" effect="dark" content="开启后，企业服务端将开放岗位服务入口，企业客户可以发布岗位招聘，完善证据链" placement="top-start">
+                <el-button class="ml100" type="text">
+                    <i class="el-icon-question"></i>
+                </el-button>
+            </el-tooltip>
         </el-form-item>
         <!-- <pre>{{contractForm}}</pre> -->
 

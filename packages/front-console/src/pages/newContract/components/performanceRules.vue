@@ -24,10 +24,16 @@
                     <div class="content">{{item.posName}}</div>
                 </td>
                 <td>
-                    <div class="content">{{item.description}}</div>
+                    <div :class="['content', postListStatus[index][i].content && 'close']">{{item.description}}</div>
+                    <el-button type="text" size="mini"
+                        v-if="item.description.length > 30"
+                        @click="expandContent(index, i)">{{postListStatus[index][i].content ? '展开' : '收起'}}</el-button>
                 </td>
                 <td>
-                    <div class="content">{{item.performance}}</div>
+                    <div :class="['content', postListStatus[index][i].rule && 'close']">{{item.performance}}</div>
+                    <el-button type="text" size="mini"
+                        v-if="item.performance.length > 30"
+                        @click="expandRule(index, i)">{{postListStatus[index][i].rule ? '展开' : '收起'}}</el-button>
                 </td>
                 <td align="center">
                     <div class="content">
@@ -46,6 +52,7 @@
         </template>
     </table>
     <!-- <pre>{{serviceList}}</pre> -->
+    <!-- <pre>{{postListStatus}}</pre> -->
     <post v-model="postDialog" @addServicePost="addServicePost"></post>
   </div>
 </template>
@@ -72,9 +79,9 @@ export default {
   data() {
     return {
       postDialog: false, // 添加岗位弹框
+      postListStatus: [], // 展开关闭
       serviceList: [], // 岗位模板列表
       serviceIndex: 0 // 选中的服务类型下标
-      // currentServiceId: 0 // 选中的服务类型
     };
   },
   computed: {
@@ -90,23 +97,20 @@ export default {
     servicePosList: {
       handler(val) {
         this.serviceList = val;
+        this.initDepth(this.serviceList)
       },
       deep: true
     }
   },
   created() {
     this.serviceList = this.servicePosList;
+    this.initDepth(this.serviceList)
   },
   methods: {
-      download() {
-          this.$emit('download')
-      },
+    download() {
+        this.$emit('download')
+    },
     addServicePost(data) {
-      // const obj = this.serviceList[this.serviceIndex]
-      // this.serviceList.splice(this.serviceIndex + 1, 0, {
-      //     ...obj,
-      //     ...data
-      // })
       this.$emit("change", this.index, this.serviceIndex, data);
     },
     addPost(index) {
@@ -120,7 +124,29 @@ export default {
       window.open(
         `${baseUrl}/api/contract-web/file/download?downloadCode=${attachment.downloadCode}`
       );
-    }
+    },
+    expandContent(index, i) {
+        this.postListStatus[index][i].content = !this.postListStatus[index][i].content
+        this.$forceUpdate()
+    },
+    expandRule(index, i) {
+        this.postListStatus[index][i].rule = !this.postListStatus[index][i].rule
+        this.$forceUpdate()
+    },
+    // 初始化岗位模板信息展开/关闭状态
+    initDepth(list) {
+        this.postListStatus = []
+        list.forEach((item, key) => {
+            this.postListStatus[key] = []
+            item.positions.forEach((row) => {
+                console.log(123)
+                this.postListStatus[key].push({
+                    content: true,
+                    rule: true,
+                })
+            })
+        })
+    },
   }
 };
 </script>
@@ -144,5 +170,9 @@ export default {
 }
 .content {
   line-height: 1.5;
+}
+.close {
+    height: 42px;
+    overflow: hidden;
 }
 </style>
