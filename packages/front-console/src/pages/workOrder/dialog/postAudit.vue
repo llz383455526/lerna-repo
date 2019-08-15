@@ -33,6 +33,7 @@
         <el-input
           size="small"
           type="textarea"
+					:readonly="detail.IsEnable"
           v-model="form.remark"
           class="input-width"
           :rows="4"
@@ -116,7 +117,8 @@ export default {
             this.step = data[0].default
 						this.current = data[1][0]
 						this.active = data[1].length
-            this.detail = data[2]
+						this.detail = data[2]
+						this.form.remark = this.detail.Remark || ''
             this.form.id = parseInt(params.businessId, 10) // 岗位模板ID parseInt(params.businessId, 10)
             this.form.processInsId = params.processInstanceId
             this.form.taskId = `${params.taskId}`
