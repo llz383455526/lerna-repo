@@ -81,7 +81,8 @@ export default {
         remark: [
           { required: true, message: "请输入岗位名称", trigger: "blur" },
         ],
-      },
+			},
+			active: 1, // 当前步骤
     };
   },
   watch: {
@@ -90,13 +91,13 @@ export default {
     },
   },
   computed: {
-      active() {
-        let index = 0
-        if (this.current) {
-            index = this.step.findIndex(val => val.activityId === this.current.activityId)
-        }
-        return index + 1
-      }
+      // active() {
+      //   let index = 0
+      //   if (this.current) {
+      //       index = this.step.findIndex(val => val.activityId === this.current.activityId)
+      //   }
+      //   return index + 1
+      // }
   },
   created() {
   },
@@ -113,7 +114,8 @@ export default {
             get(`${asr.postDetail}/${params.businessId}`)
         ]).then(data => {
             this.step = data[0].default
-            this.current = data[1][0]
+						this.current = data[1][0]
+						this.active = data[1].length
             this.detail = data[2]
             this.form.id = parseInt(params.businessId, 10) // 岗位模板ID parseInt(params.businessId, 10)
             this.form.processInsId = params.processInstanceId
