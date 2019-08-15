@@ -151,9 +151,11 @@ export default {
         this.form.profileId = user.userProfile.id
         this.form.userId = user.id
         post(asr.postAudit, this.form).then(() => {
-						this.form.remark = ''
             this.$emit('change')
-            this.closePostDialog()
+						setTimeout(() => {
+							this.$refs['form'].resetFields();
+							this.closePostDialog();
+						}, 0)
         })
     },
   }
