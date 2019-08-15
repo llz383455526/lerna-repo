@@ -79,7 +79,7 @@ export default {
       detail: null, // 岗位模板详情
       rules: {
         remark: [
-          { required: true, message: "请输入岗位名称", trigger: "blur" },
+          { required: true, message: "请输入审核意见", trigger: "blur" },
         ],
 			},
 			active: 1, // 当前步骤
@@ -149,6 +149,7 @@ export default {
         this.form.profileId = user.userProfile.id
         this.form.userId = user.id
         post(asr.postAudit, this.form).then(() => {
+						this.form.remark = ''
             this.$emit('change')
             this.closePostDialog()
         })

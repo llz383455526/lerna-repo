@@ -177,7 +177,10 @@
             }
         },
         mounted() {
-            this.contractForm.smsType = '1'
+						this.contractForm.smsType = '1'
+						// if (!this.contractForm.joinIshouru) {
+						// 	this.contractForm = Object.assign(this.contractForm, { joinIshouru: '1' })
+						// }
             this.contractForm.passportType = this.contractForm.passportType || '1'
             this.contractForm.signMode = this.contractForm.contracts.length > 1 ? '0' : '1'
             this.contractForm.econtractServiceCompanyList = this.contractForm.econtractServiceCompanyList || []

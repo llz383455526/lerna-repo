@@ -143,7 +143,6 @@ export default {
         list.forEach((item, key) => {
             this.postListStatus[key] = []
             item.positions.forEach((row) => {
-                console.log(123)
                 this.postListStatus[key].push({
                     content: true,
                     rule: true,
