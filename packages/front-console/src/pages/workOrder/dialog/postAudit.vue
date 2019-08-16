@@ -10,7 +10,7 @@
     <el-steps :active="active" align-center v-if="detail">
       <el-step v-for="(item, index) in step" :key="index"
         :title="item.activityName"
-        :description="item.activityId === 'taskCreate' ? `（来自：${detail.ServiceCompanyName}）` : `（审核人：${current.userName}）`"></el-step>
+        :description="item.activityId === 'taskCreate' ? `（来自：${detail.ServiceCompanyName}）创建人：${current[0].userName}` : (current.length === 2?`（审核人：${current[1].userName}）`:'')"></el-step>
     </el-steps>
     <h3 class="green">岗位详情</h3>
     <el-form ref="form" size="mini" :model="form" :rules="rules" :inline="true" v-if="detail">
@@ -105,8 +105,11 @@ export default {
   mounted() {},
   methods: {
     closePostDialog() {
-      this.postDialog = false;
-      this.$emit("input", false);
+			this.$refs['form'].resetFields();
+			setTimeout(() => {
+      	this.postDialog = false;
+      	this.$emit("input", false);
+			}, 0)
     },
     query(params) {
         Promise.all([
@@ -115,7 +118,7 @@ export default {
             get(`${asr.postDetail}/${params.businessId}`)
         ]).then(data => {
             this.step = data[0].default
-						this.current = data[1][0]
+						this.current = data[1]
 						this.active = data[1].length
 						this.detail = data[2]
 						this.form.remark = this.detail.Remark || ''
