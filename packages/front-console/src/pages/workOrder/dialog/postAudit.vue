@@ -10,7 +10,7 @@
     <el-steps :active="active" align-center v-if="detail">
       <el-step v-for="(item, index) in step" :key="index"
         :title="item.activityName"
-        :description="item.activityId === 'taskCreate' ? `（来自：${detail.ServiceCompanyName}）创建人：${current[0].userName}` : (current.length === 2?`（审核人：${current[1].userName}）`:'')"></el-step>
+        :description="item.activityId === 'taskCreate' ? `（来自：${detail.ServiceCompanyName}）创建人：${current[0].userName}` : (current.length === 2?`（审核人：${current[1].userName} 审核结果：${current[1].operate}）`:'')"></el-step>
     </el-steps>
     <h3 class="green">岗位详情</h3>
     <el-form ref="form" size="mini" :model="form" :rules="rules" :inline="true" v-if="detail">
@@ -33,7 +33,7 @@
         <el-input
           size="small"
           type="textarea"
-					:readonly="!!detail.IsEnable"
+					:disabled="!!detail.IsEnable"
           v-model="form.remark"
           class="input-width"
           :rows="4"
