@@ -42,7 +42,7 @@
       </el-form-item>
     </el-form>
 		<template v-if="current && current.length">
-			<div class="title">操作记录</div>
+			<div class="record">操作记录</div>
 			<div class="det" v-for="(e, i) in current" :key="i">
 					{{i + 1}}.{{e.userName ? e.userName : '系统'}}  于{{e.processDate}} {{e.operate || e.activityName}}
 					<template v-if="e.comment">
@@ -181,11 +181,10 @@ export default {
 .content {
   width: 400px;
 }
-.title {
+.record {
     font-weight: bold;
     padding-bottom: 15px;
     padding-left: 20px;
-		padding-top: 20px;
 }
 .det {
     position: relative;
