@@ -41,6 +41,15 @@
         ></el-input>
       </el-form-item>
     </el-form>
+		<template v-if="current && current.length">
+			<div class="title">操作记录</div>
+			<div class="det" v-for="(e, i) in current" :key="i">
+					{{i + 1}}.{{e.userName ? e.userName : '系统'}}  于{{e.processDate}} {{e.operate || e.activityName}}
+					<template v-if="e.comment">
+							，备注： {{e.comment}}
+					</template>
+			</div>
+		</template>
     <div slot="footer" v-if="detail && !detail.IsEnable">
       <el-button size="small" type="primary" @click="pass('form')">通过</el-button>
       <el-button size="small" @click="refuse('form')">拒绝</el-button>
@@ -171,5 +180,16 @@ export default {
 }
 .content {
   width: 400px;
+}
+.title {
+    font-weight: bold;
+    padding-bottom: 15px;
+    padding-left: 20px;
+		padding-top: 20px;
+}
+.det {
+    position: relative;
+    padding-bottom: 10px;
+    padding-left: 20px;
 }
 </style>
