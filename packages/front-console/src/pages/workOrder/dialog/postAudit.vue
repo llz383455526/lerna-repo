@@ -33,7 +33,7 @@
         <el-input
           size="small"
           type="textarea"
-					:readonly="detail.IsEnable"
+					:readonly="!!detail.IsEnable"
           v-model="form.remark"
           class="input-width"
           :rows="4"
