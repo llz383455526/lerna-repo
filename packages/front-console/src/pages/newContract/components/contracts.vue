@@ -60,7 +60,12 @@
                     </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label="C端绩效计算规则" :prop="`contracts[${index}].servicePosList`" :rules="{required: true, validator: validatePost, trigger: 'change'}">
-                    <performance-rules :servicePosList="formItem.servicePosList" :index="index" @change="addPositions" @remove="removePost" @download="downloadRule"></performance-rules>
+                    <performance-rules
+											:servicePosList="formItem.servicePosList"
+											:index="index"
+											@change="addPositions"
+											@remove="removePost"
+											@download="downloadRule(formItem.serviceCompanyId)"></performance-rules>
                 </el-form-item>
                 <br>
                 <template v-if="ruleForm.originalType == 20">
@@ -220,7 +225,7 @@ export default {
     },
     methods: {
         // 下载 绩效规则-协议
-        downloadRule() {
+        downloadRule(serviceCompanyId) {
             const datas = JSON.parse(JSON.stringify(this.ruleForm))
             datas.contracts.forEach((item) => {
                 delete item.optionServiceTypeList
@@ -230,7 +235,7 @@ export default {
                 instanceId: this.$route.query.id,
                 workflowType: this.$route.query.editType
             };
-            post('/api/contract-web/contract/generate-position-attach', param).then(res => {
+            post(`/api/contract-web/contract/generate-position-attach?serviceCompanyId=${serviceCompanyId}`, param).then(res => {
                 console.log(res)
 								if(!res.downloadCode || res.downloadCode === 'undefined') {
 										this.$message({
