@@ -24,13 +24,13 @@
                     <div class="content">{{item.posName}}</div>
                 </td>
                 <td>
-                    <div :class="['content', postListStatus[index][i].content && 'close']">{{item.description}}</div>
+                    <div :class="['content', postListStatus[index][i].content && 'close']" v-html="item.description"></div>
                     <el-button type="text" size="mini"
                         v-if="item.description && item.description.length > 30"
                         @click="expandContent(index, i)">{{postListStatus[index][i].content ? '展开' : '收起'}}</el-button>
                 </td>
                 <td>
-                    <div :class="['content', postListStatus[index][i].rule && 'close']">{{item.performance}}</div>
+                    <div :class="['content', postListStatus[index][i].rule && 'close']" v-html="item.performance"></div>
                     <el-button type="text" size="mini"
                         v-if="item.performance && item.performance.length > 30"
                         @click="expandRule(index, i)">{{postListStatus[index][i].rule ? '展开' : '收起'}}</el-button>

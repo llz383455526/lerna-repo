@@ -123,7 +123,9 @@ export default {
           //   return
           // }
           // console.log(this.form)
-          const form = Object.assign({}, this.form)
+					const form = Object.assign({}, this.form)
+					form.description = form.description.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;')
+					form.performance = form.performance.replace(/\r\n/g, '<br/>').replace(/\n/g, '<br/>').replace(/\s/g, '&nbsp;')
           this.$emit("addServicePost", form);
           setTimeout(() => {
             this.$refs['form'].resetFields();

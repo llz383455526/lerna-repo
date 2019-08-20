@@ -24,10 +24,10 @@
         <div class="content">{{detail.ServiceTypeName}}</div>
       </el-form-item>
       <el-form-item label="工作内容：" :label-width="formLabelWidth">
-        <div class="content">{{detail.Requirement}}</div>
+        <div class="content" v-html="detail.Requirement"></div>
       </el-form-item>
       <el-form-item label="绩效费结算规则：" :label-width="formLabelWidth">
-        <div class="content">{{detail.SettlementRule}}</div>
+        <div class="content" v-html="detail.SettlementRule"></div>
       </el-form-item>
       <el-form-item label="审核意见：" prop="remark" :label-width="formLabelWidth">
         <el-input
