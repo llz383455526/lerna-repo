@@ -52,8 +52,8 @@
             </el-checkbox-group>
         </el-form-item>
         <h3 class="green">爱收入发岗位</h3>
-        <el-form-item label="接入【爱收入】发布岗位" required prop="joinIshouru">
-            <el-radio-group v-model="contractForm.joinIshouru">
+        <el-form-item label="接入【爱收入】发布岗位" required prop="jobMatch">
+            <el-radio-group v-model="contractForm.jobMatch">
                 <el-radio label="1">是</el-radio>
                 <el-radio label="0">否</el-radio>
             </el-radio-group>
@@ -178,8 +178,8 @@
         },
         mounted() {
 						this.contractForm.smsType = '1'
-						// if (!this.contractForm.joinIshouru) {
-						// 	this.contractForm = Object.assign(this.contractForm, { joinIshouru: '1' })
+						// if (!this.contractForm.jobMatch) {
+						// 	this.contractForm = Object.assign(this.contractForm, { jobMatch: '1' })
 						// }
             this.contractForm.passportType = this.contractForm.passportType || '1'
             this.contractForm.signMode = this.contractForm.contracts.length > 1 ? '0' : '1'
