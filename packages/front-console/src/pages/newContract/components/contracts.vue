@@ -232,6 +232,13 @@ export default {
             };
             post('/api/contract-web/contract/generate-position-attach', param).then(res => {
                 console.log(res)
+								if(!res.downloadCode || res.downloadCode === 'undefined') {
+										this.$message({
+												message: '下载地址错误',
+												type: 'warning'
+										});
+										return
+								}
                 window.open(`${baseUrl}/api/contract-web/file/download?downloadCode=${res.downloadCode}`);
             })
         },

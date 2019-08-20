@@ -46,7 +46,7 @@
                     </div>
                 </td>
                 <td>
-                    <el-button type="text" size="mini" @click="remove(index, i)">删除</el-button>
+                    <el-button type="text" size="mini" v-if="item.posName" @click="remove(index, i)">删除</el-button>
                 </td>
             </tr>
         </template>
