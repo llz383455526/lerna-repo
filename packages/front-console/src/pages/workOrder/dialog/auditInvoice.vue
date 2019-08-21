@@ -477,7 +477,8 @@ export default {
                 'crowdSource':'普通众包',
                 'subcontract':'转包',
                 'preInvoice':'预开票'
-            }
+            },
+            invoiceApi,
         }
     },
     mounted() {

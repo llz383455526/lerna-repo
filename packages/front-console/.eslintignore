@@ -5,5 +5,7 @@ product
 src/**/*.js
 src/**/*.vue
 build/*.js
-# !src/pages/clientManager/addServer.vue
+!src/pages/clientManager/addServer.vue
+# !src/pages/clientManager/serverDetail.vue
+!src/rule/channel.js
 # !src/component/paging/*.vue

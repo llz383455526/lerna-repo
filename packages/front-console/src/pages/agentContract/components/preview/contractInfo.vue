@@ -6,14 +6,10 @@
       </h4>
     </div>
     <div class="widget-body">
-      <div
-        class="widget-main"
-        style="font-size: 16px;line-height: 30px;"
-      >
-        <div
-          class="row"
-          style="margin-bottom: 15px;"
-        >
+      <div class="widget-main"
+           style="font-size: 16px;line-height: 30px;">
+        <div class="row"
+             style="margin-bottom: 15px;">
           <div class="col-xs-12">
             <h4 class="block green">
               合同基本信息
@@ -29,30 +25,22 @@
             试合作期：若乙方第一次代理甲方产品，则本合同前{{ contractForm.datas.agentCompanyBaseInfo.probation }}个月为试合作期
           </div>
           <template v-if="contractForm.datas.agentContract.versionStartDate">
-            <div
-              class="col-xs-12"
-            >
+            <div class="col-xs-12">
               变更生效：{{ formatTime(contractForm.datas.agentContract.versionStartDate, "yyyy-MM-dd") }}
             </div>
-            <div
-              class="col-xs-12"
-              v-if="contractForm.datas.agentContract.versionStartDate"
-            >
+            <div class="col-xs-12"
+                 v-if="contractForm.datas.agentContract.versionStartDate">
               变更说明：{{ contractForm.datas.flowMemo }}
             </div>
           </template>
-          <div
-            class="col-xs-12"
-            v-else
-          >
+          <div class="col-xs-12"
+               v-else>
             代理期限：{{ contractForm.datas.agentContract.agentStart + ' - ' +
               contractForm.datas.agentContract.agentEnd }}
           </div>
         </div>
-        <div
-          class="row"
-          style="margin-bottom: 15px;"
-        >
+        <div class="row"
+             style="margin-bottom: 15px;">
           <div class="col-xs-12">
             <h4 class="block green">
               渠道基本信息
@@ -80,10 +68,8 @@
             银行账号：{{ contractForm.datas.agentCompanyBaseInfo.accountNo }}
           </div>
         </div>
-        <div
-          class="row"
-          style="margin-bottom: 15px;"
-        >
+        <div class="row"
+             style="margin-bottom: 15px;">
           <div class="col-xs-12">
             <h4 class="block green">
               渠道联系信息
@@ -99,19 +85,15 @@
             渠道联系人地址： {{ contractForm.datas.agentCompanyBaseInfo.contactAddr }}
           </div>
         </div>
-        <div
-          class="row"
-          style="margin-bottom: 15px;"
-        >
+        <div class="row"
+             style="margin-bottom: 15px;">
           <div class="col-xs-12">
             <h4 class="block green">
               代理推广费报价
             </h4>
           </div>
-          <div
-            v-for="(item, index) in contractForm.datas.agentContract.serviceCompanyFeeContentList"
-            :key="index"
-          >
+          <div v-for="(item, index) in contractForm.datas.agentContract.serviceCompanyFeeContentList"
+               :key="index">
             <div class="col-xs-12">
               落地公司：{{ item.serviceCompanyName }}
             </div>
@@ -126,11 +108,9 @@
                 <div style="padding-left: 20px">
                   <p>(1) {{ item.incomeAmount }}万含以下<span v-if="item.subType === 'nonflow'">，实发金额*{{ item.feeContentMap.down[0].percent }}%</span></p>
                   <template v-if="item.subType === 'flow'">
-                    <p
-                      class="list-item"
-                      v-for="(downitem, downindex) in item.feeContentMap.down"
-                      :key="'downindex'+downindex"
-                    >
+                    <p class="list-item"
+                       v-for="(downitem, downindex) in item.feeContentMap.down"
+                       :key="'downindex'+downindex">
                       {{ downindex === 0 ?'小于':downitem.startAmount+'万' + (downitem.equalsStart?'含':'') + (downindex === item.feeContentMap.down.length-1 ?'以上':'~') }}
                       <span v-if="downindex < item.feeContentMap.down.length-1">{{ downitem.endAmount }}万{{ downitem.equalsEnd?'含':'' }}</span>，
                       实发金额*{{ downitem.percent }}%
@@ -151,18 +131,16 @@
                 </div>
               </template>
             </div>
-            <div
-              class="col-xs-12"
-              v-if="contractForm.datas.agentContract.versionStartDate"
-            >
+            <div class="col-xs-12"
+                 v-if="contractForm.datas.agentContract.versionStartDate">
               代理期限：{{ item.agentStart + ' - ' + item.agentEnd }}
             </div>
+            <div class="col-xs-12"
+                 v-if="item.approveStateName">合同申请状态：{{item.approveStateName}}</div>
           </div>
         </div>
-        <div
-          class="row"
-          style="margin-bottom: 15px;"
-        >
+        <div class="row"
+             style="margin-bottom: 15px;">
           <div class="col-xs-12">
             <h4 class="block green">
               销售（渠道经理）联系信息
@@ -219,11 +197,11 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-p{
-    margin: 0;
-    &.list-item{
-        padding-left: 20px;
-        font-size: 14px;
-    }
+p {
+  margin: 0;
+  &.list-item {
+    padding-left: 20px;
+    font-size: 14px;
+  }
 }
 </style>

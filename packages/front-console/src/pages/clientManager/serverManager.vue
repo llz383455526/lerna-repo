@@ -22,213 +22,23 @@
             编辑
           </el-button>
         </div>
-        <div class="text">
-          <div class="box">
-            <el-row :gutter="20">
-              <el-col :span="10">
-                <el-col
-                  :span="8"
-                  class="right"
-                >
-                  公司全称
-                </el-col>
-                <el-col :span="10">
-                  {{ msg.serviceCompanyInfo.name }}
-                </el-col>
-              </el-col>
-              <el-col :span="10">
-                <el-col
-                  :span="8"
-                  class="right"
-                >
-                  支持开票类型
-                </el-col>
-                <el-col :span="15">
-                  <span>{{ msg.serviceCompanyInfo.supportInvoiceTypeName }}</span>
-                </el-col>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="10">
-                <el-col
-                  :span="8"
-                  class="right"
-                >
-                  公司简称
-                </el-col>
-                <el-col :span="10">
-                  {{ msg.serviceCompanyInfo.shortName }}
-                </el-col>
-              </el-col>
-              <el-col :span="10">
-                <el-col
-                  :span="8"
-                  class="right"
-                >
-                  法人姓名
-                </el-col>
-                <el-col :span="10">
-                  {{ msg.serviceCompanyInfo.corporateName }}
-                </el-col>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="10">
-                <el-col
-                  :span="8"
-                  class="right"
-                >
-                  所在省市
-                </el-col>
-                <el-col :span="10">
-                  {{ msg.serviceCompanyInfo.provinceName }} {{ msg.serviceCompanyInfo.cityName }}
-                </el-col>
-              </el-col>
-              <el-col :span="10">
-                <el-col
-                  :span="8"
-                  class="right"
-                >
-                  法人证件号
-                </el-col>
-                <el-col :span="10">
-                  {{ msg.serviceCompanyInfo.corporateIdentity }}
-                </el-col>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="10">
-                <el-col
-                  :span="8"
-                  class="right"
-                >
-                  是否直营
-                </el-col>
-                <el-col :span="10">
-                  {{ msg.serviceCompanyInfo.directName }}
-                </el-col>
-              </el-col>
-              <el-col :span="10">
-                <el-col
-                  :span="8"
-                  class="right"
-                >
-                  纳税人识别号
-                </el-col>
-                <el-col :span="10">
-                  {{ msg.serviceCompanyInfo.taxIdcd }}
-                </el-col>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="10">
-                <el-col
-                  :span="8"
-                  class="right"
-                >
-                  负责人
-                </el-col>
-                <el-col :span="10">
-                  {{ msg.serviceCompanyInfo.masterName }}
-                </el-col>
-              </el-col>
-              <el-col :span="10">
-                <el-col
-                  :span="8"
-                  class="right"
-                >
-                  公司详细地址
-                </el-col>
-                <el-col :span="10">
-                  {{ msg.serviceCompanyInfo.address }}
-                </el-col>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="10">
-                <el-col
-                  :span="8"
-                  class="right"
-                >
-                  注册状态
-                </el-col>
-                <el-col :span="10">
-                  {{ msg.serviceCompanyInfo.registeredName }}
-                </el-col>
-              </el-col>
-              <el-col :span="10">
-                <el-col
-                  :span="8"
-                  class="right"
-                >
-                  联系电话
-                </el-col>
-                <el-col :span="10">
-                  {{ msg.serviceCompanyInfo.telephone }}
-                </el-col>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="10">
-                <el-col
-                  :span="8"
-                  class="right"
-                >
-                  注册日期
-                </el-col>
-                <el-col :span="10">
-                  {{ msg.serviceCompanyInfo.registrationAt }}
-                </el-col>
-              </el-col>
-              <el-col :span="10">
-                <el-col
-                  :span="8"
-                  class="right"
-                >
-                  公司开户行
-                </el-col>
-                <el-col :span="10">
-                  {{ msg.serviceCompanyInfo.bankName }}
-                </el-col>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="10">
-                <el-col
-                  :span="8"
-                  class="right"
-                >
-                  银行账号
-                </el-col>
-                <el-col :span="10">
-                  {{ msg.serviceCompanyInfo.bankAccount }}
-                </el-col>
-              </el-col>
-              <el-col :span="10">
-                <el-col
-                  :span="8"
-                  class="right"
-                >
-                  税优地
-                </el-col>
-                <el-col :span="10">
-                  {{ msg.serviceCompanyInfo.taxLandingName }}
-                </el-col>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :span="10">
-                <el-col
-                  :span="10"
-                  class="right"
-                >
-                  是否有业务（用于合同）
-                </el-col>
-                <el-col :span="10">
-                  {{ msg.serviceCompanyInfo.businessedName }}
-                </el-col>
-              </el-col>
-            </el-row>
+        <div class="detail-list" v-if="detailList.length">
+          <div class="detail-list-item">
+            <span class="detail-list-item-title">{{detailList[0].title}}:</span>
+            <span class="detail-list-item-value status-highlight">{{detailList[0].value}}</span>
+          </div>
+          <div class="detail-list-item">
+            <div v-show="!msg.serviceCompanyInfo.isBusinessed">
+              <span class="detail-list-item-title">{{detailList[1].title}}:</span>
+              <span class="detail-list-item-value">{{detailList[1].value}}</span>
+            </div>
+          </div>
+          <div
+            v-for="item in detailList.slice(2,detailList.length)"
+            :key="item.title"
+            class="detail-list-item">
+              <span class="detail-list-item-title">{{item.title}}:</span>
+              <span class="detail-list-item-value">{{item.value||'--'}}</span>
           </div>
         </div>
       </el-card>
@@ -1069,6 +879,7 @@
       <el-button
         size="small"
         type="primary"
+        style="margin: 5px"
         v-for="e in channels"
         :key="e.value"
         @click="add(e.value)"
@@ -1090,15 +901,10 @@
 <script>
 import {
     get,
-    post,
-    formPost,
-    postButNoErrorToast,
-    postWithErrorCallback
+    post
 } from "../../store/api";
 // import {mapGetters} from 'vuex'
-import { createUser } from "../../service/userApi";
 import {showNotify} from '../../plugin/utils-notify';
-import { setTimeout } from 'timers';
 var baseUrl = require("../../config/address.js").baseUrl;
 import adjustInvoiceAmount from '../../pageComponent/adjustInvoiceAmount.vue';
 
@@ -1247,6 +1053,10 @@ export default {
                     text: '阿里网商',
                     value: 'alibank'
                 },
+                 {
+                    text: '阿里网商直连',
+                    value: 'aliMYbank'
+                },
                 {
                     text: '薪太软',
                     value: 'xtr'
@@ -1339,7 +1149,84 @@ export default {
                 pageSize: 10,
                 serviceCompanyId: ''
             },
-            schemeData: {}
+            schemeData: {},
+            detailList: [
+                {
+                title: '状态',
+                prop: 'isBusinessed',
+                }, {
+                title: '禁用原因',
+                prop: 'disableMemo',
+                },
+                {
+                title: '落地公司全称',
+                prop: 'name',
+                },
+                {
+                title: '税盘类型',
+                prop: 'taxType',
+                },
+                {
+                title: '落地公司简称',
+                prop: 'shortName',
+                },
+                {
+                title: '支持开票类型',
+                prop: 'supportInvoiceTypeName',
+                },
+                {
+                title: '税号',
+                prop: 'taxIdcd',
+                },
+                {
+                title: '普票开票限额',
+                prop: 'ppMaxAmount',
+                },
+                {
+                title: '法人姓名',
+                prop: 'corporateName',
+                },
+                {
+                title: '专票开票限额',
+                prop: 'zpMaxAmount',
+                },
+                {
+                title: '法人证件类型',
+                prop: 'corporateCertTypeName',
+                },
+                {
+                title: '详细地址',
+                prop: 'invoiceAddr',
+                },
+                {
+                title: '法人证件号',
+                prop: 'corporateIdentity',
+                },
+                {
+                title: '电话',
+                prop: 'invoicePhone',
+                },
+                {
+                title: '是否直营',
+                prop: 'directName',
+                },
+                {
+                title: '开户银行',
+                prop: 'bankName',
+                },
+                {
+                title: '注册状态',
+                prop: 'registeredName',
+                },
+                {
+                title: '银行账户',
+                prop: 'bankAccount',
+                },
+                {
+                title: '税优地',
+                prop: 'taxLandingName',
+                },
+            ],
         };
     },
     activated() {
@@ -1382,6 +1269,30 @@ export default {
                 //深拷贝保存老数据
                 this.oldTest = JSON.parse(JSON.stringify(data.testInfoList));
                 this.msg = data;
+                this.detailList.forEach((item) => {
+                    console.log(item)
+                    const valueForProp = data.serviceCompanyInfo[item.prop]
+                    item.value = valueForProp
+                    switch (item.prop) {
+                        case 'isBusinessed':
+                        {
+                            item.value = valueForProp ? '启用' : '禁用'
+                            break
+                        }
+                        case 'taxType':
+                        {
+                            if(valueForProp==='JS'){
+                                item.value = '金税盘'
+                            } else if(valueForProp === 'SK'){
+                                item.value = '税控盘'
+                            }
+                            break
+                        }
+                        default: {
+                        console.log('detail display error')
+                        }
+                    }
+                })
             })
 
             //穿行测试
@@ -1839,5 +1750,26 @@ export default {
 }
 .text-label{
     text-align: right;
+}
+
+.detail-list {
+  display: flex;
+  flex-flow: row wrap;
+  font-size: 16px;
+  color: #333;
+}
+.detail-list-item {
+  width: 45%;
+  padding: 5px;
+}
+.detail-list-item .status {
+  width: 100%
+}
+.detail-list-item-title {
+  color: #999;
+  margin-right: 8px;
+}
+.detail-list-item .status-highlight {
+  color: #3EBC58;
 }
 </style>

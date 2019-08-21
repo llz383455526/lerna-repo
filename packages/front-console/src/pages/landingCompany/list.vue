@@ -29,7 +29,11 @@
                     <span v-else>{{scope.row.testStatusName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="address" label="状态"></el-table-column>
+            <el-table-column prop="isBusinessed" label="状态">
+                <template slot-scope="scope">
+                    <span>{{scope.row.isBusinessed?"启用":"禁用"}}</span>
+                </template>
+            </el-table-column>
             <!--
             <el-table-column prop="address" label="地址"></el-table-column>
             <el-table-column prop="invoiceType" label="发票类型" display="none">
@@ -44,7 +48,11 @@
                 <template slot-scope="scope">
                     <el-button @click="routerPush('/main/clientManager/serverManager',scope.row)" type="text" size="medium" style="padding:0;">管理
                     </el-button>
-                    <el-switch @click="routerPush('/main/clientManager/serverManager',scope.row)" type="text" size="medium" style="padding:0;">管理
+                    <el-switch
+                        v-model="scope.row.isBusinessed"
+                        @change="switchStatus(scope.row)"
+                        size="medium"
+                        style="padding:0;">
                     </el-switch>
                 </template>
             </el-table-column>
@@ -52,6 +60,41 @@
         <ayg-pagination v-if="tableList.total" :total="tableList.total"
                         v-on:handleSizeChange="handleSizeChange"
                         v-on:handleCurrentChange="handleCurrentChange" :currentPage="currentPage"></ayg-pagination>
+        <el-dialog
+            :title="dialogModal.title"
+            :visible.sync="dialogVisible"
+            class="switch-status-dialog"
+            :before-close="dialogCancelHandler"
+        >
+            <div class="dialog-content">
+                <!--isBussined=true，表示进入禁用流程-->
+                <div class="disable-content" v-if="!dialogModal.isBusinessed">
+                    <div class="disable-tip">
+                        <i class="el-icon-warning"></i>
+                        <span>禁用原因将直接显示在企业端</span>
+                    </div>
+                    <div class="disable-reason">
+                        <span>禁用原因：</span><textarea v-model="dialogModal.disableReason"></textarea>
+                    </div>
+                    <p class="disable-comment">注：禁用后，客户不能选择与该落地公司签合同，已签合同的客户不能对该落地公司进行充值或发放</p>
+                </div>
+                <!--相反进入启用流程-->
+                <div
+                    class="enable-title"
+                    v-if="dialogModal.isBusinessed"
+                    slot="title"
+                    >
+                    <i class="el-icon-warning"></i><span>确认启用？</span>
+                </div>
+                <div class="enable-content" v-if="dialogModal.isBusinessed">
+                    启用后客户可选择与该落地公司签合同，已签合同的客户可进行对落地公司充值或发放。是否确认启用？
+                </div>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogCancelHandler">取 消</el-button>
+                <el-button type="primary" @click="dialogOkHandler">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -98,6 +141,12 @@
                 formSearch: {
                     shortName: '',
                 },
+                dialogVisible: false,
+                dialogModal:{
+                    title: '',
+                    disableReason:''
+                }
+               
                 
             }
         },
@@ -108,6 +157,38 @@
                     pageNo: 1,
                     pageSize: this.pageSize,
                 });
+            },
+            switchStatus(item){ //注意：此时el-switch已经切换了状态，dialogModal同步收到影响
+                this.dialogModal = item
+                this.dialogVisible = true
+                this.dialogModal.disableReason = ''
+                if(item.isBusinessed){
+                    this.dialogModal.title = ''
+                } else {
+                    this.dialogModal.title = '禁用'
+                }
+            },
+            dialogCancelHandler(){
+                console.log('closed')
+                this.dialogVisible = false
+                this.dialogModal.isBusinessed = !this.dialogModal.isBusinessed
+            },
+            dialogOkHandler(){
+                if(!this.dialogModal.isBusinessed && this.dialogModal.disableReason==="") {
+                    showNotify("error", '请填写禁用原因', true)
+                    return
+                }
+                var param = {
+                    id: this.dialogModal.id,
+                    isEnable: this.dialogModal.isBusinessed,
+                    memo: this.dialogModal.disableReason
+                }
+                post(`/api/salemgt/service-company/update-business`,param).then(data => {
+                    this.dialogVisible = false
+                    showNotify("success", '更新状态成功', true)
+                }).catch(()=>{
+                    showNotify("error", '更新状态失败', true)
+                })
             },
             handleSizeChange(value) {
                 this.pageSize = value;
@@ -174,3 +255,76 @@
 
     }
 </script>
+
+<style lang="scss" scoped>
+// .switch-status-dialog {
+//     &>>>.el-dialog__body{
+//         border-top:1px solid #eeeeee;
+//     }
+// }
+.dialog-content {
+    color: #666666;
+    font-size: 14px;
+
+    .disable-title {
+        font-size: 16px;
+        i {
+            color: red;
+        }
+        span {
+            color:#333;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+    }
+    .disable-content {
+        .disable-tip {
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            color: #6e777b;
+            height: 40px;
+            background-color: rgba(230,247,255,0.9);
+            i {
+                color: #108EE9;
+                margin-right: 5px;
+            }
+
+        }
+        .disable-reason {
+            margin-top: 15px;
+            display: flex;
+
+            textArea {
+                width: 80%;
+                height: 90px;
+                border-color:#eeeeee;
+                border-radius: 5px;
+                font-size: 14px;
+                outline: none;
+                margin-left: 15px;
+                padding: 10px;
+            }
+        }
+        .disable-comment{
+            color:#999999;
+        }
+    }
+    
+    .enable-title {
+        font-size: 16px;
+        i {
+            color: #FAAD14;
+        }
+        span {
+            color:#333;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+    }
+    .enable-content {
+        margin-top: 15px;
+        color:#999;
+    }
+}
+</style>

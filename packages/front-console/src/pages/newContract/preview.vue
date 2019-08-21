@@ -123,6 +123,7 @@
                 <div class="col-xs-12">代理推广费率：<show-close-service :detail="formItem"></show-close-service>
                 </div>
               </template>
+              <div class="col-xs-12" v-if="formItem.approveStateName">合同申请状态：{{formItem.approveStateName}}</div>
               <hr v-if="key+1 != contractForm.contracts.length">
             </div>
           </div>

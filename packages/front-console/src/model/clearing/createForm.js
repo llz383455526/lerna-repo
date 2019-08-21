@@ -9,7 +9,7 @@ class createForm extends BaseModel {
         this.companyName = ''; // 客户公司名称
         this.mainAccountName = ''; // 主账户名称
         this.mainAccountNo = ''; // 主账户标识
-        this.paymentThirdType = 'pingan'; // 支付渠道
+        this.paymentThirdType = ''; // 支付渠道
         this.serviceCompanyId = ''; // 服务商ID
         this.serviceCompanyName	= ''; // 服务商名称
         this.fromPaymentUserId = ''; // 转出支付用户账户ID

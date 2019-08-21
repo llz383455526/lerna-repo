@@ -37,12 +37,12 @@ let proxypath = config.dev.proxypath
 let options = {
     target: proxypath,
     changeOrigin: true,
-	cookieDomainRewrite: 'localhost'
+		cookieDomainRewrite: 'localhost'
 }
 if (context.length) {
-    server.use(proxyMiddleware(context, options))
+		server.use(proxyMiddleware(context, options))
+    cookieDomainRewrite: 'localhost'
 }
-
 server.use(history({
 	rewrites: [
 		{ from: /^\/abc$/, to: '/' }

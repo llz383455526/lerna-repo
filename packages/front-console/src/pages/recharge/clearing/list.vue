@@ -74,9 +74,14 @@
                     <el-option v-for="(item, key) in option.serveCompanyList" :key="key" :label="item.name" :value="item.id"></el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="渠道类型" prop="channelType">
+                <el-select filterable v-model="createForm.channelType" class="form-width" @change="changeChannelType">
+                    <el-option v-for="item in option.channelTypeList" :key="item.value" :label="item.text" :value="item.value"></el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item label="主账户账号" prop="mainAccountNo">
                 <el-select filterable v-model="createForm.mainAccountNo" class="form-width" @change="changeChannel">
-                    <el-option v-for="(item, key) in option.primaryAccountList" :key="key" :label="item.channelAlias" :value="item.merchId"></el-option>
+                    <el-option v-for="item in option.primaryAccountList" :key="item.id" :label="item.channelAlias" :value="item.merchId"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="转出子账户" prop="fromPaymentUserId">
@@ -164,7 +169,7 @@ export default {
             dialogCreateVisible: false,
             createForm: new createForm(),
             searchForm: new searchForm(),
-            withdrawForm: new withdrawForm(),
+            withdrawForm: new withdrawForm(),   // todo 提现是否涉及平安与阿里网商直连？
             option: new optionModel(),
             check: new check(),
             tableData: '',
@@ -181,6 +186,7 @@ export default {
         this.option.getServeCompanyList();
         this.option.getClearingStateList();
         this.option.getSourceTypeList();
+        this.option.getChannelTypeList();
         this.query();
     },
     methods: {
@@ -192,9 +198,13 @@ export default {
             this.option.getAppList(e);
             this.searchForm.appId = '';
         },
+        changeChannelType() {
+            this.createForm.paymentThirdType = this.createForm.channelType
+            this.option.getPrimaryAccountList(this.createForm.serviceCompanyId, this.createForm.channelType);
+        },
         changeService(e) {
             let json = this.option.getJson(this.option.serveCompanyList, 'id', e);
-            this.option.getPrimaryAccountList(e);
+            // this.option.getPrimaryAccountList(e);
             this.createForm.serviceCompanyName = json.name;
             this.createForm.mainAccountNo = '';
             this.createForm.fromPaymentUserId = '';
@@ -213,10 +223,10 @@ export default {
         },
         changeChannel(e) {
             let json = this.option.getJson(this.option.primaryAccountList, 'merchId', e);
-            this.option.getBypassAccountList(json.id);
             this.createForm.mainAccountName = json.merchName;
             this.createForm.fromPaymentUserId = '';
             this.createForm.toPaymentUserId = '';
+            this.option.getBypassAccountList(json.id);
         },
         changeFrom(e) {
             let json = this.option.getJson(this.option.bypassAccountList, 'userId', e);

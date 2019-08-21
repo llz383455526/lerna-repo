@@ -155,7 +155,6 @@ function postWaitbyTaskId (url, param = {}, withLoading = false) {
         post(url, param, withLoading).then((data) => {
             console.log(param)
             if(param.taskId) {
-                console.log(waitByTaskId)
                 waitByTaskId(param.taskId).finally(() => {
                     resolve(data)
                 })

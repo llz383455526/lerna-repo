@@ -202,6 +202,11 @@ export default {
             if(paymentThirdType == 'alibank-bank' || paymentThirdType == 'alibank-alipay') {
                 paymentThirdType = 'alibank'
             }
+
+            if(paymentThirdType == 'alimybank-bank' || paymentThirdType == 'alimybank-alipay') {
+                paymentThirdType = 'aliMYbank'
+            }
+            
             post("/api/paymentmgt/front/payuser/qrybycompany", {
                 companyId: this.subServiceCompanyId || this.serviceCompanyId,
                 thirdpaySystemId: paymentThirdType

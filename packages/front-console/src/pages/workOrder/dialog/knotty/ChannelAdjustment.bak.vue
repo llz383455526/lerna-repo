@@ -18,7 +18,7 @@
               prop="customerCompanyId"
             >
                 <el-select
-                  v-if="isCreate" 
+                  v-if="isCreate"
                   class="form_input"
                   v-model="form.customerCompanyId"
                   @change="selectCompany"
@@ -264,32 +264,7 @@
                   ref="uploadMultiple_1"
                 ></upload-multiple>
             </el-form-item>
-            <el-form-item
-                v-if="active > 2"
-                label="制单备注"
-                prop="preparedocRemark"
-            >
-                <el-input
-                  class="form_input"
-                  v-if="active === 3 && !finished"
-                  v-model="form.preparedocRemark"
-                  type="textarea"
-                ></el-input>
-                <span v-else>{{form.preparedocRemark}}</span>
-            </el-form-item>
-            <el-form-item
-                v-if="active > 3"
-                label="财务审核备注"
-                prop="financeAuditRemark"
-            >
-                <el-input
-                  class="form_input"
-                  v-if="active === 4  && !finished"
-                  v-model="form.financeAuditRemark"
-                  type="textarea"
-                ></el-input>
-                <span v-else>{{form.financeAuditRemark}}</span>
-            </el-form-item>
+            result1
         </el-form>
         <div
           slot="footer"
@@ -308,36 +283,36 @@
             <template v-if="active == 2 && !finished">
                 <el-button
                   size="small"
-                  type="primary" 
+                  type="primary"
                   @click="rejectForm('form')"
                 >驳回</el-button>
                 <el-button
                   size="small"
-                  type="primary" 
+                  type="primary"
                   @click="examineForm('form')"
                 >确认提交</el-button>
             </template>
             <template v-if="active == 3 && !finished">
                 <el-button
                   size="small"
-                  type="primary" 
+                  type="primary"
                   @click="makingRejectForm('form')"
                 >驳回</el-button>
                 <el-button
                   size="small"
-                  type="primary" 
+                  type="primary"
                   @click="makingExamineForm('form')"
                 >已制单</el-button>
             </template>
             <template v-if="active == 4 && !finished">
                 <el-button
                   size="small"
-                  type="primary" 
+                  type="primary"
                   @click="financeRejectForm('form')"
                 >驳回</el-button>
                 <el-button
                   size="small"
-                  type="primary" 
+                  type="primary"
                   @click="financeExamineForm('form')"
                 >已审批</el-button>
             </template>
@@ -528,7 +503,7 @@ export default {
       actualAmount: function(val) {
           this.form.actualAmount = 0 - val
           this.form.transferActualAmount = val
-          
+
       },
       serviceAmount: function(val) {
           this.form.serviceAmount = 0 - val
@@ -566,12 +541,12 @@ export default {
         /**
          * @param resetVal: any 重置的值
          * @param resetKey: array 重置的属性
-         * @param newVal 新值， 
+         * @param newVal 新值，
          * @param propArr option数组，
          * @param itemKey 需要改变的字段,
          * @param idKey id字段，
          * @param nameKey name字段
-         * 
+         *
          */
         watchFun(newVal, resetVal, resetKey, propArr, itemKey, idKey='value', nameKey='text') {
             if(this.active > 1) { // 如果是审核阶段，那么不做任何操作

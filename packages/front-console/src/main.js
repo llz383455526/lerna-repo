@@ -40,6 +40,7 @@ import {
   	Col,
   	MessageBox,
 	Radio,
+  RadioButton,
 	RadioGroup,
 	InputNumber,
 	Badge,
@@ -92,6 +93,7 @@ Vue.use(TimeSelect)
 Vue.use(TimePicker)
 Vue.use(Col)
 Vue.use(Radio)
+Vue.use(RadioButton)
 Vue.use(RadioGroup)
 Vue.use(InputNumber)
 Vue.use(Badge)

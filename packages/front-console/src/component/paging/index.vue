@@ -1,5 +1,5 @@
 <template>
-    <div class="com-paging">
+    <div class="com-paging" :style="{ paddingTop: getPaddingTop }">
         <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
@@ -13,70 +13,81 @@
 </template>
 
 <script>
+    /**
+     * 分页加载组件
+     */
     export default {
-        name: "index",
+        name: 'ComPaging',
         data() {
             return {
                 pageSize: 10,
                 pageNum: 1,
-                timer: null
-            }
+                timer: null,
+            };
         },
         props: {
+            paddingTop: {
+                type: Number || String,
+                default: 0,
+            },
             total: {
                 type: Number,
-                default: 0
+                default: 0,
             },
             pageSizes: {
                 type: Array,
-                default: () => [10, 20, 30, 40]
-            }
+                default: () => [10, 20, 30, 40],
+            },
+        },
+        computed: {
+            getPaddingTop() {
+                return typeof this.paddingTop === 'number' ? `${this.paddingTop}px` : this.paddingTop;
+            },
         },
         methods: {
             handleSizeChange(size) {
-                this.pageSize = size
-                this.createTimer()
+                this.pageSize = size;
+                this.createTimer();
 
             },
             handleCurrentChange(index) {
-                this.pageNum = index
-                this.createTimer()
+                this.pageNum = index;
+                this.createTimer();
             },
             /**
              * 物理消抖
              */
             createTimer() {
-                this.clearTimer()
+                this.clearTimer();
                 this.timer = setTimeout(() => {
                     this.$emit('onChange', {
                         pageSize: this.pageSize,
                         pageNum: this.pageNum,
-                    })
-                }, 100)
+                    });
+                }, 100);
             },
             clearTimer() {
                 if (this.timer) {
-                    clearTimeout(this.timer)
-                    this.timer = null
+                    clearTimeout(this.timer);
+                    this.timer = null;
                 }
             },
             clear() {
-                const [oneSize] = this.pageSizes
-                this.pageSize = oneSize
-                this.pageNum = 1
+                const [oneSize] = this.pageSizes;
+                this.pageSize = oneSize;
+                this.pageNum = 1;
                 this.$emit('onChange', {
                     pageSize: this.pageSize,
                     pageNum: this.pageNum,
-                })
-            }
-        }
-    }
+                });
+            },
+        },
+    };
 </script>
 
 <style scoped lang="scss">
     .com-paging {
         display: flex;
         justify-content: flex-end;
-        padding-top: 20px;
     }
 </style>

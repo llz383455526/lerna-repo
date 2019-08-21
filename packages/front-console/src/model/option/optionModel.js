@@ -6,7 +6,8 @@ class optionModel extends BaseModel {
 		super();
 		this.customerCompanies = []; // 客户公司(企业)列表
 		this.appList = []; // 商户列表
-		this.serveCompanyList = []; // 服务商公司列表
+        this.serveCompanyList = []; // 服务商公司列表
+        this.channelTypeList = [];  // 渠道类型列表
 		this.primaryAccountList = []; // 主账户列表
 		this.bypassAccountList = []; // 子账户列表
         this.clearingStateList = []; // 清分状态下拉列表
@@ -33,14 +34,22 @@ class optionModel extends BaseModel {
 		get('/api/console-dlv/option/get-option-customer-companies').then(res => {
 			this.customerCompanies = res
 		})
-	}
+    }
+    getChannelTypeList() {
+        get('/api/balance-web/commom/option?enumType=ReconThirdPaymentType').then(res => {
+            this.channelTypeList = res
+        })
+    }
 	getAppList(companyId) {
 		get('/api/sysmgr-web/commom/app-list', {
 			companyId: companyId
 		}).then(result => {
 			this.appList = result;
 		})
-	}
+    }
+    /**
+     * 手动清分，服务商列表
+     */
 	getServeCompanyList() {
 		get('/api/sysmgr-web/commom/company', {
 			companyIdentity: 'service'
@@ -48,10 +57,10 @@ class optionModel extends BaseModel {
 			this.serveCompanyList = data
 		})
 	}
-	getPrimaryAccountList(companyId) {
+	getPrimaryAccountList(companyId, channelType='pingan') {
 		post('/api/paymentmgt/front/channel/qrylist', {
 			companyId: companyId,
-			channelType: 'pingan',
+			channelType: channelType,
 			pageNo: 1,
 			pageSize: 100000
 		}).then(res => {

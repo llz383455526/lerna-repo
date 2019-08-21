@@ -61,6 +61,9 @@ let userManager = r => require.ensure([], () => r(require('../pages/eContract/us
 let consumerManager = r => require.ensure([], () => r(require('../pages/eContract/consumerManager.vue')), 'consumerManager');
 let addConsumer = r => require.ensure([], () => r(require('../pages/eContract/addConsumer.vue')), 'addConsumer');
 let downList = r => require.ensure([], () => r(require('../pages/eContract/downList.vue')), 'downList');
+let signTheComa = r => require.ensure([], () => r(require('../pages/eContract/signTheComa/index.vue')), 'downList');
+
+
 
 let rechargeIndex = r => require.ensure([], () => r(require('../pages/recharge/index.vue')), 'rechargeIndex');
 let balanceAdjust = r => require.ensure([], () => r(require('../pages/recharge/balanceAdjust/list.vue')), 'balanceAdjust');
@@ -875,6 +878,13 @@ export default [{
                 meta: {
                     keepAlive: false
                 }
+            },
+            {
+                path: 'signTheComa',
+                component: signTheComa,
+                meta: {
+                  keepAlive: false
+                }
             }
             ]
         },
@@ -1508,8 +1518,161 @@ export default [{
                 }
             ]
         },
-        ...workOrder,
-        ]
+          {
+              path: 'riskControl',
+              component: index,
+              children: [
+                  {
+                      path: 'performanceManager',
+                      component: RiskControlPerformanceManager,
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+                  {
+                      path: 'performanceManagerDetail',
+                      component: RiskControlPerformanceManagerDetail,
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+                  {
+                      path: 'performanceManagerStar',
+                      component: RiskControlPerformanceManagerStar,
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+              ],
+          },
+          {
+              path: 'accounting',
+              component: index,
+              children: [
+                  {
+                      path: 'task-list',
+                      component: taskList
+                  }
+              ]
+          },
+          {
+              path: 'monitorCompany',
+              component: index,
+              children: [
+                  {
+                      path: 'monitorList',
+                      component: () => import('../pages/monitorCompany/monitorLlist'),
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+                  {
+                      path: 'noticeDetail',
+                      component: () => import('../pages/monitorCompany/noticeDetail'),
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+                  {
+                      path: 'eventCountList',
+                      component: () => import('../pages/monitorCompany/eventCountList'),
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+                  {
+                      path: 'monitorImportResult',
+                      component: () => import('../pages/monitorCompany/monitorImportResult'),
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+              ]
+          },
+          {
+              path: 'companyBlack',
+              component: index,
+              children: [
+                  {
+                      path: 'companyBlacklist',
+                      component: () => import('../pages/companyBlack/companyBlacklist'),
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+                  {
+                      path: 'companyBlackImport',
+                      component: () => import('../pages/companyBlack/companyBlackImport'),
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+                  {
+                      path: 'companyBlackResult',
+                      component: () => import('../pages/companyBlack/companyBlackResult'),
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+              ],
+          },
+          {
+              path: 'personRisk',
+              component: index,
+              children: [
+                  {
+                      path: 'personWhitelist',
+                      component: () => import('../pages/personRisk/personWhitelist'),
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+                  {
+                      path: 'personWhiteDetail/:id',
+                      component: () => import('../pages/personRisk/personWhiteDetail'),
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+                  {
+                      path: 'personWhiteImport',
+                      component: () => import('../pages/personRisk/personWhiteImport'),
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+                  {
+                      path: 'personWhiteResult',
+                      component: () => import('../pages/personRisk/personWhiteResult'),
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+                  {
+                      path: 'personBlacklist',
+                      component: () => import('../pages/personRisk/personBlacklist'),
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+                  {
+                      path: 'personBlackImport',
+                      component: () => import('../pages/personRisk/personBlackImport'),
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+                  {
+                      path: 'personBlackResult',
+                      component: () => import('../pages/personRisk/personBlackResult'),
+                      meta: {
+                          keepAlive: false
+                      }
+                  },
+              ],
+          },
+        ...workOrder
+      ]
     },
     {
         path: '/login',

@@ -6,7 +6,6 @@
             <el-table-column label="商户状态">
                 <template slot-scope="scope">
                     {{scope.row.statusName}}&nbsp;&nbsp;
-<!--                    <el-button type="text" @click="onLineAuditBtnClick(scope.row)"><i class="el-icon-setting"></i>上线审核</el-button>-->
                 </template>
             </el-table-column>
             <el-table-column prop="updateByName" label="更新人"></el-table-column>
@@ -16,9 +15,6 @@
                     <el-button @click="edit(scope.row)" type="text">配置</el-button>
                     <el-button v-show="scope.row.isEnable" @click="set(scope.row)" type="text">关闭</el-button>
                     <el-button v-show="!scope.row.isEnable" @click="set(scope.row)" type="text">开启</el-button>
-                    <el-button v-show="scope.row.status == 'dealing'" @click="reviewDialog = true,reviewForm.appId = scope.row.appId" type="text">
-                        上线审核
-                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -54,67 +50,6 @@
             </div>
         </el-dialog>
         <auth-code @result="getAuthCode" ref="authCode"></auth-code>
-        <el-dialog
-            :visible.sync="onlineAuditIsShow"
-            width="800px">
-            <span slot="footer" class="dialog-footer">
-                <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-                <el-button size="small" type="primary" @click="dialogVisible = false">确 定</el-button>
-            </span>
-            <p v-if="popShangHu" slot="title" style="margin: 0px">
-                {{ popShangHu.appName }}&nbsp;&nbsp;&nbsp;&nbsp;
-                <el-switch v-model="popTitleSwitch"></el-switch>
-                <span>是否上线</span>
-            </p>
-            <div class="online-audit-pop-content">
-                <div class="section">
-                    <p class="gongsi-name">
-                        <span class="section-title">落地公司名称AA</span> &nbsp;&nbsp;
-                        <el-switch></el-switch>
-                    </p>
-                    <el-row :gutter="20" class="content">
-                        <el-col :span="6">
-                            &nbsp;
-                        </el-col>
-                        <el-col :span="6" class="flex-center-column">
-                            <span class="item-title">合同是否归档</span>
-                            <span class="item-data">是</span>
-                        </el-col>
-                        <el-col :span="6" class="flex-center-column">
-                            <span class="item-title">计算规则是否通过</span>
-                            <span class="item-data">是</span>
-                        </el-col>
-                        <el-col :span="6" class="flex-center-column">
-                            <span class="item-title">代理商名称</span>
-                            <span class="item-data">代理商名称DD</span>
-                        </el-col>
-                    </el-row>
-                </div>
-                <div class="section">
-                    <p class="gongsi-name">
-                        <span>落地公司名称AA</span> &nbsp;&nbsp;
-                        <el-switch></el-switch>
-                    </p>
-                    <el-row :gutter="20" class="content">
-                        <el-col :span="6">
-                            &nbsp;
-                        </el-col>
-                        <el-col :span="6" class="flex-center-column">
-                            <span class="item-title">合同是否归档</span>
-                            <span class="item-data">是</span>
-                        </el-col>
-                        <el-col :span="6" class="flex-center-column">
-                            <span class="item-title">计算规则是否通过</span>
-                            <span class="item-data">是</span>
-                        </el-col>
-                        <el-col :span="6" class="flex-center-column">
-                            <span class="item-title">代理商名称</span>
-                            <span class="item-data">代理商名称DD</span>
-                        </el-col>
-                    </el-row>
-                </div>
-            </div>
-        </el-dialog>
     </div>
 </template>
 <script>
@@ -181,11 +116,6 @@ export default {
         this.init()
     },
     methods:{
-        onLineAuditBtnClick(item) {
-            console.log(item)
-            this.onlineAuditIsShow = true
-            this.popShangHu = item
-        },
         init() {
             this.authCode = localStorage.getItem('authCode')
             if(this.companyId) {

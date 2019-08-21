@@ -755,6 +755,7 @@ export default {
                 param.insVariables = res.insVariables
             switch (param.businessType) {
                 case 'invoice-flow':
+                case 'make-out-invoice-service-to-service':
                     this.$refs.auditInvoice.transmit({
                         show: true,
                         param: param,

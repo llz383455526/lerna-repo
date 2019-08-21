@@ -6,51 +6,51 @@
     <div class="widget-body">
       <div class="widget-main">
         <el-steps :active="active"
-          simple
-          finish-status="success">
+                  simple
+                  finish-status="success">
           <el-step title="销售信息"></el-step>
           <el-step title="合同选项"></el-step>
           <el-step title="企业信息"></el-step>
           <el-step title="选择落地公司"></el-step>
           <el-step title="附加条款"></el-step>
           <el-step title="C端签约设置"
-            v-if="max == 5"></el-step>
+                   v-if="max == 5"></el-step>
         </el-steps>
         <hr>
 
         <el-form :inline="true"
-          :model="contractModel.contractForm"
-          :rules="check.rules"
-          ref="contractForm"
-          label-width="200px"
-          class="contractForm"
-          :disabled="editType === 'watch'||editType ==='workflow'">
+                 :model="contractModel.contractForm"
+                 :rules="check.rules"
+                 ref="contractForm"
+                 label-width="200px"
+                 class="contractForm"
+                 :disabled="editType === 'watch'||editType ==='workflow'">
           <customerEva :contractModel="contractModel"
-            v-if="active === 0"></customerEva>
+                       v-if="active === 0"></customerEva>
           <salesContactInfo :contractModel="contractModel"
-            v-if="active === 0"></salesContactInfo>
+                            v-if="active === 0"></salesContactInfo>
           <contractOption :contractModel="contractModel"
-            @setSettleType="setSettleType"
-            v-if="active === 1"></contractOption>
+                          @setSettleType="setSettleType"
+                          v-if="active === 1"></contractOption>
           <companyBasicInfo :contractModel="contractModel"
-            v-if="active === 2"></companyBasicInfo>
+                            v-if="active === 2"></companyBasicInfo>
           <relevantMerchantInfo :contractModel="contractModel"
-            v-if="false"></relevantMerchantInfo>
+                                v-if="false"></relevantMerchantInfo>
           <businessBillingInfo :contractModel="contractModel"
-            v-if="active === 2"></businessBillingInfo>
+                               v-if="active === 2"></businessBillingInfo>
           <companyInfo :ruleForm="contractModel.contractForm"
-            :serviceFeeList="contractModel.serviceFeeList"
-            v-if="active === 3"></companyInfo>
+                       :serviceFeeList="contractModel.serviceFeeList"
+                       v-if="active === 3"></companyInfo>
           <additionalClause :ruleForm="contractModel.contractForm"
-            :contractModel="contractModel"
-            :editType="editType"
-            :files="contractModel.files"
-            v-if="active === 4"></additionalClause>
+                            :contractModel="contractModel"
+                            :editType="editType"
+                            :files="contractModel.files"
+                            v-if="active === 4"></additionalClause>
           <setEContract :contractForm="contractModel.contractForm"
-            v-if="active === 5"></setEContract>
+                        v-if="active === 5"></setEContract>
           <el-form-item v-if="editType != 'watch' && editType!='workflow' && false">
             <el-button type="primary"
-              @click="saveContract(false)">保存</el-button>
+                       @click="saveContract(false)">保存</el-button>
           </el-form-item>
         </el-form>
         <generateContract :contractModel="contractModel"></generateContract>
@@ -58,13 +58,13 @@
         <div class="wizard-actions">
           <el-button @click="backToList('list')">返回</el-button>
           <el-button @click="prev"
-            v-if="active != 0">上一步</el-button>
+                     v-if="active != 0">上一步</el-button>
           <el-button type="success"
-            @click="next('contractForm')"
-            v-if="active != max">下一步</el-button>
+                     @click="next('contractForm')"
+                     v-if="active != max">下一步</el-button>
           <el-button type="primary"
-            @click="submitContract('contractForm')"
-            v-if="active == max">提交</el-button>
+                     @click="submitContract('contractForm')"
+                     v-if="active == max">提交</el-button>
         </div>
       </div>
     </div>
@@ -268,7 +268,7 @@ export default {
         next(formName) {
             this.$refs[formName].validate(valid => {
                 if (valid) {
-                    if (this.active++ > this.max) this.active = 0;
+										if (this.active++ > this.max) this.active = 0;
                     this.saveContract(false);
                 }
             })

@@ -24,6 +24,7 @@ class Check extends BaseModel {
         }
         this.rules = {
             serviceCompanyId: [{ required: true, message: "请选择服务商公司", trigger: "change"}],
+            channelType: [{ required: true, message: "请选择渠道类型", trigger: "change"}],
             mainAccountNo: [{ required: true, message: "请选择主账户", trigger: "change"}],
             fromPaymentUserId: [{ required: true, message: '请选择转出子账户', trigger: 'change' }],
             toPaymentUserId: [{ required: true, message: '请选择转入子账户', trigger: 'change' }],
