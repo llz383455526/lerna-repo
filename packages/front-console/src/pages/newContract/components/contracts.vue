@@ -54,7 +54,8 @@
                 </el-form-item>
                 <el-form-item style="display: flex; padding-left: 100px;" :prop="'contracts.'+index+'.serviceTypeList'" label="服务类型" :rules="{required: true, message: '请选择服务类型', trigger: 'blur'}">
                     <el-checkbox-group @change="serverTypeChangeChange" v-model="formItem.serviceTypeList">
-                        <el-checkbox v-for="v in formItem.optionServiceTypeList" :label="v" :key="v.serviceId">
+                        <el-checkbox v-for="v in formItem.optionServiceTypeList" :label="v" :key="v.serviceId"
+                            @change="checked => changePositions(checked, index, v)">
                             {{ v.serviceName }}
                         </el-checkbox>
                     </el-checkbox-group>
