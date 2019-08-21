@@ -126,7 +126,7 @@ export default {
     },
     downFile(attachment) {
       window.open(
-        `${baseUrl}/api/contract-web/file/download?downloadCode=${attachment.downloadCode}`
+        `${baseUrl}/api/sysmgr-web/file/download?downloadCode=${attachment.downloadCode}`
       );
     },
     expandContent(index, i) {
