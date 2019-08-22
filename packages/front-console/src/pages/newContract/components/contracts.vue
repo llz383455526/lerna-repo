@@ -245,7 +245,7 @@ export default {
 										});
 										return
 								}
-                window.open(`${baseUrl}/api/sysmgr-web/file/download?downloadCode=${res.downloadCode}`);
+                window.open(`${baseUrl}/api/contract-web/file/download?downloadCode=${res.downloadCode}`);
             })
         },
         // 验证岗位模板是否填写
