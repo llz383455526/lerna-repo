@@ -15,6 +15,9 @@
                     <el-button @click="edit(scope.row)" type="text">配置</el-button>
                     <el-button v-show="scope.row.isEnable" @click="set(scope.row)" type="text">关闭</el-button>
                     <el-button v-show="!scope.row.isEnable" @click="set(scope.row)" type="text">开启</el-button>
+									<el-button v-show="scope.row.status == 'dealing'" @click="reviewDialog = true,reviewForm.appId = scope.row.appId" type="text">
+										上线审核
+									</el-button>
                 </template>
             </el-table-column>
         </el-table>

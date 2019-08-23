@@ -20,7 +20,7 @@
           v-for="e in stepList"
           :key="e.activityId"
           :title="e.activityName"
-          :description="e.userName" 
+          :description="e.userName"
         />
       </el-steps>
       <div class="title mb20 green_0">
@@ -38,14 +38,14 @@
       <div v-if="currentStpe.activityId == 'taskAudit'">
         <p class="title">
           购买方信息
-        </p> 
+        </p>
         <div style="padding-left: 20px">
           <p> 开票名称：{{ msg.customCompanyResult.name }}</p>
           <p> 纳税人识别号：{{ msg.customCompanyResult.taxIdcd }}</p>
           <p> 地址、电话：{{ msg.customCompanyResult.addr }} {{ msg.customCompanyResult.phone }}</p>
           <p> 开户行及账号：{{ msg.customCompanyResult.bankName }} {{ msg.customCompanyResult.bankAccount }}</p>
         </div>
-      </div> 
+      </div>
       <el-table
         class="mt20"
         :data="[msg.orderTitle]"
@@ -60,7 +60,7 @@
         />
         <el-table-column
           label="开票类型"
-          prop="invoiceTypeName" 
+          prop="invoiceTypeName"
         />
         <el-table-column label="开票总金额">
           <template slot-scope="scope">
@@ -70,12 +70,12 @@
         <el-table-column
           label="寄送发票数"
           v-if="currentStpe.activityId ==='taskMakeInvoice' || currentStpe.activityId ==='taskUploadInvoice'"
-          prop="realNum" 
+          prop="realNum"
         />
         <el-table-column
           label="申请发票数"
           v-else
-          prop="totalNum" 
+          prop="totalNum"
         />
       </el-table>
       <template v-if="currentStpe.activityId == 'taskInCrowdSourceAudit' || currentStpe.activityId == 'taskApply' || currentStpe.activityId == 'taskAudit' || currentStpe.activityId == 'taskCreate' || currentStpe.activityId == 'taskExceptionCheck'">
@@ -88,7 +88,7 @@
           <el-table-column
             type="selection"
             v-if="currentStpe.activityId == 'taskAudit' && !look"
-            :selectable="selecCheck" 
+            :selectable="selecCheck"
           />
           <el-table-column
             label="序号"
@@ -149,14 +149,14 @@
           </el-form-item>
           <el-form-item
             label="备注"
-            v-if="(stepList[active - 1].activityId ==='taskAudit' && !look) || (msg.busiRemark && look)"
+            v-if="(stepList.length > 0 && stepList[active - 1].activityId ==='taskAudit' && !look) || (msg.busiRemark && look)"
             prop="busiRemark"
           >
             <el-input
               class="form_input"
               v-model="form.busiRemark"
               type="textarea"
-              v-if="stepList[active - 1].activityId ==='taskAudit' && !look"
+              v-if="stepList.length > 0 && stepList[active - 1].activityId ==='taskAudit' && !look"
             />
             <template v-else-if="msg.busiRemark && look">
               {{ msg.busiRemark }}
@@ -218,7 +218,7 @@
               <span v-if="msg.channel != 'pxx' || currentStpe.activityId != 'taskMakeInvoice'">{{ scope.row.invoiceCode }}</span>
               <el-input
                 v-else
-                v-model="scope.row.invoiceCode" 
+                v-model="scope.row.invoiceCode"
               />
             </template>
           </el-table-column>
@@ -318,7 +318,7 @@
           </el-table-column>
           <el-table-column
             label="物流公司"
-            prop="expressCompany" 
+            prop="expressCompany"
           />
           <el-table-column
             label="物流单号"
@@ -515,12 +515,14 @@ export default {
                     // }
                     this.stepList = []
                     const allSteps = data[0][this.param.insVariables.taskSteps || 'default']
-                    allSteps.forEach((e, i) => {
-                        if(data[1][i] && data[1][i].activityId == 'taskProcessing') {
-                            data[1].splice(i, 1)
-                        }
-                        this.stepList.push(Object.assign(data[1][i] ? data[1][i] : {}, e))
-                    })
+									if (allSteps) {
+										allSteps.forEach((e, i) => {
+											if(data[1][i] && data[1][i].activityId == 'taskProcessing') {
+												data[1].splice(i, 1)
+											}
+											this.stepList.push(Object.assign(data[1][i] ? data[1][i] : {}, e))
+										})
+									}
                     this.active = data[1].length + ((this.look || this.param.finishedStatus == 'FINISHED') && this.param.currentTaskNodeId != 'endEvent' ? 0 : 1)
                     this.realStep = JSON.parse(JSON.stringify(data[1]))
                     data[1] && (this.currentStpe = data[1].pop())
@@ -534,7 +536,7 @@ export default {
             // get(workflow.getProcessCurrentProgress, {
             //     processInstanceId: this.param.processInstanceId
             // }).then(data => {
-                
+
             // })
         },
         showInput(a) {
