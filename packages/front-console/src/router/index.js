@@ -729,14 +729,27 @@ export default [{
             }
             ]
         },
-        {
-            path: 'bigAmount',
-            component: index,
-            children: [{
-                path: 'list',
-                component: r => require.ensure([], () => r(require('../pages/bigAmount/list.vue')), 'list')
-            }]
-        },
+        // {
+        //     path: 'bigAmount',
+        //     component: index,
+        //     children: [{
+        //         path: 'list',
+        //         component: r => require.ensure([], () => r(require('../pages/bigAmount/list.vue')), 'list')
+        //     }]
+        // },
+				{
+					path: 'orderApproveManager',
+					component: index,
+					children: [
+						{
+							path: 'list',
+							component: () => import('../pages/orderApproveManager/approveList.vue'),
+							meta: {
+								keepAlive: true,
+							}
+						}
+					],
+				},
         {
             path: 'settled',
             component: index,

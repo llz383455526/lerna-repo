@@ -57,6 +57,7 @@
                 key="selection"
                 fixed
                 type="selection"
+								:selectable="(row) => row.needApprove"
                 width="50">
             </el-table-column>
             <el-table-column width="100" prop="name" key="name" label="姓名"></el-table-column>
@@ -71,7 +72,7 @@
                 </template>
             </el-table-column>
             <el-table-column width="180" prop="accountNo" key="accountNo" label="银行卡"></el-table-column>
-            <el-table-column width="100" prop="personWhiteRiskTypeName" key="personWhiteRiskTypeName" label="类型"></el-table-column>
+            <el-table-column width="100" prop="personWhiteRiskTypeName" key="personWhiteRiskTypeName" label="场景事件"></el-table-column>
             <el-table-column width="100" prop="customerCompanyName" key="customerCompanyName" label="客户名称"></el-table-column>
             <el-table-column width="100" prop="serviceCompanyName" key="serviceCompanyName" label="落地公司"></el-table-column>
             <el-table-column width="150" prop="updateByName" key="createByName" label="添加人"></el-table-column>
@@ -87,7 +88,12 @@
                 label="操作"
                 width="120">
                 <template slot-scope="scope">
-                    <el-button type="text" size="small" @click="go2WhiteDetail(scope.row)">查看</el-button>
+                    <el-button
+											v-if="scope.row.needApprove"
+											type="text"
+											size="small"
+											@click="go2WhiteDetail(scope.row)"
+										>查看</el-button>
                     <el-button type="text" size="small" @click="remove(scope.row)">移除</el-button>
                 </template>
             </el-table-column>
@@ -121,7 +127,8 @@
 
 <script>
 /**
- * TODO
+ * 发放超龄的不能审批和查看详情
+ * needApprove
  */
 import { monitor } from '../../api/monitor'
 import { post, get} from '../../store/api'
@@ -154,9 +161,13 @@ export default {
                     value: 'sign-white',
                 },
                 {
-                    text: '发放',
+                    text: '发放实名',
                     value: 'deliver-white',
-                }
+                },
+								{
+										text: '发放超龄',
+                    value: 'deliver-age-white',
+								},
             ],
             // 状态枚举
             personRiskStateList: [],
