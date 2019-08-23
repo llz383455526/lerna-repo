@@ -51,8 +51,8 @@
                 </div>
             </el-checkbox-group>
         </el-form-item>
-        <h3 class="green">爱收入发岗位</h3>
-        <el-form-item label="接入【爱收入】发布岗位" prop="jobMatch" :rules="{required: true, message: '请选择是否接入【爱收入】发布岗位', trigger: 'change'}">
+        <h3 class="green" v-if="type != 1">爱收入发岗位</h3>
+        <el-form-item label="接入【爱收入】发布岗位" v-if="type != 1" prop="jobMatch" :rules="{required: true, message: '请选择是否接入【爱收入】发布岗位', trigger: 'change'}">
             <el-radio-group v-model="contractForm.jobMatch">
                 <el-radio label="1">是</el-radio>
                 <el-radio label="0">否</el-radio>
