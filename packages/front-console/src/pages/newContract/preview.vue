@@ -172,7 +172,8 @@
                 </div>
               </div>
             </div>
-            <div class="col-xs-12">接入【爱收入】发布岗位：{{ contractForm.jobMatch === '1' ? '是' : '否' }}</div>
+						<!-- 创建合同时才显示开关 -->
+            <div class="col-xs-12" v-if="contractModel.operateEnum === 1">接入【爱收入】发布岗位：{{ contractForm.jobMatch === '1' ? '是' : '否' }}</div>
           </div>
         </div>
       </div>
@@ -290,7 +291,7 @@ export default {
         this.contractModel.contractId = id;
         // let first = new Promise((res, rej) => {
             this.contractModel.getContractDetail(id, () => {
-                this.contractForm = this.contractModel.contractForm
+								this.contractForm = this.contractModel.contractForm
                 this.getCUserStandardInfoList()
                 this.contractForm.showSubjectInfo = this.contractForm.showSubjectInfo === '1' ? true : false;
                 // this.contractForm.contracts.forEach(item => {
@@ -314,7 +315,7 @@ export default {
         // })
 
         this.editType = this.$route.query.editType || 'new';
-        this.contractModel.editType = this.$route.query.editType || 'new';
+				this.contractModel.editType = this.$route.query.editType || 'new';
     },
     methods: {
         getCUserStandardInfoList() {

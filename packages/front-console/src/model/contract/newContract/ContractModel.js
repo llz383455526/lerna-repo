@@ -223,7 +223,8 @@ class ContractModel extends BaseModel {
                 this.actions = result.actions;
                 this.processLogs = result.processLogs;
                 this.workflowType = result.workflowType;
-                this.status = result.status;
+								this.status = result.status;
+								this.operateEnum = result.operateEnum; // 合规通 判断合同类型 1创建，2补签，3更新
                 this.contractForm.contracts.forEach(e => {
                     if (!e.agentFeeContent) {
                         e.agentFeeContent = {
