@@ -96,8 +96,14 @@ export default {
   watch: {
     servicePosList: {
       handler(val) {
-        this.serviceList = val;
-        this.initDepth(this.serviceList)
+				this.serviceList = val;
+				// this.initDepth(this.serviceList)
+      },
+      deep: true
+    },
+    serviceList: {
+      handler(val) {
+				this.initDepth(val)
       },
       deep: true
     }
