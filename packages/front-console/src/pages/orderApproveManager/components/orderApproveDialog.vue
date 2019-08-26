@@ -13,11 +13,17 @@
 		<el-form :model="formApprove">
 			<el-form-item>
 				<el-radio-group v-model="formApprove.approveState">
-					<el-radio v-model="formApprove.approveState" :label="2">通过</el-radio>
-					<el-radio v-model="formApprove.approveState" :label="3">不通过</el-radio>
+					<el-radio :label="2">通过</el-radio>
+					<el-radio :label="3">不通过</el-radio>
 				</el-radio-group>
 				<div class="pass-tip">
-					<span v-if="passTip && formApprove.approveState == 2">{{passTip}}</span>
+					<span v-if="passTip && formApprove.approveState === 2">{{passTip}}</span>
+					<el-input
+						v-if="formApprove.approveState === 3"
+						v-model.trim="formApprove.approveComment"
+						size="small"
+						maxlength="50"
+						placeholder="请输入审批不通过原因"></el-input>
 				</div>
 			</el-form-item>
 		</el-form>
@@ -40,6 +46,7 @@ export default {
 			formApprove: {
 				id: '',
 				approveState: '',
+				approveComment: '',
 			},
 			amount: 0,
 		}
@@ -56,10 +63,21 @@ export default {
 			}
 		},
 		passTip() {
-			if(this.order.approveType && this.order.approveType === 2) {
+			if (this.order.approveType && this.order.approveType === 2) {
 				return '审核通过的用户，会放入发放白名单，发放限额3星'
 			}
 			return ''
+		},
+		// 各发放审批的默认备注文案
+		defaultApproveComment () {
+			const {order, formApprove} = this
+			if (order.approveType === 1) {
+				return '大额审批不通过'
+			} else if (order.approveType === 2) {
+				return '超龄/低龄发放审批不通过'
+			} else {
+				return ''
+			}
 		}
 	},
 	watch: {
@@ -67,6 +85,7 @@ export default {
 			this.formApprove = Object.assign({
 				id: val.id,
 				approveState: '',
+				approveComment: this.defaultApproveComment,
 			})
 		}
 	},
@@ -118,7 +137,10 @@ export default {
 				return
 			}
 			const url = '/api/console-dlv/pay-order/approve'
-			post(url, this.formApprove).then(() => {
+			const form = Object.assign({},this.formApprove)
+			// 产品要求 通过默认不传备注
+			form.approveComment = form.approveState === 3 ? form.approveComment : ''
+			post(url, form).then(() => {
 				this.approveDialogVisible = false
 				this.$emit('success')
 			})
@@ -140,8 +162,13 @@ export default {
 	.pass-tip {
 		color: #909399;
 		font-size: 13px;
-		min-height: 16px;
+		min-height: 32px;
 		line-height: 16px;
+		
+		span {
+			display: inline-block;
+			padding-top: 8px;
+		}
 	}
 }
 

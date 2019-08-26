@@ -63,6 +63,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="approveStateName" label="处理状态"></el-table-column>
+			<el-table-column prop="approveComment" label="备注" width="120"></el-table-column>
       <el-table-column label="操作&记录" width="180" fixed="right">
         <template slot-scope="scope">
           <el-button
