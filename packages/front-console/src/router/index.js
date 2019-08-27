@@ -164,6 +164,9 @@ let addCompany = r => require.ensure([], () => r(require('../pages/landingCompan
 let previewCompany = r => require.ensure([], () => r(require('../pages/landingCompany/previewCompany')), 'previewCompany')
 
 let taskList = r => require.ensure([], () => r(require('../pages/accounting/task-list.vue')), 'taskList');
+let receivablesOrderList = r => require.ensure([], () => r(require('../pages/accounting/receivables-order-list')), 'receivablesOrderList');
+let receivablesList = r => require.ensure([], () => r(require('../pages/accounting/receivables-list')), 'receivablesList');
+let costsCustomerCompanyList = r => require.ensure([], () => r(require('../pages/accounting/costs-customer-company-list')), 'costsCustomerCompanyList');
 
 
 const documentList = () => import('../pages/management/documentList')
@@ -1528,6 +1531,18 @@ export default [{
                 {
                     path: 'task-list',
                     component: taskList
+                },
+                {
+                    path: 'receivables-order-list',
+                    component: receivablesOrderList
+                },
+                {
+                    path: 'receivables-list',
+                    component: receivablesList
+                },
+                {
+                    path: 'costs-customer-company-list',
+                    component: costsCustomerCompanyList
                 }
             ]
         },
