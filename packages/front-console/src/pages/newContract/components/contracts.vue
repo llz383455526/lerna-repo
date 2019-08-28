@@ -1,103 +1,171 @@
 <template>
-    <div>
-        <h3 class="green">请添加落地公司
-            <el-button
-                size="small"
-                type="primary"
-                @click="dialogVisible = true;info.serviceCompanyId = ''"
-                v-if="!showAddBtn"
-                style="margin-left: 20px;">添加</el-button>
-        </h3>
-        <div class="widget-box" v-for="(formItem,index) in ruleForm.contracts" :key="index" style="margin-bottom: 20px;">
-            <div class="widget-header">
-                <h4 class="widget-title" style="margin-right: 25px;">{{formItem.taxLandingName}} / {{ formItem.serviceCompanyName || '落地公司名称' }}</h4>
-                <div class="widget-title">
-                    <el-checkbox v-model="formItem.showServiceCompanyInfo" label="1">合同中显示服务商收款账户信息</el-checkbox>
-                </div>
-                <div class="widget-toolbar">
-                    <el-button @click="deleteForm(index)" type="text" size="medium" v-if="!showDelBtn">删除</el-button>
-                </div>
-            </div>
-            <div class="widget-main">
-                <el-form-item label="合同期限" :prop="'contracts.'+index+'.startDate'" :rules="{ required: true, message: '请选择合同期限', trigger: 'blur' }">
-                    <el-date-picker type="daterange" style="width:450px;"
-                                    v-model="contractDate[index]"
-                                    start-placeholder="开始日期"
-                                    end-placeholder="结束日期"
-                                    value-format="yyyy-MM-dd"
-                                    @change="autoFill(index, contractDate[index])">
-                    </el-date-picker>
-                </el-form-item>
-                <el-form-item label="业务方案" :prop="'contracts.'+index+'.goodsId'" :rules="{required: true, message: '请选择业务方案', trigger: 'change'}">
-                    <el-select v-model="formItem.goodsId" placeholder="请选择" style="width:400px;">
-                        <el-option v-for="(item, key) in (formItem.goodsList.length ? formItem.goodsList : info.goodsList)" :key="key" :label="item.name" :value="item.id"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="结算方式" :prop="'contracts.'+index+'.settleType'" :rules="{required: true, message: '请选择结算方式', trigger: 'change'}">
-                    <el-select v-model="formItem.settleType" placeholder="请选择" style="width:400px;">
-                        <el-option v-for="(item,key) in settleTypeList" :key="key" :label="item.text"
-                            :value="item.value"></el-option>
-                    </el-select>
-                    <el-tooltip placement="left">
-                        <div slot="content">日结：适用于管理费和绩效费同步结算，即客户一起打款管理费和对C端发放款<br />月结：适用于管理费和绩效费不能同步结清，包括阶梯费率情况、充值提现情况等所有发放款和管理费不能同步结清的，均为月结</div>
-                        <i class="el-icon-question ml10"></i>
-                    </el-tooltip>
-                </el-form-item>
-                <el-form-item label="发放方式" :prop="'contracts.'+index+'.channelTypeList'" :rules="{required: true, message: '请选择服务类型', trigger: 'change'}">
-                    <el-checkbox-group v-model="formItem.channelTypeList" style="width:800px;">
-                        <el-checkbox v-for="(item, key) in payModeList" :key="key" :label="item.value">{{item.label}}</el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
-                <el-form-item label="服务商报价" :prop="`contracts[${index}].serviceFeeContent.fixFee`" :rules="{required: true, message: '请正确填写服务商报价', trigger: 'blur'}">
-                    <contract-create-item :arrIndex="index" @result="result" :showSettledRate="true" :contractForm="formItem"></contract-create-item>
-                    <!-- <contractItem label-width="0" :arrIndex="index" @result="result" :initCheck="true" :contractForm="{serviceFeeContent:formItem.serviceFeeContent,serviceFeeContent2:formItem.serviceFeeContent2}"></contractItem> -->
-                </el-form-item>
-                <el-form-item style="display: flex; padding-left: 100px;" :prop="'contracts.'+index+'.serviceTypeList'" label="服务类型" :rules="{required: true, message: '请选择服务类型', trigger: 'blur'}">
-                    <el-checkbox-group @change="serverTypeChangeChange" v-model="formItem.serviceTypeList">
-                        <el-checkbox v-for="v in formItem.optionServiceTypeList" :label="v" :key="v.serviceId"
-                            @change="checked => changePositions(checked, index, v)">
-                            {{ v.serviceName }}
-                        </el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
-                <el-form-item label="C端绩效计算规则" :prop="`contracts[${index}].servicePosList`" :rules="{required: true, validator: validatePost, trigger: 'change'}">
-                    <performance-rules
-											:servicePosList="formItem.servicePosList"
-											:index="index"
-											@change="addPositions"
-											@remove="removePost"
-											@download="downloadRule(formItem.serviceCompanyId)"></performance-rules>
-                </el-form-item>
-                <br>
-                <template v-if="ruleForm.originalType == 20">
-                    <el-form-item label="渠道经理" required>
-                        <el-input v-model="chargeByName" disabled style="width:400px;"></el-input>
-                    </el-form-item><br>
-                    <el-form-item label="报价规则" :rules="{required: true, message: '请选择报价规则', trigger: 'blur'}">
-                        <el-radio v-for="e in ruleList" :key="e.value" v-model="formItem.quoteRule" :label="e.value" :disabled="true">{{e.text}}</el-radio>
-                        <i class="el-icon-question ml10" title="结算规则：按高于结算费率的部分结算   返佣规则：按返佣费率直接返佣"></i>
-                    </el-form-item><br>
-                    <el-form-item label="结算费率" :prop="'contracts.'+index+'.checkC'" :rules="{required: true, message: '请正确填写服务商报价', trigger: 'blur'}">
-                        <contract-close-item :arrIndex="index" :initCheck="true" @result="resultClose" :form="formItem" :disable="true"></contract-close-item>
-                    </el-form-item>
-                </template>
-            </div>
+  <div>
+    <h3 class="green">请添加落地公司
+      <el-button size="small"
+                 type="primary"
+                 @click="dialogVisible = true;info.serviceCompanyId = ''"
+                 v-if="!showAddBtn"
+                 style="margin-left: 20px;">添加</el-button>
+    </h3>
+    <div class="widget-box"
+         v-for="(formItem,index) in ruleForm.contracts"
+         :key="index"
+         style="margin-bottom: 20px;">
+      <div class="widget-header">
+        <h4 class="widget-title"
+            style="margin-right: 25px;">{{formItem.taxLandingName}} / {{ formItem.serviceCompanyName || '落地公司名称' }}</h4>
+        <div class="widget-title">
+          <el-checkbox v-model="formItem.showServiceCompanyInfo"
+                       label="1">合同中显示服务商收款账户信息</el-checkbox>
         </div>
-
-        <el-dialog title="添加公司信息" :visible.sync="dialogVisible" width="700px">
-            <el-form :inline="true" :model="appForm" label-width="150px" ref="appForm">
-                <el-form-item label="服务商名称">
-                    <el-select v-model="info.serviceCompanyId" filterable placeholder="请选择" @change="setServiceCompany" style="width: 450px;">
-                        <el-option v-for="(item,key) in customerServiceCompanyList" :key="key" :label="item.name" :value="item.companyId"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item style="margin-left: 150px;">
-                    <el-button type="primary" @click="formAdd">保存</el-button>
-                    <el-button @click="dialogVisible = false">取消</el-button>
-                </el-form-item>
-            </el-form>
-        </el-dialog>
+        <div class="widget-toolbar">
+          <el-button @click="deleteForm(index)"
+                     type="text"
+                     size="medium"
+                     v-if="!showDelBtn">删除</el-button>
+        </div>
+      </div>
+      <div class="widget-main">
+        <el-form-item label="合同期限"
+                      :prop="'contracts.'+index+'.startDate'"
+                      :rules="{ required: true, message: '请选择合同期限', trigger: 'blur' }">
+          <el-date-picker type="daterange"
+                          style="width:450px;"
+                          v-model="contractDate[index]"
+                          start-placeholder="开始日期"
+                          end-placeholder="结束日期"
+                          value-format="yyyy-MM-dd"
+                          @change="autoFill(index, contractDate[index])">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="业务方案"
+                      :prop="'contracts.'+index+'.goodsId'"
+                      :rules="{required: true, message: '请选择业务方案', trigger: 'change'}">
+          <el-select v-model="formItem.goodsId"
+                     placeholder="请选择"
+                     style="width:400px;">
+            <el-option v-for="(item, key) in (formItem.goodsList.length ? formItem.goodsList : info.goodsList)"
+                       :key="key"
+                       :label="item.name"
+                       :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="结算方式"
+                      :prop="'contracts.'+index+'.settleType'"
+                      :rules="{required: true, message: '请选择结算方式', trigger: 'change'}">
+          <el-select v-model="formItem.settleType"
+                     placeholder="请选择"
+                     style="width:400px;">
+            <el-option v-for="(item,key) in settleTypeList"
+                       :key="key"
+                       :label="item.text"
+                       :value="item.value"></el-option>
+          </el-select>
+          <el-tooltip placement="left">
+            <div slot="content">日结：适用于管理费和绩效费同步结算，即客户一起打款管理费和对C端发放款<br />月结：适用于管理费和绩效费不能同步结清，包括阶梯费率情况、充值提现情况等所有发放款和管理费不能同步结清的，均为月结</div>
+            <i class="el-icon-question ml10"></i>
+          </el-tooltip>
+        </el-form-item>
+        <el-form-item label="发放方式"
+                      :prop="'contracts.'+index+'.channelTypeList'"
+                      :rules="{required: true, message: '请选择服务类型', trigger: 'change'}">
+          <el-checkbox-group v-model="formItem.channelTypeList"
+                             style="width:800px;">
+            <el-checkbox v-for="(item, key) in payModeList"
+                         :key="key"
+                         :label="item.value">{{item.label}}</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item label="服务商报价"
+                      :prop="`contracts[${index}].serviceFeeContent.fixFee`"
+                      :rules="{required: true, message: '请正确填写服务商报价', trigger: 'blur'}">
+          <contract-create-item :arrIndex="index"
+                                @result="result"
+                                :showSettledRate="true"
+                                :contractForm="formItem"></contract-create-item>
+          <!-- <contractItem label-width="0" :arrIndex="index" @result="result" :initCheck="true" :contractForm="{serviceFeeContent:formItem.serviceFeeContent,serviceFeeContent2:formItem.serviceFeeContent2}"></contractItem> -->
+        </el-form-item>
+        <el-form-item style="display: flex; padding-left: 100px;"
+                      :prop="'contracts.'+index+'.serviceTypeList'"
+                      label="服务类型"
+                      :rules="{required: true, message: '请选择服务类型', trigger: 'blur'}">
+          <el-checkbox-group @change="serverTypeChangeChange"
+                             v-model="formItem.serviceTypeList">
+            <el-checkbox v-for="v in formItem.optionServiceTypeList"
+                         :label="v"
+                         :key="v.serviceId"
+                         @change="checked => changePositions(checked, index, v)">
+              {{ v.serviceName }}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item label="C端绩效计算规则"
+                      :prop="`contracts[${index}].servicePosList`"
+                      :rules="{required: true, validator: validatePost, trigger: 'change'}">
+          <performance-rules :servicePosList="formItem.servicePosList"
+                             :index="index"
+                             @change="addPositions"
+                             @remove="removePost"
+                             @download="downloadRule(formItem.serviceCompanyId)"></performance-rules>
+        </el-form-item>
+        <br>
+        <template v-if="ruleForm.originalType == 20">
+          <el-form-item label="渠道经理"
+                        required>
+            <el-input v-model="chargeByName"
+                      disabled
+                      style="width:400px;"></el-input>
+          </el-form-item><br>
+          <el-form-item label="报价规则"
+                        :rules="{required: true, message: '请选择报价规则', trigger: 'blur'}">
+            <el-radio v-for="e in ruleList"
+                      :key="e.value"
+                      v-model="formItem.quoteRule"
+                      :label="e.value"
+                      :disabled="true">{{e.text}}</el-radio>
+            <i class="el-icon-question ml10"
+               title="结算规则：按高于结算费率的部分结算   返佣规则：按返佣费率直接返佣"></i>
+          </el-form-item><br>
+          <el-form-item label="结算费率"
+                        :prop="'contracts.'+index+'.checkC'"
+                        :rules="{required: true, message: '请正确填写服务商报价', trigger: 'blur'}">
+            <contract-close-item :arrIndex="index"
+                                 :initCheck="true"
+                                 @result="resultClose"
+                                 :form="formItem"
+                                 :disable="true"></contract-close-item>
+          </el-form-item>
+        </template>
+      </div>
     </div>
+
+    <el-dialog title="添加公司信息"
+               :visible.sync="dialogVisible"
+               width="700px">
+      <el-form :inline="true"
+               :model="appForm"
+               label-width="150px"
+               ref="appForm">
+        <el-form-item label="服务商名称">
+          <el-select v-model="info.serviceCompanyId"
+                     filterable
+                     placeholder="请选择"
+                     @change="setServiceCompany"
+                     style="width: 450px;">
+            <el-option v-for="(item,key) in customerServiceCompanyList"
+                       :key="key"
+                       :label="item.name"
+                       :value="item.companyId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item style="margin-left: 150px;">
+          <el-button type="primary"
+                     @click="formAdd">保存</el-button>
+          <el-button @click="dialogVisible = false">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -320,7 +388,12 @@ export default {
                     }]
                 })
             } else {
-                this.ruleForm.contracts[index].servicePosList = positions.filter(item => item.serviceId !== v.serviceId)
+								this.ruleForm.contracts[index].servicePosList = positions.filter(item => item.serviceId !== v.serviceId)
+								// 过滤没有服务类型的C端绩效规则
+								const { servicePosList, serviceTypeList } = this.ruleForm.contracts[index]
+								this.ruleForm.contracts[index].servicePosList = servicePosList.filter(item => {
+									return serviceTypeList.some(item2 => item2.serviceId === item.serviceId)
+								})
             }
             this.$forceUpdate()
         },
@@ -548,11 +621,11 @@ export default {
 
 <style scoped>
 .form-list {
-    border: 1px solid #999999;
-    /* padding: 32px 100px 20px 0; */
-    /* margin: 0 0 22px 100px; */
-    position: relative;
-    /* width: 1200px; */
+  border: 1px solid #999999;
+  /* padding: 32px 100px 20px 0; */
+  /* margin: 0 0 22px 100px; */
+  position: relative;
+  /* width: 1200px; */
 }
 
 /* .btn-del {
@@ -563,18 +636,18 @@ export default {
 } */
 
 .btn-add {
-    font-weight: normal;
-    color: red;
-    margin-left: 30px;
+  font-weight: normal;
+  color: red;
+  margin-left: 30px;
 }
 .el-icon-question {
-    margin-right: 5px;
-    color: #f56c6c;
-    cursor: pointer;
+  margin-right: 5px;
+  color: #f56c6c;
+  cursor: pointer;
 }
 .el-icon-question {
-	margin-right: 5px;
-	color: #f56c6c;
-	cursor: pointer;
+  margin-right: 5px;
+  color: #f56c6c;
+  cursor: pointer;
 }
 </style>
