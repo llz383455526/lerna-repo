@@ -322,7 +322,7 @@ export default {
             this.$forceUpdate()
         },
         initData() {
-            this.ruleForm.contracts.forEach((item) => {
+            this.ruleForm.contracts.forEach((item, index) => {
                 // 设置落地公司ID
                 this.serviceCompaniesList.some((item1) => {
                     if (item1.companyId === item.serviceCompanyId) {
@@ -357,7 +357,13 @@ export default {
                         }
                         return obj
                     })
-                }
+                } else {
+									// 过滤没有服务类型的C端绩效规则
+									const { servicePosList, serviceTypeList } = this.ruleForm.contracts[index]
+									this.ruleForm.contracts[index].servicePosList = servicePosList.filter(item1 => {
+										return serviceTypeList.some(item2 => item2.serviceId === item1.serviceId)
+									})
+								}
             })
             this.upDataServerType()
         },

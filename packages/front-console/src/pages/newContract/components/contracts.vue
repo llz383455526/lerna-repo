@@ -389,11 +389,6 @@ export default {
                 })
             } else {
 								this.ruleForm.contracts[index].servicePosList = positions.filter(item => item.serviceId !== v.serviceId)
-								// 过滤没有服务类型的C端绩效规则
-								const { servicePosList, serviceTypeList } = this.ruleForm.contracts[index]
-								this.ruleForm.contracts[index].servicePosList = servicePosList.filter(item => {
-									return serviceTypeList.some(item2 => item2.serviceId === item.serviceId)
-								})
             }
             this.$forceUpdate()
         },
@@ -404,7 +399,7 @@ export default {
             }
         },
         setTaxLanding() {
-            this.ruleForm.contracts.forEach((item) => {
+            this.ruleForm.contracts.forEach((item, index) => {
                 // 设置落地公司ID
                 this.serviceCompaniesList.some((item1) => {
                     if (item1.companyId === item.serviceCompanyId) {
@@ -434,7 +429,13 @@ export default {
                         }
                         return obj
                     })
-                }
+                } else {
+									// 过滤没有服务类型的C端绩效规则
+									const { servicePosList, serviceTypeList } = this.ruleForm.contracts[index]
+									this.ruleForm.contracts[index].servicePosList = servicePosList.filter(item1 => {
+										return serviceTypeList.some(item2 => item2.serviceId === item1.serviceId)
+									})
+								}
             })
         },
         initData() {
