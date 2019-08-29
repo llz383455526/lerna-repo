@@ -439,8 +439,8 @@ export default {
             })
         },
         initData() {
-            this.setTaxLanding()
             this.updateServiceTypeList()
+            this.setTaxLanding()
             this.upDataServerType()
             this.getContractDate()
         },
