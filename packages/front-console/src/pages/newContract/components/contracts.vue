@@ -408,6 +408,10 @@ export default {
                         return true
                     }
                 })
+            })
+				},
+				initSetServicePost() {
+            this.ruleForm.contracts.forEach((item, index) => {
                 // 初始设置岗位模板数据
                 if (!item.servicePosList || !item.servicePosList.length) {
                     item.servicePosList = item.serviceTypeList.map((val) => {
@@ -437,10 +441,11 @@ export default {
 									})
 								}
             })
-        },
+				},
         initData() {
+						this.setTaxLanding()
             this.updateServiceTypeList()
-            this.setTaxLanding()
+						this.initSetServicePost()
             this.upDataServerType()
             this.getContractDate()
         },
@@ -544,7 +549,7 @@ export default {
             const param = { customCompanyId, serviceCompanyId }
             post('/api/contract-web/commom/custom-form-contract', param).then((res) => {
                 this.ruleForm.contracts.push(Object.assign(res))
-                this.setTaxLanding()
+            		this.setTaxLanding()
                 const index = this.ruleForm.contracts.length - 1
                 // 把时间读取出来
                 this.contractDate[index] = [res.startDate, res.endDate]
@@ -556,6 +561,7 @@ export default {
                 });
                 this.dialogVisible = false
                 this.updateServiceTypeList()
+								this.initSetServicePost()
                 this.upDataServerType()
                 // console.log(this.ruleForm.contracts)
             })
