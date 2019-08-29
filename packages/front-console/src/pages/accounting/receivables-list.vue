@@ -293,7 +293,9 @@
                     amount: [{required: true, validator: validateRequire, label: '实发工资'}],
                     notSettleServiceFeeAmount: [{required: true, validator: validateRequire, label: '当月未结服务费'}]
                 },
-                taskType: undefined
+                taskType: undefined,
+							  companys:[],
+							  serviceCompanyIds:[]
 
             }
         },

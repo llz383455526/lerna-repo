@@ -9,3 +9,5 @@ build/*.js
 # !src/pages/clientManager/serverDetail.vue
 !src/rule/channel.js
 # !src/component/paging/*.vue
+!src/pages/accounting/*.vue
+

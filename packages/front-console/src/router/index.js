@@ -1574,16 +1574,6 @@ export default [{
               ],
           },
           {
-              path: 'accounting',
-              component: index,
-              children: [
-                  {
-                      path: 'task-list',
-                      component: taskList
-                  }
-              ]
-          },
-          {
               path: 'monitorCompany',
               component: index,
               children: [

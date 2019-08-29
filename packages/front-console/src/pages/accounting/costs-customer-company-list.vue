@@ -280,6 +280,8 @@
                 taskType: undefined,
                 confirmLogId:'',
                 exportMonth:'',
+							  companys:[],
+							  serviceCompanyIds:[]
 
             }
         },
