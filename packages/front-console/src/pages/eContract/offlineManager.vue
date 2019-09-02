@@ -85,6 +85,11 @@
         <el-table-column prop="personalIdentity" label="证件号"></el-table-column>
         <!-- <el-table-column prop="personalMobile" label="手机号"></el-table-column> -->
         <el-table-column prop="signStateDesc" label="状态"></el-table-column>
+        <el-table-column prop="terminateTimeDesc" label="合同终止时间">
+          <template slot-scope="scope">
+            <span>{{scope.row.terminateTimeDesc?scope.row.terminateTimeDesc:'--'}}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <a target="_blank" :href="`${baseUrl}/api/econtract/contract/download?orderId=${scope.row.orderId}`">

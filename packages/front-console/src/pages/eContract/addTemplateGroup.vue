@@ -63,12 +63,12 @@
                     <el-radio label="2">否</el-radio>
                 </el-radio-group>
             </el-form-item>
-            <el-form-item label="是否需要绑定银行卡" prop="bindBank" v-if="bindBank">
+            <!-- <el-form-item label="是否需要绑定银行卡" prop="bindBank" v-if="bindBank">
                 <el-radio-group v-model="form.bindBank" @change="settingChangeConfirm('bindBank', '签约方式', ['1', '2'])">
                     <el-radio label="1">是</el-radio>
                     <el-radio label="2">否</el-radio>
                 </el-radio-group>
-            </el-form-item>
+            </el-form-item> -->
 
             <div class="mtitle">C端合同设置</div>
             <el-form-item label="合同类型" prop="partyCount">
@@ -231,6 +231,13 @@
                         <el-button type="text" size="small" @click="addParams(i)">{{item.userType == 2 ? '添加公司盖章' : '添加手写签名'}}</el-button>
                     </template>
                 </div>
+                <el-form-item v-if="templateModel.partys && templateModel.partys[1].userDetailType === '1'" label="合同上显示其他变量">
+                  <el-checkbox-group v-model="contractOther">
+                    <el-checkbox label="0" disabled>身份证</el-checkbox>
+                    <el-checkbox label="1">手机号</el-checkbox>
+                    <el-checkbox label="2">签署日期</el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
             </el-form>
 
             <span slot="footer" class="dialog-footer">
@@ -320,7 +327,7 @@
 					// 	extrSystemName: this.form.platformName,
 					// 	extrSystemId: this.form.platform,
 					// 	extrSystemGroup: this.form.companyId
-					// })
+          // })
 				})
 			}
 		},
@@ -344,6 +351,7 @@
 				}
 			}
 			return {
+        contractOther: ['0'],
 				form: {
 					groupName: '',
 					platform: '',
@@ -541,7 +549,9 @@
 				if(!this.form.platform || !this.form.groupName) {
 					showNotify('warning', '请先填写基础信息设置')
 					return
-				}
+        }
+        this.initContractOther()
+        // this.contractOther = ['0']
 				get('/api/econtract/template/getnextid')
 					.then(result => {
 						this.editType = 'new'
@@ -662,7 +672,6 @@
 				this.templateModel.partys[i].params.push(a)
 			},
 			addTemplate() {
-			    console.log('addTemplate')
 				this.$refs['templateModel'].validate(valid => {
 					if(valid) {
 						let errMsg
@@ -753,23 +762,31 @@
 						})
 						formData.append('personalPartyNum', personalPartyNum)
 						formData.append('companyPartyNum', companyPartyNum)
-
+            this.changeFormContractOther(formData)
 						importPost('/api/econtract/template/uploadfile', formData)
 							.then(result => {
 								templateModel.fname = result.fname
 								templateModel.furl = result.url
-                                templateModel.name = result.fname
-                                if(templateModel.isSign === '2') templateModel.partys = null
+                templateModel.name = result.fname
+                if(templateModel.isSign === '2') templateModel.partys = null
+                // templateModel.displayPersonalIdentity = '1'
+                // templateModel.displayPersonalMobile = this.contractOther.indexOf('1') >= 0 ? '1' : '2'
+                // templateModel.displayPersonalSigntime = this.contractOther.indexOf('2') >= 0 ? '1' : '2'
+                // this.contractOther = ['0']
 								this.templateArr.push(templateModel)
-								this.dialogVisible = false
+                this.dialogVisible = false
+                // c成功后要给templateArr赋值，不然点开没数据
+                if(this.templateArr.length) {
+                  this.initFormContractOther(this.templateArr.length-1)
+                }
 							})
-                    }else {
+          }else {
 						this.$message({
 							type: 'warning',
 							message: '请正确填写表单！'
 						})
-                    }
-                })
+          }
+        })
 
 			},
 			openDialogTwo() {
@@ -872,7 +889,7 @@
                 else {
                     form.signModel = '1'
                 }
-
+      
 				post('/api/econtract/template-group/add-update', form)
 					.then(result => {
 						showNotify('success', form.groupId ? '修改成功' : '创建成功')
@@ -905,7 +922,9 @@
 
 				this.editType = type
 				this.editIndex = _index
-				this.dialogVisible = true
+        this.dialogVisible = true
+        // 初始化合同其他信息多选框
+        this.initContractOther(_index)
 			},
 			saveTemplate() {
 				this.$refs['templateModel'].validate(valid => {
@@ -964,42 +983,46 @@
 
 						templateModel.isChange = '1'
 
-                        if(this.file) {
-	                        let formData = new FormData()
-	                        formData.append('templateId', this.templateId)
-	                        formData.append('fileName', this.file.name)
-	                        formData.append('file', this.file.raw)
-	                        formData.append('isSign', templateModel.isSign)
-	                        formData.append('partyCount', templateModel.partycount)
+            if(this.file) {
+              let formData = new FormData()
+              formData.append('templateId', this.templateId)
+              formData.append('fileName', this.file.name)
+              formData.append('file', this.file.raw)
+              formData.append('isSign', templateModel.isSign)
+              formData.append('partyCount', templateModel.partycount)
 
-	                        let personalPartyNum = ''
-	                        let companyPartyNum = ''
-	                        if(templateModel.isSign === '1') {
-		                        _.forEach(templateModel.partys, party => {
-			                        if(party.userType.toString() === '2') companyPartyNum += party.signNo
-			                        else personalPartyNum = party.signNo
-		                        })
-	                        }
+              let personalPartyNum = ''
+              let companyPartyNum = ''
+              if(templateModel.isSign === '1') {
+                _.forEach(templateModel.partys, party => {
+                  if(party.userType.toString() === '2') companyPartyNum += party.signNo
+                  else personalPartyNum = party.signNo
+                })
+              }
 
-	                        formData.append('personalPartyNum', personalPartyNum)
-	                        formData.append('companyPartyNum', companyPartyNum)
-                            formData.append('platform', templateModel.platform)
-
-	                        importPost('/api/econtract/template/uploadfile', formData)
-		                        .then(result => {
-			                        templateModel.name = result.fname
-			                        templateModel.fname = result.fname
-			                        templateModel.furl = result.url
-			                        // this.templateArr[this.editIndex] = templateModel
-			                        this.templateArr.splice(this.editIndex, 1)
-			                        this.templateArr.splice(this.editIndex, 0, templateModel)
-			                        this.dialogVisible = false
-		                        })
-                        }else {
-	                        this.templateArr.splice(this.editIndex, 1)
-	                        this.templateArr.splice(this.editIndex, 0, templateModel)
-	                        this.dialogVisible = false
-                        }
+              formData.append('personalPartyNum', personalPartyNum)
+              formData.append('companyPartyNum', companyPartyNum)
+                formData.append('platform', templateModel.platform)
+              this.changeFormContractOther(formData)
+              importPost('/api/econtract/template/uploadfile', formData)
+                .then(result => {
+                  templateModel.name = result.fname
+                  templateModel.fname = result.fname
+                  templateModel.furl = result.url
+                  // this.templateArr[this.editIndex] = templateModel
+                  this.templateArr.splice(this.editIndex, 1)
+                  this.templateArr.splice(this.editIndex, 0, templateModel)
+                  this.dialogVisible = false
+                  // c成功后要给form赋值，不然点开没数据
+                  this.initFormContractOther(this.editIndex)
+                })
+            }else {
+              this.templateArr.splice(this.editIndex, 1)
+              this.templateArr.splice(this.editIndex, 0, templateModel)
+              this.dialogVisible = false
+              // c成功后要给form赋值，不然点开没数据
+              this.initFormContractOther(this.editIndex)
+            }
 
 					}else {
 						this.$message({
@@ -1010,7 +1033,7 @@
 				})
 
 			},
-            changeSignType(e) {
+      changeSignType(e) {
 				// console.log(e)
 				if(e === '2') this.templateModel.partys = null
                 else if(e === '1') {
@@ -1109,8 +1132,8 @@
 						_this.form.platform = _this.oldExtrSystemId
                     }
 				})
-            },
-            getBindStatus(a) {
+      },
+      getBindStatus(a) {
                 this.platform.forEach(e => {
                     // if(this.form.platform == e.extrSystemId) {
                     //     this.bindBank = e.bindBank === '1' ? true : false
@@ -1126,7 +1149,38 @@
                         }
                     }
                 })
-            }
+      },
+      // 动态修改contractOther
+      initContractOther(index) {
+        // 合同上显示其他变量的多选框组
+        this.contractOther = ['0']
+        if(index === undefined) {
+          return
+        }
+        if(this.templateArr[index].displayPersonalMobile === '1') {
+          this.contractOther.push('1')
+        }
+        if(this.templateArr[index].displayPersonalSigntime === '1') {
+          this.contractOther.push('2')
+        }
+      },
+      // 动态修改form中的值，避免再次打开时为空
+      initFormContractOther(index) {
+        // editIndex
+        this.templateArr[index].displayPersonalIdentity = '1'
+        this.templateArr[index].displayPersonalMobile = this.contractOther.includes('1') ? '1' : '2'
+        this.templateArr[index].displayPersonalSigntime = this.contractOther.includes('2') ? '1' : '2'
+      },
+      // 动态修改提交表单的值
+      changeFormContractOther(obj) {
+        // 只有乙方签约对象选择个人时才会显示
+        if(this.templateModel.partys[1].userDetailType !== '1') {
+          return
+        }
+        obj.displayPersonalIdentity = '1'
+        obj.displayPersonalMobile = this.contractOther.indexOf('1') >= 0 ? '1' : '2'
+        obj.displayPersonalSigntime = this.contractOther.indexOf('2') >= 0 ? '1' : '2'
+      }
 		}
 	}
 </script>

@@ -122,7 +122,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="orderStateDesc" label="订单状态" fixed></el-table-column>
-				        <el-table-column prop="createTimeDesc" label="签约时间" fixed>
+				        <el-table-column prop="createTimeDesc" label="发起签约时间" fixed>
                     <template slot-scope="scope">
                         <span>{{scope.row.createTimeDesc | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
                     </template>
@@ -137,6 +137,16 @@
                 <el-table-column prop="personalMobile" label="手机号"></el-table-column>
                 <el-table-column prop="signStateDesc" label="签约状态"></el-table-column>
                 <el-table-column prop="certStateDesc" label="身份证认证状态"></el-table-column>
+                <el-table-column prop="finishedSignTimeDesc" label="签约完成时间">
+                  <template slot-scope="scope">
+                    <span>{{scope.row.finishedSignTimeDesc?scope.row.finishedSignTimeDesc:'--'}}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="terminateTimeDesc" label="合同终止时间">
+                  <template slot-scope="scope">
+                    <span>{{scope.row.terminateTimeDesc?scope.row.terminateTimeDesc:'--'}}</span>
+                  </template>
+                </el-table-column>
             </el-table>
         </div>
         <div class="right">

@@ -130,6 +130,13 @@
                 </template>
                 <el-button type="text" size="small" @click="addParams(i)">{{item.userType == 2 ? '添加公司盖章' : '添加手写签名'}}</el-button>
             </template>
+            <el-form-item v-if="form.partys[1].userDetailType === '1'" label="合同上显示其他变量">
+                  <el-checkbox-group v-model="contractOther">
+                    <el-checkbox label="0" disabled>身份证</el-checkbox>
+                    <el-checkbox label="1">手机号</el-checkbox>
+                    <el-checkbox label="2">签署日期</el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
             <div class="mtitle">签约方式设置</div>
             <el-form-item label="对接方式" prop="accessType">
                 <el-radio v-model="form.accessType" v-for="e in accessTypes" :key="e.value" :label="e.value" @change="accessTypeChange">{{e.text}}</el-radio>
@@ -159,10 +166,10 @@
                 <el-radio v-model="form.storeType" label="1" :disabled="form.enable ? true : false">硬盘存储</el-radio>
                 <el-radio v-model="form.storeType" label="2" :disabled="form.enable ? true : false">OSS存储</el-radio>
             </el-form-item> -->
-            <el-form-item label="是否需要绑定银行卡" prop="bindBank" v-if="form.signModel && form.signModel == 2 && bindBank">
+            <!-- <el-form-item label="是否需要绑定银行卡" prop="bindBank" v-if="form.signModel && form.signModel == 2 && bindBank">
                 <el-radio v-model="form.bindBank" label="1">是</el-radio>
                 <el-radio v-model="form.bindBank" label="2">否</el-radio>
-            </el-form-item>
+            </el-form-item> -->
         </el-form>
         <el-button type="primary" size="small" @click="submit" v-if="!ltype">提交</el-button>
         <el-button size="small" @click="back">{{ltype ? '返回' : '取消'}}</el-button>
@@ -193,6 +200,7 @@ export default {
             }
         }
         return {
+          contractOther: ['0'],
             form: {
                 name: '',
                 templateId: '',
@@ -284,9 +292,9 @@ export default {
                 storeType: [
                     { required: true, message: '请选择储存方式', trigger: 'blur' }
                 ],
-                bindBank: [
-                    { required: true, message: '请选择是否需要绑定银行卡', trigger: 'blur' }
-                ]
+                // bindBank: [
+                //     { required: true, message: '请选择是否需要绑定银行卡', trigger: 'blur' }
+                // ]
             },
             platform: [],
             objects: [],
@@ -445,6 +453,8 @@ export default {
                 this.form.templateId = data
             })
         }
+        // 合同上显示其他变量的多选框组
+        this.initContractOther()
     },
     methods: {
         // 设置商户名称
@@ -640,7 +650,10 @@ export default {
             })
         },
         add() {
-            post('/api/econtract/template/add', this.form).then(data => {
+          const p = { ...this.form }
+          // 修改要传的值
+            this.changeFormContractOther(p)
+            post('/api/econtract/template/add', p).then(data => {
                 this.$message({
                     type: 'success',
                     message: '添加成功！'
@@ -649,7 +662,9 @@ export default {
             })
         },
         change() {
-            post('/api/econtract/template/mod', this.form).then(data => {
+            const p = { ...this.form }
+            this.changeFormContractOther(p)
+            post('/api/econtract/template/mod', p).then(data => {
                 this.$message({
                     type: 'success',
                     message: '修改成功！'
@@ -737,6 +752,27 @@ export default {
                     }
                 }
             })
+        },
+        // 动态修改contractOther
+        initContractOther() {
+          // 合同上显示其他变量的多选框组
+          this.contractOther = ['0']
+          if(this.form.displayPersonalMobile === '1') {
+            this.contractOther.push('1')
+          }
+          if(this.form.displayPersonalSigntime === '1') {
+            this.contractOther.push('2')
+          }
+        },
+        // 动态修改提交表单的值
+        changeFormContractOther(obj) {
+          // 只有乙方签约对象选择个人时才会显示
+          if(this.form.partys[1].userDetailType !== '1') {
+            return
+          }
+          obj.displayPersonalIdentity = '1'
+          obj.displayPersonalMobile = this.contractOther.indexOf('1') >= 0 ? '1' : '2'
+          obj.displayPersonalSigntime = this.contractOther.indexOf('2') >= 0 ? '1' : '2'
         }
     }
 }
