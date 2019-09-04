@@ -1571,6 +1571,20 @@ export default [{
                           keepAlive: false
                       }
                   },
+									{
+                      path: 'businessSwitch',
+                      component: () => import('../pages/riskControl/businessSwitch/index'),
+                      meta: {
+                          keepAlive: true
+                      }
+                  },
+									{
+                      path: 'invoiceRiskDetail',
+                      component: () => import('../pages/riskControl/businessSwitch/invoiceRiskDetail'),
+                      meta: {
+                          keepAlive: true
+                      }
+                  },
               ],
           },
           {
