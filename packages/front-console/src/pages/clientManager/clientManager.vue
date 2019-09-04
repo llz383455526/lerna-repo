@@ -119,7 +119,7 @@
             <el-table-column prop="updateTime"
                              label="更新时间"></el-table-column>
             <el-table-column label="操作"
-                             width="250px">
+                             width="200">
                 <template slot-scope="scope">
                     <el-button v-if="checkRight(permissions, 'sysmgr-web:/company/edit-company')"
                                @click="appManager(scope.row)"
@@ -131,9 +131,9 @@
                     <el-button type="text"
                                @click="getDialogTable(scope.row)">历史版本
                     </el-button>
-                    <el-button v-if="checkRight(permissions, 'risk-mgt-service:/company-business-risk/get-customer-business-risk')" type="text" @click="onLineAuditBtnClick(scope.row)">
+                    <!-- <el-button v-if="checkRight(permissions, 'risk-mgt-service:/company-business-risk/get-customer-business-risk')" type="text" @click="onLineAuditBtnClick(scope.row)">
                         发放管理
-                    </el-button>
+                    </el-button> -->
                 </template>
             </el-table-column>
         </el-table>
@@ -181,7 +181,7 @@
             </el-tabs>
 
         </el-dialog>
-        <el-dialog
+        <!-- <el-dialog
             :visible.sync="onlineAuditIsShow"
             width="800px">
             <p slot="title" style="margin: 0px" v-if="shangHuShangXianModel">
@@ -219,7 +219,7 @@
 							label="计算规则是否通过">
 						</el-table-column>
 					</el-table>
-        </el-dialog>
+        </el-dialog> -->
     </div>
 </template>
 <script>
@@ -252,8 +252,8 @@
                 SalesList: [],
                 OriginaTypelList: [],
                 AgentCompanyList: [],
-                onlineAuditIsShow: false,
-                shangHuShangXianModel: null
+                // onlineAuditIsShow: false,
+                // shangHuShangXianModel: null
             };
         },
         computed: {
@@ -271,56 +271,56 @@
             this.getAgentCompanyList()
         },
         methods: {
-            faFangTitleChange(data) {
-                post('/api/risk-mgt-service/company-business-risk/update-customer-business-enable', {
-                    "customerCompanyId": data.customerCompanyId,
-                    "enable": data.enable ? 1 : 0
-                }).then((data) => {
-                    this.$message({
-                        message: '修改成功',
-                        type: 'success'
-                    });
-                }).catch(() => {
+            // faFangTitleChange(data) {
+            //     post('/api/risk-mgt-service/company-business-risk/update-customer-business-enable', {
+            //         "customerCompanyId": data.customerCompanyId,
+            //         "enable": data.enable ? 1 : 0
+            //     }).then((data) => {
+            //         this.$message({
+            //             message: '修改成功',
+            //             type: 'success'
+            //         });
+            //     }).catch(() => {
 
-                })
-            },
-            faFangCellChange(data) {
-                post('/api/risk-mgt-service/company-business-risk/update-customer-business-enable', {
-                    "customerCompanyId": this.shangHuShangXianModel.customerCompanyId,
-                    "enable": data.enable ? 1 : 0,
-                    "serviceCompanyId": data.serviceCompanyId
-                }).then((data) => {
-                    this.$message({
-                        message: '修改成功',
-                        type: 'success'
-                    });
-                }).catch(() => {
+            //     })
+            // },
+            // faFangCellChange(data) {
+            //     post('/api/risk-mgt-service/company-business-risk/update-customer-business-enable', {
+            //         "customerCompanyId": this.shangHuShangXianModel.customerCompanyId,
+            //         "enable": data.enable ? 1 : 0,
+            //         "serviceCompanyId": data.serviceCompanyId
+            //     }).then((data) => {
+            //         this.$message({
+            //             message: '修改成功',
+            //             type: 'success'
+            //         });
+            //     }).catch(() => {
 
-                })
-            },
-            onLineAuditBtnClick(item) {
-                this.shangHuShangXianModel = null
-                get('/api/risk-mgt-service/company-business-risk/get-customer-business-risk', {
-                    customerCompanyId: item.id
-                }).then((data) => {
-                    data.enable = !!data.businessStatus
-                    if (!data.detailResultList) {
-                        data.detailResultList = []
-                    }
-                    data.detailResultList.forEach((item) => {
-                        item.enable = !!item.businessStatus
-                    })
-                    this.shangHuShangXianModel = data
-                }).catch(() => {
+            //     })
+            // },
+            // onLineAuditBtnClick(item) {
+            //     this.shangHuShangXianModel = null
+            //     get('/api/risk-mgt-service/company-business-risk/get-customer-business-risk', {
+            //         customerCompanyId: item.id
+            //     }).then((data) => {
+            //         data.enable = !!data.businessStatus
+            //         if (!data.detailResultList) {
+            //             data.detailResultList = []
+            //         }
+            //         data.detailResultList.forEach((item) => {
+            //             item.enable = !!item.businessStatus
+            //         })
+            //         this.shangHuShangXianModel = data
+            //     }).catch(() => {
 
-                })
-                this.onlineAuditIsShow = true
-            },
-            getDeliverList() {
-                get('/api/sysmgr-web/user/get-group-users?relationKey=DeliverUserRelation').then((res) => {
-                    this.DeliverList = res
-                })
-            },
+            //     })
+            //     this.onlineAuditIsShow = true
+            // },
+            // getDeliverList() {
+            //     get('/api/sysmgr-web/user/get-group-users?relationKey=DeliverUserRelation').then((res) => {
+            //         this.DeliverList = res
+            //     })
+            // },
             getSalesList() {
                 const queryForm = {
                     accountInfo: "",

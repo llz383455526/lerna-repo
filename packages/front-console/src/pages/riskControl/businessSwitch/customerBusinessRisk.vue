@@ -30,14 +30,14 @@
 							:key="k">{{ v.name }}</p>
 				</template>
 			</el-table-column>
-			<el-table-column prop="originalTypeName" label="客户类型"></el-table-column>
+			<el-table-column prop="customerTypeName" label="客户类型"></el-table-column>
 			<el-table-column prop="agentCompanyName" label="代理商公司"></el-table-column>
-			<el-table-column prop="updateBy" label="操作记录">
+			<!-- <el-table-column prop="updateBy" label="操作记录">
 				<template slot-scope="scope">
 					<div>{{scope.row.updateByName}}</div>
 					<div>{{scope.row.updateTime}}</div>
 				</template>
-			</el-table-column>
+			</el-table-column> -->
 			<el-table-column prop="action" label="操作">
 				<template slot-scope="scope">
 					<el-button
@@ -50,7 +50,7 @@
 			</el-table-column>
 		</el-table>
 		<ayg-pagination v-if="tableData.total"
-				:total="total"
+				:total="tableData.total"
 				v-on:handleSizeChange="sizeChange"
 				:currentSize="formSearch.pageSize"
 				v-on:handleCurrentChange="query"
@@ -134,7 +134,7 @@ export default {
 	computed: {
 		...mapGetters({
 			permissions: 'permissions',
-			userInformation: 'userInformation'
+			// userInformation: 'userInformation'
 		})
 	},
 	created() {
@@ -144,7 +144,6 @@ export default {
 		}).then(data => {
 			this.companyList = data
 		})
-		// this.query()
 	},
 	activated () {
 		this.query()
@@ -155,7 +154,7 @@ export default {
 			if (a && !isNaN(a)) {
 				this.formSearch.page = a
 			}
-			post('/api/sysmgr-web/company/query-company', this.formSearch).then((data) => {
+			post('/api/risk-mgt-service/company-business-risk/list-customer-business-risk', this.formSearch).then((data) => {
 				this.tableData = data
 			})
 		},
@@ -170,7 +169,7 @@ export default {
 		onLineAuditBtnClick(item) {
 			this.shangHuShangXianModel = null
 			get('/api/risk-mgt-service/company-business-risk/get-customer-business-risk', {
-				customerCompanyId: item.id
+				customerCompanyId: item.companyId
 			}).then((data) => {
 				data.enable = !!data.businessStatus
 				if (!data.detailResultList) {
@@ -183,6 +182,33 @@ export default {
 			}).catch(() => {
 			})
 			this.onlineAuditIsShow = true
+		},
+		faFangTitleChange(data) {
+			post('/api/risk-mgt-service/company-business-risk/update-customer-business-enable', {
+				"customerCompanyId": data.customerCompanyId,
+				"enable": data.enable ? 1 : 0
+			}).then((data) => {
+				this.$message({
+					message: '修改成功',
+					type: 'success'
+				})
+			}).catch(() => {
+
+			})
+		},
+		faFangCellChange(data) {
+			post('/api/risk-mgt-service/company-business-risk/update-customer-business-enable', {
+				"customerCompanyId": this.shangHuShangXianModel.customerCompanyId,
+				"enable": data.enable ? 1 : 0,
+				"serviceCompanyId": data.serviceCompanyId
+			}).then((data) => {
+				this.$message({
+					message: '修改成功',
+					type: 'success'
+				})
+			}).catch(() => {
+
+			})
 		},
 	},
 }
