@@ -1,71 +1,75 @@
 <template>
   <div>
     <div class="widget-box bg-white"
-      style="margin-top:20px;">
+         style="margin-top:20px;">
       <div class="widget-header">
         <h4 class="widget-title">审核意见</h4>
       </div>
       <div class="widget-body">
         <div class="widget-main"
-          style="font-size: 16px;line-height: 30px;">
+             style="font-size: 16px;line-height: 30px;">
           <el-table :data="contractModel.processLogs"
-            class="mb20">
+                    class="mb20">
             <el-table-column prop="actionUserName"
-              label="审核人姓名"></el-table-column>
+                             label="审核人姓名"></el-table-column>
             <el-table-column prop="actionAt"
-              label="审核时间"></el-table-column>
+                             label="审核时间"></el-table-column>
             <el-table-column prop="stage"
-              label="审核状态">
+                             label="审核状态">
               <template slot-scope="scope">
                 <span style="color: rgba(232, 87, 92, 1);"
-                  v-if="scope.row.actionType === 'reject'">拒绝</span>
+                      v-if="scope.row.actionType === 'reject'">拒绝</span>
                 <span style="color: rgba(26, 179, 148, 1);"
-                  v-if="scope.row.actionType === 'agree'">同意</span>
+                      v-if="scope.row.actionType === 'agree'">同意</span>
                 <!-- {{scope.row.actionType === 'reject' ? '拒绝' : '同意'}} -->
               </template>
             </el-table-column>
             <el-table-column prop="actionMemo"
-              label="审核意见"></el-table-column>
+                             label="审核意见"></el-table-column>
             <el-table-column prop="rejectType"
-              label="拒绝类型">
+                             label="拒绝类型">
               <!-- <template slot-scope="scope">
                 {{scope.row.rejectType || '无'}}
               </template> -->
             </el-table-column>
+            <el-table-column label="当前处理"
+                             prop="actionUserName"></el-table-column>
+            <el-table-column label="审核方"
+                             prop="serviceCompanyName"></el-table-column>
           </el-table>
           <div v-if="contractModel.actions.length">
             <el-input type="textarea"
-              v-model="opinion"></el-input>
+                      v-model="opinion"></el-input>
             <div style="color:red;"
-              v-if="opinion === ''">请填写审核意见</div>
+                 v-if="opinion === ''">请填写审核意见</div>
           </div>
           <div class="mt20 mb20"
-            v-if="contractModel.actions.length">
+               v-if="contractModel.actions.length">
             <span>请选拒绝类型</span>
             <el-select class="ml20"
-              style="width: 330px;"
-              v-model="value">
+                       style="width: 330px;"
+                       v-model="value">
               <el-option v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"></el-option>
+                         :key="item.value"
+                         :label="item.label"
+                         :value="item.value"></el-option>
             </el-select>
           </div>
         </div>
       </div>
     </div>
     <div class="mt20 mb20"
-      v-if="contractModel.status != 'init'">
+         v-if="contractModel.status != 'init'">
       <el-button size="small"
-        type="primary"
-        v-if="contractModel.actions[0] === 'agree'"
-        @click="handleContract('agree')">审批通过</el-button>
+                 type="primary"
+                 v-if="contractModel.actions[0] === 'agree'"
+                 @click="handleContract('agree')">审批通过</el-button>
       <el-button size="small"
-        type="danger"
-        v-if="contractModel.actions[1] === 'reject'"
-        @click="handleContract('reject')">审批不通过</el-button>
+                 type="danger"
+                 v-if="contractModel.actions[1] === 'reject'"
+                 @click="handleContract('reject')">审批不通过</el-button>
       <el-button size="small"
-        @click="backToList">返回</el-button>
+                 @click="backToList">返回</el-button>
     </div>
   </div>
 </template>

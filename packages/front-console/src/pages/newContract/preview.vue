@@ -31,7 +31,7 @@
             <div class="col-xs-12">
               <h4 class="block green">合同选项</h4>
             </div>
-            <div class="col-xs-6">合同模板：{{ getText(contractForm.contractTplId, contractTplList) }}</div>
+            <div class="col-xs-6">合同模板：{{ contractForm.contractTplName }}</div>
             <div class="col-xs-6">客户行业类型：{{ getText(contractForm.contractType, industryTypeList) }}</div>
             <div class="col-xs-6">客户从事：{{ contractForm.customIndustry }}</div>
             <div class="col-xs-6"
