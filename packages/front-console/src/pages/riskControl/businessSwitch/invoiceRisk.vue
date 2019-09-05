@@ -1,8 +1,8 @@
 <template>
 	<div style="padding-top: 10px;">
 		<el-form :inline="true" label-position="top" :model="formSearch" ref="formSearch" size="small">
-			<el-form-item label="客户名称" prop="companyId">
-				<el-select filterable clearable style="width: 200px" v-model="formSearch.companyId">
+			<el-form-item label="客户名称" prop="customerCompanyId">
+				<el-select filterable clearable style="width: 200px" v-model="formSearch.customerCompanyId">
 						<el-option v-for="e in companyList" :value="e.id" :label="e.name" :key="e.id"></el-option>
 				</el-select>
 			</el-form-item>
