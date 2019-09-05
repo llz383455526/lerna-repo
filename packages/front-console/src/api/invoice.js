@@ -30,6 +30,7 @@ const invoiceApi = {
     customCompanyOptions: "/api/invoice-web/invoice/custom-company-options",
     serviceCompanyOptions: "/api/invoice-web/invoice/service-company-options",
     queryCompanyContract: "/api/contract-web/commom/check-contract", // APP查询公司合同信息
+    canMakeInvoice: '/workflow/risk-info', // 查询是否符合风控规则
 };
 
 export { invoiceApi };

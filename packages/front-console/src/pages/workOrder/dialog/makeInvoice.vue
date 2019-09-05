@@ -216,6 +216,9 @@ export default {
                     if (this.form.buyerCompanyId !== '' && this.form.invoiceCompanyId !== '') {
                         this.$refs.form.validateField('buyerCompanyId');
                     }
+                }else if(this.form.businessType === this.businessTypes[0] && !this.canMakeInvoice) {
+                  // 众包时，风控是否允许申请发票
+                  callback(new Error('风控限制：该客户与落地公司禁止提交发票申请'))
                 }
                 callback();
             }
@@ -249,11 +252,12 @@ export default {
                 businessType: 'crowdSource',
                 customCompanyId: '',
                 serviceCompanyId: '',
-                buyerCompanyId: '', // 购买方公司
+                buyerCompanyId: '', // 购买方公司 ,只有在非众包才使用
                 invoiceCompanyId: '' // 开票公司
             },
             businessTypes: ['crowdSource', 'subcontract', 'preInvoice'],
             hasContract: false, // 预开票时验证是否有合同关系
+            canMakeInvoice: true, // 众包时，风控是否允许申请发票
             rules: {
                 serviceCompanyId: [
                     { validator: validateServiceCompanyId, trigger: "change"}
@@ -294,6 +298,14 @@ export default {
                 this.customCompanies = data
             })
         },
+        pushCreatePage() {
+          this.show = false
+          let str = ''
+          for(let k in this.form) {
+              str += `${str ? '&' : '?'}${k}=${this.form[k]}`
+          }
+          this.$router.push(`/main/workOrder/invoice_sheet/index${str}`)
+        },
         result() {
             this.$refs.form.validate(valid => {
                 if(valid) {
@@ -302,26 +314,31 @@ export default {
                         post(invoiceApi.queryCompanyContract,
                             {customerId: this.form.buyerCompanyId,serviceCompanyId: this.form.invoiceCompanyId})
                         .then(res => {
-                            console.log(res)
                             if(res) {
                                 this.hasContract = true
                                 this.$refs.form.validateField('invoiceCompanyId')
                             } else {
-                                this.show = false
-                                let str = ''
-                                for(let k in this.form) {
-                                    str += `${str ? '&' : '?'}${k}=${this.form[k]}`
-                                }
-                               this.$router.push(`/main/workOrder/invoice_sheet/index${str}`)
+                                this.pushCreatePage()
                             }
                         })
                     } else {
-                        this.show = false
-                        let str = ''
-                        for(let k in this.form) {
-                            str += `${str ? '&' : '?'}${k}=${this.form[k]}`
-                        }
-                        this.$router.push(`/main/workOrder/invoice_sheet/index${str}`)
+                      // 如果是众包，需要看是否符合风控规则
+                      if(this.form.businessType === 'crowdSource') {
+                        get(invoiceApi.canMakeInvoice,
+                              {customCompanyId: this.form.customCompanyId,serviceCompanyId: this.form.serviceCompanyId})
+                        .then(res => {
+                          this.canMakeInvoice = res
+                          if(res) {
+                            this.pushCreatePage()
+                          } else {
+                            // 鉴定
+                            this.$refs.form.validateField('serviceCompanyId')
+                          }
+                        })
+                      } else {
+                        this.pushCreatePage()
+                      }
+                      
                     }
                 }
             })

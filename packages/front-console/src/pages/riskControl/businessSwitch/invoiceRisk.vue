@@ -1,37 +1,32 @@
 <template>
 	<div style="padding-top: 10px;">
-		<el-form :inline="true" :model="formSearch" ref="formSearch" size="small">
-			<el-form-item label="客户公司" prop="companyId">
+		<el-form :inline="true" label-position="top" :model="formSearch" ref="formSearch" size="small">
+			<el-form-item label="客户名称" prop="companyId">
 				<el-select filterable clearable style="width: 200px" v-model="formSearch.companyId">
-						<el-option label="所有" value=""></el-option>
 						<el-option v-for="e in companyList" :value="e.id" :label="e.name" :key="e.id"></el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item>
-				<el-button type="primary" @click="query()">查询</el-button>
+      <el-form-item label="开票开关" prop="switchStatus">
+				<el-select filterable clearable style="width: 200px" v-model="formSearch.switchStatus">
+          <el-option v-for="item in invoiceApplySwitch" :key="item.value"
+            :label="item.label" :value="item.value"></el-option>
+				</el-select>
+			</el-form-item>
+			<el-form-item label=".">
+				<el-button type="primary" @click="searchQuery">查询</el-button>
 				<el-button @click="resetFormSearch">清空</el-button>
 			</el-form-item>
 		</el-form>
+    <el-button type="text" @click="forbidInvoiceApplyShow = true">+ 添加配置</el-button>
 		<el-table :data="tableData.list">
-			<el-table-column prop="companyName" label="客户公司"></el-table-column>
-			<el-table-column prop="salesList" label="关联销售">
+			<el-table-column prop="customerCompanyName" label="客户名称"></el-table-column>
+			<el-table-column prop="serviceCompanyName" label="落地公司"></el-table-column>
+			<el-table-column prop="switchStatus" label="开票开关">
 				<template slot-scope="scope">
-					<div
-						v-for="e in scope.row.salesList"
-						:key="e.id">{{e.name}}
-					</div>
+					<span>{{scope.row.switchStatus === '0' ? '禁止开票申请' : '可以开票申请'}}</span>
 				</template>
 			</el-table-column>
-			<el-table-column prop="deliverList" label="关联交付">
-				<template slot-scope="scope">
-						<p
-							style="margin: 0"
-							v-for="(v, k) in scope.row.deliverList"
-							:key="k">{{ v.name }}</p>
-				</template>
-			</el-table-column>
-			<el-table-column prop="originalTypeName" label="客户类型"></el-table-column>
-			<el-table-column prop="agentCompanyName" label="代理商公司"></el-table-column>
+			<el-table-column prop="remark" label="原因"></el-table-column>
 			<el-table-column prop="updateBy" label="操作记录">
 				<template slot-scope="scope">
 					<div>{{scope.row.updateByName}}</div>
@@ -40,12 +35,20 @@
 			</el-table-column>
 			<el-table-column prop="action" label="操作">
 				<template slot-scope="scope">
+          <el-button
+						type="text"
+						@click="changeInvoiceStatus(scope.row)"
+					>
+          {{scope.row.switchStatus === '0' ? '启用开票' : '禁用开票'}}
+					</el-button>
+          <router-link :to="`invoiceRiskDetail?customerCompanyId=${scope.row.customerCompanyId}&serviceCompanyId=${scope.row.serviceCompanyId}`">
 					<el-button
 						v-if="checkRight(permissions, 'risk-mgt-service:/company-business-risk/get-customer-business-risk')"
 						type="text"
-						@click="onLineAuditBtnClick(scope.row)"
-					>发放管理
+					>
+            查看详情
 					</el-button>
+          </router-link>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -56,22 +59,75 @@
 				v-on:handleCurrentChange="query"
 				:currentPage="formSearch.page">
 		</ayg-pagination>
+    <forbid-invoice-apply 
+      :show.sync="forbidInvoiceApplyShow"
+      :companyList="companyList"
+      @success="resetQuery"></forbid-invoice-apply>
+    <el-dialog
+      title="开票申请开关"
+			:visible.sync="invocieApplyConfigShow"
+			width="400px">
+      <el-form :model="invoiceApplyForm" ref="formSearch" size="small">
+        <el-form-item prop="companyId">
+          <el-radio-group v-model="invoiceApplyForm.switchStatus">
+            <el-radio v-for="item in invoiceApplySwitch.slice(1)" :key="item.value"
+              :label="item.value">{{item.label}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="备注：">
+          <el-input type="textarea" :value="invoiceApplyForm.remark"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="invocieApplyConfigShow = false">取 消</el-button>
+        <el-button type="primary" @click="submitInvoiceApplyForm">确 定</el-button>
+      </span>
+    </el-dialog>
 	</div>
 </template>
 
 <script>
 import {mapGetters} from 'vuex'
 import {post, get} from '../../../store/api'
+import {risk} from 'src/api'
+import forbidInvoiceApply from './forbidInvoiceApply.vue'
 
 export default {
+  components: {
+    forbidInvoiceApply
+  },
 	data() {
 		return {
+      invocieApplyConfigShow: false, // 配置弹窗
+      forbidInvoiceApplyShow: false, // 添加配置弹窗
 			formSearch: {
-				companyId: '',
+        companyId: '',
+        switchStatus: '',
 				page: 1,
 				pageSize: 10,
 			},
-			companyList: [],
+      companyList: [],
+      invoiceApplySwitch: [ // 开票申请枚举
+        {
+          label: '全部',
+          value: '',
+        },
+        {
+          label: '可以开票申请',
+          value: '1',
+        },
+        {
+          label: '禁止开票申请',
+          value: '0'
+        }
+      ],
+      // 更新要提交的表单
+      invoiceApplyForm: {
+        customerCompanyId: '',
+        remark: '',
+        serviceCompanyId: '',
+        switchStatus: ''
+      },
 			tableData: {
 				list: [
 					// {
@@ -85,7 +141,7 @@ export default {
 					// 	salesList: [{name:'salesList'}],
 					// }
 				],
-				total: 1,
+				total: 0,
 			},
 		}
 	},
@@ -95,33 +151,56 @@ export default {
 			// userInformation: 'userInformation'
 		})
 	},
-	created() {
+	activated () {
+	},
+	methods: {
+		query() {
+			post(risk.invoiceRiskList, this.formSearch).then((data) => {
+        this.tableData.list = data ? data.list : []
+        this.tableData.total = data ? data.total :0
+			})
+    },
+    searchQuery() {
+      this.formSearch.page = 1
+      this.query()
+    },
+		sizeChange(size) {
+      this.formSearch.page = 1
+			this.formSearch.pageSize = size
+			this.query()
+		},
+		resetFormSearch() {
+			this.$refs['formSearch'].resetFields();
+    },
+    // 提交成功后重新拉取数据
+    resetQuery() {
+      this.resetFormSearch()
+      this.searchQuery()
+    },
+    changeInvoiceStatus(val) {
+      // 将行数据更新到要提交的对象
+      Object.assign(this.invoiceApplyForm, val)
+      this.invoiceApplyForm.remark = ''
+      this.invocieApplyConfigShow = true
+
+    },
+    // 修改开关
+    submitInvoiceApplyForm() {
+      post(risk.invoiceRiskSwitch, this.invoiceApplyForm).then(res => {
+        this.invocieApplyConfigShow = false
+        this.query()
+      })
+    }
+  },
+  created() {
+    // 获取列表
+    this.query()
 		// 客户公司
 		get('/api/sysmgr-web/commom/company', {
 			companyIdentity: 'custom'
 		}).then(data => {
 			this.companyList = data
 		})
-	},
-	activated () {
-	},
-	methods: {
-		query(a) {
-			this.formSearch.page = 1
-			if (a && !isNaN(a)) {
-				this.formSearch.page = a
-			}
-			post('/api/sysmgr-web/company/query-company', this.formSearch).then((data) => {
-				this.tableData = data
-			})
-		},
-		sizeChange(size) {
-			this.formSearch.pageSize = size
-			this.query()
-		},
-		resetFormSearch() {
-			this.formSearch.companyId = ''
-		},
 	},
 }
 </script>
