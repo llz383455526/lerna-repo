@@ -29,7 +29,7 @@ module.exports = merge(baseWebpackConfig, {
 	        }]
         }]
     },
-    // devtool: '#eval-source-map',
+    devtool: 'eval',
     plugins: [
         new webpack.DefinePlugin({
             'process.env': config.dev.env
