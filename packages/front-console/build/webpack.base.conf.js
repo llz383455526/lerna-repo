@@ -48,11 +48,11 @@ module.exports = {
     module: {
     	rules: [{
 		    test: /\.vue$/,
-		    loader: 'vue-loader',
+        loader: 'vue-loader',
 		    include: path.resolve(__dirname,'../src')
 	    }, {
 		    test: /\.js$/,
-		    loader: 'babel-loader?cacheDirectory',
+        loader: 'babel-loader?cacheDirectory',
 		    include: [
                 path.resolve(__dirname,'../src')
             ],
@@ -77,28 +77,25 @@ module.exports = {
 		    }
 	    }]
     },
-	devtool: "#source-map",
+	// devtool: "#source-map",
 	plugins: [
-		new webpack.LoaderOptionsPlugin({
-			minimize: true
-		}),
 		new LodashModuleReplacementPlugin({
 			'collections': true,
 			'paths': true
-		}),
-		new webpack.LoaderOptionsPlugin({
-			test: /\.vue$/,
-			options: {
-				loaders: utils.cssLoaders({
-					sourceMap: useCssSourceMap,
-					extract: true
-				}),
-				postcss: [
-					autoprefixer({
-						browsers: ['last 10 versions']
-					})
-				]
-			}
-		})
+    }),
+		// new webpack.LoaderOptionsPlugin({
+		// 	test: /\.vue$/,
+		// 	options: {
+		// 		loaders: utils.cssLoaders({
+		// 			sourceMap: useCssSourceMap,
+		// 			extract: true
+		// 		}),
+		// 		postcss: [
+		// 			autoprefixer({
+		// 				browsers: ['last 10 versions']
+		// 			})
+		// 		]
+		// 	}
+		// })
 	]
 }

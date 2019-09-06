@@ -6,7 +6,7 @@ let baseWebpackConfig = require('./webpack.base.conf')
 let HtmlWebpackPlugin = require('html-webpack-plugin')
 
 Object.keys(baseWebpackConfig.entry).forEach(function(name) {
-    baseWebpackConfig.entry[name] = ['./build/dev-client'].concat(baseWebpackConfig.entry[name])
+    baseWebpackConfig.entry[name] = ['webpack-hot-middleware/client?noInfo=true'].concat(baseWebpackConfig.entry[name])
 })
 
 module.exports = merge(baseWebpackConfig, {
@@ -25,11 +25,11 @@ module.exports = merge(baseWebpackConfig, {
 	        }, {
 		        loader: "css-loader", // translates CSS into CommonJS
 	        }, {
-		        loader: "sass-loader", // compiles Sass to CSS
+		        loader: "fast-sass-loader", // compiles Sass to CSS
 	        }]
         }]
     },
-    devtool: '#eval-source-map',
+    // devtool: '#eval-source-map',
     plugins: [
         new webpack.DefinePlugin({
             'process.env': config.dev.env

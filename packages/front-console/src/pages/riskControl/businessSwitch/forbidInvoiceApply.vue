@@ -10,8 +10,8 @@
 						<el-option v-for="e in companyList" :value="e.id" :label="e.name" :key="e.id"></el-option>
 				</el-select>
       </el-form-item>
-      <el-form-item v-if="serviceCompany.length" label="落地公司" prop="serviceCompanyIds">
-        <el-checkbox v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+      <el-form-item label="落地公司" prop="serviceCompanyIds">
+        <el-checkbox v-if="serviceCompany.length" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
         <el-checkbox-group v-model="forbidInvoiceApplyForm.serviceCompanyIds" @change="handleCheckedServiceChange">
           <el-checkbox v-for="item in serviceCompany" :label="item.id" :key="item.id">{{item.name}}</el-checkbox>
         </el-checkbox-group>

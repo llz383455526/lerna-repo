@@ -22,14 +22,14 @@ let devMiddleware = require('webpack-dev-middleware')(compiler, {
 })
 
 let hotMiddleware = require('webpack-hot-middleware')(compiler)
-compiler.plugin('compilation', compilation => {
-    compilation.plugin('html-webpack-plugin-after-emit', (data, cb) => {
-        hotMiddleware.publish({
-            action: 'reload'
-        })
-        cb()
-    })
-})
+// compiler.plugin('compilation', compilation => {
+//     compilation.plugin('html-webpack-plugin-after-emit', (data, cb) => {
+//         hotMiddleware.publish({
+//             action: 'reload'
+//         })
+//         cb()
+//     })
+// })
 
 let context = config.dev.context
 let proxypath = config.dev.proxypath

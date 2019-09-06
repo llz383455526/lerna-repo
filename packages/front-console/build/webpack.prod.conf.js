@@ -75,6 +75,9 @@ let webpackConfig = merge(baseWebpackConfig, {
             name: 'manifest',
             chunks: ['vendor']
         }),
+        new webpack.LoaderOptionsPlugin({
+          minimize: true
+        }),
 	    new ExtractTextPlugin(utils.assetsPath('css/[name].[chunkhash].css'), {
 		    allChunks: true
 	    }),
