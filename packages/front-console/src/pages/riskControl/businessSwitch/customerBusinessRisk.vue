@@ -12,6 +12,7 @@
 				<el-button @click="resetFormSearch">清空</el-button>
 			</el-form-item>
 		</el-form>
+    <el-button type="text" @click="customerRiskAddShow = true">+ 添加客户配置</el-button>
 		<el-table :data="tableData.list">
 			<el-table-column prop="companyName" label="客户公司"></el-table-column>
 			<el-table-column prop="salesList" label="关联销售">
@@ -56,7 +57,7 @@
 				v-on:handleCurrentChange="query"
 				:currentPage="formSearch.page">
 		</ayg-pagination>
-
+    <customer-risk-add :show.sync="customerRiskAddShow" :companyList="companyList" @success="query"></customer-risk-add>
 		<el-dialog
 			:visible.sync="onlineAuditIsShow"
 			width="800px">
@@ -102,8 +103,10 @@
 <script>
 import {mapGetters} from 'vuex'
 import {post, get} from '../../../store/api'
+import CustomerRiskAdd from './CustomerRiskAdd.vue'
 
 export default {
+  components: {CustomerRiskAdd},
 	data() {
 		return {
 			formSearch: {
@@ -127,7 +130,8 @@ export default {
 				],
 				total: 1,
 			},
-			onlineAuditIsShow: false,
+      onlineAuditIsShow: false,
+      customerRiskAddShow: false,
 			shangHuShangXianModel: null,
 		}
 	},

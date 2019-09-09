@@ -97,6 +97,7 @@
             class="form_input"
             v-model="form.serviceCompanyId"
             filterable
+            @change="() => {canMakeInvoice = true}"
           >
             <el-option
               v-for="(e, i) in serviceCompanyList"

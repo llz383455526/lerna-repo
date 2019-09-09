@@ -66,15 +66,16 @@
     <el-dialog
       title="开票申请开关"
 			:visible.sync="invocieApplyConfigShow"
+      @close="$refs.invoiceApplyForm.resetFields()"
 			width="400px">
-      <el-form :model="invoiceApplyForm" ref="formSearch" size="small">
+      <el-form :model="invoiceApplyForm" :rules="rules" ref="invoiceApplyForm" size="small">
         <el-form-item prop="companyId">
           <el-radio-group v-model="invoiceApplyForm.switchStatus">
             <el-radio v-for="item in invoiceApplySwitch.slice(1)" :key="item.value"
               :label="item.value">{{item.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="备注：">
+        <el-form-item label="备注：" prop="remark">
           <el-input type="textarea" :value="invoiceApplyForm.remark"></el-input>
         </el-form-item>
       </el-form>
@@ -105,7 +106,10 @@ export default {
         switchStatus: '',
 				page: 1,
 				pageSize: 10,
-			},
+      },
+      rules: {
+        remark: {required: true, message: '请填写备注', trigger: 'blur'}
+      },
       companyList: [],
       invoiceApplySwitch: [ // 开票申请枚举
         {
@@ -186,9 +190,13 @@ export default {
     },
     // 修改开关
     submitInvoiceApplyForm() {
-      post(risk.invoiceRiskSwitch, this.invoiceApplyForm).then(res => {
-        this.invocieApplyConfigShow = false
-        this.query()
+      this.$refs.invoiceApplyForm.validate((valid) => {
+        if (valid) {
+         post(risk.invoiceRiskSwitch, this.invoiceApplyForm).then(res => {
+          this.invocieApplyConfigShow = false
+          this.query()
+        })
+        }
       })
     }
   },

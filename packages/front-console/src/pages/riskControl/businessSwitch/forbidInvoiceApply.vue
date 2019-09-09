@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     title="添加配置：禁止开票申请"
-    :visible.sync="show"
+    :visible="show"
     @close="closeDialog"
     width="500px">
     <el-form :rules="rules" :model="forbidInvoiceApplyForm" ref="forbidInvoiceApplyForm" size="small" label-width="80px">
@@ -13,7 +13,10 @@
       <el-form-item label="落地公司" prop="serviceCompanyIds">
         <el-checkbox v-if="serviceCompany.length" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
         <el-checkbox-group v-model="forbidInvoiceApplyForm.serviceCompanyIds" @change="handleCheckedServiceChange">
-          <el-checkbox v-for="item in serviceCompany" :label="item.id" :key="item.id">{{item.name}}</el-checkbox>
+          <el-checkbox v-for="item in serviceCompany" :label="item.id" :key="item.id">{{item.name}}
+            <el-tag v-if="item.direct" type="success" size="small">自营</el-tag>
+            <el-tag v-else size="small">非自营</el-tag>
+          </el-checkbox>
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="原因" prop="remark">
@@ -64,6 +67,8 @@ export default {
   },
   methods: {
     closeDialog() {
+      this.$refs.forbidInvoiceApplyForm.resetFields()
+      this.serviceCompany = []
       this.$emit('update:show',false)
     },
     // 全选操作
