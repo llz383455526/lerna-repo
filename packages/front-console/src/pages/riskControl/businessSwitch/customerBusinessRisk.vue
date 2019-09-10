@@ -103,7 +103,7 @@
 <script>
 import {mapGetters} from 'vuex'
 import {post, get} from '../../../store/api'
-import CustomerRiskAdd from './CustomerRiskAdd.vue'
+import CustomerRiskAdd from './customerRiskAdd.vue'
 
 export default {
   components: {CustomerRiskAdd},
