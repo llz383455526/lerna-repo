@@ -14,6 +14,9 @@
         <el-switch v-model="customerRiskAddForm.enable" :active-value="1" :inactive-value="0"></el-switch>
         <span>客户发放开关</span><br /><br />
       </el-form-item>
+      <el-form-item label="">
+        代理商名称：{{ customerRiskAddForm.agentCompanyName }}
+      </el-form-item>
       <el-table
         :data="customerRiskAddForm.detailResultList"
         style="width: 100%">
