@@ -69,6 +69,7 @@ export default {
     closeDialog() {
       this.$refs.forbidInvoiceApplyForm.resetFields()
       this.serviceCompany = []
+      this.checkAll = false
       this.$emit('update:show',false)
     },
     // 全选操作
