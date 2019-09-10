@@ -158,18 +158,17 @@ export default {
 	activated () {
 	},
 	methods: {
-		query() {
+		query(page) {
+      this.formSearch.page = page || 1
 			post(risk.invoiceRiskList, this.formSearch).then((data) => {
         this.tableData.list = data ? data.list : []
         this.tableData.total = data ? data.total :0
 			})
     },
     searchQuery() {
-      this.formSearch.page = 1
       this.query()
     },
 		sizeChange(size) {
-      this.formSearch.page = 1
 			this.formSearch.pageSize = size
 			this.query()
 		},
@@ -194,7 +193,7 @@ export default {
         if (valid) {
          post(risk.invoiceRiskSwitch, this.invoiceApplyForm).then(res => {
           this.invocieApplyConfigShow = false
-          this.query()
+          this.searchQuery()
         })
         }
       })
@@ -202,7 +201,7 @@ export default {
   },
   created() {
     // 获取列表
-    this.query()
+    this.searchQuery()
 		// 客户公司
 		get('/api/sysmgr-web/commom/company', {
 			companyIdentity: 'custom'
