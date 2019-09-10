@@ -69,14 +69,14 @@
       @close="$refs.invoiceApplyForm.resetFields()"
 			width="400px">
       <el-form :model="invoiceApplyForm" :rules="rules" ref="invoiceApplyForm" size="small">
-        <el-form-item prop="companyId">
+        <el-form-item prop="switchStatus">
           <el-radio-group v-model="invoiceApplyForm.switchStatus">
             <el-radio v-for="item in invoiceApplySwitch.slice(1)" :key="item.value"
               :label="item.value">{{item.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注：" prop="remark">
-          <el-input type="textarea" :value="invoiceApplyForm.remark"></el-input>
+          <el-input type="textarea" v-model="invoiceApplyForm.remark"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

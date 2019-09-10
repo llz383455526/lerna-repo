@@ -31,8 +31,8 @@
                     </div>
                 </timeline-item>
             </timeline>
-            <el-form :form="approveForm" style="margin-top: 25px;">
-                <el-form-item label="配置修改备注(非必填)">
+            <el-form :model="approveForm" ref="approveForm" style="margin-top: 25px;" :rules="rules">
+                <el-form-item label="配置修改备注" prop="remark">
                     <el-input
                         v-model.trim="approveForm.remark"
                         type="textarea"
@@ -96,6 +96,9 @@ export default {
                 remark: '',
                 switchStatus: '',
             },
+            rules: {
+              remark: {required: true, message: '请填写备注', trigger: 'blur'}
+            },
         }
     },
 		computed: {
@@ -131,9 +134,13 @@ export default {
         },
         // 审核确定按钮
         submitApprove() {
-            post(risk.invoiceRiskSwitch, this.approveForm).then(res => {
-              this.getInvoiceRiskDetail()
-            })
+          this.$refs.approveForm.validate((valid) => {
+            if (valid) {
+                post(risk.invoiceRiskSwitch, this.approveForm).then(res => {
+                  this.getInvoiceRiskDetail()
+                })
+            }
+          })
         }
     }
 }
