@@ -5,13 +5,14 @@
 			<el-tab-pane v-if="checkRight(permissions, 'risk-mgt-service:/company-business-risk/list-customer-business-risk')" label="发放开关配置" name="business"></el-tab-pane>
 		</el-tabs>
 		<keep-alive>
-			<invoice-risk v-if="activeName === 'invoice'"></invoice-risk>
-			<customer-business-risk v-else-if="activeName === 'business'"></customer-business-risk>
+			<invoice-risk v-if="activeName === 'invoice' && checkRight(permissions, 'risk-mgt-service:/invoice-risk-info/switch-list')"></invoice-risk>
+			<customer-business-risk v-else-if="activeName === 'business' && checkRight(permissions, 'risk-mgt-service:/company-business-risk/list-customer-business-risk')"></customer-business-risk>
 		</keep-alive>
 	</div>
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 import CustomerBusinessRisk from './customerBusinessRisk'
 import InvoiceRisk from './invoiceRisk'
 
@@ -24,6 +25,12 @@ export default {
 		return {
 			activeName: 'invoice',
 		}
+  },
+  computed: {
+		...mapGetters({
+			permissions: 'permissions',
+			// userInformation: 'userInformation'
+		})
 	},
 	methods: {
 		// handleClick(instance) {
