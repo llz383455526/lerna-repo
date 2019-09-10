@@ -154,8 +154,11 @@
         </el-form-item>
       </template>
       <template v-if="form.thirdpaySystemId == 'cmb'">
-        <el-form-item label="服务器地址" size="small" prop="cmb$server">
+        <el-form-item label="招行前置机地址" size="small" prop="cmb$server">
           <el-input class="form_input" v-model="form.cmb$server"></el-input>
+        </el-form-item>
+				<el-form-item label="招行前置机GoServer地址" size="small" prop="cmb$goserver$front">
+          <el-input class="form_input" v-model="form.cmb$goserver$front"></el-input>
         </el-form-item>
         <el-form-item label="登录用户名" size="small" prop="cmb$nteckopr$loginName">
           <el-input class="form_input" v-model="form.cmb$nteckopr$loginName"></el-input>
@@ -163,9 +166,15 @@
         <el-form-item label="主账号" size="small" prop="cmb$nteckopr$eacNbr">
           <el-input class="form_input" v-model="form.cmb$nteckopr$eacNbr"></el-input>
         </el-form-item>
-        <el-form-item label="分行号" size="small" prop="cmb$nteckopr$cmbBkNbr">
+				<el-form-item label="主账号户名" size="small" prop="cmb$mainacc$name">
+         <el-input class="form_input" v-model="form.cmb$mainacc$name"></el-input>
+        </el-form-item>
+       <el-form-item label="主账号开户分行号" size="small" prop="cmb$nteckopr$cmbBkNbr">
           <el-input class="form_input" v-model="form.cmb$nteckopr$cmbBkNbr"></el-input>
         </el-form-item>
+				<el-form-item label="主账号开户分行名称" size="small" prop="cmb$mainacc$bankname">
+          <el-input class="form_input" v-model="form.cmb$mainacc$bankname"></el-input>
+				</el-form-item>
         <el-form-item label="授权使用人" size="small" prop="cmb$nteckopr$autUSR">
           <el-input class="form_input" v-model="form.cmb$nteckopr$autUSR"></el-input>
         </el-form-item>

@@ -1498,33 +1498,6 @@ export default [{
             ],
         },
         {
-            path: 'riskControl',
-            component: index,
-            children: [
-                {
-                    path: 'performanceManager',
-                    component: RiskControlPerformanceManager,
-                    meta: {
-                        keepAlive: false
-                    }
-                },
-                {
-                    path: 'performanceManagerDetail',
-                    component: RiskControlPerformanceManagerDetail,
-                    meta: {
-                        keepAlive: false
-                    }
-                },
-                {
-                    path: 'performanceManagerStar',
-                    component: RiskControlPerformanceManagerStar,
-                    meta: {
-                        keepAlive: false
-                    }
-                },
-            ],
-        },
-        {
             path: 'accounting',
             component: index,
             children: [

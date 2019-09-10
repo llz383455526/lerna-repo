@@ -1,3 +1,20 @@
+const validateRule = {
+  requiredRule(required = true, message = '', trigger = 'blur') {
+    return {
+      required,
+      message: `请输入${message}`,
+      trigger,
+    }
+  },
+  lengthRule(max = 256, message = '', trigger = 'blur') {
+    return {
+      max,
+      message: message || `输入长度不能超过${max}`,
+      trigger,
+    }
+  },
+}
+
 export const commonRule = {
   channelAlias: [{
     required: true,
@@ -496,83 +513,16 @@ export const pinganRule = {
 }
 
 export const cmbRule = {
-  cmb$server: [{
-    required: true,
-    message: '请输入服务器地址',
-    trigger: 'blur',
-  },
-  {
-    max: 512,
-    message: '输入过长',
-    trigger: 'blur',
-  },
-  ],
-  cmb$nteckopr$loginName: [{
-    required: true,
-    message: '请输入登录用户名',
-    trigger: 'blur',
-  },
-  {
-    max: 128,
-    message: '输入过长',
-    trigger: 'blur',
-  },
-  ],
-  cmb$nteckopr$eacNbr: [{
-    required: true,
-    message: '请输入主账号',
-    trigger: 'blur',
-  },
-  {
-    max: 128,
-    message: '输入过长',
-    trigger: 'blur',
-  },
-  ],
-  cmb$nteckopr$cmbBkNbr: [{
-    required: true,
-    message: '请输入分行号',
-    trigger: 'blur',
-  },
-  {
-    max: 512,
-    message: '输入过长',
-    trigger: 'blur',
-  },
-  ],
-  cmb$nteckopr$autUSR: [{
-    required: true,
-    message: '请输入授权使用人',
-    trigger: 'blur',
-  },
-  {
-    max: 512,
-    message: '输入过长',
-    trigger: 'blur',
-  },
-  ],
-  cmb$dcpaymnt$cmbBusMod: [{
-    required: true,
-    message: '请输入直接支付业务模式',
-    trigger: 'blur',
-  },
-  {
-    max: 512,
-    message: '输入过长',
-    trigger: 'blur',
-  },
-  ],
-  cmb$nteckopr$cmbBusMod: [{
-    required: true,
-    message: '请输入移动支票业务模式',
-    trigger: 'blur',
-  },
-  {
-    max: 512,
-    message: '输入过长',
-    trigger: 'blur',
-  },
-  ],
+  cmb$server: [validateRule.requiredRule(true, '前置机地址'), validateRule.lengthRule(512)],
+  cmb$goserver$front: [validateRule.requiredRule(true, '前置机GoServer地址'), validateRule.lengthRule(512)],
+  cmb$nteckopr$loginName: [validateRule.requiredRule(true, '登录用户名'), validateRule.lengthRule(128)],
+  cmb$nteckopr$eacNbr: [validateRule.requiredRule(true, '主账号'), validateRule.lengthRule(128)],
+  cmb$mainacc$name: [validateRule.requiredRule(true, '主账号户名'), validateRule.lengthRule(128)],
+  cmb$nteckopr$cmbBkNbr: [validateRule.requiredRule(true, '主账号开户分行号'), validateRule.lengthRule(512)],
+  cmb$mainacc$bankname: [validateRule.requiredRule(true, '主账号开户分行名称'), validateRule.lengthRule(512)],
+  cmb$nteckopr$autUSR: [validateRule.requiredRule(true, '授权使用人'), validateRule.lengthRule(512)],
+  cmb$dcpaymnt$cmbBusMod: [validateRule.requiredRule(true, '直接支付业务模式'), validateRule.lengthRule(512)],
+  cmb$nteckopr$cmbBusMod: [validateRule.requiredRule(true, '移动支票业务模式'), validateRule.lengthRule(512)],
 }
 
 export const hfRule = {

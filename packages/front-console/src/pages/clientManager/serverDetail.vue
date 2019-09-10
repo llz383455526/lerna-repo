@@ -242,7 +242,7 @@
         			</el-row>
 	    			<el-row :gutter="20">
         			    <el-col :span="12">
-	    					  <el-col :span="8" class="right">服务器地址</el-col><el-col :span="12">{{data['cmb.server']}}</el-col>
+	    					  <el-col :span="8" class="right">招行前置机地址</el-col><el-col :span="12">{{data['cmb.server']}}</el-col>
 	    				</el-col>
 	    				<el-col :span="12">
 	    					  <el-col :span="8" class="right">分行号</el-col><el-col :span="12">{{data['cmb.nteckopr.cmbBkNbr']}}</el-col>
@@ -260,7 +260,18 @@
         			    <el-col :span="12">
 	    					  <el-col :span="8" class="right">授权使用人</el-col><el-col :span="12">{{data['cmb.nteckopr.autUSR']}}</el-col>
 	    				</el-col>
+							<el-col :span="12">
+	    					  <el-col :span="8" class="right">招行前置机GoServer地址</el-col><el-col :span="12">{{data['cmb.goserver.front']}}</el-col>
+	    				</el-col>
         			</el-row>
+							<el-row :gutter="20">
+								<el-col :span="12">
+	    					  <el-col :span="8" class="right">主账户名</el-col><el-col :span="12">{{data['cmb.mainacc.name']}}</el-col>
+								</el-col>
+								<el-col :span="12">
+										<el-col :span="8" class="right">主账号开户分行名称</el-col><el-col :span="12">{{data['cmb.mainacc.bankname']}}</el-col>
+								</el-col>
+							</el-row>
 	    		</template>
 	    		<template v-if="data.thirdpaySystemId == 'hf'">
 	    			<el-row :gutter="20">
@@ -687,12 +698,21 @@
 	    			<el-form-item label="主账号" prop="cmb$nteckopr$eacNbr">
 	    				<el-input v-model="eform.cmb$nteckopr$eacNbr"></el-input>
 	    			</el-form-item>
-	    			<el-form-item label="服务器地址" prop="cmb$server">
+						<el-form-item label="主账号户名" size="small" prop="cmb$mainacc$name">
+							<el-input class="form_input" v-model="eform.cmb$mainacc$name"></el-input>
+						</el-form-item>
+	    			<el-form-item label="招行前置机地址" prop="cmb$server">
 	    				<el-input v-model="eform.cmb$server"></el-input>
 	    			</el-form-item>
-	    			<el-form-item label="分行号" prop="cmb$nteckopr$cmbBkNbr">
+						<el-form-item label="招行前置机GoServer地址" prop="cmb$goserver$front">
+	    				<el-input v-model="eform.cmb$goserver$front"></el-input>
+	    			</el-form-item>
+	    			<el-form-item label="主账号开户分行号" prop="cmb$nteckopr$cmbBkNbr">
 	    				<el-input v-model="eform.cmb$nteckopr$cmbBkNbr"></el-input>
 	    			</el-form-item>
+						<el-form-item label="主账号开户分行名称" size="small" prop="cmb$mainacc$bankname">
+							<el-input class="form_input" v-model="eform.cmb$mainacc$bankname"></el-input>
+						</el-form-item>
 	    			<el-form-item label="直接支付业务模式" prop="cmb$dcpaymnt$cmbBusMod">
 	    				<el-input v-model="eform.cmb$dcpaymnt$cmbBusMod"></el-input>
 	    			</el-form-item>
@@ -976,7 +996,8 @@ export default {
         showThirdPayUser(){
             let notShowThirdPayUserChannelIds = [
                 "changjie",
-                "wx",
+								"wx",
+								"cmb",
                 "hxb",
                 "pingan",
                 "xtr",
