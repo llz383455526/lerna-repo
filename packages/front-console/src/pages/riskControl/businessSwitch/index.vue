@@ -1,8 +1,8 @@
 <template>
 	<div style="margin: 15px 0;background-color: #fff; padding: 15px;">
 		<el-tabs v-model="activeName">
-			<el-tab-pane label="发票申请开关配置" name="invoice"></el-tab-pane>
-			<el-tab-pane label="发放开关配置" name="business"></el-tab-pane>
+			<el-tab-pane v-if="checkRight(permissions, 'risk-mgt-service:/invoice-risk-info/switch-list')" label="发票申请开关配置" name="invoice"></el-tab-pane>
+			<el-tab-pane v-if="checkRight(permissions, 'risk-mgt-service:/company-business-risk/list-customer-business-risk')" label="发放开关配置" name="business"></el-tab-pane>
 		</el-tabs>
 		<keep-alive>
 			<invoice-risk v-if="activeName === 'invoice'"></invoice-risk>
