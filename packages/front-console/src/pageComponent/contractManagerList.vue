@@ -46,7 +46,7 @@
                     <el-button class="h_btn" type="text" size="small" @click="look(scope.row)">修改</el-button>
                     <el-button class="h_btn" type="text" size="small" @click="copy(scope.row)" v-if="tabName == 'contract' && scope.row.partycount == '2'">复制</el-button>
                     <el-button class="h_btn" type="text" size="small" @click="changeGroupType(scope.row)">{{scope.row.enable === '1' ? '禁用' : '启用'}}</el-button>
-                    <el-button class="h_btn" type="text" size="small" @click="deleteTemplate(scope.row)">删除</el-button>
+                    <!-- <el-button class="h_btn" type="text" size="small" @click="deleteTemplate(scope.row)">删除</el-button> -->
                 </template>
             </el-table-column>
         </el-table>
@@ -54,6 +54,7 @@
         <el-dialog :title="`复制${copyContract.name}`" :visible.sync="show" :before-close="clearForm" width="600px">
             <el-form :model="copyForm" :rules="copyRules" label-width="120px" size="small" ref="copyForm">
                 <el-form-item label="商户名称" prop="platform">
+									  <!-- :loading="loading" -->
                     <el-select
                         class="w360"
                         v-model="copyForm.platform"
@@ -62,7 +63,6 @@
                         reserve-keyword
                         placeholder="请输入关键词"
                         :remote-method="remoteMethod"
-                        :loading="loading"
                         size="small">
                         <el-option
                             v-for="e in platform"
@@ -73,7 +73,8 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="服务商名称" prop="serviceCompanyId">
-                    <el-select
+                    <!-- :loading="loading" -->
+										<el-select
                         class="w360"
                         v-model="copyForm.serviceCompanyId"
                         filterable
@@ -81,7 +82,6 @@
                         reserve-keyword
                         placeholder="请输入关键词"
                         :remote-method="getObject"
-                        :loading="loading"
                         size="small">
                         <el-option
                             v-for="e in objects"

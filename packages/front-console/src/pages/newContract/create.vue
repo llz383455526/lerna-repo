@@ -112,7 +112,7 @@ export default {
             this.contractModel.getContractDetail(id, null, 'create').then(() => {
                 // 返回数据处理服务类型
                 this.getServiceType();
-                this.maxChange()
+                // this.maxChange()
             });
         } else {
             // 新建的时候
@@ -150,9 +150,9 @@ export default {
             this.contractModel.contractForm.companyId = ev.userProfile.subjectId
             // console.log(this.contractModel.contractForm)
         },
-        'contractModel.contractForm.isFromOutApp'() {
-            this.maxChange()
-        }
+        // 'contractModel.contractForm.isFromOutApp'() {
+        //     this.maxChange()
+        // }
     },
     methods: {
         saveContract(isSubmit) {
@@ -299,14 +299,15 @@ export default {
             })
             this.contractModel.contractForm.serviceType = arr
         },
-        maxChange() {
-            if(this.contractModel.contractForm.isFromOutApp == 0) {
-                this.max = 5
-            }
-            else {
-                this.max = 4
-            }
-        }
+				// 以前的逻辑，不知道要干嘛，先注释了
+        // maxChange() {
+        //     if(this.contractModel.contractForm.isFromOutApp == 0) {
+        //         this.max = 5
+        //     }
+        //     else {
+        //         this.max = 4
+        //     }
+        // }
     }
 }
 </script>

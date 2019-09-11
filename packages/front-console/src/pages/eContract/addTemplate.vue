@@ -7,6 +7,7 @@
                 <el-input v-model="form.name" class="form_input" placeholder="请填写合同模板名称" size="small"></el-input>
             </el-form-item>
             <el-form-item label="商户名称：" prop="platform">
+								<!-- :loading="loading" -->
                 <el-select
                     class="form_input"
                     v-model="form.platform"
@@ -15,7 +16,6 @@
                     reserve-keyword
                     placeholder="请输入关键词"
                     :remote-method="remoteMethod"
-                    :loading="loading"
                     @change="getBindStatus"
                     size="small">
                     <el-option
@@ -87,6 +87,7 @@
                 </el-form-item>
                 <el-form-item label="选择签约对象" :prop="`partys[${i}].userId`" :rules="item.userType == 2 ? { required: true, message: '请选择签约对象', trigger: 'blur' } : {}">
                     <template v-if="item.userType == 2">
+												<!-- :loading="loading" -->
                         <el-select
                             class="form_input"
                             v-model="item.userId"
@@ -95,7 +96,6 @@
                             reserve-keyword
                             placeholder="请输入关键词"
                             :remote-method="remoteObject"
-                            :loading="loading"
                             size="small">
                             <el-option
                                 v-for="e in objects"

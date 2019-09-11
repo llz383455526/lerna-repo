@@ -4,13 +4,19 @@
         <!-- <el-form-item label="先签约后发放" prop="signPayForm">
             <el-radio v-for="e in signPayList" :key="e.value" v-model="contractForm.signPayForm" :label="e.value">{{e.text}}</el-radio>
         </el-form-item><br> -->
-        <el-form-item label="签约介质" prop="signForm">
+				<el-form-item label="是否需要技术对接" prop="isFromOutApp">
+            <el-radio v-for="e in FromOutAppList" v-model="contractForm.isFromOutApp" :key="e.value" :label="e.value">
+                {{e.text}}
+            </el-radio>
+        </el-form-item>
+        <br v-if="contractForm.isFromOutApp == 0">
+        <el-form-item label="签约介质" v-if="contractForm.isFromOutApp == 0" prop="signForm">
             <el-radio v-for="e in signTypeList" :key="e.value" v-model="contractForm.signForm" :label="e.value">
                 {{e.text}}
             </el-radio>
         </el-form-item>
-        <br>
-        <el-form-item label="c端短信通知" prop="smsType">
+        <br v-if="contractForm.isFromOutApp == 0">
+        <el-form-item label="c端短信通知" v-if="contractForm.isFromOutApp == 0" prop="smsType">
             <div style="width:300px; display: inline-block;">
                 <el-radio v-for="e in smsTypeList" :key="e.value" v-model="contractForm.smsType" :label="e.value"
                           disabled>{{e.text}}
@@ -21,14 +27,14 @@
                 <span class="bottom-line">短信示例</span>
             </el-button>
         </el-form-item>
-        <br>
-        <el-form-item label="c端上传身份证" prop="passportType">
+        <br v-if="contractForm.isFromOutApp == 0">
+        <el-form-item label="c端上传身份证" v-if="contractForm.isFromOutApp == 0" prop="passportType">
             <el-radio :disabled="contractForm.signForm === '2'" v-for="e in passportTypeList" :key="e.value"
                       v-model="contractForm.passportType" :label="e.value">{{e.text}}
             </el-radio>
         </el-form-item>
-        <br>
-        <el-form-item label="c端签署方式" prop="signMode">
+        <br v-if="contractForm.isFromOutApp == 0">
+        <el-form-item label="c端签署方式" v-if="contractForm.isFromOutApp == 0" prop="signMode">
             <div style="width:300px; display: inline-block;">
                 <el-radio v-for="e in signModeList" :key="e.value" v-model="contractForm.signMode" :label="e.value">
                     {{e.text}}
@@ -39,7 +45,7 @@
                 <span class="bottom-line">查看图例</span>
             </el-button>
         </el-form-item>
-        <br>
+        <!-- <br>
         <el-form-item label="选择签约落地公司" required v-if="!type || contractForm.signMode == '0'">
             <el-checkbox-group v-model="companyIdList">
                 <div v-for="e in companyList" :key="e.serviceCompanyId">
@@ -50,7 +56,7 @@
                     </el-checkbox>
                 </div>
             </el-checkbox-group>
-        </el-form-item>
+        </el-form-item> -->
         <h3 class="green" v-if="type != 1">爱收入发岗位</h3>
         <el-form-item label="接入【爱收入】发布岗位" v-if="type != 1" prop="jobMatch" :rules="{required: true, message: '请选择是否接入【爱收入】发布岗位', trigger: 'change'}">
             <el-radio-group v-model="contractForm.jobMatch">
@@ -103,6 +109,16 @@
         props: ['contractForm', 'type'],
         data() {
             return {
+								FromOutAppList: [
+										{
+                        value: '1',
+                        text: '是'
+                    },
+                    {
+                        value: '0',
+                        text: '否'
+                    }
+								],
                 signPayList: [
                     {
                         value: '1',

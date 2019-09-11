@@ -163,6 +163,9 @@ class Check extends BaseModel {
             signPayForm: [
                 { required: true, message: "请选择是否先签后发", trigger: "change" }
             ],
+						isFromOutApp: [
+								{ required: true, message: "请选择签约介质", trigger: "change" }
+						],
             signForm: [
                 { required: true, message: "请选择签约介质", trigger: "change" }
             ],

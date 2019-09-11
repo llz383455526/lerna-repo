@@ -158,11 +158,12 @@
             <div class="col-xs-12">
               <h4 class="block green">C端签约设置</h4>
             </div>
+						<div class="col-xs-12">是否需要技术对接：{{ contractForm.isFromOutApp == 1 ? '是' : '否' }}</div>
             <div class="col-xs-12">签约介质：{{ contractForm.signForm == 1 ? '短信网页链接' : '小程序（微信搜索小程序“爱员工小助手”）' }}</div>
             <div class="col-xs-12">C端短信通知：{{ contractForm.smsType == 1 ? '是' : '否' }}</div>
             <div class="col-xs-12">C端上传身份证：{{ contractForm.passportType == 1 ? '是' : '否' }}</div>
             <div class="col-xs-12">C端签署方式：{{ contractForm.signMode == 1 ? '屏幕手签' : '勾选“我同意”并自动签' }}</div>
-            <div class="col-xs-12">签约落地公司：
+            <!-- <div class="col-xs-12">签约落地公司：
               <div class="inline">
                 <div v-for="e in contractForm.econtractServiceCompanyList"
                      :key="e.serviceCompanyId">
@@ -171,7 +172,7 @@
                                disabled></el-checkbox>
                 </div>
               </div>
-            </div>
+            </div> -->
 						<!-- 创建合同时才显示开关 -->
             <div class="col-xs-12" v-if="contractModel.operateEnum === 1">接入【爱收入】发布岗位：{{ contractForm.jobMatch === '1' ? '是' : '否' }}</div>
           </div>

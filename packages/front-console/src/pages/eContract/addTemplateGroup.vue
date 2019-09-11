@@ -7,6 +7,7 @@
                 <el-input v-model="form.groupName" class="form_input" placeholder="请填写合同模板组名称" size="small"></el-input>
             </el-form-item>
             <el-form-item label="商户名称：" prop="platform">
+								<!-- :loading="loading" -->
                 <el-select
                         class="form_input"
                         v-model="form.platform"
@@ -15,7 +16,6 @@
                         reserve-keyword
                         placeholder="请输入关键词"
                         :remote-method="remoteMethod"
-                        :loading="loading"
                         @visible-change="platformSelectVisible"
                         @change="platformSelectChange"
                         size="small">
@@ -103,7 +103,7 @@
                                 <a :href="`${baseUrl}/api/econtract/template/download?templateId=${scope.row.templateId}`" target="_blank">{{scope.row.fname}}</a>
                             </template>
                         </el-table-column>
-
+												<el-table-column label="状态" prop="enableDesc"></el-table-column>
                         <el-table-column label="操作">
                             <template slot-scope="scope">
                                 <el-button type="text" size="small" @click="editTemplate(scope.$index, false)">查看</el-button>
@@ -111,6 +111,7 @@
                                 <el-button type="text" size="small" @click="deleteTemplate(scope.$index)">移除</el-button>
                                 <el-button type="text" size="small" @click="templateUp(scope.$index)">上移</el-button>
                                 <el-button type="text" size="small" @click="templateDown(scope.$index)">下移</el-button>
+																<el-button type="text" size="small" @click="changeGroupType(scope.$index)">{{scope.row.enable === '1' ? '禁用' : '启用'}}</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -182,7 +183,8 @@
 
                         <el-form-item label="选择签约对象" :prop="`partys[${i}].userId`" :rules="item.userType == 2 ? { required: true, message: '请选择签约对象', trigger: 'blur' } : {}">
                             <template v-if="item.userType == 2">
-                                <el-select
+                                <!-- :loading="loading" -->
+																<el-select
                                         class="form_input"
                                         @change="setUserData(i)"
                                         v-model="item.userId"
@@ -191,7 +193,6 @@
                                         reserve-keyword
                                         placeholder="请输入关键词"
                                         :remote-method="remoteObject"
-                                        :loading="loading"
                                         size="small">
                                     <el-option
                                             v-for="e in objects"
@@ -861,6 +862,16 @@
 				if(_index === this.templateArr.length - 1) return
 				let _template = this.templateArr.splice(_index, 1)[0]
 				this.templateArr.splice(_index + 1, 0, _template)
+			},
+			changeGroupType(_index) {
+				const { enable } = this.templateArr[_index]
+				if (enable === '1') {
+					this.templateArr[_index].enable = '0'
+					this.templateArr[_index].enableDesc = '禁用'
+				} else if (enable === '0') {
+					this.templateArr[_index].enable = '1'
+					this.templateArr[_index].enableDesc = '启用'
+				}
 			},
 			formSubmit() {
 				if(!this.form.groupName || !this.form.platform) {
