@@ -103,7 +103,11 @@
                                 <a :href="`${baseUrl}/api/econtract/template/download?templateId=${scope.row.templateId}`" target="_blank">{{scope.row.fname}}</a>
                             </template>
                         </el-table-column>
-												<el-table-column label="状态" prop="enableDesc"></el-table-column>
+												<el-table-column label="状态" prop="__innerEnable">
+													<template slot-scope="scope">
+														<span>{{scope.row.__innerEnable == 1 ? '启用' : '禁用'}}</span>
+													</template>
+												</el-table-column>
                         <el-table-column label="操作">
                             <template slot-scope="scope">
                                 <el-button type="text" size="small" @click="editTemplate(scope.$index, false)">查看</el-button>
@@ -111,7 +115,12 @@
                                 <el-button type="text" size="small" @click="deleteTemplate(scope.$index)">移除</el-button>
                                 <el-button type="text" size="small" @click="templateUp(scope.$index)">上移</el-button>
                                 <el-button type="text" size="small" @click="templateDown(scope.$index)">下移</el-button>
-																<el-button type="text" size="small" @click="changeEnableStatus(scope.$index)">{{scope.row.enable === '1' ? '禁用' : '启用'}}</el-button>
+																<el-button
+																	v-if="!scope.row.__isAdd"
+																	type="text"
+																	size="small"
+																	@click="changeEnableStatus(scope.$index)"
+																>{{scope.row.__innerEnable == 1 ? '禁用' : '启用'}}</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -317,13 +326,21 @@
 				}).then(result => {
 					this.form = result
 					this.templateArr = result.templates
-                    _.forEach(this.templateArr, template => {
-	                    template.fromModel = true
-                    })
-                    this.remoteMethod(this.form.platformName).then(data => {
-                        this.getBindStatus(true)
-                    })
-                    this.setPlatformName()
+					// 合同模版组内合同模版的启用状态列表
+					const templateMap = result.contractTemplateMappingGroupList.reduce((res, item) => {
+						res[item.templateId] = item
+						return res
+					}, {})
+					_.forEach(this.templateArr, template => {
+						template.fromModel = true
+						// 遍历处理下模版的启用状态
+						this.$set(template, '__innerEnable', templateMap[template.templateId].enable)
+						this.$set(template, '__isAdd', false)
+					})
+					this.remoteMethod(this.form.platformName).then(data => {
+							this.getBindStatus(true)
+					})
+					this.setPlatformName()
 					// this.platform.push({
 					// 	extrSystemName: this.form.platformName,
 					// 	extrSystemId: this.form.platform,
@@ -372,8 +389,8 @@
 				dialogVisible: false,
 				templateModel: {
 					isSign: '1',
-					enable: '1',
-					enableDesc: '启用',
+					__innerEnable: '1',
+					__isAdd: true,
 					partys: [{
 						params: [
 							{
@@ -564,8 +581,9 @@
 						this.templateModel = {
 							isSign: '1',
 							// 新增的模版默认为开启状态
-							enable: '1',
-							enableDesc: '启用',
+							__innerEnable: '1',
+							// 标识下是否为新增的模版
+							__isAdd: true,
 							partys: [{
 								params: [
 									{
@@ -868,15 +886,18 @@
 				let _template = this.templateArr.splice(_index, 1)[0]
 				this.templateArr.splice(_index + 1, 0, _template)
 			},
+			// 控制模版启用/禁用，接口单独控制，新增的模版(未提交)是不允许操作的，默认启用
 			changeEnableStatus(_index) {
-				const { enable } = this.templateArr[_index]
-				if (enable === '1') {
-					this.templateArr[_index].enable = '0'
-					this.templateArr[_index].enableDesc = '禁用'
-				} else if (enable === '0') {
-					this.templateArr[_index].enable = '1'
-					this.templateArr[_index].enableDesc = '启用'
-				}
+				const template = this.templateArr[_index]
+				const changeVal = template.__innerEnable == 1 ? '0' : '1'
+				debugger
+				post('/api/econtract/template-group/inner/is-enable-template', {
+					enable: changeVal,
+					templateGroupId: this.groupId,
+					templateId: template.templateId,
+				}).then(() => {
+					template.__innerEnable = changeVal
+				})
 			},
 			formSubmit() {
 				if(!this.form.groupName || !this.form.platform) {
