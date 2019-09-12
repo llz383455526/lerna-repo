@@ -111,7 +111,7 @@
                                 <el-button type="text" size="small" @click="deleteTemplate(scope.$index)">移除</el-button>
                                 <el-button type="text" size="small" @click="templateUp(scope.$index)">上移</el-button>
                                 <el-button type="text" size="small" @click="templateDown(scope.$index)">下移</el-button>
-																<el-button type="text" size="small" @click="changeGroupType(scope.$index)">{{scope.row.enable === '1' ? '禁用' : '启用'}}</el-button>
+																<el-button type="text" size="small" @click="changeEnableStatus(scope.$index)">{{scope.row.enable === '1' ? '禁用' : '启用'}}</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -372,6 +372,8 @@
 				dialogVisible: false,
 				templateModel: {
 					isSign: '1',
+					enable: '1',
+					enableDesc: '启用',
 					partys: [{
 						params: [
 							{
@@ -561,6 +563,9 @@
                         this.file = null
 						this.templateModel = {
 							isSign: '1',
+							// 新增的模版默认为开启状态
+							enable: '1',
+							enableDesc: '启用',
 							partys: [{
 								params: [
 									{
@@ -863,7 +868,7 @@
 				let _template = this.templateArr.splice(_index, 1)[0]
 				this.templateArr.splice(_index + 1, 0, _template)
 			},
-			changeGroupType(_index) {
+			changeEnableStatus(_index) {
 				const { enable } = this.templateArr[_index]
 				if (enable === '1') {
 					this.templateArr[_index].enable = '0'
