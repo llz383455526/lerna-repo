@@ -866,6 +866,9 @@
 					})
 					if(_index === -1) {
 						template.fromModel = true
+						// 已有合同模版新增也是默认启用
+						template.__innerEnable = '1'
+						template.__isAdd = true
 						this.templateArr.push(template)
 					}
 				})
@@ -890,7 +893,6 @@
 			changeEnableStatus(_index) {
 				const template = this.templateArr[_index]
 				const changeVal = template.__innerEnable == 1 ? '0' : '1'
-				debugger
 				post('/api/econtract/template-group/inner/is-enable-template', {
 					enable: changeVal,
 					templateGroupId: this.groupId,
