@@ -119,7 +119,7 @@
 																	v-if="!scope.row.__isAdd"
 																	type="text"
 																	size="small"
-																	@click="changeEnableStatus(scope.$index)"
+																	@click="changeEnableConfirm(scope.$index)"
 																>{{scope.row.__innerEnable == 1 ? '禁用' : '启用'}}</el-button>
                             </template>
                         </el-table-column>
@@ -888,6 +888,19 @@
 				if(_index === this.templateArr.length - 1) return
 				let _template = this.templateArr.splice(_index, 1)[0]
 				this.templateArr.splice(_index + 1, 0, _template)
+			},
+			// 启用/禁用弹窗
+			changeEnableConfirm(_index) {
+				const desc = this.templateArr[_index].__innerEnable == 1
+					? '是否禁用该合同模版'
+					: '是否启用该合同模版'
+				this.$confirm(desc, '提示', {
+					confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+				}).then(() => {
+					this.changeEnableStatus(_index)
+				})
 			},
 			// 控制模版启用/禁用，接口单独控制，新增的模版(未提交)是不允许操作的，默认启用
 			changeEnableStatus(_index) {
