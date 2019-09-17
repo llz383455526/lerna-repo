@@ -127,6 +127,7 @@ Vue.prototype.$notify = Notification
 Vue.prototype.$confirm = MessageBox.confirm
 Vue.prototype.$alert = MessageBox.alert
 Vue.prototype.$message = Message
+Vue.prototype.$prompt = MessageBox.prompt
 Vue.prototype.checkRight = function(permissions, url) {
     if(permissions) {
         return url in permissions
@@ -163,18 +164,3 @@ new Vue({
 	router,
 	store
 }).$mount('#app')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

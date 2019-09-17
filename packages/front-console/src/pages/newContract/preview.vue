@@ -106,7 +106,11 @@
               <div class="col-xs-12">发放方式：{{ getPayMode(formItem.channelTypeList, contractModel.payMode)
                 }}</div>
               <div class="col-xs-12">
-                <show-service :detail="{serviceFeeContent:formItem.serviceFeeContent,serviceFeeContent2:formItem.serviceFeeContent2}">
+                <div v-if="formItem.serviceFeeDescription">
+                  <span style="float: left;">服务商报价：</span>
+                  <span style="float: left;white-space: pre-line;">{{formItem.serviceFeeDescription}}</span>
+                </div>
+                <show-service v-else :detail="{serviceFeeContent:formItem.serviceFeeContent,serviceFeeContent2:formItem.serviceFeeContent2}">
                 </show-service>
               </div>
               <div class="col-xs-12">服务类型：
@@ -259,6 +263,8 @@ import contractInfo from './components/preview/contractInfo.vue' // 合同业务
 import auditOption from './components/preview/auditOption.vue' // 审核意见
 import showService from '../../pageComponent/showService.vue'
 import showCloseService from '../../pageComponent/showCloseService'
+import { post, get } from "../../store/api"
+import { showNotify } from "../../plugin/utils-notify";
 import { mapGetters } from 'vuex'
 export default {
     name: "preview",
@@ -467,7 +473,10 @@ export default {
                         memo: ''
                     }).then(result => {
                         showNotify('success', '删除成功')
-                        this.getList()
+                        // this.getList()
+                        this.$router.push({
+                          path: 'list'
+                        })
                     })
                 }
             })

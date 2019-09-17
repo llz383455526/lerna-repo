@@ -6,8 +6,8 @@
     <div class="widget-body">
       <div class="widget-main">
         <el-steps :active="active"
-          simple
-          finish-status="success">
+                  simple
+                  finish-status="success">
           <el-step title="合同选项"></el-step>
           <el-step title="销售信息"></el-step>
           <el-step title="企业信息"></el-step>
@@ -17,37 +17,38 @@
         <hr>
 
         <el-form :inline="true"
-          :model="contractModel.contractForm"
-          :rules="check.rules"
-          ref="contractForm"
-          label-width="200px"
-          class="contractForm"
-          :disabled="editType === 'watch'||editType ==='workflow'">
+                 :model="contractModel.contractForm"
+                 :rules="check.rules"
+                 ref="contractForm"
+                 label-width="200px"
+                 class="contractForm"
+                 :disabled="editType === 'watch'||editType ==='workflow'">
           <applicationChange :contractModel="contractModel"
-            v-if="active === 0"></applicationChange>
+                             v-if="active === 0"></applicationChange>
           <customerEva :contractModel="contractModel"
-            v-if="active === 0"></customerEva>
+                       v-if="active === 0"></customerEva>
           <salesContactInfo :contractModel="contractModel"
-            v-if="active === 0"></salesContactInfo>
+                            v-if="active === 0"></salesContactInfo>
           <contractOption :contractModel="contractModel"
-            @setSettleType="setSettleType"
-            v-if="active === 1"></contractOption>
+                          @setSettleType="setSettleType"
+                          v-if="active === 1"></contractOption>
           <companyBasicInfo :contractModel="contractModel"
-            v-if="active === 2"></companyBasicInfo>
+                            v-if="active === 2"></companyBasicInfo>
           <relevantMerchantInfo :contractModel="contractModel"
-            v-if="false"></relevantMerchantInfo>
+                                v-if="false"></relevantMerchantInfo>
           <businessBillingInfo :contractModel="contractModel"
-            v-if="active === 2"></businessBillingInfo>
-          <contracts :ruleForm="contractModel.contractForm"
-            :serviceFeeList="contractModel.serviceFeeList"
-            v-if="active === 3"></contracts>
+                               v-if="active === 2"></businessBillingInfo>
+          <contracts ref="contracts"
+                     :ruleForm="contractModel.contractForm"
+                     :serviceFeeList="contractModel.serviceFeeList"
+                     v-if="active === 3"></contracts>
           <additionalClause :ruleForm="contractModel.contractForm"
-            :editType="editType"
-            :files="contractModel.files"
-            v-if="active === 4"></additionalClause>
+                            :editType="editType"
+                            :files="contractModel.files"
+                            v-if="active === 4"></additionalClause>
           <el-form-item v-if="editType != 'watch' && editType!='workflow' && false">
             <el-button type="primary"
-              @click="saveContract(false)">保存</el-button>
+                       @click="saveContract(false)">保存</el-button>
           </el-form-item>
         </el-form>
         <generateContract :contractModel="contractModel"></generateContract>
@@ -55,13 +56,13 @@
         <div class="wizard-actions">
           <el-button @click="backToList('list')">返回</el-button>
           <el-button @click="prev"
-            v-if="active != 0">上一步</el-button>
+                     v-if="active != 0">上一步</el-button>
           <el-button type="success"
-            @click="next('contractForm')"
-            v-if="active != 4">下一步</el-button>
+                     @click="next('contractForm')"
+                     v-if="active != 4">下一步</el-button>
           <el-button type="primary"
-            @click="submitContract('contractForm')"
-            v-if="active == 4">提交</el-button>
+                     @click="submitContract('contractForm')"
+                     v-if="active == 4">提交</el-button>
         </div>
       </div>
     </div>
@@ -107,6 +108,7 @@ export default {
         if (id) {
             this.contractModel.contractId = id;
             this.contractModel.getContractDetail(id, null, 'create').then(() => {
+                // console.log(this.contractModel.contractForm)
                 // 返回数据处理服务类型
                 this.getServiceType();
             });
@@ -129,7 +131,7 @@ export default {
         return {
             contractModel: new ContractModel(),
             check: new Check(),
-            active: 0
+            active: 0,
         }
     },
     computed: {
@@ -189,8 +191,8 @@ export default {
                     }
 
                     // 请选择合同附件那一步 需要上传清单的判断
-                    if (this.active === 4 
-                        && this.contractModel.contractForm.payAndInvoiceSame === '0' 
+                    if (this.active === 4
+                        && this.contractModel.contractForm.payAndInvoiceSame === '0'
                         && this.contractModel.contractForm.customUnderAttachList.length  === 0) {
                         showNotify('error', '请上传清单');
                         return;
@@ -253,6 +255,48 @@ export default {
             if (this.active-- < 1) this.active = 4;
         },
         next(formName) {
+            // 验证服务费率组件并存值
+            let check = true
+            if(this.active === 3) {
+              if (this.contractModel.contractForm.contracts.length) {
+                this.contractModel.contractForm.contracts.forEach((item, i) => {
+                  const serviceFeeInterval = this.$refs['contracts'].$refs['serviceFeeInterval'][i].serviceFeeInterval
+                  if (serviceFeeInterval
+                    && (serviceFeeInterval.secondType == 3
+                      || serviceFeeInterval.secondType == 4)) {
+                        this.$refs['contracts'].$refs['serviceFeeInterval'][i].validate((valid) => {
+													console.log(valid)
+                          if (valid) {
+                            // console.log(valid)
+                            // this.contractModel.contractForm.contracts[i].serviceFeeContent.settledRate = valid.settledRate
+                            this.contractModel.contractForm.contracts[i].serviceFeeInterval = valid.serviceFeeInterval
+                            check = true
+                          } else {
+                            check = false
+                          }
+                        })
+                      }
+                })
+              }
+						}
+						if (!check) {
+							console.log('验证不通过~')
+							return
+						}
+            // if(this.active === 3 && this.$refs['contracts'].$refs['serviceFeeInterval']) {
+            //   this.$refs['contracts'].$refs['serviceFeeInterval'].forEach((item, i) => {
+            //     item.validate((valid) => {
+            //       if (valid) {
+            //         console.log(valid)
+            //         console.log(this.contractModel.contractForm.contracts[i])
+            //         this.contractModel.contractForm.contracts[i].serviceFeeInterval = valid
+            //         check = true
+            //       } else {
+            //         check = false
+            //       }
+            //     })
+            //   })
+            // }
             this.$refs[formName].validate(valid => {
                 if (valid) {
                     if (this.active++ > 4) this.active = 0;

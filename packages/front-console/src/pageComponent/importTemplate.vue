@@ -164,9 +164,9 @@ export default {
 					// }
 					// 
 					this.pro = Number(data.progress)
-					console.log(this.pro)
+					// console.log(this.pro)
 					this.handleFileStatus('uploading', this.pro)
-					this.$refs.upload.onProgress({percent: this.pro})
+					// this.$refs.upload.onProgress({percent: this.pro})
 					if (this.pro == 100) {
 						cancelAnimationFrame(this.frame)
 						if(data.state == 30 || data.state == 20) {

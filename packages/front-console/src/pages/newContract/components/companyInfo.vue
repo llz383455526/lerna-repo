@@ -1,91 +1,162 @@
 <template>
-    <div>
-        <h3 class="green">请添加落地公司
-            <el-button size="small" type="primary" @click="dialogVisible = true;info.serviceCompanyId = ''" v-if="!showAddBtn"
-                style="margin-left: 20px;">添加</el-button>
-        </h3>
-        <div class="widget-box" v-for="(formItem,index) in ruleForm.contracts" :key="index" style="margin-bottom: 20px;">
-            <div class="widget-header">
-                <h4 class="widget-title" style="margin-right: 25px;">{{formItem.taxLandingName}} / {{ formItem.serviceCompanyName || '落地公司名称' }}</h4>
-                <div class="widget-title">
-                    <el-checkbox v-model="formItem.showServiceCompanyInfo" label="1">合同中显示服务商收款账户信息</el-checkbox>
-                </div>
-                <div class="widget-toolbar">
-                    <el-button @click="deleteForm(index)" type="text" size="medium" v-if="!showDelBtn">删除</el-button>
-                </div>
-            </div>
-            <div class="widget-main">
-                <el-form-item label="业务方案" :prop="'contracts.'+index+'.goodsId'" :rules="{required: true, message: '请选择业务方案', trigger: 'change'}">
-                    <el-select v-model="formItem.goodsId" placeholder="请选择" style="width:400px;">
-                        <el-option v-for="(item, key) in (formItem.goodsList.length ? formItem.goodsList : goodsList)" :key="key" :label="item.name" :value="item.id"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="结算方式" :prop="'contracts.'+index+'.settleType'" :rules="{required: true, message: '请选择结算方式', trigger: 'change'}">
-                    <el-select v-model="formItem.settleType" placeholder="请选择" style="width:400px;">
-                        <el-option v-for="(item,key) in settleTypeList" :key="key" :label="item.text"
-                            :value="item.value"></el-option>
-                    </el-select>
-                    <el-tooltip placement="left">
-                        <div slot="content">日结：适用于管理费和绩效费同步结算，即客户一起打款管理费和对C端发放款<br />月结：适用于管理费和绩效费不能同步结清，包括阶梯费率情况、充值提现情况等所有发放款和管理费不能同步结清的，均为月结</div>
-                        <i class="el-icon-question ml10"></i>
-                    </el-tooltip>
-                </el-form-item>
-                <el-form-item label="发放方式" :prop="'contracts.'+index+'.channelTypeList'" :rules="{required: true, message: '请选择服务类型', trigger: 'change'}">
-                    <el-checkbox-group v-model="formItem.channelTypeList" style="width:800px;">
-                        <el-checkbox v-for="(item, key) in payModeList" :key="key" :label="item.value">{{item.label}}</el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
-                <el-form-item label="服务商报价" :prop="`contracts[${index}].serviceFeeContent.fixFee`" :rules="{required: true, message: '请正确填写服务商报价', trigger: 'blur'}">
-                    <contract-create-item :arrIndex="index" @result="result" :showSettledRate="true" :contractForm="formItem"></contract-create-item>
-                    <!-- <contractItem label-width="0" :arrIndex="index" @result="result" :initCheck="true" :contractForm="{serviceFeeContent:formItem.serviceFeeContent,serviceFeeContent2:formItem.serviceFeeContent2}"></contractItem> -->
-                </el-form-item>
-                <el-form-item style="display: flex; padding-left: 100px;" :prop="'contracts.'+index+'.serviceTypeList'" label="服务类型" :rules="{required: true, message: '请选择服务类型', trigger: 'blur'}">
-                    <el-checkbox-group @change="serverTypeChangeChange" v-model="formItem.serviceTypeList">
-                        <el-checkbox v-for="v in formItem.optionServiceTypeList" :label="v" :key="v.serviceId"
-                            @change="checked => changePositions(checked, index, v)">
-                            {{ v.serviceName }}
-                        </el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
-                <el-form-item label="C端绩效计算规则" :prop="`contracts[${index}].servicePosList`" :rules="{required: true, validator: validatePost, trigger: 'change'}">
-                    <performance-rules
-											:servicePosList="formItem.servicePosList"
-											:index="index"
-											@change="addPositions"
-											@remove="removePost"
-											@download="downloadRule(formItem.serviceCompanyId)"></performance-rules>
-                </el-form-item>
-                <br>
-                <template v-if="ruleForm.originalType == 20">
-                    <el-form-item label="渠道经理" required>
-                        <el-input v-model="chargeByName" disabled style="width:400px;"></el-input>
-                    </el-form-item><br>
-                    <el-form-item label="报价规则" :rules="{required: true, message: '请选择报价规则', trigger: 'blur'}">
-                        <el-radio v-for="e in ruleList" :key="e.value" v-model="formItem.quoteRule" :label="e.value" :disabled="true">{{e.text}}</el-radio>
-                        <i class="el-icon-question ml10" title="结算规则：按高于结算费率的部分结算   返佣规则：按返佣费率直接返佣"></i>
-                    </el-form-item><br>
-                    <el-form-item label="结算费率" :prop="'contracts.'+index+'.checkC'" :rules="{required: true, message: '请正确填写服务商报价', trigger: 'blur'}">
-                        <contract-close-item :arrIndex="index" :initCheck="true" @result="resultClose" :form="formItem" :disable="true"></contract-close-item>
-                    </el-form-item>
-                </template>
-            </div>
+  <div>
+    <h3 class="green">请添加落地公司
+      <el-button size="small"
+                 type="primary"
+                 @click="dialogVisible = true;info.serviceCompanyId = ''"
+                 v-if="!showAddBtn"
+                 style="margin-left: 20px;">添加</el-button>
+    </h3>
+    <div class="widget-box"
+         v-for="(formItem,index) in ruleForm.contracts"
+         :key="index"
+         style="margin-bottom: 20px;" ref="contracts">
+      <div class="widget-header">
+        <h4 class="widget-title"
+            style="margin-right: 25px;">{{formItem.taxLandingName}} / {{ formItem.serviceCompanyName || '落地公司名称' }}</h4>
+        <div class="widget-title">
+          <el-checkbox v-model="formItem.showServiceCompanyInfo"
+                       label="1">合同中显示服务商收款账户信息</el-checkbox>
         </div>
-        <!-- <pre>{{ruleForm.contracts}}</pre> -->
-
-        <el-dialog title="添加公司信息" :visible.sync="dialogVisible" width="700px">
-            <el-form :inline="true" :model="appForm" label-width="150px" ref="appForm">
-                <el-form-item label="服务商名称">
-                    <el-select v-model="info.serviceCompanyId" filterable placeholder="请选择" @change="setServiceCompany" style="width: 450px;">
-                        <el-option v-for="(item,key) in filterList" :key="key" :label="item.name" :value="item.companyId"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item style="margin-left: 150px;">
-                    <el-button type="primary" @click="formAdd">保存</el-button>
-                    <el-button @click="dialogVisible = false">取消</el-button>
-                </el-form-item>
-            </el-form>
-        </el-dialog>
+        <div class="widget-toolbar">
+          <el-button @click="deleteForm(index)"
+                     type="text"
+                     size="medium"
+                     v-if="!showDelBtn">删除</el-button>
+        </div>
+      </div>
+      <div class="widget-main">
+        <el-form-item label="业务方案"
+                      :prop="'contracts.'+index+'.goodsId'"
+                      :rules="{required: true, message: '请选择业务方案', trigger: 'change'}">
+          <el-select v-model="formItem.goodsId"
+                     placeholder="请选择"
+                     style="width:400px;">
+            <el-option v-for="(item, key) in (formItem.goodsList.length ? formItem.goodsList : goodsList)"
+                       :key="key"
+                       :label="item.name"
+                       :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="结算方式"
+                      :prop="'contracts.'+index+'.settleType'"
+                      :rules="{required: true, message: '请选择结算方式', trigger: 'change'}">
+          <el-select v-model="formItem.settleType"
+                     placeholder="请选择"
+                     style="width:400px;">
+            <el-option v-for="(item,key) in settleTypeList"
+                       :key="key"
+                       :label="item.text"
+                       :value="item.value"></el-option>
+          </el-select>
+          <el-tooltip placement="left">
+            <div slot="content">日结：适用于管理费和绩效费同步结算，即客户一起打款管理费和对C端发放款<br />月结：适用于管理费和绩效费不能同步结清，包括阶梯费率情况、充值提现情况等所有发放款和管理费不能同步结清的，均为月结</div>
+            <i class="el-icon-question ml10"></i>
+          </el-tooltip>
+        </el-form-item>
+        <el-form-item label="发放方式"
+                      :prop="'contracts.'+index+'.channelTypeList'"
+                      :rules="{required: true, message: '请选择服务类型', trigger: 'change'}">
+          <el-checkbox-group v-model="formItem.channelTypeList"
+                             style="width:800px;">
+            <el-checkbox v-for="(item, key) in payModeList"
+                         :key="key"
+                         :label="item.value">{{item.label}}</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item style="display: flex;"
+                      label="服务商报价"
+                      :prop="`contracts[${index}].serviceFeeContent.fixFee`"
+                      :rules="{required: true, message: '请正确填写服务商报价', trigger: 'blur'}">
+          <contract-create-item ref="contractCreateItem" :arrIndex="index"
+                                @result="result" @ratioChange="$refs['serviceFeeInterval'][index].serviceFeeInterval.secondType = ''"
+                                :showSettledRate="true"
+                                :contractForm="formItem"></contract-create-item>
+          <!-- <contractItem label-width="0" :arrIndex="index" @result="result" :initCheck="true" :contractForm="{serviceFeeContent:formItem.serviceFeeContent,serviceFeeContent2:formItem.serviceFeeContent2}"></contractItem> -->
+          <serviceFeeInterval ref="serviceFeeInterval"
+                              :contractForm="formItem"
+                              @secondTypeChange="$refs['contractCreateItem'][index].showInputRatio = 6,$refs['contractCreateItem'][index].checkTable()"></serviceFeeInterval>
+        </el-form-item>
+        <el-form-item style="display: flex;"
+                      :prop="'contracts.'+index+'.serviceTypeList'"
+                      label="服务类型"
+                      :rules="{required: true, message: '请选择服务类型', trigger: 'blur'}">
+          <el-checkbox-group @change="serverTypeChangeChange"
+                             v-model="formItem.serviceTypeList">
+            <el-checkbox v-for="v in formItem.optionServiceTypeList"
+                         :label="v"
+                         :key="v.serviceId"
+                         @change="checked => changePositions(checked, index, v)">
+              {{ v.serviceName }}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item label="C端绩效计算规则"
+                      :prop="`contracts[${index}].servicePosList`"
+                      :rules="{required: true, validator: validatePost, trigger: 'change'}">
+          <performance-rules :servicePosList="formItem.servicePosList"
+                             :index="index"
+                             @change="addPositions"
+                             @remove="removePost"
+                             @download="downloadRule(formItem.serviceCompanyId)"></performance-rules>
+        </el-form-item>
+        <br>
+        <template v-if="ruleForm.originalType == 20">
+          <el-form-item label="渠道经理"
+                        required>
+            <el-input v-model="chargeByName"
+                      disabled
+                      style="width:400px;"></el-input>
+          </el-form-item><br>
+          <el-form-item label="报价规则"
+                        :rules="{required: true, message: '请选择报价规则', trigger: 'blur'}">
+            <el-radio v-for="e in ruleList"
+                      :key="e.value"
+                      v-model="formItem.quoteRule"
+                      :label="e.value"
+                      :disabled="true">{{e.text}}</el-radio>
+            <i class="el-icon-question ml10"
+               title="结算规则：按高于结算费率的部分结算   返佣规则：按返佣费率直接返佣"></i>
+          </el-form-item><br>
+          <el-form-item label="结算费率"
+                        :prop="'contracts.'+index+'.checkC'"
+                        :rules="{required: true, message: '请正确填写服务商报价', trigger: 'blur'}">
+            <contract-close-item :arrIndex="index"
+                                 :initCheck="true"
+                                 @result="resultClose"
+                                 :form="formItem"
+                                 :disable="true"></contract-close-item>
+          </el-form-item>
+        </template>
+      </div>
     </div>
+    <!-- <pre>{{ruleForm.contracts}}</pre> -->
+
+    <el-dialog title="添加公司信息"
+               :visible.sync="dialogVisible"
+               width="700px">
+      <el-form :inline="true"
+               label-width="150px">
+        <el-form-item label="服务商名称">
+          <el-select v-model="info.serviceCompanyId"
+                     filterable
+                     placeholder="请选择"
+                     @change="setServiceCompany"
+                     style="width: 450px;">
+            <el-option v-for="(item,key) in filterList"
+                       :key="key"
+                       :label="item.name"
+                       :value="item.companyId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item style="margin-left: 150px;">
+          <el-button type="primary"
+                     @click="formAdd">保存</el-button>
+          <el-button @click="dialogVisible = false">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -94,6 +165,7 @@ import { get, post } from '../../../store/api'
 import { baseUrl } from "../../../config/address";
 import contractCreateItem from '../../../pageComponent/contractCreateItem'
 import contractCloseItem from '../../../pageComponent/contractCloseItem'
+import serviceFeeInterval from '../../../component/serviceFeeInterval'
 import performanceRules from './performanceRules'
 import upload from './upload'
 import { mapGetters } from 'vuex'
@@ -104,7 +176,8 @@ export default {
         contractCreateItem,
         contractCloseItem,
         upload,
-        performanceRules
+				performanceRules,
+        serviceFeeInterval,
     },
     computed: {
         ...mapGetters({
@@ -454,9 +527,6 @@ export default {
                 });
                 return
             }
-
-
-
             let info = _.cloneDeep(this.info);
             // let quoteFeeContent = _.cloneDeep(this.quoteFeeContent);
             let quoteFeeContent = await this.getQuoteFeeContent()
@@ -503,6 +573,48 @@ export default {
                     monthIncomeAmount: '',
                     stepwiseList: []
                 },
+                serviceFeeInterval: {
+                  secondType: '', // 服务类型：should-应发金额，real-实发金额，0-分2.8万-无流水阶梯，1-不分2.8万-按流水总额阶梯，2-分2.8万-按流水分阶梯报价，3-分2.8-9.3万无流水阶梯，4-分2.8-9.3按流水阶梯
+                  serviceFeeType: 'step', // fixed-固定金额，ratio-固定比例，step-阶梯收费
+                  serviceFeeContent: [
+                    {
+                      // 2.8万以下
+                      "start":null,           // 区间开始
+                      "equalsStart":false,    // 是否包含开始区间
+                      "end":'2.8',              // 区间结束
+                      "equalsEnd":true,       // 是否包含结束区间
+                      "serviceFeeRate":10,    // 收费比例
+                      "monthIncomeAmount":0,  // 新字段方式（serviceFeeInterval）暂时不用
+                      "settledRate":null,     // 新字段方式（serviceFeeInterval）暂时不用
+                      "fixFee":0,		// 新字段方式（serviceFeeInterval）暂时不用
+                      "stepwiseList":null	// 无流水报价不处理此阶梯
+                    },
+                    {
+                      // 2.8~9.3万
+                      "start":'2.8',
+                      "equalsStart":false,
+                      "end":'9.3',
+                      "equalsEnd":true,
+                      "serviceFeeRate":12,	// 收费比例
+                      "monthIncomeAmount":0,
+                      "settledRate":null,
+                      "fixFee":0,
+                      "stepwiseList":null	// 无流水报价不处理此阶梯
+                    },
+                    {
+                      // 9.3万以上
+                      "start":'9.3',
+                      "equalsStart":false,
+                      "end":null,
+                      "equalsEnd":true,
+                      "serviceFeeRate":15,	// 收费比例
+                      "monthIncomeAmount":0,
+                      "settledRate":null,
+                      "fixFee":0,
+                      "stepwiseList":null	// 无流水报价不处理此阶梯
+                    }
+                  ],
+                },
                 referIds: [],
                 referNames: [],
                 check: '',
@@ -524,11 +636,12 @@ export default {
             this.upDataServerType()
         },
         result({
-
             serviceFeeContent,
             serviceFeeContent2,
             arrIndex,
-            check
+            check,
+            showInputRatio,
+            intervalSetting6,
         }) {
             this.ruleForm.contracts[arrIndex].check = check;
             this.ruleForm.contracts[arrIndex].serviceFeeContent = serviceFeeContent
@@ -537,6 +650,9 @@ export default {
             //     serviceFeeContent: serviceFeeContent,
             //     serviceFeeContent2: serviceFeeContent2
             // };
+            // if (!check) {
+            //   this.ruleForm.contracts[arrIndex].serviceFeeInterval.serviceFeeContent = intervalSetting6.infoList
+            // }
         },
         resultClose({quoteFeeContent, arrIndex, check}) {
             this.ruleForm.contracts[arrIndex].checkC = check;
@@ -568,7 +684,7 @@ export default {
             }).then(result => {
                 this.info.goodsList = result || []
             })
-        }
+        },
     },
     async mounted() {
         await this.$store.dispatch('getServiceTypeList')
@@ -590,11 +706,11 @@ export default {
 
 <style scoped>
 .form-list {
-    border: 1px solid #999999;
-    /* padding: 32px 100px 20px 0; */
-    /* margin: 0 0 22px 100px; */
-    position: relative;
-    /* width: 1200px; */
+  border: 1px solid #999999;
+  /* padding: 32px 100px 20px 0; */
+  /* margin: 0 0 22px 100px; */
+  position: relative;
+  /* width: 1200px; */
 }
 
 /* .btn-del {
@@ -605,18 +721,24 @@ export default {
 } */
 
 .btn-add {
-    font-weight: normal;
-    color: red;
-    margin-left: 30px;
+  font-weight: normal;
+  color: red;
+  margin-left: 30px;
 }
 .el-icon-question {
-    margin-right: 5px;
-    color: #f56c6c;
-    cursor: pointer;
+  margin-right: 5px;
+  color: #f56c6c;
+  cursor: pointer;
 }
 .el-icon-question {
-	margin-right: 5px;
-	color: #f56c6c;
-	cursor: pointer;
+  margin-right: 5px;
+  color: #f56c6c;
+  cursor: pointer;
+}
+</style>
+
+<style lang="scss">
+.el-form--inline .el-form-item__label {
+  flex: none;
 }
 </style>

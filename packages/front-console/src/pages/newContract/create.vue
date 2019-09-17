@@ -38,7 +38,7 @@
                                 v-if="false"></relevantMerchantInfo>
           <businessBillingInfo :contractModel="contractModel"
                                v-if="active === 2"></businessBillingInfo>
-          <companyInfo :ruleForm="contractModel.contractForm"
+          <companyInfo ref="companyInfo" :ruleForm="contractModel.contractForm"
                        :serviceFeeList="contractModel.serviceFeeList"
                        v-if="active === 3"></companyInfo>
           <additionalClause :ruleForm="contractModel.contractForm"
@@ -90,6 +90,7 @@ import generateContract from './components/generateContract.vue' // 生成合同
 import setEContract from './components/setEContract.vue'  // c端签约设置
 import upload from './components/upload' // 上传组建
 import { mapGetters } from 'vuex';
+import _ from 'lodash'
 
 export default {
     components: {
@@ -160,7 +161,8 @@ export default {
             this.contractModel.changeServiceFeeList();
             // let url = this.editType === 'edit' ? '/api/opencrm/workflow/save_data' : '/api/opencrm/workflow/create';
             let url = '/api/opencrm/workflow/save_draft';
-            const datas = JSON.parse(JSON.stringify(this.contractModel.contractForm))
+            // console.log(this.contractModel.contractForm)
+            const datas = _.cloneDeep(this.contractModel.contractForm)
             datas.contracts.forEach((item) => {
                 delete item.optionServiceTypeList
             })
@@ -266,6 +268,54 @@ export default {
             if (this.active-- < 1) this.active = this.max;
         },
         next(formName) {
+          // 验证服务费率组件并存值
+          let check = true
+          if(this.active === 3) {
+            if (this.contractModel.contractForm.contracts.length) {
+              this.contractModel.contractForm.contracts.forEach((item, i) => {
+                // console.log(item.serviceFeeInterval)
+                const serviceFeeInterval = this.$refs['companyInfo'].$refs['serviceFeeInterval'][i].serviceFeeInterval
+                // console.log(serviceFeeInterval)
+                if (serviceFeeInterval
+                  && (serviceFeeInterval.secondType == 3
+                    || serviceFeeInterval.secondType == 4)) {
+                      this.$refs['companyInfo'].$refs['serviceFeeInterval'][i].validate((valid) => {
+                        if (valid) {
+                          // console.log(valid)
+                          // this.contractModel.contractForm.contracts[i].serviceFeeContent.settledRate = valid.settledRate
+                          this.contractModel.contractForm.contracts[i].serviceFeeInterval = valid.serviceFeeInterval
+                          check = true
+                        } else {
+                          check = false
+                        }
+                      })
+                    }
+              })
+            }
+            // if(this.contractModel.contractForm.serviceFeeInterval
+            //   && (this.contractModel.contractForm.serviceFeeInterval.secondType == 3
+            //     || this.contractModel.contractForm.serviceFeeInterval.secondType == 4)) {
+            //
+            //     if (this.$refs['companyInfo'].$refs['serviceFeeInterval']) {
+            //       this.$refs['companyInfo'].$refs['serviceFeeInterval'].forEach((item, i) => {
+            //         item.validate((valid) => {
+            //           if (valid) {
+            //             console.log(valid)
+            //             this.contractModel.contractForm.contracts[i].serviceFeeInterval = valid
+            //             check = true
+            //           } else {
+            //             check = false
+            //           }
+            //         })
+            //       })
+            //     }
+            //
+            //   }
+          }
+          if (!check) {
+            console.log('验证不通过~')
+            return
+          }
             this.$refs[formName].validate(valid => {
                 if (valid) {
 										if (this.active++ > this.max) this.active = 0;

@@ -80,7 +80,10 @@
             v-if="!isExamine">
       <el-col :span="4"
               style="text-align: right; margin-right: 20px;">服务费收费比例/金额：</el-col>
-      <show-service :detail="detail"
+              <div v-if="detail.serviceFeeDescription">
+                <span style="float: left;white-space: pre-line;">{{detail.serviceFeeDescription}}</span>
+              </div>
+      <show-service v-else :detail="detail"
                     :showSettledRate="false"></show-service>
     </el-row>
     <el-row class="mb15"
@@ -336,7 +339,7 @@
                     this.$message({
                         type: 'info',
                         message: '已取消删除'
-                    });          
+                    });
                 });
             }
         },
@@ -392,4 +395,3 @@
   white-space: pre-line;
 }
 </style>
-

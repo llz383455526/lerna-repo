@@ -76,16 +76,22 @@
                          :label="item.value">{{item.label}}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
-        <el-form-item label="服务商报价"
+        <el-form-item style="display: flex;"
+                      label="服务商报价"
                       :prop="`contracts[${index}].serviceFeeContent.fixFee`"
                       :rules="{required: true, message: '请正确填写服务商报价', trigger: 'blur'}">
-          <contract-create-item :arrIndex="index"
+          <contract-create-item ref="contractCreateItem"
+                                :arrIndex="index"
                                 @result="result"
+                                @ratioChange="$refs['serviceFeeInterval'][index].serviceFeeInterval.secondType = ''"
                                 :showSettledRate="true"
                                 :contractForm="formItem"></contract-create-item>
           <!-- <contractItem label-width="0" :arrIndex="index" @result="result" :initCheck="true" :contractForm="{serviceFeeContent:formItem.serviceFeeContent,serviceFeeContent2:formItem.serviceFeeContent2}"></contractItem> -->
+          <serviceFeeInterval ref="serviceFeeInterval"
+                              :contractForm="formItem"
+                              @secondTypeChange="$refs['contractCreateItem'][index].showInputRatio = 6,$refs['contractCreateItem'][index].checkTable()"></serviceFeeInterval>
         </el-form-item>
-        <el-form-item style="display: flex; padding-left: 100px;"
+        <el-form-item style="display: flex;"
                       :prop="'contracts.'+index+'.serviceTypeList'"
                       label="服务类型"
                       :rules="{required: true, message: '请选择服务类型', trigger: 'blur'}">
@@ -143,9 +149,7 @@
                :visible.sync="dialogVisible"
                width="700px">
       <el-form :inline="true"
-               :model="appForm"
-               label-width="150px"
-               ref="appForm">
+               label-width="150px">
         <el-form-item label="服务商名称">
           <el-select v-model="info.serviceCompanyId"
                      filterable
@@ -173,6 +177,7 @@ import _ from 'lodash'
 import { get, post } from '../../../store/api'
 import contractCreateItem from '../../../pageComponent/contractCreateItem'
 import contractCloseItem from '../../../pageComponent/contractCloseItem'
+import serviceFeeInterval from '../../../component/serviceFeeInterval'
 import performanceRules from './performanceRules'
 import upload from './upload'
 import { baseUrl } from "../../../config/address";
@@ -184,7 +189,8 @@ export default {
         contractCreateItem,
         contractCloseItem,
         upload,
-        performanceRules
+        performanceRules,
+        serviceFeeInterval,
     },
     computed: {
         ...mapGetters({
@@ -253,6 +259,7 @@ export default {
                     value: 20
                 }
             },
+            chargeByName: '',
             chargeByNames: [],
             f2: (rule, value, cb) => {
                 if (!/^(([0-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/.test(value)) {
@@ -548,6 +555,14 @@ export default {
             const serviceCompanyId = this.info.serviceCompanyId
             const param = { customCompanyId, serviceCompanyId }
             post('/api/contract-web/commom/custom-form-contract', param).then((res) => {
+								if (!res.serviceFeeInterval) {
+									res.serviceFeeInterval = {
+										secondType: '', // 服务类型：should-应发金额，real-实发金额，0-分2.8万-无流水阶梯，1-不分2.8万-按流水总额阶梯，2-分2.8万-按流水分阶梯报价，3-分2.8-9.3万无流水阶梯，4-分2.8-9.3按流水阶梯
+										serviceFeeType: 'step', // fixed-固定金额，ratio-固定比例，step-阶梯收费
+										serviceFeeContent: [],
+										settledRate: '',
+									}
+								}
                 this.ruleForm.contracts.push(Object.assign(res))
             		this.setTaxLanding()
                 const index = this.ruleForm.contracts.length - 1
@@ -656,5 +671,11 @@ export default {
   margin-right: 5px;
   color: #f56c6c;
   cursor: pointer;
+}
+</style>
+
+<style lang="scss">
+.el-form--inline .el-form-item__label {
+  flex: none;
 }
 </style>

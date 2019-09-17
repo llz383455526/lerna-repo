@@ -110,7 +110,7 @@
               </el-input>
             </el-form-item>
           </div>
-          <companyInfo :ruleForm="contractModel.contractForm"
+          <companyInfo ref="companyInfo" :ruleForm="contractModel.contractForm"
             :serviceFeeList="serviceFeeList"
             :chargeByName="chargeByName"
             v-if="active === 2"></companyInfo>
@@ -264,6 +264,31 @@ export default {
             if (this.active !== 1) this.active--
         },
         next() {
+          // 验证服务费率组件并存值
+          let check = true
+          if(this.active === 2) {
+            if (this.contractModel.contractForm.contracts.length) {
+              this.contractModel.contractForm.contracts.forEach((item, i) => {
+                const serviceFeeInterval = this.$refs['companyInfo'].$refs['serviceFeeInterval'][i].serviceFeeInterval
+                if (serviceFeeInterval
+                  && (serviceFeeInterval.secondType == 3
+                    || serviceFeeInterval.secondType == 4)) {
+                      this.$refs['companyInfo'].$refs['serviceFeeInterval'][i].validate((valid) => {
+                        if (valid) {
+                          this.contractModel.contractForm.contracts[i].serviceFeeInterval = valid.serviceFeeInterval
+                          check = true
+                        } else {
+                          check = false
+                        }
+                      })
+                    }
+              })
+            }
+          }
+          if (!check) {
+            console.log('验证不通过~')
+            return
+          }
             this.$refs['contractForm'].validate(valid => {
                 if(valid && this.active !== 4) {
                     this.active++

@@ -1516,7 +1516,28 @@ export default [{
                 {
                     path: 'costs-customer-company-list',
                     component: costsCustomerCompanyList
-                }
+                },
+								{
+                    path: 'frozen-order-list',
+                    component: () => import('../pages/accounting/frozen-order-list'),
+                    meta: {
+                        keepAlive: false
+                    },
+                },
+								{
+                    path: 'commission-order-list',
+                    component: () => import('../pages/accounting/commission-order-list'),
+                    meta: {
+                        keepAlive: true
+                    },
+                },
+                {
+                    path: 'commission-order-detail',
+                    component: () => import('../pages/accounting/commission-order-detail'),
+                    meta: {
+                        keepAlive: false
+                    },
+                },
             ]
         },
           {

@@ -58,13 +58,13 @@
         </el-row> -->
         <el-row class="mb15">
             <el-col :span="6">
-                <el-radio 
-                    :label="3" 
-                    v-model="showInputRatio" 
+                <el-radio
+                    :label="3"
+                    v-model="showInputRatio"
                     @change="ratioChange"
                     :disabled="disabled">分{{showInputRatio == 3 ? contractForm.serviceFeeContent.stepwiseList[0] && contractForm.serviceFeeContent.stepwiseList[0].endAmount : '2.8'}}万 - 无流水阶梯报价</el-radio>
             </el-col><br>
-            <el-col :span="24" v-show="showInputRatio == 3">
+            <el-col :span="24" v-if="showInputRatio == 3">
                 <el-table :data="contractForm.serviceFeeContent.stepwiseList">
                     <el-table-column label="月收入下限" width="240">
                         <template slot-scope="scope">
@@ -126,7 +126,7 @@
             <el-col :span="6">
                 <el-radio :label="4" v-model="showInputRatio" @change="ratioChange" :disabled="disabled">不分2.8万 - 按流水总额阶梯报价</el-radio>
             </el-col><br>
-            <el-col :span="24" v-show="showInputRatio == 4">
+            <el-col :span="24" v-if="showInputRatio == 4">
                 <el-table :data="contractForm.serviceFeeContent.stepwiseList">
                     <el-table-column label="月总额下限" width="240">
                         <template slot-scope="scope">
@@ -188,7 +188,7 @@
             <el-col :span="6">
                 <el-radio :label="5" v-model="showInputRatio" @change="ratioChange" :disabled="disabled">分{{showInputRatio == 5 ? contractForm.serviceFeeContent.monthIncomeAmount : '2.8'}}万 - 按流水分阶梯报价</el-radio>
             </el-col><br>
-            <el-col :span="24" v-show="showInputRatio == 5">
+            <el-col :span="24" v-if="showInputRatio == 5">
                 <div>
                     月收入
                     <el-input class="input_100" v-model="contractForm.serviceFeeContent.monthIncomeAmount" @blur="checkTable" :disabled="disabled">
@@ -477,6 +477,11 @@ export default {
                     this.showInputRatio = 5;
                 }
             }
+            if(this.contractForm.serviceFeeInterval
+              && (this.contractForm.serviceFeeInterval.secondType == '3'
+              || this.contractForm.serviceFeeInterval.secondType == '4')) {
+              this.showInputRatio = 6
+            }
             this.transferObj()
             this.checkTable()
         },
@@ -492,6 +497,7 @@ export default {
                 this.contractForm.serviceFeeContent.monthIncomeAmount = 2.8
             }
             this.checkTable()
+            this.$emit('ratioChange')
         },
         addColumn(a) {
             if(isNaN(a)) {
@@ -627,6 +633,11 @@ export default {
             }
             if(this.showInputRatio != 0) {
                 this.contractForm.serviceFeeContent.fixFee = results.indexOf('') > -1 ? '' : 0
+            }
+            // console.log(this.contractForm.serviceFeeContent.fixFee)
+            // console.log(this.showInputRatio)
+            if (this.showInputRatio == 6) {
+              this.contractForm.serviceFeeContent.fixFee = 0
             }
             this.transferObj()
         },
