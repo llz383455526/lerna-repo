@@ -59,8 +59,8 @@ export default {
         return {
             companyList: [],
             list: [
-                { label: 'SaaS发放', value: '0' },
-                { label: 'API发放', value: '1' },
+                { label: 'SaaS发放', value: 0 },
+                { label: 'API发放', value: 1 },
             ],
         }
     },

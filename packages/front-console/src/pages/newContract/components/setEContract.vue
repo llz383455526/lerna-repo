@@ -111,11 +111,11 @@
             return {
 								FromOutAppList: [
 										{
-                        value: '1',
+                        value: 1,
                         text: '是'
                     },
                     {
-                        value: '0',
+                        value: 0,
                         text: '否'
                     }
 								],
