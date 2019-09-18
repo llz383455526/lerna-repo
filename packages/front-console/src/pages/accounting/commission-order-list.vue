@@ -21,7 +21,7 @@
         <el-form-item label="结算主体公司" size="small" prop="settleCompanyIdEQ">
           <el-select filterable clearable v-model="formSearch.settleCompanyIdEQ">
             <el-option label="全部" value=""></el-option>
-            <el-option v-for="item in settleCompanyList" :label="item.text" :value="item.value" :key="item.value"></el-option>
+            <el-option v-for="item in settleCompanyList" :label="item.name" :value="item.id" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="发放服务公司" size="small" prop="serviceCompanyIdEQ">
@@ -63,6 +63,12 @@
             <el-option v-for="item in settleTypeOptions" :label="item.text" :value="item.value" :key="item.value"></el-option>
           </el-select>
         </el-form-item>
+				<el-form-item label="结算月份" size="small" prop="currentSettleTypeEQ">
+					<el-select v-model="formSearch.currentSettleTypeEQ">
+						<el-option label="全部" value=""></el-option>
+						<el-option v-for="item in currentSettleTypeOptions" :label="item.text" :value="item.value" :key="item.value"></el-option>
+					</el-select>
+				</el-form-item>
         <el-form-item label="支付状态" size="small" prop="payStatusEQ">
           <el-select v-model="formSearch.payStatusEQ">
             <el-option label="全部" value=""></el-option>
@@ -91,7 +97,7 @@
           <el-table-column prop="statusText" label="单据状态" width="170"></el-table-column>
           <el-table-column prop="frozenStatus" label="冻结状态" width="170">
 						<template slot-scope="scope">
-              <span>{{scope.row.frozenStatus ? '否' : '是'}}</span>
+              <span>{{scope.row.frozenStatus ? '是' : '否'}}</span>
             </template>
 					</el-table-column>
           <el-table-column prop="frozenRemarks" label="冻结原因" width="170"></el-table-column>
@@ -110,9 +116,14 @@
               <span>{{scope.row.currentCommissionAmount | formatMoney}}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="currentSettleType" label="结算方式" width="170">
+				<el-table-column prop="settleType" label="结算方式" width="170">
+					<template slot-scope="scope">
+						<span>{{formatOptionType('settleTypeOptions', scope.row.settleType)}}</span>
+					</template>
+				</el-table-column>
+          <el-table-column prop="currentSettleType" label="结算月份" width="170">
 						<template slot-scope="scope">
-              <span>{{formatOptionType('settleTypeOptions', scope.row.currentSettleType)}}</span>
+              <span>{{formatOptionType('currentSettleTypeOptions', scope.row.currentSettleType)}}</span>
             </template>
 					</el-table-column>
           <el-table-column prop="payStatus" label="支付状态" width="170">
@@ -225,7 +236,7 @@
         </el-form-item>
         <el-form-item prop="currentSettleType" label="结算方式">
           <el-select v-model="formBatch.currentSettleType">
-            <el-option v-for="item in settleTypeOptions" :label="item.text" :value="item.value" :key="item.value"></el-option>
+            <el-option v-for="item in currentSettleTypeOptions" :label="item.text" :value="item.value" :key="item.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -266,6 +277,7 @@ export default {
         monthLTE: '',
         salesmanNameLK: '',
         settleTypeEQ: '',
+				currentSettleTypeEQ: '',
         payStatusEQ: '',
         page: 1,
         pageSize: 10,
@@ -293,11 +305,18 @@ export default {
         { value: 'PART_PAID', text: '部分已支付'},
         { value: 'PAID', text: '完全支付'}
       ],
-      // 结算方式
-      settleTypeOptions: [
+      // 结算方式-月份
+      currentSettleTypeOptions: [
         { value: 'NextMonth', text: '次月'},
         { value: 'MonthAfterNext', text: '次次月'}
       ],
+			// 结算方式
+			settleTypeOptions: [
+				{ value: 'NextMonth', text: '次月'},
+				{ value: 'MonthAfterNext', text: '次次月'},
+				{ value: 'NMAndMANBy672', text: '次月+次次月（分6.72%）'},
+				{ value: 'NMAndMANByPercent', text: '次月+次次月(约定比例)'},
+			],
       tableList: {
         total: 0,
         list: [
@@ -358,10 +377,8 @@ export default {
 			companyIdentity: 'service'
 		}).then(data => {
 			this.serviceCompanyList = data
+			this.settleCompanyList = data
 		})
-    get('/api/accounting/option/settle-companies').then((data) => {
-      this.settleCompanyList = data
-    })
     this.query()
   },
   methods: {

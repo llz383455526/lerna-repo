@@ -13,8 +13,8 @@
           <el-option v-for="(item, index) in agentList" :label="item.companyName" :value="item.companyId" :key="index"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="状态:" size="small" prop="frozen">
-        <el-select v-model="formSearch.frozen">
+      <el-form-item label="状态:" size="small" prop="frozenEQ">
+        <el-select v-model="formSearch.frozenEQ">
           <el-option label="全部" value=""></el-option>
           <el-option label="有效" :value="1"></el-option>
           <el-option label="无效" :value="0"></el-option>
@@ -36,7 +36,7 @@
       <el-table-column prop="settleCompanyName" label="结算主体公司" width="200"></el-table-column>
       <el-table-column prop="frozen" label="状态" width="120">
 				<template slot-scope="scope">
-          <span>{{scope.row.frozen ? '有效' : '无效'}}</span>
+          <span>{{scope.row.frozen == 1 ? '有效' : '无效'}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="startMonth" label="起始月份" width="120"></el-table-column>
@@ -128,9 +128,9 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { get, post } from '../../store/api'
 import OrderUpload from './component/order-upload.vue'
-import {mapGetters} from 'vuex'
 
 export default {
   components: {
@@ -140,7 +140,7 @@ export default {
     return {
       formSearch: {
         agentCompanyIdEQ: '',
-        frozen: '',
+        frozenEQ: '',
         createdBy: '',
         page: 1,
         pageSize: 10,
@@ -166,11 +166,11 @@ export default {
       importDialogResVisible: false,
     }
   },
-	computed: {
-		...mapGetters({
-			permissions: 'permissions',
-		})
-	},
+  computed: {
+    ...mapGetters({
+      permissions: 'permissions',
+    }),
+  },
   created() {
     get('/api/contract-web/agent-contract/agent-company-option?sign=true').then((data) => {
       this.agentList = data
