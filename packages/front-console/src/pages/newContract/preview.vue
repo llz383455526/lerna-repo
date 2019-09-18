@@ -60,7 +60,7 @@
             </div>
             <div class="col-xs-12">客户性质：{{ getText(contractForm.customNature,
               contractModel.customNatureList) }}</div>
-            <div class="col-xs-12">企业对接方式：{{ contractForm.isFromOutApp ? (contractForm.isFromOutApp === '0' ? 'SaaS发放' : 'API发放') : contractForm.isFromOutApp }}</div>
+            <!-- <div class="col-xs-12">企业对接方式：{{ contractForm.isFromOutApp ? (contractForm.isFromOutApp === '0' ? 'SaaS发放' : 'API发放') : contractForm.isFromOutApp }}</div> -->
             <div class="col-xs-6">企业名称：{{ contractForm.customerName }}</div>
             <div class="col-xs-6">企业地址：{{ contractForm.areaName }}</div>
             <div class="col-xs-6">法定代表人：{{ contractForm.customLegalPerson }}</div>

@@ -5,8 +5,12 @@
             <el-radio v-for="e in signPayList" :key="e.value" v-model="contractForm.signPayForm" :label="e.value">{{e.text}}</el-radio>
         </el-form-item><br> -->
 				<el-form-item label="是否需要技术对接" prop="isFromOutApp">
-            <el-radio v-for="e in FromOutAppList" v-model="contractForm.isFromOutApp" :key="e.value" :label="e.value">
-                {{e.text}}
+            <el-radio
+							v-for="e in FromOutAppList"
+							v-model="contractForm.isFromOutApp"
+							:key="e.value"
+							:label="e.value"
+						>{{e.text}}
             </el-radio>
         </el-form-item>
         <br v-if="contractForm.isFromOutApp == 0">
@@ -190,15 +194,37 @@
                 if (data === '2') {
                     this.contractForm.passportType = '1'
                 }
-            }
+            },
+						// 经过激烈探讨后，若需要技术对接选是则全部置空，否则赋默认值
+						'contractForm.isFromOutApp'(val) {
+							console.log(val)
+							debugger
+							if (val == 1) {
+								this.contractForm.signForm = ''
+								this.contractForm.smsType = ''
+								this.contractForm.passportType = ''
+								this.contractForm.signMode = ''
+							} else {
+								this.contractForm.signForm = '2'
+								this.contractForm.smsType = '1'
+								this.contractForm.passportType = '1'
+								this.contractForm.signMode = this.contractForm.contracts.length > 1 ? '0' : '1'
+
+							}
+						}
         },
         mounted() {
-						this.contractForm.smsType = '1'
-						// if (!this.contractForm.jobMatch) {
-						// 	this.contractForm = Object.assign(this.contractForm, { jobMatch: '1' })
-						// }
-            this.contractForm.passportType = this.contractForm.passportType || '1'
-            this.contractForm.signMode = this.contractForm.contracts.length > 1 ? '0' : '1'
+						// 如果 不需要技术对接，才去赋值
+						if (this.contractForm.isFromOutApp == 0) {
+							this.contractForm.smsType = '1'
+							// if (!this.contractForm.jobMatch) {
+							// 	this.contractForm = Object.assign(this.contractForm, { jobMatch: '1' })
+							// }
+							this.contractForm.passportType = this.contractForm.passportType || '1'
+							if (!this.contractForm.signMode) {
+								this.contractForm.signMode = this.contractForm.contracts.length > 1 ? '0' : '1'
+							}
+						}
             this.contractForm.econtractServiceCompanyList = this.contractForm.econtractServiceCompanyList || []
             this.contractForm.econtractServiceCompanyList.forEach(e => {
                 this.companyIdList.push(e.serviceCompanyId)
@@ -236,7 +262,7 @@
                     Object.assign(this.contractForm, data)
                 })
             }
-        }
+        },
     }
 </script>
 <style scoped>

@@ -115,7 +115,7 @@ export default {
         this.contractForm = this.contractModel.contractForm
         this.contractModel.contractForm.cUserStandardAttachmentModels = []
         this.getCUserStandardInfoList()
-        this.checkCSign()
+        // this.checkCSign()
     })
   },
   computed: {
@@ -150,20 +150,21 @@ export default {
           this.contractModel.contractForm.cUserStandardInfoList = cUserStandardInfoList
       },
       // 校验C端签约
-      checkCSign() {
-          if (this.isChange) {
-              return true
-          }
-          if (this.contractForm.isFromOutApp === '1') { return true }
-          if (!this.contractForm.signForm
-              || !this.contractForm.smsType
-              || !this.contractForm.passportType
-              || !this.contractForm.signMode) {
-              this.$message.error('请重新编辑，填写C端签约设置');
-              return false
-          }
-         return true
-      },
+			// 不做校验了。。。。
+      // checkCSign() {
+      //     if (this.isChange) {
+      //         return true
+      //     }
+      //     if (this.contractForm.isFromOutApp === '1') { return true }
+      //     if (!this.contractForm.signForm
+      //         || !this.contractForm.smsType
+      //         || !this.contractForm.passportType
+      //         || !this.contractForm.signMode) {
+      //         this.$message.error('请重新编辑，填写C端签约设置');
+      //         return false
+      //     }
+      //    return true
+      // },
       jieSuanBiaoZhunChange(data) {
           this.cUserStandardInfoList.forEach((item1) => {
               data.forEach((item2) => {
@@ -228,7 +229,7 @@ export default {
       })
     },
     submit () {
-          if(!this.checkCSign()) { return }
+          // if(!this.checkCSign()) { return }
         if (this.contractForm.approveType == 'standard') {
             // this.contractModel.workflowType = 'create_sale_contract';
             let workflowType = 'create_sale_contract'
