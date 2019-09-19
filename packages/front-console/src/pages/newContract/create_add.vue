@@ -457,8 +457,8 @@ export default {
             this.contractModel.getContractDetail(id, null, 'create').then(() => {
                 // 返回数据处理服务类型
                 this.getServiceType()
+								this.checkTemplateGroup(this.contractModel.contractForm.customerId)
             });
-						this.checkTemplateGroup(this.contractModel.contractForm.customerId)
         }
         this.optionModel.getCustomNatureList()
     }
