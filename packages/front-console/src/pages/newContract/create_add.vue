@@ -10,7 +10,7 @@
           <el-step title="选择已有企业"></el-step>
           <el-step title="选择落地公司"></el-step>
           <el-step title="附加条款"></el-step>
-          <el-step title="C端签约设置"></el-step>
+          <el-step v-if="max === 4" title="C端签约设置"></el-step>
         </el-steps>
         <el-form label-width="200px"
           :inline="true"
@@ -128,10 +128,10 @@
             @click="backToList('save')">保存并返回</el-button>
           <el-button type="success"
             @click="next"
-            v-if="active !== 4">下一步</el-button>
+            v-if="active !== max">下一步</el-button>
           <el-button type="success"
             @click="submit"
-            v-if="active === 4">提交</el-button>
+            v-if="active === max">提交</el-button>
         </div>
       </div>
     </div>
@@ -242,7 +242,8 @@ export default {
                     { required: true, message: "请选择签署方式", trigger: "change" }
                 ]
             },
-            optionModel: new optionModel()
+            optionModel: new optionModel(),
+						max: 3,
         }
     },
     computed: {
@@ -381,7 +382,17 @@ export default {
             this.contractModel.contractForm.agentCompanyId = obj.agentCompanyId
             this.contractModel.contractForm.agentCompanyName = obj.agentCompanyName
             this.$store.dispatch('getContractTplList', this.contractModel.contractForm.agentCompanyId)
+						this.checkTemplateGroup(ev)
         },
+				// 根据companyId判断是否存在合同模板组
+				// 有模版则不需要 C端签约
+				checkTemplateGroup(companyId) {
+					get('/api/econtract/template-group/check/by-company', {
+						companyId,
+					}).then((res) => {
+						res ? this.max = 3 : this.max = 4
+					})
+				},
         agentChange() {
             this.getChargeByName()
             this.ruleForm.contracts = []
@@ -418,6 +429,7 @@ export default {
             })
             this.ruleForm.serviceType = arr
         },
+
         // setServiceFeeList() {
         //     this.serviceFeeList.forEach((item, key) => {
         //         if (!item) return;
@@ -444,8 +456,9 @@ export default {
             this.instanceId = id;
             this.contractModel.getContractDetail(id, null, 'create').then(() => {
                 // 返回数据处理服务类型
-                this.getServiceType();
+                this.getServiceType()
             });
+						this.checkTemplateGroup(this.contractModel.contractForm.customerId)
         }
         this.optionModel.getCustomNatureList()
     }
