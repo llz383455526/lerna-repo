@@ -336,6 +336,7 @@
 						// 遍历处理下模版的启用状态
 						this.$set(template, '__innerEnable', templateMap[template.templateId].enable)
 						this.$set(template, '__isAdd', false)
+						this.$set(template, '__mappingId', templateMap[template.templateId].id)
 					})
 					this.remoteMethod(this.form.platformName).then(data => {
 							this.getBindStatus(true)
@@ -908,8 +909,9 @@
 				const changeVal = template.__innerEnable == 1 ? '0' : '1'
 				post('/api/econtract/template-group/inner/is-enable-template', {
 					enable: changeVal,
-					templateGroupId: this.groupId,
-					templateId: template.templateId,
+					// templateGroupId: this.groupId,
+					// templateId: template.templateId,
+					templateMappingId: template.__mappingId,
 				}).then(() => {
 					template.__innerEnable = changeVal
 				})
