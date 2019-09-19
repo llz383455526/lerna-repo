@@ -197,8 +197,6 @@
             },
 						// 经过激烈探讨后，若需要技术对接选是则全部置空，否则赋默认值
 						'contractForm.isFromOutApp'(val) {
-							console.log(val)
-							debugger
 							if (val == 1) {
 								this.contractForm.signForm = ''
 								this.contractForm.smsType = ''

@@ -103,9 +103,9 @@ class Check extends BaseModel {
             customNature: [
                 { required: true, message: '请选择客户性质', trigger: 'change' }
             ],
-            isFromOutApp: [
-                { required: true, message: '请选择企业对接方式', trigger: 'change' }
-            ],
+            // isFromOutApp: [
+            //     { required: true, message: '请选择企业对接方式', trigger: 'change' }
+            // ],
             // customerName: [
             //     { required: true, message: '请输入企业名称', trigger: 'blur' },
             //     { validator: checkCustomerName, trigger: 'blur' },
