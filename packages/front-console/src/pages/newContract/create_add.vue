@@ -390,7 +390,14 @@ export default {
 					get('/api/econtract/template-group/check/by-company', {
 						companyId,
 					}).then((res) => {
-						res ? this.max = 3 : this.max = 4
+						// 若有合同模版，还需要告知后端该补签是 没有设置C端签约的， 约定传null
+						if (res) {
+							this.max = 3
+							this.contractModel.contractForm.isFromOutApp = null
+						} else {
+							this.max = 4
+							this.contractModel.contractForm.isFromOutApp = 0
+						}
 					})
 				},
         agentChange() {
