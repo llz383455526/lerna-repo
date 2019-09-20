@@ -3,7 +3,7 @@
     <div id="print-content">
       <div style="width: 685px;" v-if="detail">
         <h1 style="text-align: center;">返佣结算对账单</h1>
-        <h3 style="text-align: center;">{{detail.settleCompanyName}}</h3>
+        <h3 style="text-align: center;">{{detail.agentCompanyName}}</h3>
         <p>
           <span style="display: inline-block; width: 45%;">对账单编号：{{detail.id}}</span>
           <span>落地服务商：{{detail.serviceCompanyName}}</span>

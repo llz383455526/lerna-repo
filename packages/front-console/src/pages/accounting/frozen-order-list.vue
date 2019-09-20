@@ -31,7 +31,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
+    <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;" max-height="600" border>
       <el-table-column prop="agentCompanyName" label="渠道/代理商" width="200"></el-table-column>
       <el-table-column prop="settleCompanyName" label="结算主体公司" width="200"></el-table-column>
       <el-table-column prop="frozen" label="状态" width="120">

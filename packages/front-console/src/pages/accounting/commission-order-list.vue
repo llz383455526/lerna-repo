@@ -86,7 +86,7 @@
           <el-button size="small" @click="showImportDialog" v-if="checkRight(permissions, 'accounting:/commission-order/upload/pay-list-submit')" >导入支付明细</el-button>
         </el-form-item>
       </el-form>
-      <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;">
+      <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;" max-height="600" border>
           <el-table-column prop="month" label="实发月份" width="120"></el-table-column>
           <el-table-column prop="agentCompanyName" label="渠道/代理商" width="200"></el-table-column>
           <el-table-column prop="serviceCompanyName" label="发放服务公司" width="200"></el-table-column>

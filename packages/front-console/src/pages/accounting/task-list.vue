@@ -41,7 +41,7 @@
         <el-table :data="flowTableList.list" style="width: 100%;margin-top: 20px;">
             <el-table-column prop="id" label="任务ID" width="200" fixed></el-table-column>
             <el-table-column prop="taskTypeName" label="任务名称" width="200" fixed></el-table-column>
-            <el-table-column label="任务时间范围" width="180" :formatter="taskPeriodFormatter"></el-table-column>
+            <el-table-column label="任务时间范围" width="280" :formatter="taskPeriodFormatter"></el-table-column>
             <el-table-column prop="state" label="状态" width="120" :formatter="stateNameFormatter"></el-table-column>
             <el-table-column prop="createByName" label="提交人" width="120"></el-table-column>
             <el-table-column prop="createTime" label="提交时间" width="170">
@@ -90,21 +90,21 @@
 
                 <el-row :gutter="20">
                     <el-col :span="12">
-                        <el-form-item label="结算开始月份" prop="startDate" required>
+                        <el-form-item label="结算开始日期" prop="startDate" required>
                             <el-date-picker
                                     v-model="createTaskPostForm.startDate"
-                                    type="month"
-                                    value-format="yyyy-MM"
+                                    type="date"
+                                    value-format="yyyy-MM-dd"
                                     placeholder="提交日期" style="width: 180px;">
                             </el-date-picker>
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="结算结束月份" prop="endDate" required>
+                        <el-form-item label="结算结束日期" prop="endDate" required>
                             <el-date-picker
                                 v-model="createTaskPostForm.endDate"
-                                type="month"
-                                value-format="yyyy-MM"
+                                type="date"
+                                value-format="yyyy-MM-dd"
                                 placeholder="提交日期" style="width: 180px;">
                             </el-date-picker>
                         </el-form-item>
@@ -215,8 +215,8 @@
                 },
                 rules: {
                     taskTypeId: [{required: true, validator: validateRequire, label: '发放渠道'}],
-                    startDate: [{required: true, validator: validateRequire, label: '结算开始月份'}],
-                    endDate: [{required: true, validator: validateRequire, label: '结算结束月份'}],
+                    startDate: [{required: true, validator: validateRequire, label: '结算开始日期'}],
+                    endDate: [{required: true, validator: validateRequire, label: '结算结束日期'}],
                     remarks: [{required: true, validator: validateRequire, label: '结算说明'}],
                 },
                 taskType: undefined
