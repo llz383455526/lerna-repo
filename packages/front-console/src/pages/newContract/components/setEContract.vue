@@ -253,13 +253,13 @@
                     })
                 })
             }
-            if (this.$route.path === '/main/newContract/create_add') {
-                get(contract.econtractSynParam, {
-                    customerName: this.contractForm.customerName
-                }).then(data => {
-                    Object.assign(this.contractForm, data)
-                })
-            }
+            // if (this.$route.path === '/main/newContract/create_add') {
+            //     get(contract.econtractSynParam, {
+            //         customerName: this.contractForm.customerName
+            //     }).then(data => {
+            //         Object.assign(this.contractForm, data)
+            //     })
+            // }
         },
     }
 </script>
