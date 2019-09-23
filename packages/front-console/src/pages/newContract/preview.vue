@@ -161,11 +161,13 @@
             <div class="col-xs-12">
               <h4 class="block green">C端签约设置</h4>
             </div>
-						<div class="col-xs-12">是否需要技术对接：{{ contractForm.isFromOutApp == 1 ? '是' : '否' }}</div>
-            <div class="col-xs-12" v-if="contractForm.isFromOutApp == 0">签约介质：{{ contractForm.signForm == 1 ? '短信网页链接' : '小程序（微信搜索小程序“爱员工小助手”）' }}</div>
-            <div class="col-xs-12" v-if="contractForm.isFromOutApp == 0">C端短信通知：{{ contractForm.smsType == 1 ? '是' : '否' }}</div>
-            <div class="col-xs-12" v-if="contractForm.isFromOutApp == 0">C端上传身份证：{{ contractForm.passportType == 1 ? '是' : '否' }}</div>
-            <div class="col-xs-12" v-if="contractForm.isFromOutApp == 0">C端签署方式：{{ contractForm.signMode == 1 ? '屏幕手签' : '勾选“我同意”并自动签' }}</div>
+						<div
+							class="col-xs-12"
+						>是否需要技术对接：{{ getText(contractForm.isFromOutApp, contractModel.isFromOutAppList) }}</div>
+            <div class="col-xs-12" v-if="contractForm.isFromOutApp == 0">签约介质：{{  getText(contractForm.signForm, contractModel.signFormList) }}</div>
+            <div class="col-xs-12" v-if="contractForm.isFromOutApp == 0">C端短信通知：{{  getText(contractForm.smsType, contractModel.smsTypeList) }}</div>
+            <div class="col-xs-12" v-if="contractForm.isFromOutApp == 0">C端上传身份证：{{ getText(contractForm.passportType, contractModel.passportTypeList) }}</div>
+            <div class="col-xs-12" v-if="contractForm.isFromOutApp == 0">C端签署方式：{{  getText(contractForm.signMode, contractModel.signModeList) }}</div>
             <!-- <div class="col-xs-12">签约落地公司：
               <div class="inline">
                 <div v-for="e in contractForm.econtractServiceCompanyList"

@@ -129,6 +129,56 @@ class ContractModel extends BaseModel {
 		]; // 甲方下属公司类型
 		this.chargeByName = ''; // 渠道经理名称
 		this.agentList = []; // 代理商列表
+		this.isFromOutAppList = [
+			{
+				value: 1,
+				text: '是'
+			},
+			{
+				value: 0,
+				text: '否'
+			}
+		]; // 是否需要技术对接列表
+		this.signFormList = [
+			{
+				value: '1',
+				text: '短信网页链接'
+			},
+			{
+				value: '2',
+				text: '小程序（微信搜索小程序“爱员工小助手”）'
+			}
+		]; // 签约介质列表
+		this.smsTypeList = [
+			{
+				value: '1',
+				text: '是'
+			},
+			{
+				value: '2',
+				text: '否'
+			}
+		]; // c端短信通知列表
+		this.passportTypeList = [
+			{
+				value: '1',
+				text: '是'
+			},
+			{
+				value: '2',
+				text: '否'
+			}
+		]; // c端上传身份证列表
+		this.signModeList = [
+			{
+				value: '1',
+				text: '屏幕手签'
+			},
+			{
+				value: '0',
+				text: '勾选“我同意”并自动签'
+			}
+		]; // c端签署方式列表
 	}
 	getAllOptions() {
 		this.getOptionServiceCompanies();
