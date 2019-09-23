@@ -1,8 +1,8 @@
-
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import routes from './router'
 import store from './store'
+import { $delete, $add } from './utils/global'
 import './filter'
 
 import 'vue-area-linkage/dist/index.css'
@@ -10,6 +10,7 @@ import './style'
 import './style/iconfont'
 
 import { AreaSelect } from 'vue-area-linkage'
+Vue.use(AreaSelect)
 
 import {
 	Collapse,
@@ -31,21 +32,21 @@ import {
 	TableColumn,
 	Dialog,
 	Dropdown,
-  	DropdownMenu,
-  	DropdownItem,
+	DropdownMenu,
+	DropdownItem,
 	Tabs,
 	TabPane,
-  	TimeSelect,
-  	TimePicker,
-  	Col,
-  	MessageBox,
+	TimeSelect,
+	TimePicker,
+	Col,
+	MessageBox,
 	Radio,
-  RadioButton,
+	RadioButton,
 	RadioGroup,
 	InputNumber,
 	Badge,
 	Autocomplete,
-    Steps,
+	Steps,
 	Step,
 	CheckboxGroup,
 	Checkbox,
@@ -63,10 +64,10 @@ import {
 	BreadcrumbItem,
 	Tree,
 	Message,
-    Cascader,
-    Card,
-    Alert,
-    Popover
+	Cascader,
+	Card,
+	Alert,
+	Popover
 } from 'element-ui'
 
 Vue.use(Popover)
@@ -127,36 +128,45 @@ Vue.prototype.$notify = Notification
 Vue.prototype.$confirm = MessageBox.confirm
 Vue.prototype.$alert = MessageBox.alert
 Vue.prototype.$message = Message
+// collapse 展开折叠
+import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
+Vue.component(CollapseTransition.name, CollapseTransition)
+
+import Avue from '@smallwei/avue'
+import '@smallwei/avue/lib/index.css'
+Vue.use(Avue)
+
 Vue.prototype.$prompt = MessageBox.prompt
-Vue.prototype.checkRight = function(permissions, url) {
-    if(permissions) {
-        return url in permissions
-    }
-    else {
-        return false
-    }
+Vue.prototype.checkRight = function (permissions, url) {
+	if (permissions) {
+		return url in permissions
+	}
+	else {
+		return false
+	}
 }
 
-Vue.use(AreaSelect)
+Vue.prototype.$delete = $delete
+Vue.prototype.$add = $add
 
 Date.prototype.toJSON = function () {
 	return Date.parse(this)
 }
 
-import {register} from './component/component'
+import { register } from './component/component'
 register();
 
 Vue.prototype.judgePermission = function (url) {
-    let permissions = this.$store.getters['permissions'];
-    return permissions && permissions.hasOwnProperty(url);
+	let permissions = this.$store.getters['permissions'];
+	return permissions && permissions.hasOwnProperty(url);
 }
 
 Vue.use(VueRouter)
 export const router = new VueRouter({
 	routes: routes,
 	mode: 'history',
-	scrollBehavior:()=>({ // 滚动条滚动的行为，不加这个默认就会记忆原来滚动条的位置
-		y:0
+	scrollBehavior: () => ({ // 滚动条滚动的行为，不加这个默认就会记忆原来滚动条的位置
+		y: 0
 	})
 })
 

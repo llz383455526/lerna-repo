@@ -3,8 +3,7 @@
     <contract-info :contract-form="contractForm"
                    :contract-tpl-list="contractTplList" />
     <contract-annex :contract-form="contractForm" />
-    <auditOption :contract-form="contractForm"
-                 :edit-type="editType" />
+    <auditOption :contract-form="contractForm" />
     <div style="margin:20px 0;"
          v-if="contractForm.status == 'init'">
       <el-button size="small"

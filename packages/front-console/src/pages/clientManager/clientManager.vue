@@ -1,40 +1,40 @@
 <template>
-    <div class="r_main">
-        <el-breadcrumb>
-            <el-breadcrumb-item>
-                客户管理
-            </el-breadcrumb-item>
-        </el-breadcrumb>
-        <el-form class="form"
-                 :model="form"
-                 :inline="true"
-                 label-width="100px">
-            <el-form-item label="企业名称"
-                          size="small">
-                <el-input v-model="form.fullName"
-                          class="in_input"></el-input>
-            </el-form-item>
-            <el-form-item label="企业简称"
-                          size="small">
-                <el-input v-model="form.name"
-                          class="in_input"></el-input>
-            </el-form-item>
-            <el-form-item label="关联交付"
-                          size="small">
-                <el-select v-model="form.deliverId"
-                           class="in_input"
-                           filterable>
-                    <el-option label="全部"
-                               value=""></el-option>
-                    <el-option v-for="e in DeliverList"
-                               :key="e.id"
-                               :label="e.name"
-                               :value="e.id"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="关联销售"
-                          size="small">
-                <!-- <el-select v-model="form.salesId"
+  <div class="r_main">
+    <el-breadcrumb>
+      <el-breadcrumb-item>
+        客户管理
+      </el-breadcrumb-item>
+    </el-breadcrumb>
+    <el-form class="form"
+             :model="form"
+             :inline="true"
+             label-width="100px">
+      <el-form-item label="企业名称"
+                    size="small">
+        <el-input v-model="form.fullName"
+                  class="in_input"></el-input>
+      </el-form-item>
+      <el-form-item label="企业简称"
+                    size="small">
+        <el-input v-model="form.name"
+                  class="in_input"></el-input>
+      </el-form-item>
+      <el-form-item label="关联交付"
+                    size="small">
+        <el-select v-model="form.deliverId"
+                   class="in_input"
+                   filterable>
+          <el-option label="全部"
+                     value=""></el-option>
+          <el-option v-for="e in DeliverList"
+                     :key="e.id"
+                     :label="e.name"
+                     :value="e.id"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="关联销售"
+                    size="small">
+        <!-- <el-select v-model="form.salesId"
                            class="in_input"
                            filterable>
                   <el-option label="全部"
@@ -44,144 +44,144 @@
                              :label="e.name"
                              :value="e.id"></el-option>
                 </el-select> -->
-                <el-input v-model="form.salesName"
-                          class="in_input"></el-input>
-            </el-form-item>
-            <el-form-item label="客户类型"
-                          size="small">
-                <el-select v-model="form.originalType"
-                           class="in_input"
-                           filterable>
-                    <el-option label="全部"
-                               value=""></el-option>
-                    <el-option v-for="e in OriginaTypelList"
-                               :key="e.value"
-                               :label="e.text"
-                               :value="e.value"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="渠道名称"
-                          size="small">
-                <el-select v-model="form.agentCompanyId"
-                           class="in_input"
-                           filterable>
-                    <el-option label="全部"
-                               value=""></el-option>
-                    <el-option v-for="e in AgentCompanyList"
-                               :key="e.agentCompanyId"
-                               :label="e.agentCompanyName"
-                               :value="e.agentCompanyId"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item size="small">
-                <el-button type="primary"
-                           @click="query">查询
-                </el-button>
-                <el-button @click="clear">重置</el-button>
-                <el-button @click="handleExport">导出</el-button>
-            </el-form-item>
-        </el-form>
-        <router-link to="addClient"
-                     v-if="checkRight(permissions, 'sysmgr-web:/company/add-company')">
-            <el-button size="small"
-                       type="primary">新建企业
-            </el-button>
-        </router-link>
-        <el-table class="table"
-                  :data="tableData"
-                  border="">
-            <el-table-column prop="fullName"
-                             label="企业全称"></el-table-column>
-            <el-table-column prop="chargeByName"
-                             label="企业负责人"></el-table-column>
-            <el-table-column prop="salesList"
-                             label="关联销售">
-                <template slot-scope="scope">
-                    <div v-for="e in scope.row.salesList"
-                         :key="e.id">{{e.name}}
-                    </div>
-                </template>
-            </el-table-column>
-            <el-table-column prop="deliverList"
-                             label="关联交付">
-                <template slot-scope="scope">
-                    <p style="margin: 0"
-                       v-for="(v, k) in scope.row.deliverList"
-                       :key="k">{{ v.name }}</p>
-                </template>
-            </el-table-column>
-            <el-table-column prop="originalTypeName"
-                             label="客户类型"></el-table-column>
-            <el-table-column prop="agentCompanyName"
-                             label="所属渠道"></el-table-column>
-            <el-table-column prop="createTime"
-                             label="添加时间"></el-table-column>
-            <el-table-column prop="updateTime"
-                             label="更新时间"></el-table-column>
-            <el-table-column label="操作"
-                             width="200">
-                <template slot-scope="scope">
-                    <el-button v-if="checkRight(permissions, 'sysmgr-web:/company/edit-company')"
-                               @click="appManager(scope.row)"
-                               type="text">管理
-                    </el-button>
-                    <el-button @click="appExamine(scope.row)"
-                               type="text">查看
-                    </el-button>
-                    <el-button type="text"
-                               @click="getDialogTable(scope.row)">历史版本
-                    </el-button>
-                    <!-- <el-button v-if="checkRight(permissions, 'risk-mgt-service:/company-business-risk/get-customer-business-risk')" type="text" @click="onLineAuditBtnClick(scope.row)">
+        <el-input v-model="form.salesName"
+                  class="in_input"></el-input>
+      </el-form-item>
+      <el-form-item label="客户类型"
+                    size="small">
+        <el-select v-model="form.originalType"
+                   class="in_input"
+                   filterable>
+          <el-option label="全部"
+                     value=""></el-option>
+          <el-option v-for="e in OriginaTypelList"
+                     :key="e.value"
+                     :label="e.text"
+                     :value="e.value"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="渠道名称"
+                    size="small">
+        <el-select v-model="form.agentCompanyId"
+                   class="in_input"
+                   filterable>
+          <el-option label="全部"
+                     value=""></el-option>
+          <el-option v-for="e in AgentCompanyList"
+                     :key="e.agentCompanyId"
+                     :label="e.agentCompanyName"
+                     :value="e.agentCompanyId"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item size="small">
+        <el-button type="primary"
+                   @click="query">查询
+        </el-button>
+        <el-button @click="clear">重置</el-button>
+        <!-- <el-button @click="handleExport">导出</el-button> -->
+      </el-form-item>
+    </el-form>
+    <router-link to="addClient"
+                 v-if="checkRight(permissions, 'sysmgr-web:/company/add-company')">
+      <el-button size="small"
+                 type="primary">新建企业
+      </el-button>
+    </router-link>
+    <el-table class="table"
+              :data="tableData"
+              border="">
+      <el-table-column prop="fullName"
+                       label="企业全称"></el-table-column>
+      <el-table-column prop="chargeByName"
+                       label="企业负责人"></el-table-column>
+      <el-table-column prop="salesList"
+                       label="关联销售">
+        <template slot-scope="scope">
+          <div v-for="e in scope.row.salesList"
+               :key="e.id">{{e.name}}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="deliverList"
+                       label="关联交付">
+        <template slot-scope="scope">
+          <p style="margin: 0"
+             v-for="(v, k) in scope.row.deliverList"
+             :key="k">{{ v.name }}</p>
+        </template>
+      </el-table-column>
+      <el-table-column prop="originalTypeName"
+                       label="客户类型"></el-table-column>
+      <el-table-column prop="agentCompanyName"
+                       label="所属渠道"></el-table-column>
+      <el-table-column prop="createTime"
+                       label="添加时间"></el-table-column>
+      <el-table-column prop="updateTime"
+                       label="更新时间"></el-table-column>
+      <el-table-column label="操作"
+                       width="200">
+        <template slot-scope="scope">
+          <el-button v-if="checkRight(permissions, 'sysmgr-web:/company/edit-company')"
+                     @click="appManager(scope.row)"
+                     type="text">管理
+          </el-button>
+          <el-button @click="appExamine(scope.row)"
+                     type="text">查看
+          </el-button>
+          <el-button type="text"
+                     @click="getDialogTable(scope.row)">历史版本
+          </el-button>
+          <!-- <el-button v-if="checkRight(permissions, 'risk-mgt-service:/company-business-risk/get-customer-business-risk')" type="text" @click="onLineAuditBtnClick(scope.row)">
                         发放管理
                     </el-button> -->
-                </template>
-            </el-table-column>
-        </el-table>
-        <ayg-pagination v-if="total"
-                        :total="total"
-                        v-on:handleSizeChange="setSize"
-                        :currentSize="form.pageSize"
-                        v-on:handleCurrentChange="query"
-                        :currentPage="form.page">
-        </ayg-pagination>
-        <el-dialog :visible.sync="dialogTableVisible">
-            <el-tabs>
-                <el-tab-pane label="客户归属变更记录">
-                    <el-table :data="OriginaTypeTable">
-                        <el-table-column property="versionStartDate"
-                                         label="版本生效时间"></el-table-column>
-                        <el-table-column property="version"
-                                         label="版本号"></el-table-column>
-                        <el-table-column property="statusName"
-                                         label="状态"></el-table-column>
-                        <el-table-column property="memo"
-                                         label="变更版本说明"></el-table-column>
-                        <el-table-column property="createTime"
-                                         label="创建时间"></el-table-column>
-                        <el-table-column property="createByName"
-                                         label="创建人"></el-table-column>
-                    </el-table>
-                </el-tab-pane>
-                <el-tab-pane label="关联销售变更记录">
-                    <el-table :data="SalesTable">
-                        <el-table-column property="versionStartDate"
-                                         label="版本生效时间"></el-table-column>
-                        <el-table-column property="versionSeq"
-                                         label="版本号"></el-table-column>
-                        <el-table-column property="statusName"
-                                         label="状态"></el-table-column>
-                        <el-table-column property="memo"
-                                         label="变更版本说明"></el-table-column>
-                        <el-table-column property="createTime"
-                                         label="创建时间"></el-table-column>
-                        <el-table-column property="createByName"
-                                         label="创建人"></el-table-column>
-                    </el-table>
-                </el-tab-pane>
-            </el-tabs>
+        </template>
+      </el-table-column>
+    </el-table>
+    <ayg-pagination v-if="total"
+                    :total="total"
+                    v-on:handleSizeChange="setSize"
+                    :currentSize="form.pageSize"
+                    v-on:handleCurrentChange="query"
+                    :currentPage="form.page">
+    </ayg-pagination>
+    <el-dialog :visible.sync="dialogTableVisible">
+      <el-tabs>
+        <el-tab-pane label="客户归属变更记录">
+          <el-table :data="OriginaTypeTable">
+            <el-table-column property="versionStartDate"
+                             label="版本生效时间"></el-table-column>
+            <el-table-column property="version"
+                             label="版本号"></el-table-column>
+            <el-table-column property="statusName"
+                             label="状态"></el-table-column>
+            <el-table-column property="memo"
+                             label="变更版本说明"></el-table-column>
+            <el-table-column property="createTime"
+                             label="创建时间"></el-table-column>
+            <el-table-column property="createByName"
+                             label="创建人"></el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="关联销售变更记录">
+          <el-table :data="SalesTable">
+            <el-table-column property="versionStartDate"
+                             label="版本生效时间"></el-table-column>
+            <el-table-column property="versionSeq"
+                             label="版本号"></el-table-column>
+            <el-table-column property="statusName"
+                             label="状态"></el-table-column>
+            <el-table-column property="memo"
+                             label="变更版本说明"></el-table-column>
+            <el-table-column property="createTime"
+                             label="创建时间"></el-table-column>
+            <el-table-column property="createByName"
+                             label="创建人"></el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
 
-        </el-dialog>
-        <!-- <el-dialog
+    </el-dialog>
+    <!-- <el-dialog
             :visible.sync="onlineAuditIsShow"
             width="800px">
             <p slot="title" style="margin: 0px" v-if="shangHuShangXianModel">
@@ -220,7 +220,7 @@
 						</el-table-column>
 					</el-table>
         </el-dialog> -->
-    </div>
+  </div>
 </template>
 <script>
     import {mapGetters} from 'vuex';
@@ -441,61 +441,61 @@
     };
 </script>
 <style scoped lang="scss">
-    .online-audit-pop-content {
-        .flex-center-column {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-    }
-    .r_main {
-        padding: 30px 10px;
-        background-color: #fff;
-    }
+.online-audit-pop-content {
+  .flex-center-column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+}
+.r_main {
+  padding: 30px 10px;
+  background-color: #fff;
+}
 
-    .form {
-        margin-top: 20px;
-    }
+.form {
+  margin-top: 20px;
+}
 
-    .in_input {
-        width: 200px;
-    }
+.in_input {
+  width: 200px;
+}
 
-    .t_head {
-        margin: 30px 0;
-        font-size: 20px;
-        color: #666;
-    }
+.t_head {
+  margin: 30px 0;
+  font-size: 20px;
+  color: #666;
+}
 
-    .table {
-        margin-top: 20px;
-    }
+.table {
+  margin-top: 20px;
+}
 
-    .page {
-        margin-top: 30px;
-        display: flex;
-        justify-content: space-around;
-    }
+.page {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-around;
+}
 
-    .half > span {
-        display: inline-block;
-        width: 40%;
-    }
+.half > span {
+  display: inline-block;
+  width: 40%;
+}
 
-    .f_input {
-        width: 400px;
-    }
+.f_input {
+  width: 400px;
+}
 
-    .form_footer > button {
-        margin: 0px 30px;
-    }
+.form_footer > button {
+  margin: 0px 30px;
+}
 
-    .start-icon {
-        color: #ddd;
-    }
+.start-icon {
+  color: #ddd;
+}
 
-    .start-action {
-        color: #30652e;
-    }
+.start-action {
+  color: #30652e;
+}
 </style>

@@ -33,7 +33,7 @@
               </template> -->
             </el-table-column>
             <el-table-column label="当前处理"
-                             prop="actionUserName"></el-table-column>
+                             prop="stage"></el-table-column>
             <el-table-column label="审核方"
                              prop="serviceCompanyName"></el-table-column>
           </el-table>
