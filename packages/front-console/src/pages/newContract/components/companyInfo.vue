@@ -10,7 +10,8 @@
     <div class="widget-box"
          v-for="(formItem,index) in ruleForm.contracts"
          :key="index"
-         style="margin-bottom: 20px;" ref="contracts">
+         style="margin-bottom: 20px;"
+         ref="contracts">
       <div class="widget-header">
         <h4 class="widget-title"
             style="margin-right: 25px;">{{formItem.taxLandingName}} / {{ formItem.serviceCompanyName || '落地公司名称' }}</h4>
@@ -68,8 +69,10 @@
                       label="服务商报价"
                       :prop="`contracts[${index}].serviceFeeContent.fixFee`"
                       :rules="{required: true, message: '请正确填写服务商报价', trigger: 'blur'}">
-          <contract-create-item ref="contractCreateItem" :arrIndex="index"
-                                @result="result" @ratioChange="$refs['serviceFeeInterval'][index].serviceFeeInterval.secondType = ''"
+          <contract-create-item ref="contractCreateItem"
+                                :arrIndex="index"
+                                @result="result"
+                                @ratioChange="$refs['serviceFeeInterval'][index].serviceFeeInterval.secondType = ''"
                                 :showSettledRate="true"
                                 :contractForm="formItem"></contract-create-item>
           <!-- <contractItem label-width="0" :arrIndex="index" @result="result" :initCheck="true" :contractForm="{serviceFeeContent:formItem.serviceFeeContent,serviceFeeContent2:formItem.serviceFeeContent2}"></contractItem> -->
@@ -143,10 +146,13 @@
                      placeholder="请选择"
                      @change="setServiceCompany"
                      style="width: 450px;">
-            <el-option v-for="(item,key) in filterList"
-                       :key="key"
-                       :label="item.name"
-                       :value="item.companyId"></el-option>
+            <template v-for="(item,key) in filterList">
+              <el-option v-if="item.name !== '睢县恒迅计算机科技有限公司'"
+                         :key="key"
+                         :label="item.name"
+                         :value="item.companyId"></el-option>
+            </template>
+
           </el-select>
         </el-form-item>
         <el-form-item style="margin-left: 150px;">
@@ -188,7 +194,7 @@ export default {
             allServiceTypeList: 'serviceTypeList',
         }),
         agentCompanyList() {
-            let agentCompanyList = []
+						let agentCompanyList = []
             this.quoteFeeContent.serviceCompanyRateList.forEach(e => {
                 agentCompanyList.push({
                     name: e.serviceCompanyName,
@@ -206,7 +212,7 @@ export default {
         }
     },
     watch: {
-        agentList() { // 获取代理商列表并找到当前代理商
+				agentList() { // 获取代理商列表并找到当前代理商
             this.agentList.forEach(e => {
                 if(e.companyId == this.ruleForm.agentCompanyId) {
                     this.chargeByName = e.chargeByName

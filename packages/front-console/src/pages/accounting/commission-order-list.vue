@@ -87,10 +87,10 @@
         </el-form-item>
       </el-form>
       <el-table :data="tableList.list" style="width: 100%;margin-top: 20px;" max-height="600" border>
-          <el-table-column prop="month" label="实发月份" width="120"></el-table-column>
-          <el-table-column prop="agentCompanyName" label="渠道/代理商" width="200"></el-table-column>
-          <el-table-column prop="serviceCompanyName" label="发放服务公司" width="200"></el-table-column>
-          <el-table-column prop="settleCompanyName" label="结算主体公司" width="200"></el-table-column>
+          <el-table-column prop="month" label="实发月份" width="120" fixed></el-table-column>
+          <el-table-column prop="agentCompanyName" label="渠道/代理商" width="200" fixed></el-table-column>
+          <el-table-column prop="serviceCompanyName" label="发放服务公司" width="200" fixed></el-table-column>
+          <el-table-column prop="settleCompanyName" label="结算主体公司" width="200" fixed></el-table-column>
           <el-table-column prop="salesmanName" label="销售人员" width="120"></el-table-column>
           <el-table-column prop="groupName" label="所属团队" width="170"></el-table-column>
           <el-table-column prop="id" label="结算单号" width="170"></el-table-column>
@@ -154,9 +154,18 @@
                 type="text"
                 size="small"
                 @click="handleDelete(scope.row)">删除</el-button>
-							<!-- 这里只走业务驳回 -->
+							<el-button
+								v-if="(scope.row.status === 'Ready' || scope.row.status === 'Rejected') && checkRight(permissions, 'accounting:/commission-order/sign')"
+								type="text"
+								size="small"
+								@click="handleSignOne(scope.row)">签发</el-button>
+							<el-button
+								v-if="scope.row.status === 'Signed' && checkRight(permissions, 'accounting:/commission-order/sales-confirm')"
+								type="text"
+								size="small"
+								@click="handleSalesConfirmOne(scope.row)">确认</el-button>
               <el-button
-                v-else-if="scope.row.status === 'Signed' && checkRight(permissions, 'accounting:/commission-order/sales-reject')"
+                v-if="scope.row.status === 'Signed' && checkRight(permissions, 'accounting:/commission-order/sales-reject')"
                 type="text"
                 size="small"
                 @click="handleReject('sales-reject', scope.row)">驳回</el-button>
@@ -288,8 +297,8 @@ export default {
       settleCompanyList: [],
       // 单据状态
       orderStatusOptions: [
-        { value: 'Ready', text: '新建'},
-        { value: 'Signed', text: '已签发'},
+        { value: 'Ready', text: '结算组复核中'},
+        { value: 'Signed', text: '结算组已确认'},
         { value: 'SalesConfirmed', text: '销售已确认'},
         { value: 'FinanceConfirmed', text: '财务已确认'},
         { value: 'Rejected', text: '已驳回'}
@@ -595,6 +604,46 @@ export default {
 				return ''
 			}
 			return item.text
+		},
+		handleSignOne(item) {
+			this.$prompt('备注', '确定签发', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				inputPattern: /^(?=.*\S).+$/,
+				inputErrorMessage: '内容不能为空',
+			}).then(({ value }) => {
+				post('/api/accounting/commission-order/sign-one', {
+					confirmLogId: item.confirmLogId,
+					id: item.id,
+					operationRemarks: value.trim(),
+				}).then(() => {
+					this.$message({
+						type: 'success',
+						message: '签发成功',
+					})
+					this.query()
+				})
+			})
+		},
+		handleSalesConfirmOne(item) {
+			this.$prompt('备注', '确认', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				inputPattern: /^(?=.*\S).+$/,
+				inputErrorMessage: '内容不能为空',
+			}).then(({ value }) => {
+				post('/api/accounting/commission-order/sales-confirm-one', {
+					confirmLogId: item.confirmLogId,
+					id: item.id,
+					operationRemarks: value.trim(),
+				}).then(() => {
+					this.$message({
+						type: 'success',
+						message: '确认成功',
+					})
+					this.query()
+				})
+			})
 		}
   },
 }

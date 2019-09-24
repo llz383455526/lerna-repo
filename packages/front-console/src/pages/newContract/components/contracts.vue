@@ -156,10 +156,13 @@
                      placeholder="请选择"
                      @change="setServiceCompany"
                      style="width: 450px;">
-            <el-option v-for="(item,key) in customerServiceCompanyList"
-                       :key="key"
-                       :label="item.name"
-                       :value="item.companyId"></el-option>
+            <template v-for="(item,key) in customerServiceCompanyList">
+              <el-option v-if="item.name !== '睢县恒迅计算机科技有限公司'"
+                         :key="key"
+                         :label="item.name"
+                         :value="item.companyId"></el-option>
+            </template>
+
           </el-select>
         </el-form-item>
         <el-form-item style="margin-left: 150px;">
