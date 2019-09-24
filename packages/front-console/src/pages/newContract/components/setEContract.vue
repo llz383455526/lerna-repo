@@ -197,32 +197,35 @@
             },
 						// 经过激烈探讨后，若需要技术对接选是则全部置空，否则赋默认值
 						'contractForm.isFromOutApp'(val) {
-							if (val == 1) {
-								this.contractForm.signForm = ''
-								this.contractForm.smsType = ''
-								this.contractForm.passportType = ''
-								this.contractForm.signMode = ''
-							} else {
-								this.contractForm.signForm = '2'
-								this.contractForm.smsType = '1'
-								this.contractForm.passportType = '1'
-								this.contractForm.signMode = this.contractForm.contracts.length > 1 ? '0' : '1'
+							// if (val == 1) {
+							// 	this.contractForm.signForm = ''
+							// 	this.contractForm.smsType = ''
+							// 	this.contractForm.passportType = ''
+							// 	this.contractForm.signMode = ''
+							// } else {
+							// 	this.contractForm.signForm = '2'
+							// 	this.contractForm.smsType = '1'
+							// 	this.contractForm.passportType = '1'
+							// 	this.contractForm.signMode = this.contractForm.contracts.length > 1 ? '0' : '1'
 
-							}
+							// }
+							this.initEContractForm(val)
 						}
         },
         mounted() {
-						// 如果 不需要技术对接，才去赋值
-						if (this.contractForm.isFromOutApp == 0) {
-							this.contractForm.smsType = '1'
-							// if (!this.contractForm.jobMatch) {
-							// 	this.contractForm = Object.assign(this.contractForm, { jobMatch: '1' })
-							// }
-							this.contractForm.passportType = this.contractForm.passportType || '1'
-							if (!this.contractForm.signMode) {
-								this.contractForm.signMode = this.contractForm.contracts.length > 1 ? '0' : '1'
-							}
-						}
+						// // 如果 不需要技术对接，才去赋值
+						// if (this.contractForm.isFromOutApp == 0) {
+						// 	this.contractForm.signForm = '2'
+						// 	this.contractForm.smsType = '1'
+						// 	// if (!this.contractForm.jobMatch) {
+						// 	// 	this.contractForm = Object.assign(this.contractForm, { jobMatch: '1' })
+						// 	// }
+						// 	this.contractForm.passportType = this.contractForm.passportType || '1'
+						// 	if (!this.contractForm.signMode) {
+						// 		this.contractForm.signMode = this.contractForm.contracts.length > 1 ? '0' : '1'
+						// 	}
+						// }
+						this.initEContractForm(this.contractForm.isFromOutApp, true)
             this.contractForm.econtractServiceCompanyList = this.contractForm.econtractServiceCompanyList || []
             this.contractForm.econtractServiceCompanyList.forEach(e => {
                 this.companyIdList.push(e.serviceCompanyId)
@@ -261,6 +264,37 @@
             //     })
             // }
         },
+				methods: {
+					initEContractForm(isFromOutApp, isMount = false) {
+						const fromOne = {
+							signForm: '',
+							smsType: '',
+							passportType: '',
+							signMode: '',
+						}
+						const fromZero = {
+							signForm: '2',
+							smsType: '1',
+							passportType: '1',
+							signMode: this.contractForm.contracts.length > 1 ? '0' : '1',
+						}
+						if (isFromOutApp === 1) {
+							Object.assign(this.contractForm, fromOne)
+						} else {
+							// 首次mounted 不能覆盖原值
+							if (isMount) {
+								const {passportType, signMode} = this.contractForm
+								fromZero.signMode = signMode || fromZero.signMode
+								fromZero.passportType = passportType || fromZero.passportType
+							}
+							// 补签 C端签署方式为 勾选我同意
+							if (this.$route.path === '/main/newContract/create_add') {
+								fromZero.signMode = '0'
+							}
+							Object.assign(this.contractForm, fromZero)
+						}
+					}
+				},
     }
 </script>
 <style scoped>
