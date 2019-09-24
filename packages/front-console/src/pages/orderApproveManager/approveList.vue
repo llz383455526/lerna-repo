@@ -45,36 +45,46 @@
       </el-form-item>
     </el-form>
 		<el-table :data="tableData.list">
-      <el-table-column prop="outOrderNo" label="客户订单号" width="180"></el-table-column>
-      <el-table-column prop="companyName" label="客户名称" width="200"></el-table-column>
-      <el-table-column prop="serviceCompanyName" label="落地公司" width="200"></el-table-column>
-      <el-table-column prop="paymentThirdTypeName" label="发放渠道"></el-table-column>
-      <el-table-column prop="accountName" label="收款人"></el-table-column>
-      <el-table-column prop="accountNo" label="收款账号" width="180"></el-table-column>
-      <el-table-column prop="idCard" label="身份证号" width="180"></el-table-column>
-      <el-table-column prop="amount" label="交易金额" width="150">
+      <el-table-column key="outOrderNo" prop="outOrderNo" label="客户订单号" width="180"></el-table-column>
+      <el-table-column key="companyName" prop="companyName" label="客户名称" width="200"></el-table-column>
+      <el-table-column key="serviceCompanyName" prop="serviceCompanyName" label="落地公司" width="200"></el-table-column>
+      <el-table-column key="paymentThirdTypeName" prop="paymentThirdTypeName" label="发放渠道"></el-table-column>
+      <el-table-column key="accountName" prop="accountName" label="收款人"></el-table-column>
+      <el-table-column key="accountNo" prop="accountNo" label="收款账号" width="180"></el-table-column>
+      <el-table-column key="idCard" prop="idCard" label="身份证号" width="180"></el-table-column>
+			<el-table-column v-if="activeName === '2'" key="age" prop="age" label="年龄" width="100"></el-table-column>
+      <el-table-column key="amount" prop="amount" label="交易金额" width="150">
 				<template slot-scope="scope">
           <span>{{scope.row.amount | formatMoney}}</span>
         </template>
 			</el-table-column>
-      <el-table-column prop="createAt" label="提交时间" width="180">
+      <el-table-column key="createAt" prop="createAt" label="提交时间" width="180">
         <template slot-scope="scope">
           <span>{{scope.row.createAt | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="approveStateName" label="处理状态"></el-table-column>
-			<el-table-column prop="approveComment" label="备注" width="120"></el-table-column>
-      <el-table-column label="操作&记录" width="180" fixed="right">
+      <el-table-column key="approveStateName" prop="approveStateName" label="处理状态"></el-table-column>
+			<el-table-column key="approveComment" prop="approveComment" label="备注" width="120"></el-table-column>
+			<el-table-column key="" prop="approveAt" label="记录" width="180">
+				<template slot-scope="scope">
+          <span>
+						{{scope.row.approveByName}}<br />
+            {{scope.row.approveAt | formatTime('yyyy-MM-dd hh:mm:ss')}}
+          </span>
+        </template>
+			</el-table-column>
+      <el-table-column key="action" label="操作" width="180" fixed="right">
         <template slot-scope="scope">
           <el-button
 						type="text"
 						v-if="scope.row.approveState == 1"
 						@click="openApproveDialog(scope.row)"
 					>审批</el-button>
-          <span v-else>
-						{{scope.row.approveByName}}<br />
-            {{scope.row.approveAt | formatTime('yyyy-MM-dd hh:mm:ss')}}
-          </span>
+					<el-button
+						v-if="activeName === '2'"
+						type="text"
+						@click="openAgeAmountLimitDialog(scope.row)"
+					>月额度</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -88,18 +98,29 @@
 		<order-approve-dialog
 			ref="orderApproveDialog"
 			:order="selectedOrder"
-			@success="handleApproveSuccess"
+			@success="handleActionSuccess"
 		></order-approve-dialog>
+		<age-amount-limit-dialog
+			ref="ageAmountLimitDialog"
+			:order="selectedOrder"
+			@success="handleActionSuccess"
+		></age-amount-limit-dialog>
 	</div>
 </template>
 
 <script>
 import {get, post} from "../../store/api"
-import OrderApproveDialog from './components/orderApproveDialog.vue'
+import orderApproveDialog from './components/orderApproveDialog.vue'
+import ageAmountLimitDialog from './components/ageAmountLimitDialog.vue'
+
+/**
+ * 后续业务发展，可能会出现不同业务不同表格，
+ */
 
 export default {
 	components: {
-		OrderApproveDialog,
+		orderApproveDialog,
+		ageAmountLimitDialog,
 	},
 	data() {
 		return {
@@ -183,7 +204,14 @@ export default {
 				this.$refs.orderApproveDialog.openDialog()
 			})
 		},
-		handleApproveSuccess() {
+		// 超龄风控限额
+		openAgeAmountLimitDialog(row) {
+			this.selectedOrder = Object.assign({}, row)
+			this.$nextTick(() => {
+				this.$refs.ageAmountLimitDialog.openDialog()
+			})
+		},
+		handleActionSuccess() {
 			this.getApproveList()
 		},
 		// 客户公司

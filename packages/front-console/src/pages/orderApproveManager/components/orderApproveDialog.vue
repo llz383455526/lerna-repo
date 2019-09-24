@@ -1,6 +1,5 @@
 <template>
 	<el-dialog
-		ref="orderApproveDialog"
 		:visible.sync="approveDialogVisible"
 		:title="title"
 		width="400px"
@@ -10,14 +9,17 @@
 			<span>发放总流水：{{ amount | formatMoney }}</span>
 			<el-button type="text" size="small" @click="go2OrderList">详情</el-button>
 		</div>
-		<el-form :model="formApprove">
-			<el-form-item>
+		<div v-if="order.approveType === 2" class="mount-wrap">
+			<span>当前额度：{{ ageAmountMonthLimit | formatMoney }}</span>
+		</div>
+		<el-form ref="formApprove" :model="formApprove" size="small">
+			<el-form-item prop="approveState">
 				<el-radio-group v-model="formApprove.approveState">
 					<el-radio :label="2">通过</el-radio>
 					<el-radio :label="3">不通过</el-radio>
 				</el-radio-group>
 				<div class="pass-tip">
-					<span v-if="passTip && formApprove.approveState === 2">{{passTip}}</span>
+					<!-- <span v-if="passTip && formApprove.approveState === 2">{{passTip}}</span> -->
 					<el-input
 						v-if="formApprove.approveState === 3"
 						v-model.trim="formApprove.approveComment"
@@ -25,6 +27,9 @@
 						maxlength="50"
 						placeholder="请输入审批不通过原因"></el-input>
 				</div>
+			</el-form-item>
+			<el-form-item>
+				
 			</el-form-item>
 		</el-form>
 		<div style="text-align: right;">
@@ -49,6 +54,7 @@ export default {
 				approveComment: '',
 			},
 			amount: 0,
+			ageAmountMonthLimit: 0,
 		}
 	},
 	computed: {
@@ -62,12 +68,12 @@ export default {
 				return '超龄发放审批'
 			}
 		},
-		passTip() {
-			if (this.order.approveType && this.order.approveType === 2) {
-				return '审核通过的用户，会放入发放白名单，发放限额3星'
-			}
-			return ''
-		},
+		// passTip() {
+		// 	if (this.order.approveType && this.order.approveType === 2) {
+		// 		return '审核通过的用户，会放入发放白名单，发放限额3星'
+		// 	}
+		// 	return ''
+		// },
 		// 各发放审批的默认备注文案
 		defaultApproveComment () {
 			const {order, formApprove} = this
@@ -91,9 +97,11 @@ export default {
 	},
 	methods: {
 		openDialog() {
-			this.getAmount().then(() => {
+			Promise.all([this.getAmount(), this.getAgeAmountMonthLimit()]).then(() => {
 				this.approveDialogVisible = true
 			})
+			// this.getAmount().then(() => {
+			// })
 		},
 		closeDialog() {
 			this.approveDialogVisible = false
@@ -102,16 +110,26 @@ export default {
 		// 获取总金额
 		getAmount() {
 			const url = '/api/console-dlv/pay-order/get-person-amount'
-			return new Promise((resolve, reject) => {
-				const {accountName, idCard} = this.order
-				const form = {
-					idCard,
-					name: accountName,
-				}
-				post(url, form).then((data) => {
-					this.amount = data
-					resolve()
-				})
+			const {accountName, idCard} = this.order
+			const form = {
+				idCard,
+				name: accountName,
+			}
+			return post(url, form).then((data) => {
+				this.amount = data
+			})
+		},
+		// 查询个人超龄风控限额
+		getAgeAmountMonthLimit() {
+			const url = '/api/risk-mgt-service/person-risk/query-person-age-month-limit'
+			const {companyId, idCard, accountName, serviceCompanyId} = this.order
+			return post(url, {
+				customerCompanyId: companyId,
+				name: accountName,
+				idCard,
+				serviceCompanyId,
+			}).then((data) => {
+				this.ageAmountMonthLimit = data
 			})
 		},
 		// 详情跳转
@@ -158,6 +176,7 @@ export default {
 		align-items: center;
 		background: #f9f9f9;
 		padding: 6px 12px;
+		margin-bottom: 22px;
 	}
 	.pass-tip {
 		color: #909399;
