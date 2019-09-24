@@ -35,7 +35,7 @@ class ContractModel extends BaseModel {
 			// 企业基本信息
 			customNature: '',
 			serviceCodes: [],
-			isFromOutApp: 0,
+			isFromOutApp: '',
 			customerName: '',
 			areaName: '',
 			customLegalPerson: '',

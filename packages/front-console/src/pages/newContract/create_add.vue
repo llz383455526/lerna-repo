@@ -396,7 +396,8 @@ export default {
 							this.contractModel.contractForm.isFromOutApp = null
 						} else {
 							this.max = 4
-							this.contractModel.contractForm.isFromOutApp = 0
+							// 设置清空
+							this.contractModel.contractForm.isFromOutApp = ''
 						}
 					})
 				},
