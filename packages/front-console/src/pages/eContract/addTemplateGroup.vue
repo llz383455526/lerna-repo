@@ -914,6 +914,11 @@
 					templateMappingId: template.__mappingId,
 				}).then(() => {
 					template.__innerEnable = changeVal
+					this.$notify({
+						title: '成功',
+						message: '修改成功',
+						type: 'success'
+					})
 				})
 			},
 			formSubmit() {
