@@ -137,7 +137,7 @@
             </el-form-item>
         </el-col> -->
       </el-row>
-      <el-form-item
+      <!-- <el-form-item
         label="企业所在地"
         prop="addr1Code"
       >
@@ -147,7 +147,7 @@
           v-model="companyForm.addr1Code"
           @change="calcuAddr1" 
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item
         label="详细地址"
         prop="addr2"
@@ -389,9 +389,9 @@
               pattern: /(^\d+$)/, message: '专票可开张数上限必须为数字值'
             }
           ],
-          addr1Code: [
-            {required: true, message: '请输入企业所在地', trigger: 'blur'}
-          ],
+          // addr1Code: [
+          //   {required: true, message: '请输入企业所在地', trigger: 'blur'}
+          // ],
           addr2: [
             {required: true, message: '请输入详细地址', trigger: 'blur'}
           ],
@@ -566,11 +566,11 @@
           this.companyForm.taxTypeName = '税控盘';
         }
       },
-      calcuAddr1() {
-        if (this.companyForm.addr1Code) {
-          this.companyForm.addr1 = (this.companyForm.addr1Code[0] ? CodeToText[this.companyForm.addr1Code[0]] : '') + ' ' + (this.companyForm.addr1Code[1] ? CodeToText[this.companyForm.addr1Code[1]] : '') + ' ' + (this.companyForm.addr1Code[2] ? CodeToText[this.companyForm.addr1Code[2]] : '');
-        }
-      },
+      // calcuAddr1() {
+      //   if (this.companyForm.addr1Code) {
+      //     this.companyForm.addr1 = (this.companyForm.addr1Code[0] ? CodeToText[this.companyForm.addr1Code[0]] : '') + ' ' + (this.companyForm.addr1Code[1] ? CodeToText[this.companyForm.addr1Code[1]] : '') + ' ' + (this.companyForm.addr1Code[2] ? CodeToText[this.companyForm.addr1Code[2]] : '');
+      //   }
+      // },
       getOptionServiceCompanies() {
         let url = '/api/console-dlv/option/get-option-service-companies';
         let self = this;
