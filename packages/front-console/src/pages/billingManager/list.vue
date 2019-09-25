@@ -530,7 +530,7 @@
           data.list.forEach(item => {
             if (item) {
               if (item.addr) {
-                item.addr = item.addr.replace(/\s+/g, '');
+                item.addr = item.addr.replace(/undefined\s+/g, '');
               }
             }
           })
