@@ -526,7 +526,8 @@
         } else {
           this.companyForm.opr = 'upd';
         }
-        this.companyForm.addr = this.companyForm.addr1 + ' ' + this.companyForm.addr2;
+        // this.companyForm.addr = this.companyForm.addr1 + ' ' + this.companyForm.addr2;
+        this.companyForm.addr = this.companyForm.addr2;
         this.$refs[formName].validate ((valid) => {
           if (valid) {
             if (this.companyForm.supportSelfInvoice == '是') {
