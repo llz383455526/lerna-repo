@@ -13,17 +13,32 @@
 						>{{e.text}}
             </el-radio>
         </el-form-item>
-        <br v-if="contractForm.isFromOutApp == 0">
-        <el-form-item label="签约介质" v-if="contractForm.isFromOutApp == 0" prop="signForm">
-            <el-radio v-for="e in signTypeList" :key="e.value" v-model="contractForm.signForm" :label="e.value">
-                {{e.text}}
+        <br v-if="contractForm.isFromOutApp === 0">
+        <el-form-item
+						label="签约介质"
+						v-if="contractForm.isFromOutApp === 0"
+						prop="signForm">
+            <el-radio
+								v-for="e in signTypeList"
+								:key="e.value"
+								v-model="contractForm.signForm"
+								:label="e.value"
+						>{{e.text}}
             </el-radio>
         </el-form-item>
-        <br v-if="contractForm.isFromOutApp == 0">
-        <el-form-item label="c端短信通知" v-if="contractForm.isFromOutApp == 0" prop="smsType">
+        <br v-if="contractForm.isFromOutApp === 0">
+        <el-form-item
+						label="c端短信通知"
+						v-if="contractForm.isFromOutApp === 0"
+						prop="smsType">
             <div style="width:300px; display: inline-block;">
-                <el-radio v-for="e in smsTypeList" :key="e.value" v-model="contractForm.smsType" :label="e.value"
-                          disabled>{{e.text}}
+                <el-radio
+										v-for="e in smsTypeList"
+										:key="e.value"
+										v-model="contractForm.smsType"
+										:label="e.value"
+                    disabled
+								>{{e.text}}
                 </el-radio>
             </div>
             <el-button class="ml100" type="text" @click="show = true">
@@ -31,17 +46,32 @@
                 <span class="bottom-line">短信示例</span>
             </el-button>
         </el-form-item>
-        <br v-if="contractForm.isFromOutApp == 0">
-        <el-form-item label="c端上传身份证" v-if="contractForm.isFromOutApp == 0" prop="passportType">
-            <el-radio :disabled="contractForm.signForm === '2'" v-for="e in passportTypeList" :key="e.value"
-                      v-model="contractForm.passportType" :label="e.value">{{e.text}}
+        <br v-if="contractForm.isFromOutApp === 0">
+        <el-form-item
+						label="c端上传身份证"
+						v-if="contractForm.isFromOutApp === 0"
+						prop="passportType">
+            <el-radio
+								:disabled="contractForm.signForm === '2'"
+								v-for="e in passportTypeList"
+								:key="e.value"
+                v-model="contractForm.passportType"
+								:label="e.value"
+						>{{e.text}}
             </el-radio>
         </el-form-item>
-        <br v-if="contractForm.isFromOutApp == 0">
-        <el-form-item label="c端签署方式" v-if="contractForm.isFromOutApp == 0" prop="signMode">
+        <br v-if="contractForm.isFromOutApp === 0">
+        <el-form-item
+						label="c端签署方式"
+						v-if="contractForm.isFromOutApp === 0"
+						prop="signMode">
             <div style="width:300px; display: inline-block;">
-                <el-radio v-for="e in signModeList" :key="e.value" v-model="contractForm.signMode" :label="e.value">
-                    {{e.text}}
+                <el-radio
+										v-for="e in signModeList"
+										:key="e.value"
+										v-model="contractForm.signMode"
+										:label="e.value"
+								>{{e.text}}
                 </el-radio>
             </div>
             <el-button class="ml100" type="text" @click="examShow = true">

@@ -1233,7 +1233,7 @@
       // 动态修改提交表单的值
       changeFormContractOther(obj) {
         // 只有乙方签约对象选择个人时才会显示
-        if(this.templateModel.partys[1].userDetailType !== '1') {
+        if(this.templateModel.partys && this.templateModel.partys[1].userDetailType !== '1') {
           return
         }
         obj.displayPersonalIdentity = '1'
