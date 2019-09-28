@@ -191,6 +191,11 @@
         </div>
         <avue-crud :data="item.subWorkflowList || []"
                    :option="crudOption">
+          <template slot="approverInfoList"
+                    slot-scope="scope">
+            <div v-for="item in scope.row.approverInfoList"
+                 :key="item.actorName">{{item.actorName}}</div>
+          </template>
           <template slot="approveStateName"
                     slot-scope="scope">
             <div>
@@ -362,7 +367,8 @@ export default {
 							prop: 'operateTypeName',
 						},{
 							label: '当前处理人',
-							prop: 'actorName',
+							prop: 'approverInfoList',
+							slot: true,
 						},{
 							label: '最后审批时间',
 							prop: 'processedAt',
