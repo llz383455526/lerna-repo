@@ -9,6 +9,7 @@ class ContractModel extends BaseModel {
 	constructor() {
 		super();
 		this.contractId = '';
+		this.workflowTaskId = ''
 		this.contractForm = {
 			// 企业入驻申请变更
 			customerId: '',
@@ -278,6 +279,7 @@ class ContractModel extends BaseModel {
 					}
 				})
 				this.contractForm = _.cloneDeep(result.datas);
+				this.workflowTaskId = result.workflowTaskId
 				this.actions = result.actions;
 				this.processLogs = result.processLogs;
 				this.workflowType = result.workflowType;

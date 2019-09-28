@@ -110,8 +110,10 @@ export default {
             showConfirm({
                 msg: '确认操作？',
                 confirmCallback: () => {
+									console.log(this.contractModel)
                     post('/api/opencrm/workflow/process', {
-                        instanceId: this.contractModel.contractId,
+												instanceId: this.contractModel.contractId,
+												workflowTaskId: this.contractModel.workflowTaskId,
                         actionType: type,
                         opinion: this.opinion
                     }).then(result => {
