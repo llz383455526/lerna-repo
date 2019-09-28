@@ -81,7 +81,9 @@ export default {
             showConfirm({
                 msg: '确认操作？',
                 confirmCallback: () => {
+									console.log(this.contractForm)
                     post('/api/opencrm/workflow/process', {
+											workflowTaskId: this.contractForm.workflowTaskId,
                         instanceId: this.contractForm.id,
                         actionType: type,
                         opinion: this.opinion
