@@ -19,9 +19,9 @@
             <el-table-column prop="actionMemo"
                              label="审核意见" />
             <el-table-column label="当前处理"
-                             prop="actionUserName" />
+                             prop="stage" />
             <el-table-column label="审核方"
-                             prop="serviceCompanyName" />
+                             prop="actionUserName" />
           </el-table>
           <div v-if="contractForm.actions.length">
             <el-input type="textarea"
