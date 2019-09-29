@@ -21,7 +21,7 @@
             <el-table-column label="当前处理"
                              prop="stage" />
             <el-table-column label="审核方"
-                             prop="actionUserName" />
+                             prop="serviceCompanyName" />
           </el-table>
           <div v-if="contractForm.actions.length">
             <el-input type="textarea"
