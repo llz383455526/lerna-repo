@@ -77,14 +77,14 @@
 								<td>6</td>
 								<td>本月实际收到管理费</td>
 								<td>实发*预收费率</td>
-								<td>{{detail.prepayServiceFeeAmount}}</td>
+								<td>{{currentReceiveServiceFeeAmount}}</td>
 								<td></td>
 							</tr>
 							<tr>
 								<td>7</td>
 								<td>贵公司尚欠/(预收贵公司)管理费</td>
 								<td></td>
-								<td>{{detail.serviceFeePreRechargeAmount}}</td>
+								<td>{{preServiceFeeAmount}}</td>
 								<td>项目4-项目5-项目6</td>
 							</tr>
 						</tbody>
@@ -104,6 +104,28 @@ export default {
 		aygPrint,
 	},
 	props: ['detail'],
+	computed: {
+		currentReceiveServiceFeeAmount() {
+			if (!this.detail) {
+				return null
+			}
+			const { serviceFeeAmount, notSettledServiceFeeAmount } = this.detail
+			if (!serviceFeeAmount || !notSettledServiceFeeAmount) {
+				return null
+			}
+			return (serviceFeeAmount - notSettledServiceFeeAmount).toFixed(2)
+		},
+		preServiceFeeAmount() {
+			if (!this.detail) {
+				return null
+			}
+			const {kpAmount, rechargedAmount} = this.detail
+			if (!kpAmount || !rechargedAmount || !this.currentReceiveServiceFeeAmount) {
+				return null
+			}
+			return (kpAmount - rechargedAmount - this.currentReceiveServiceFeeAmount).toFixed(2)
+		}
+	},
 	methods: {
 		print() {
 			this.$refs.aygPrint.writeIframe()
