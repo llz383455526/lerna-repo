@@ -110,6 +110,9 @@
                     <span v-else-if="(scope.row.status === 'Ready' || scope.row.status === 'Rejected') && checkRight(permissions, 'accounting:/receivables-order/delete')">
                         <el-button @click="deleteClick(scope.row)" type="text" size="small">删除</el-button>
                     </span>
+										<span >
+                        <el-button @click="printClick(scope.row)" type="text" size="small">打印</el-button>
+                    </span>
                 </template>
             </el-table-column>
         </el-table>
@@ -210,6 +213,8 @@
             </div>
         </el-dialog>
 
+				<!-- 打印 -->
+				<receivables-order-print ref="orderPrint" :detail="printDetail"></receivables-order-print>
     </div>
 </template>
 
@@ -223,12 +228,14 @@
     import fileUploader from '../../component/fileUploader'
     import fileUpload from '../../component/fileUpload'
     import _ from 'lodash'
+		import receivablesOrderPrint from './component/receivables-order-print'
     // import Ajax from "../../ajax/index"
 
     export default {
         components: {
             fileUploader,
-            fileUpload
+            fileUpload,
+						receivablesOrderPrint,
         },
         data() {
             const validateRequire = (rule, value, callback) => {
@@ -341,8 +348,8 @@
                 confirmLogId:'',
                 exportMonth:'',
 							  companys:[],
-							  serviceCompanyIds:[]
-
+							  serviceCompanyIds:[],
+								printDetail: {},
             }
         },
         computed: {
@@ -542,7 +549,18 @@
                 return this.StatusOptions.filter(function (state) {
                     return state.value === row.status
                 })[0].text
-            }
+            },
+						printClick(row) {
+								// get('/api/accounting/receivables-order/detail-for-print', {
+								// 	id: row.id,
+								// }).then((data) => {
+								// 	this.printDetail = data
+								// 	this.$refs.orderPrint.print()
+								// })
+								// 先不通过接口获取内容
+								this.printDetail = row
+								this.$refs.orderPrint.print()
+						},
         },
         created: function () {
             this.requestAction({

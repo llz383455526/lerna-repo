@@ -262,7 +262,7 @@
 
 <script>
 import { get, post } from '../../store/api'
-import commissionOrderPrint from './commission-order-print.vue'
+import commissionOrderPrint from './component/commission-order-print.vue'
 import orderUpload from './component/order-upload.vue'
 import payTable from './component/pay-table.vue'
 import {mapGetters} from 'vuex'
