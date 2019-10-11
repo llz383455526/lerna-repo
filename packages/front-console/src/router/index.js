@@ -729,7 +729,21 @@ export default [{
                 meta: {
                     keepAlive: false
                 }
-            }
+            },
+            {
+              path: 'tagLibrary',
+              component: () => import('../pages/tagManage/tagLibrary'),
+              meta: {
+                  keepAlive: false
+              }
+            },
+            {
+              path: 'tagCompany',
+              component: () => import('../pages/tagManage/tagCompany'),
+              meta: {
+                  keepAlive: false
+              }
+            },
             ]
         },
         // {
