@@ -1,149 +1,521 @@
 <template>
-  <div class="main-container">
-    <div style="margin-bottom:30px;">公司标签管理</div>
-    <el-form :inline="true" :model="formSearch" ref="formSearch">
-      <el-form-item label="归属系统" size="small" prop="sourceType">
-        <el-select v-model="formSearch.sourceType" placeholder="请选择" style="width:100%;">
-          <el-option label="全部" value=""></el-option>
-          <el-option v-for="item in systemList" :label="item.text" :value="item.value" :key="item.value"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="角色名称" size="small" prop="roleName">
-        <el-input v-model="formSearch.roleName"></el-input>
-      </el-form-item>
-      <el-form-item style="margin-top: -4px">
-        <el-button type="primary" @click="search" size="small">查询</el-button>
-        <el-button size="small" @click="resetForm('formSearch')">清除</el-button>
-      </el-form-item>
-    </el-form>
+  <div class="tag_container" v-loading="isReady">
+    <div class="tag_hd_tab">
+      <div style="margin-bottom:30px;" class="tag_tt">公司标签管理</div>
+      <el-tabs v-model="activeTab" @tab-click="handleTabClick">
+        <el-tab-pane label="客户公司" name="first"></el-tab-pane>
+        <el-tab-pane label="渠道/代理商" name="second"></el-tab-pane>
+        <el-tab-pane label="服务商公司" name="third"></el-tab-pane>
+      </el-tabs>
+      <el-form :inline="true" :model="formSearch" ref="formSearch">
+        <el-form-item label="创建时间" size="small">
+          <el-date-picker
+            v-model="dateValue"
+            type="daterange"
+            :unlink-panels="true"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            @change="getTime"
+            value-format="yyyy-MM-dd">
+          </el-date-picker>
+        </el-form-item>
 
-    <el-button size="small" @click="$router.push('roleCreate')">添加角色</el-button>
+        <el-form-item label="客户公司" size="large" prop="customerName">
+          <el-input v-model="formSearch.customerName" placeholder="请输入"></el-input>
+        </el-form-item>
 
-    <div class="table-container">
-      <el-table :data="tableList.list">
-        <el-table-column prop="name" label="角色"></el-table-column>
-        <el-table-column prop="sourceTypeName" label="归属系统"></el-table-column>
-        <el-table-column prop="memo" label="说明"></el-table-column>
-        <el-table-column label="系统预设">
-          <template slot-scope="scope">
-            <span>{{scope.row.isSystem ? '是' : '否'}}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="操作" width="200">
-          <template slot-scope="scope">
-            <el-button @click="toDetail(scope.row.id)" type="text" size="medium" style="padding:0;">查看</el-button>
-            <el-button v-if="!scope.row.isSystem" @click="roleDelete(scope.row)" type="text" size="medium" style="padding:0;">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+        <el-form-item label="标签名称:" size="small">
+          <el-select v-model="formSearch.tagNames" multiple collapse-tags>
+            <el-option label="全部" value=""></el-option>
+            <el-option v-for="item in tagGroupsList" :label="item.value" :value="item.key" :key="item.key"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item style="display:block;">
+          <el-button type="primary" @click="search(this.url)" size="small" :class="{disable: isHandle}">查询</el-button>
+          <el-button size="small" @click="resetForm('formSearch')">清空</el-button>
+          <el-button size="small" @click="download" class="btn">导出</el-button>
+        </el-form-item>
+      </el-form>
+      <p>form:{{formSearch}}</p>
     </div>
-    <ayg-pagination
-      v-if="tableList.total"
-      :total="tableList.total"
-      v-on:handleSizeChange="handleSizeChange"
-      :currentSize="pageSize"
-      v-on:handleCurrentChange="handleCurrentChange"
-      :currentPage="pageIndex" />
+    <div class="tab_container">
+      <el-tabs v-model="activeTabCell" @tab-click="handleTabToggle">
+        <el-tab-pane label="全部" name="first" />
+        <el-tab-pane label="新增公司(6)" name="second" />
+      </el-tabs>
 
+      <div class="handle_batch" v-if="multipleSelection.length">
+        <div class="batch_left">
+          <span class="choose">已选择<i class="num">{{multipleSelection.length}}</i>条</span>
+          <span class="btnch_s" @click="handleBatchTags('add')">批量添加标签</span>
+          <span class="btnch_s" @click="handleBatchTags('remove')">批量移除标签</span>
+        </div>
+        <div class="ico_close" @click="toggleSelection()"><i class="el-icon-close"></i></div>
+      </div>
+      <el-table
+        ref="multipleTable"
+        :data="tableList"
+        @selection-change="handleSelectionChange"
+        :header-cell-style="{background:'#FAFAFA',height: 54, color:'rgba(0,0,0,0.85)',fontWeight: 600}">
+          <el-table-column type="selection" width="55" />
+          <el-table-column prop="customerName" label="客户公司" />
+          <el-table-column prop="createdAt" label="创建时间" />
+          <el-table-column prop="tagNames" label="标签名称" />
+          <el-table-column label="操作" width="200">
+            <template slot-scope="scope">
+              <el-button
+                @click="editRow(scope.row)"
+                type="text"
+                size="medium"
+                style="padding:0;">编辑</el-button>
+            </template>
+          </el-table-column>
+      </el-table>
+      <!-- 分页 -->
+      <ayg-pagination
+        v-if="total"
+        :total="total"
+        @handleSizeChange="handleSizeChange"
+        :currentSize="formSearch.pageSize"
+        @handleCurrentChange="handleCurrentChange"
+        :currentPage="currentPage" />
+    </div>
+    
+  <!-- 标签管理 -->
+  <el-dialog :title="dialogTitle"  :visible.sync="tagLibrayManager" width="840px" top="339px">
+    <div class="dialog_manage">
+      <div class="left">
+        <p>选择需要批量添加的标签</p>
+        <div class="custom-tree-container">
+          <el-form :inline="true" :model="searchTagLibray" ref="searchTagLibray">
+            <el-form-item label="标签名" size="small" prop="searchLibrayTag">
+              <el-input v-model="searchTagLibray.searchLibrayTag" placeholder="输入关键字进行过滤" class="dia_f_input"></el-input>
+            </el-form-item>
+            <el-form-item style="margin-top: -4px">
+              <el-button type="primary" @click="searchLibray" size="small">查询</el-button>
+            </el-form-item>
+          </el-form>
+          <el-tree
+            :data="soloTagMangerList" 
+            node-key="id" 
+            :default-expanded-keys="[1]" 
+            :expand-on-click-node="false">
+              <span class="custom-tree-node" slot-scope="{ node, data }">
+                <span class="tree_node_h"><i :class="data.icon"></i>{{ data.label }} {{data.children ? `(${data.children.length})`: ''}}</span>
+              </span>
+            </el-tree>
+        </div>
+      </div>
+      <div class="left">
+        <p>批量添加的标签</p>
+        <div class="custom_tag_show">
+        </div>
+      </div>
+    </div>
+    <span class="form_footer" slot="footer">
+      <el-button @click="sure" type="primary">保存</el-button>
+      <el-button @click="tagLibrayManager = false">关闭</el-button>
+    </span>
+  </el-dialog>
   </div>
 
 </template>
 
 <script>
-  import { post, get } from "../../store/api";
-  import { showConfirm } from '../../plugin/utils-message'
-  import { showNotify } from '../../plugin/utils-notify'
-  import _ from 'lodash'
+	import { post, get } from "../../store/api"
+	import _ from 'lodash'
+	import { showNotify } from '../../plugin/utils-notify'
+  import { baseUrl } from "../../config/address.js"
+  import { formatTime } from '../../plugin/utils-functions'
+  import { econtract, file } from 'src/api'
+  let id = 1000;
+  const treeData = [{
+  id: 1,
+  label: '一级 1',
+  radio: '1',
+  icon:'tag_files',
+  desc:'你想要的，就是我想给的',
+  children: [{
+    id: 4,
+    label: '二级 1-1',
+    radio: '2',
+    icon:'tag_file',
+    desc:'你想要的，就是我想给的',
+  }]
+  }, {
+    id: 2,
+    label: '一级 2',
+    radio: '1',
+    icon:'tag_files',
+    desc:'你想要的，就是我想给的',
+    children: [{
+      id: 5,
+      label: '二级 2-1',
+      radio: '2',
+      icon:'tag_file',
+      desc:'你想要的，就是我想给的',
+    }, {
+      id: 6,
+      label: '二级 2-2',
+      radio: '2',
+      icon:'tag_file',
+      desc:'你想要的，就是我想给的',
+    }]
+  }, {
+    id: 3,
+    label: '一级 3',
+    radio: '2',
+    icon:'tag_files',
+    desc:'你想要的，就是我想给的',
+    children: [{
+      id: 7,
+      label: '二级 3-1',
+      radio: '1',
+      icon:'tag_file',
+      desc:'你想要的，就是我想给的',
+    }, {
+      id: 8,
+      label: '二级 3-2',
+      radio: '1',
+      icon:'tag_file',
+      desc:'你想要的，就是我想给的',
+    }]
+  }]
 
-export default {
-  created() {
-    this.querySysList()
-      this.getList()
-  },
+	export default {
   data() {
+    let t = formatTime(new Date().getTime(), 'yyyy-MM-dd');
     return {
-      tableList: [],
-      pageIndex: 1,
-      pageSize: 10,
-      systemList: [],
       formSearch: {
-        sourceType: '',
-        roleName: '',
-      }
+        tagNames: [],
+        state:'', // '' 全部 3 新增公司
+        customerName: '',
+        startTime: '',
+        endTime: '',
+        pageNo: 1,
+        pageSize: 10
+      },
+      total: 0, // 统计数据
+      activeTab: 'first',
+      activeTabCell: 'first',
+      isReady: true,
+      dateValue: '',//,[t, t],
+      currentPage: 1,
+      pageSize: 10,
+      tagGroupsList: [], // 标签组名称
+      multipleSelection: [], // 多选数据
+      url: '/api/econtract/order/statelist',
+      soloTagMangerList: [],
+      tagLibrayManager: false, // 标签管理弹框展示
+      dialogTitle: '',
+      searchTagLibray: {
+        searchLibrayTag: ''
+      },
+
+      sighStateList: [],
+      extrSystemOptions: [],
+      tableList: [],
+      baseUrl,
+      selection: [],
+      isHandle: false,
+      ableType: '',
+      objects: [],
+      econtract,
+      processId: '',
+      pro: 0,
+      frame: '',
+      date: 0,
+      isEnd: true,
+      windowOpener: ''
     }
   },
-    methods: {
-      resetForm(formName) {
-        this.$refs[formName].resetFields()
-      },
-      search() {
-        this.pageIndex = 1
-        this.getList()
-      },
-      handleSizeChange(value) {
-        this.pageSize = value
-        this.pageIndex = 1
-        this.getList()
-      },
-      handleCurrentChange(value) {
-        this.pageIndex = value
-        this.getList()
-      },
-      getList() {
-        let formSearch = _.cloneDeep(this.formSearch)
-        let options = _.assign(formSearch, {
-          page: this.pageIndex,
-          pageSize: this.pageSize
-        })
-        post('/api/sysmgr-web/role/list', options)
-          .then(result => {
-            this.tableList = result
-          })
-        },
-      roleDelete(role) {
-        showConfirm({
-          msg: '确定删除该角色？',
-          confirmCallback: () => {
-            post(`/api/sysmgr-web/role/delete/${role.id}`, {
-              roleId: role.id,
-              sourceType: role.sourceType
-            }).then(reuslt => {
-              showNotify('success', '删除成功')
-                this.getList()
-            })
+  created() {
+    this.soloTagMangerList.push(...treeData)
+    this.getOrderStateList() // 获取标签组数据
+    this.handleTabClick({'name': 'first'}) // 客户公司
+    this.isReady = false
+  },
+  mounted() {
+    Object.assign(this.formSearch, this.$route.query)
+    this.getTime()
+  },
+  methods: {
+    searchLibray() {},
+    sure() {},
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
+    },
+    // 处理批量操作
+    handleBatchTags(e) {
+      this.dialogTitle = '批量添加标签'
+      this.tagLibrayManager = true;
+      console.log(e)
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+      console.log(`选择行数：${JSON.stringify(this.multipleSelection)}`)
+    },
+    // 编辑当前行
+    editRow(row) {
+      console.log(`编辑当前行：${JSON.stringify(row)}`)
+      this.tagLibrayManager = true;
+    },
+    // 搜索
+    search(url) {
+      this.formSearch.pageNo = this.currentPage
+      this.formSearch.pageSize = this.pageSize
+      console.log(`输入是的form内容：${JSON.stringify(this.formSearch)}`)
+      post(url, this.formSearch)
+      .then(result => {
+        // console.log(`${JSON.stringify(result)}`)
+        this.tableList = result.data
+          this.total = result.total
+      })
+
+    },
+    handleSizeChange(value) {
+      this.currentPage = 1;
+      this.pageSize = value;
+      this.search();
+    },
+    handleCurrentChange(value) {
+      this.currentPage = value;
+      this.search()
+    },
+    getTime() {
+      if(this.dateValue && this.dateValue.length) {
+        this.formSearch.startTime = this.dateValue[0]
+        this.formSearch.endTime = this.dateValue[1]
+      }
+      else {
+        this.formSearch.startTime = ''
+        this.formSearch.endTime = ''
+      }
+    },
+    download() {
+      this.windowOpener = window.open()
+      let formSearch = JSON.parse(JSON.stringify(this.formSearch))
+      formSearch.manufacturer = 0
+      post(econtract.innerExport, formSearch, true).then(data => {
+        this.processId = data
+        this.showPro = true
+        this.progress()
+      })
+    },
+    progress() {
+      this.frame = requestAnimationFrame(this.progress)
+      if(this.isEnd && (!this.date || this.date < new Date().getTime() - 1000)) {
+        this.isEnd = false
+        get(file.exportStatus, {
+          processId: this.processId
+        }, true).then(data => {
+          this.isEnd = true
+          this.date = new Date().getTime()
+          this.pro = data.rate
+          if(data.status == 'Complated') {
+            this.$message.success('导出成功!')
+            cancelAnimationFrame(this.frame)
+            this.showPro = false
+            this.windowOpener.location.href = `${file.download}?processId=${this.processId}`
           }
-        })
-      },
-      querySysList() {
-        get('/api/sysmgr-web/commom/option', {
-          enumType: 'PlatformType'
-        }).then(result => {
-          this.systemList = result
-        })
-      },
-      toDetail(id) {
-        this.$router.push({
-          path: 'roleCreate',
-          query: {
-            id: id
+          else if(data.status == 'Failed') {
+            this.$message({
+              type: 'error',
+              message: data.msg
+            });
+            cancelAnimationFrame(this.frame)
+            this.showPro = false
           }
         })
       }
-    }
-  }
+    },
+    getOrderStateList() {
+      get('/api/econtract/order/statelist', {})
+        .then(result => {
+          this.tagGroupsList = result
+          this.total = result.total
+        })
+    },
+    getCustomerClientList() {
+},
+  resetForm(formName) {
+    this.$refs[formName].resetFields()
+    this.dateValue = []
+  },
+    handleTabToggle(tab, event) {
+      let _tab = tab.name
+      switch (_tab) {
+        case 'first':
+          this.formSearch.state = '' // 新增的6家公司
+        break
+        case 'second':
+          this.formSearch.state = '6' // 新增的6家公司
+          break
+        default:
+      }
+      this.search()
+
+    },
+    handleTabClick(tab, event) {
+      console.log(tab);
+      let _tab = tab.name
+      switch (_tab) {
+        case 'first':
+          this.url = '/api/opencrm/sale_contract/complated_list'
+          break
+        case 'second':
+          this.url = '1'
+          break
+        case 'third':
+          this.url = '2'
+          break
+        default:
+      }
+      this.search(this.url)
+    },
+	}
+	}
 </script>
 
 <style lang="scss" scoped>
-
-  .main-container {
-      background-color:#fff;
-      padding:15px;
-  }
-
-  .table-container {
+  .tag_container {
+    .tag_hd_tab {
+      padding:40px 30px 15px 30px;
+      background-color: #fff;
+    }
+    .tag_tt {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .opera_gap {
+      display: inline-block;
+      vertical-align: middle;
+      height: 14px;
+      width: 1px;
+      margin-left: 11px;
+      background: #E8E8E8;
+    }
+    /deep/ .el-tabs__nav-wrap::after {
+      display: none;
+    }
+    /deep/ .el-tabs__item{
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .tab_container {
+      padding:30px 30px 15px 30px;
       width: 100%;
       margin-top: 20px;
+      background-color: #fff;
+      .handle_batch {
+        margin-bottom: 6px;
+        height: 46px;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+        padding: 0 20px;
+        background: #E6F7FF;
+        .ico_close {
+          cursor: pointer;
+        }
+        span {
+          display: inline-block;
+          vertical-align: middle;
+          color: rgba(0,0,0,0.65);
+          &.choose {
+            font-weight: 500;
+            margin-right: 25px;
+          }
+          .num {
+            padding: 0 5px;
+            color: #0486FE;
+          }
+          &.btnch_s {
+            cursor: pointer;
+            margin-right: 6px;
+            padding: 6px 20px;
+            color: #666;
+            background: #FFFFFF;
+            border: 1px solid #DBDEE3;
+            border-radius: 4px;
+            &:hover {
+              color: #0283FB;
+              border-color: rgb(179, 218, 254);
+              background-color: rgb(230, 243, 255);
+            }
+          }
+        }
+      }
+    }
+    .custom-tree-node {
+      flex: 1;
+      display: flex;
+      align-items: left;
+      justify-content: space-between;
+      font-size: 14px;
+      padding-right: 8px;
+      .tree_node_h {
+        display: inline-block;
+        vertical-align: middle;
+        flex: 1;
+      }
+      .tree_node_middle {
+        width: 500px;
+      }
+      .tree_node_opea {
+        width: 220px;
+        text-align: right;
+      }
+    }
+    .dialog_manage {
+      flex: 1;
+      display: flex;
+      align-items: left;
+      justify-content: space-between;
+    }
+    .custom_tag_show {
+      padding: 20px 10px;
+      width: 390px;
+      height: 470px;
+      border: 1px solid #DCDCDC;
+    }
+    .custom-tree-container {
+      padding: 20px 10px;
+      width: 390px;
+      height: 470px;
+      border: 1px solid #DCDCDC;
+      overflow-y: auto;
+      /deep/ .el-tree-node__content {
+        padding: 25px 0;
+        border-bottom: 1px solid #F2F2F2;
+      }
+      .tag_files {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 6px;
+        width: 22px;
+        height: 20px;
+        background: url('../../image/tag_files.png') no-repeat center;
+        background-size: 22px 20px;
+      }
+      .tag_file {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 6px;
+        width: 14px;
+        height: 14px;
+        background: url('../../image/tag_file.png') no-repeat center;
+        background-size: 14px 14px;
+      }
+    }
   }
-
 </style>

@@ -227,8 +227,8 @@
     }
   },
   created() {
-    // this.tagMangerList.push(...treeData)
-    this.tagMangerList.push()
+    this.tagMangerList.push(...treeData)
+    // this.tagMangerList.push()
   },
   mounted() {
     let url = '/api/invoice-web/custom-invoice-subject/qry';
@@ -333,6 +333,10 @@
 .tag_container {
   padding:40px 15px 15px;
   background-color: #fff;
+  .tag_tt {
+    font-size: 18px;
+    font-weight: 600;
+  }
   .opera_gap {
     display: inline-block;
     vertical-align: middle;
@@ -341,10 +345,6 @@
     margin-left: 11px;
     background: #E8E8E8;
   }
-}
-.tag_tt {
-  font-size: 18px;
-  font-weight: 600;
 }
 .tab_container {
   width: 100%;
