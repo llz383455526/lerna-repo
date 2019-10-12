@@ -1,7 +1,7 @@
 <template>
 <div class="tag_container">
   <div style="margin-bottom:30px;" class="tag_tt">标签库管理</div>
-  <el-form :inline="true" :model="searchForm" ref="searchForm" v-if="page.list">
+  <el-form :inline="true" :model="searchForm" ref="searchForm" v-if="tagMangerList.length">
       <el-form-item label="标签组" size="small" prop="searchTagGroup">
         <el-input v-model="searchForm.searchTagGroup" placeholder="请输入关键词"></el-input>
       </el-form-item>
@@ -16,8 +16,8 @@
 
   <el-button type="primary" size="medium" @click="addGroup">添加标签组</el-button>
 
-  <div class="tab_container">
-    <el-table :data="page.list" :header-cell-style="{background:'#FAFAFA',color:'rgba(0,0,0,0.85)',fontWeight: 600}">
+  <div class="tab_container custom-tree-container" v-if="tagMangerList.length">
+    <!-- <el-table :data="page.list" :header-cell-style="{background:'#FAFAFA',color:'rgba(0,0,0,0.85)',fontWeight: 600}">
       <el-table-column prop="serviceName" label="标签名称"></el-table-column>
       <el-table-column prop="serviceContent" label="标签描述"></el-table-column>
       <el-table-column align="center" label="操作" width="400">
@@ -29,8 +29,27 @@
           <el-button @click="edit(scope.row)" type="text" size="medium" style="padding:0;">编辑</el-button>
         </template>
       </el-table-column>
-    </el-table>
-
+    </el-table> -->
+    <div class="tree_tab_hd">
+      <div class="tab_tt_txt">标签名称</div>
+      <div class="tab_tt_middle">标签描述</div>
+      <div class="tab_tt_opea ">操作</div>
+    </div>
+    <el-tree
+      :data="tagMangerList" 
+      node-key="id" 
+      :default-expanded-keys="[1]" 
+      :expand-on-click-node="false">
+        <span class="custom-tree-node" slot-scope="{ node, data }">
+          <span class="tree_node_h"><i :class="data.icon"></i>{{ data.label }} {{data.children ? `(${data.children.length})`: ''}}</span>
+          <span class="tree_node_middle">{{data.desc}}</span>
+          <span class="tree_node_opea">
+            <el-button v-show="data.children" @click="addChildTag(data)" type="text" size="medium" style="padding:0;">添加子标签<i class="opera_gap"></i></el-button>
+            <el-button v-show="data.children" @click="editTagLibrayManager(tagMangerList[0])" type="text" size="medium" style="padding:0;">标签管理<i class="opera_gap"></i></el-button>
+            <el-button @click="edit(data)" type="text" size="medium" style="padding:0;">编辑</el-button>
+          </span>
+        </span>
+      </el-tree>
     <ayg-pagination
       v-if="page.total" 
       :total="page.total"
@@ -38,6 +57,10 @@
       @handleCurrentChange="handleCurrentChange" 
       :currentPage="currentPage" />
 
+  </div>
+  <!-- 无数据状态 -->
+  <div class="tag_no_data" v-if="!tagMangerList.length">
+    <p>暂无标签</p>
   </div>
   <!-- 编辑，标签添加 添加子标签 -->
   <el-dialog :title="editFormTitle"  :visible.sync="editFormShow" :before-close="clearForm" width="558px" top="339px">
@@ -74,7 +97,7 @@
         </el-form-item>
       </el-form>
       <el-tree
-        :data="tagMangerList" 
+        :data="soloTagMangerList" 
         node-key="id" 
         :default-expanded-keys="[1]" 
         :expand-on-click-node="false">
@@ -105,43 +128,51 @@
     label: '一级 1',
     radio: '1',
     icon:'tag_files',
+    desc:'你想要的，就是我想给的',
     children: [{
       id: 4,
       label: '二级 1-1',
       radio: '2',
       icon:'tag_file',
+      desc:'你想要的，就是我想给的',
     }]
   }, {
     id: 2,
     label: '一级 2',
     radio: '1',
     icon:'tag_files',
+    desc:'你想要的，就是我想给的',
     children: [{
       id: 5,
       label: '二级 2-1',
       radio: '2',
       icon:'tag_file',
+      desc:'你想要的，就是我想给的',
     }, {
       id: 6,
       label: '二级 2-2',
       radio: '2',
       icon:'tag_file',
+      desc:'你想要的，就是我想给的',
     }]
   }, {
     id: 3,
     label: '一级 3',
     radio: '2',
     icon:'tag_files',
+    desc:'你想要的，就是我想给的',
     children: [{
       id: 7,
       label: '二级 3-1',
       radio: '1',
       icon:'tag_file',
+      desc:'你想要的，就是我想给的',
     }, {
       id: 8,
       label: '二级 3-2',
       radio: '1',
       icon:'tag_file',
+      desc:'你想要的，就是我想给的',
     }]
   }]
 
@@ -158,6 +189,7 @@
         return callback()
       }
     return {
+      soloTagMangerList: [],
       tagMangerList:  [],//JSON.parse(JSON.stringify(treeData)),
       searchForm: {
         searchTagGroup: '',
@@ -195,7 +227,8 @@
     }
   },
   created() {
-    this.tagMangerList.push(...treeData)
+    // this.tagMangerList.push(...treeData)
+    this.tagMangerList.push()
   },
   mounted() {
     let url = '/api/invoice-web/custom-invoice-subject/qry';
@@ -243,12 +276,12 @@
       this.editForm.serviceContent = '';
     },
     // 添加子标签
-    addChildTag(model) {
+    addChildTag(data) {
       this.editFormShow = true;
       this.editFormTitle = '添加子标签';
       this.showTagName = true
       this.notEditGroupName = true
-      this.editForm.editTagGroupName = model.serviceName;
+      this.editForm.editTagGroupName = data.label;
       this.editTagName = '';
       this.editForm.serviceContent = '';
     },
@@ -256,16 +289,14 @@
     edit(model){
       this.editFormShow = true;
       this.editFormTitle = '编辑';
-      this.editForm.editTagGroupName = model.serviceName;
+      this.editForm.editTagGroupName = model.label;
       this.editForm.editTagName = model.id;
-      this.editForm.serviceContent = model.serviceContent;
+      this.editForm.serviceContent = model.desc;
     },
     // 标签管理
-    editTagLibrayManager(model){
+    editTagLibrayManager(data){
       this.tagLibrayManager = true;
-      this.editForm.editTagGroupName = model.serviceName;
-      this.editForm.editTagName = model.id;
-      this.editForm.serviceContent = model.serviceContent;
+      this.soloTagMangerList = this.tagMangerList
     },
     clearForm(next) {
       this.$refs['editForm'].clearValidate()
@@ -305,9 +336,9 @@
   .opera_gap {
     display: inline-block;
     vertical-align: middle;
-    height: 15px;
+    height: 14px;
     width: 1px;
-    margin: 0 8px;
+    margin-left: 11px;
     background: #E8E8E8;
   }
 }
@@ -339,15 +370,30 @@
 .custom-tree-node {
   flex: 1;
   display: flex;
-  align-items: center;
+  align-items: left;
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
+  .tree_node_h {
+    display: inline-block;
+    vertical-align: middle;
+    flex: 1;
+  }
+  .tree_node_middle {
+    width: 500px;
+  }
+  .tree_node_opea {
+    width: 220px;
+    text-align: right;
+  }
 }
 .custom-tree-container {
   /deep/ .el-tree-node__content {
     padding: 25px 0;
     border-bottom: 1px solid #F2F2F2;
+  }
+    /deep/ .el-tree {
+    // padding-left: 15px;
   }
   .tag_files {
     display: inline-block;
@@ -366,6 +412,40 @@
     height: 14px;
     background: url('../../image/tag_file.png') no-repeat center;
     background-size: 14px 14px;
+  }
+}
+.tree_tab_hd {
+  height: 54px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  color: rgba(0,0,0,0.85);
+  font-weight: 600;
+  padding-right: 8px;
+  background: #FAFAFA;
+  .tab_tt_txt {
+    flex: 1;
+    padding-left: 10px;
+  }
+  .tab_tt_middle {
+    width: 500px;
+  }
+  .tab_tt_opea {
+    width: 220px;
+    text-align: center;
+  }
+}
+.tag_no_data {
+  min-height: 560px;
+  text-align: center;
+  background: url('../../image/no_data.png') no-repeat center;
+  background-size: 88px 57px;
+  p {
+    padding-top: 320px;
+    font-size: 14px;
+    color: #333333;
   }
 }
 </style>
