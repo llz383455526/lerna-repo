@@ -6,13 +6,22 @@
         <el-input v-model="searchForm.searchTagGroup" placeholder="请输入关键词"></el-input>
       </el-form-item>
       <el-form-item label="标签名称" size="small" prop="searchTagName">
-        <el-input v-model="searchForm.searchTagName" placeholder="请输入关键词"></el-input>
+        <!-- <el-input v-model="searchForm.searchTagName" placeholder="请输入关键词"></el-input> -->
+        <el-autocomplete
+          class="inline-input"
+          v-model="searchForm.searchTagName"
+          :fetch-suggestions="querySearch"
+          placeholder="请输入关键词"
+          @blur="calcuCompanyId"
+          @select="handleSelect"
+        />
       </el-form-item>
       <el-form-item style="margin-top: -4px">
         <el-button type="primary" @click="search" size="small">查询</el-button>
         <el-button size="small" @click="resetForm('searchForm')">清空</el-button>
       </el-form-item>
     </el-form>
+    <p>标签库管理搜索字段：{{searchForm}}</p>
 
   <el-button type="primary" size="medium" @click="addGroup">添加标签组</el-button>
 
@@ -46,7 +55,7 @@
           <span class="tree_node_opea">
             <el-button v-show="data.children" @click="addChildTag(data)" type="text" size="medium" style="padding:0;">添加子标签<i class="opera_gap"></i></el-button>
             <el-button v-show="data.children" @click="editTagLibrayManager(tagMangerList[0])" type="text" size="medium" style="padding:0;">标签管理<i class="opera_gap"></i></el-button>
-            <el-button @click="edit(data)" type="text" size="medium" style="padding:0;">编辑</el-button>
+            <el-button @click="ModifyTagName(node, data)" type="text" size="medium" style="padding:0;">编辑</el-button>
           </span>
         </span>
       </el-tree>
@@ -79,6 +88,7 @@
         <el-input type="textarea" :rows="5" placeholder="建议不要超过50个字" v-model="editForm.serviceContent"></el-input>
       </el-form-item>
     </el-form>
+    <p>标签编辑的信息： {{editForm}}</p>
     <span class="form_footer" slot="footer">
       <el-button @click="sure" type="primary">保存</el-button>
       <el-button @click="editFormShow = false">关闭</el-button>
@@ -90,14 +100,18 @@
     <div class="custom-tree-container">
       <el-form :inline="true" :model="searchTagLibray" ref="searchTagLibray">
         <el-form-item label="标签名" size="small" prop="searchLibrayTag">
-          <el-input v-model="searchTagLibray.searchLibrayTag" placeholder="输入关键字进行过滤" class="dia_f_input"></el-input>
+          <!-- <el-input v-model="searchTagLibray.searchLibrayTag" placeholder="输入关键字进行过滤" class="dia_f_input"></el-input> -->
+          <el-input v-model="filterText" placeholder="输入关键字进行过滤" class="dia_f_input"></el-input>
         </el-form-item>
         <el-form-item style="margin-top: -4px">
           <el-button type="primary" @click="searchLibray" size="small">查询</el-button>
         </el-form-item>
       </el-form>
       <el-tree
-        :data="soloTagMangerList" 
+        class="filter-tree"
+        ref="tree2"
+        :data="soloTagMangerList"
+        :filter-node-method="filterNode"
         node-key="id" 
         :default-expanded-keys="[1]" 
         :expand-on-click-node="false">
@@ -119,10 +133,13 @@
 </template>
 
 <script>
-  import { get, post } from "../../store/api";
+  import { get, post } from "../../store/api"
+  import { tags } from "../../api/tags"
   import {showNotify} from '../../plugin/utils-notify'
-  import { valid } from 'semver';
-  let id = 1000;
+  import { valid } from 'semver'
+  import _ from 'lodash'
+
+  // let id = 1000;
     const treeData = [{
     id: 1,
     label: '一级 1',
@@ -179,14 +196,19 @@
 
   export default {
     data() {
-      var checkNo = (rule, value, callback) => {
-        if(!/^[0-9]+$/.test(value)) {
-          return callback(new Error('必须为整数'))
+      // 校验标签名
+      const validateTagName = (rule, value, callback) => {
+        if(!value) {
+          return callback(new Error('请填写标签组名'))
         }
-        if(value.length > 3) {
-          return callback(new Error('最多三位'));
-        }
-        return callback()
+        // 异步校验
+        post(tags.postDetail, value).then(data => {
+          if(data.status !== 200) {
+            return callback(new Error('名称已存在，请重命名'))
+          } else {
+            return callback()
+          }
+          })
       }
     return {
       soloTagMangerList: [],
@@ -197,6 +219,8 @@
         page: 1,
         pageSize: 10
       },
+      restaurants: [], // 获取到的标签名称数组
+      serviceCompaniesList: [],
       searchTagLibray: {
         searchLibrayTag: ''
       },
@@ -212,14 +236,17 @@
         editTagName: '',
         serviceContent: '',
       },
+      filterText: '',
       rules: {
         editTagGroupName: [
-          { required: true, message: '请填写标签组名', trigger: 'blur' },
-          { min: 0, max: 10, message: '长度在 0 到 10 个字', trigger: 'blur' }
+          // { required: true, message: '请填写标签组名', trigger: 'blur' },
+          { min: 0, max: 10, message: '长度在 0 到 10 个字', trigger: 'blur' },
+          { required: true, validator: validateTagName, trigger: 'blur' }
         ],
         editTagName: [
-          { required: true, message: '请填写标签名称', trigger: 'blur' },
-          { min: 0, max: 10, message: '长度在 0 到 10 个字', trigger: 'blur' }
+          // { required: true, message: '请填写标签名称', trigger: 'blur' },
+          { min: 0, max: 10, message: '长度在 0 到 10 个字', trigger: 'blur' },
+          { required: true, validator: validateTagName, trigger: 'blur' }
         ],
       },
       currentPage: 1,
@@ -227,53 +254,99 @@
     }
   },
   created() {
-    this.tagMangerList.push(...treeData)
+    this.getOptionServiceCompanies()
+    // this.tagMangerList.push(...treeData)
+    // 初始化页面，请求数据
+    this.search()
     // this.tagMangerList.push()
   },
+  watch: {
+    filterText(val) {
+      this.$refs.tree2.filter(val);
+    }
+  },
   mounted() {
-    let url = '/api/invoice-web/custom-invoice-subject/qry';
-    let param = {
-      name: '',
-      orderBy: '',
-      page: 0,
-      pageSize: 0,
-      status: 1
-    };
-    let self = this;
-    post(url, param).then(data => {
-      self.subjects = data.list;
-      })
-      this.search()
+    // this.search()
   },
   methods: {
+    filterNode(value, data) {
+        if (!value) return true;
+        return data.label.indexOf(value) !== -1;
+      },
+    // 获取所有标签名
+    getOptionServiceCompanies() {
+      let self = this;
+      get (tags.tagsList).then (data => {
+        self.serviceCompaniesList = data
+        // console.log(`拿到的标签数据 ${JSON.stringify(data)}`)
+        _.foreach (data, function (value, key) {
+          self.restaurants[key] = {
+            "value": value['companyName']
+          }
+        })
+        // console.log(`当前处理后的格式 ${JSON.stringify(self.restaurants)}`)
+      })
+    },
+    handleSelect(item) {
+      // console.log(`当前选取的item ${JSON.stringify(item)}`)
+      this.calcuCompanyId (item);
+    },
+    calcuCompanyId(item) {
+      let self = this
+      _.foreach (this.serviceCompaniesList, function (value) {
+        if (value['companyName'] !== self.searchForm.searchTagName) {
+          self.searchForm.tagId = value['companyId']
+          return false
+        } else {
+          self.searchForm.tagId = ''
+        }
+      })
+    },
+    querySearch(queryString, cb) {
+      var restaurants = this.restaurants;
+      var results = queryString ? restaurants.filter (this.createFilter (queryString)) : restaurants;
+      // 调用 callback 返回建议列表的数据
+      cb (results);
+    },
+    createFilter(queryString) {
+      return (restaurant) => {
+        return (restaurant.value.toLowerCase ().indexOf (queryString.toLowerCase ()) === 0);
+      };
+    },
     showNode(node) {
       console.log(node)
     },
     searchLibray() {},
     search() {
-      this.searchForm.page = this.currentPage;
-      this.searchForm.pageSize = this.pageSize;
+      this.searchForm.page = this.currentPage
+      this.searchForm.pageSize = this.pageSize
+      console.log(`搜索前，表单输入的数据： ${JSON.stringify(this.searchForm)}`)
       let url = '/api/contract-web/service-mgr/query-service-types';
       post(url, this.searchForm).then(data => {
-        this.page = data;
-        })
+        this.page = data
+        this.tagMangerList.push(...treeData)
+      })
+    },
+    // 清空表单
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
     },
     handleSizeChange(value) {
-      this.currentPage = 1;
-      this.pageSize = value;
-      this.search();
+      this.currentPage = 1
+      this.pageSize = value
+      this.search()
     },
     handleCurrentChange(value) {
-      this.currentPage = value;
-      this.search();
+      this.currentPage = value
+      this.search()
     },
     // 添加标签组
     addGroup() {
-      this.editFormShow = true;
-      this.editFormTitle = '添加标签组';
-      this.editForm.editTagGroupName = '';
-      this.editTagName = '';
-      this.editForm.serviceContent = '';
+      this.editFormShow = true
+      this.editFormTitle = '添加标签组'
+      this.editForm.editTagGroupName = ''
+      this.editTagName = ''
+      this.editForm.serviceContent = ''
     },
     // 添加子标签
     addChildTag(data) {
@@ -282,20 +355,31 @@
       this.showTagName = true
       this.notEditGroupName = true
       this.editForm.editTagGroupName = data.label;
-      this.editTagName = '';
-      this.editForm.serviceContent = '';
+      this.editTagName = ''
+      this.editForm.serviceContent = ''
     },
-    // 编辑
-    edit(model){
-      this.editFormShow = true;
-      this.editFormTitle = '编辑';
-      this.editForm.editTagGroupName = model.label;
-      this.editForm.editTagName = model.id;
-      this.editForm.serviceContent = model.desc;
+    // 修改
+    ModifyTagName(e, d){
+      console.log(`当前点击的tree数据data中的node ${e}`)
+      console.log(`当前点击的tree数据data ${JSON.stringify(d)}`)
+      this.editFormShow = true
+      this.editFormTitle = '编辑'
+      if(d.children) { // 修改标签组的命名
+        this.showTagName = false
+        this.notEditGroupName = false
+        this.editForm.editTagGroupName = d.label
+        this.editForm.serviceContent = d.desc
+      } else { // 修改子标签的命名
+        this.notEditGroupName = true
+        this.showTagName = true
+        this.editForm.editTagGroupName = e.parent.label
+        this.editForm.editTagName = d.label
+        this.editForm.serviceContent = d.desc
+      }
     },
     // 标签管理
     editTagLibrayManager(data){
-      this.tagLibrayManager = true;
+      this.tagLibrayManager = true
       this.soloTagMangerList = this.tagMangerList
     },
     clearForm(next) {
@@ -304,21 +388,21 @@
     },
     sure(){
       this.$refs['editForm'].validate(valid => {
-        if(valid) {
-          let selt = this;
-          let url = '';
-          if(this.editForm.serviceId){
-          url = "/api/contract-web/service-mgr/update-service-type";
-          }else{
-          url = "/api/contract-web/service-mgr/create-service-type";
+      if(valid) {
+        let selt = this
+        let url = ''
+        if(this.editForm.serviceId){
+        url = "/api/contract-web/service-mgr/update-service-type";
+        }else{
+        url = "/api/contract-web/service-mgr/create-service-type";
+        }
+        post(url, this.editForm).then(
+          function(data){
+            showNotify('success','操作成功！');
+            selt.editFormShow = false;
+            selt.search();
           }
-          post(url, this.editForm).then(
-            function(data){
-              showNotify('success','操作成功！');
-              selt.editFormShow = false;
-              selt.search();
-            }
-          );
+        );
       }
       })
     },

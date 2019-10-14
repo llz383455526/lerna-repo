@@ -7,5 +7,6 @@ import {balance} from './balance'
 import {file} from './file'
 import {asr} from './asr'
 import {risk} from './risk'
+import {tags} from './tags'
 
-export { invoiceApi, workflow, sysmgr, contract, econtract, balance, file, asr, risk }
+export { invoiceApi, workflow, sysmgr, contract, econtract, balance, file, asr, risk, tags }

@@ -90,7 +90,7 @@
         <div class="custom-tree-container">
           <el-form :inline="true" :model="searchTagLibray" ref="searchTagLibray">
             <el-form-item label="标签名" size="small" prop="searchLibrayTag">
-              <el-input v-model="searchTagLibray.searchLibrayTag" placeholder="输入关键字进行过滤" class="dia_f_input" @keyup.enter.native="searchLibray"></el-input>
+              <el-input v-model="filterText" placeholder="输入关键字进行过滤" class="dia_f_input" @keyup.enter.native="searchLibray"></el-input>
             </el-form-item>
             <el-form-item style="margin-top: -4px">
               <el-button type="primary" @click="searchLibray" size="small">查询</el-button>
@@ -103,7 +103,7 @@
             :default-expanded-keys="[1]" 
             @node-click="handleNodeClick"
             ref="tree"
-            :expand-on-click-node="false">
+            :expand-on-click-node="true">
               <span class="custom-tree-node" slot-scope="{ node, data }">
                 <span class="tree_node_h"><i :class="data.icon"></i>{{ data.label }} {{data.children ? `(${data.children.length})`: ''}}</span>
               </span>
