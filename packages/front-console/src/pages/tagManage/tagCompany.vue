@@ -21,13 +21,12 @@
           </el-date-picker>
         </el-form-item>
 
-        <el-form-item label="客户公司" size="large" prop="customerName">
-          <el-input v-model="formSearch.customerName" placeholder="请输入"></el-input>
+        <el-form-item label="客户公司" size="large" prop="companyName">
+          <el-input v-model="formSearch.companyName" placeholder="请输入"></el-input>
         </el-form-item>
 
         <el-form-item label="标签名称:" size="small">
-          <el-select v-model="formSearch.tagNames" multiple collapse-tags>
-            <el-option label="全部" value=""></el-option>
+          <el-select v-model="formSearch.tagIds" multiple collapse-tags>
             <el-option v-for="item in tagGroupsList" :label="item.value" :value="item.key" :key="item.key"></el-option>
           </el-select>
         </el-form-item>
@@ -40,10 +39,10 @@
       <p>form:{{formSearch}}</p>
     </div>
     <div class="tab_container">
-      <el-tabs v-model="activeTabCell" @tab-click="handleTabToggle">
+      <!-- <el-tabs v-model="activeTabCell" @tab-click="handleTabToggle">
         <el-tab-pane label="全部" name="first" />
         <el-tab-pane label="新增公司(6)" name="second" />
-      </el-tabs>
+      </el-tabs> -->
 
       <div class="handle_batch" v-if="multipleSelection.length">
         <div class="batch_left">
@@ -59,9 +58,13 @@
         @selection-change="handleSelectionChange"
         :header-cell-style="{background:'#FAFAFA',height: 54, color:'rgba(0,0,0,0.85)',fontWeight: 600}">
           <el-table-column type="selection" width="55" />
-          <el-table-column prop="customerName" label="客户公司" />
-          <el-table-column prop="createdAt" label="创建时间" />
-          <el-table-column prop="tagNames" label="标签名称" />
+          <el-table-column prop="companyName" label="客户公司" />
+          <el-table-column prop="createAt" label="创建时间" />
+          <el-table-column prop="tagList" label="标签名称" >
+            <template slot-scope="scope">
+              <span class="tag_list_cell" v-for="(item, index) in scope.row.tagList" :key="index">{{ item.tagName }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="200">
             <template slot-scope="scope">
               <el-button
@@ -77,7 +80,7 @@
         v-if="total"
         :total="total"
         @handleSizeChange="handleSizeChange"
-        :currentSize="formSearch.pageSize"
+        :currentSize="pageSize"
         @handleCurrentChange="handleCurrentChange"
         :currentPage="currentPage" />
     </div>
@@ -86,7 +89,7 @@
   <el-dialog :title="dialogTitle"  :visible.sync="tagLibrayManager" width="840px" top="339px">
     <div class="dialog_manage">
       <div class="left">
-        <p>选择需要批量添加的标签</p>
+        <p>{{leftTitle}}</p>
         <div class="custom-tree-container">
           <el-form :inline="true" :model="searchTagLibray" ref="searchTagLibray">
             <el-form-item label="标签名" size="small" prop="searchLibrayTag">
@@ -111,7 +114,7 @@
         </div>
       </div>
       <div class="left">
-        <p>批量添加的标签</p>
+        <p>{{rightTitle}}</p>
         <div class="custom_tag_show">
           <template v-for="(item, index) in waitingHandleTags">
             <div :key="item.id" class="hand_r_tag">
@@ -137,7 +140,7 @@
 	import { showNotify } from '../../plugin/utils-notify'
   import { baseUrl } from "../../config/address.js"
   import { formatTime } from '../../plugin/utils-functions'
-  import { econtract, file } from 'src/api'
+  import { tags } from "../../api/tags"
   let id = 1000;
   const treeData = [{
   id: 1,
@@ -198,12 +201,11 @@
     let t = formatTime(new Date().getTime(), 'yyyy-MM-dd');
     return {
       formSearch: {
-        tagNames: [],
-        state:'', // '' 全部 3 新增公司
-        customerName: '',
-        startTime: '',
-        endTime: '',
-        pageNo: 1,
+        tagIds: [],
+        companyName: '',
+        createStartAt: '',
+        createEndAt: '',
+        page: 1,
         pageSize: 10
       },
       total: 0, // 统计数据
@@ -215,32 +217,20 @@
       pageSize: 10,
       tagGroupsList: [], // 标签组名称
       multipleSelection: [], // 多选数据
-      url: '/api/econtract/order/statelist',
+      url: null,
       soloTagMangerList: [],
       tagLibrayManager: false, // 标签管理弹框展示
       dialogTitle: '',
+      leftTitle: '',
+      rightTitle: '',
       searchTagLibray: {
         searchLibrayTag: ''
       },
       waitingHandleTags: [], // 等待处理的标签 批量添加，或者删除
-      
-      filterText: '',
-
-      sighStateList: [],
-      extrSystemOptions: [],
       tableList: [],
-      baseUrl,
-      selection: [],
+      filterText: '',
       isHandle: false,
-      ableType: '',
-      objects: [],
-      econtract,
-      processId: '',
-      pro: 0,
-      frame: '',
-      date: 0,
-      isEnd: true,
-      windowOpener: ''
+
     }
   },
   watch: {
@@ -249,7 +239,7 @@
     },
   },
   created() {
-    this.soloTagMangerList.push(...treeData)
+    // this.soloTagMangerList.push(...treeData)
     this.getOrderStateList() // 获取标签组数据
     this.handleTabClick({'name': 'first'}) // 客户公司
     this.isReady = false
@@ -301,9 +291,12 @@
     },
     // 处理批量操作
     handleBatchTags(e) {
-      this.dialogTitle = '批量添加标签'
+      this.waitingHandleTags = []
+      this.dialogTitle = `批量${e === 'add' ? '添加': '移除'}标签`
       this.tagLibrayManager = true;
-      console.log(e)
+      this.leftTitle = `选择需要批量${e === 'add' ? '添加': '移除'}的标签`
+      this.rightTitle = `批量${e === 'add' ? '添加': '移除'}的标签`
+
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
@@ -311,20 +304,29 @@
     },
     // 编辑当前行
     editRow(row) {
+      this.waitingHandleTags = []
       console.log(`编辑当前行：${JSON.stringify(row)}`)
       this.tagLibrayManager = true;
+      this.dialogTitle = '编辑'
+      this.leftTitle = '选择需要添加的标签'
+      this.rightTitle = '公司已有标签'
     },
     // 搜索
-    search(url) {
-      this.formSearch.pageNo = this.currentPage
+    async search(url) {
+      this.formSearch.page = this.currentPage
       this.formSearch.pageSize = this.pageSize
       console.log(`输入是的form内容：${JSON.stringify(this.formSearch)}`)
-      post(url, this.formSearch)
-      .then(result => {
-        // console.log(`${JSON.stringify(result)}`)
-        this.tableList = result.data
-          this.total = result.total
-      })
+      const result = await post(url, this.formSearch)
+      console.log(`搜索后的数据：${JSON.stringify(result)}`)
+      this.tableList = result.list
+      this.total = result.total
+
+
+      // .then(result => {
+      //   // console.log(`${JSON.stringify(result)}`)
+      //   this.tableList = result.data
+      //     this.total = result.total
+      // })
 
     },
     handleSizeChange(value) {
@@ -338,12 +340,11 @@
     },
     getTime() {
       if(this.dateValue && this.dateValue.length) {
-        this.formSearch.startTime = this.dateValue[0]
-        this.formSearch.endTime = this.dateValue[1]
-      }
-      else {
-        this.formSearch.startTime = ''
-        this.formSearch.endTime = ''
+        this.formSearch.createStartAt = this.dateValue[0]
+        this.formSearch.createEndAt = this.dateValue[1]
+      } else {
+        this.formSearch.createStartAt = ''
+        this.formSearch.createEndAt = ''
       }
     },
     download() {
@@ -394,7 +395,9 @@
 },
   resetForm(formName) {
     this.$refs[formName].resetFields()
-    this.dateValue = []
+    this.dateValue = ''
+    this.getTime()
+    this.formSearch.tagIds = []
   },
     handleTabToggle(tab, event) {
       let _tab = tab.name
@@ -415,13 +418,13 @@
       let _tab = tab.name
       switch (_tab) {
         case 'first':
-          this.url = '/api/opencrm/sale_contract/complated_list'
+          this.url = tags.tagsCustom
           break
         case 'second':
-          this.url = '1'
+          this.url = tags.tagsChannel
           break
         case 'third':
-          this.url = '2'
+          this.url = tags.tagsServiceuery
           break
         default:
       }
@@ -436,6 +439,16 @@
     .tag_hd_tab {
       padding:40px 30px 15px 30px;
       background-color: #fff;
+    }
+    .tag_list_cell {
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 10px;
+      padding: 2px 8px;
+      border: 1px solid #3F9EFF;
+      border-radius: 3px;
+      font-size: 14px;
+      color: #3F9EFF;
     }
     .tag_tt {
       font-size: 18px;
