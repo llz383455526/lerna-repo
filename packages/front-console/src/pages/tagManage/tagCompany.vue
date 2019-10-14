@@ -90,16 +90,19 @@
         <div class="custom-tree-container">
           <el-form :inline="true" :model="searchTagLibray" ref="searchTagLibray">
             <el-form-item label="标签名" size="small" prop="searchLibrayTag">
-              <el-input v-model="searchTagLibray.searchLibrayTag" placeholder="输入关键字进行过滤" class="dia_f_input"></el-input>
+              <el-input v-model="searchTagLibray.searchLibrayTag" placeholder="输入关键字进行过滤" class="dia_f_input" @keyup.enter.native="searchLibray"></el-input>
             </el-form-item>
             <el-form-item style="margin-top: -4px">
               <el-button type="primary" @click="searchLibray" size="small">查询</el-button>
             </el-form-item>
           </el-form>
           <el-tree
+            :filter-node-method="filterNode"
             :data="soloTagMangerList" 
             node-key="id" 
             :default-expanded-keys="[1]" 
+            @node-click="handleNodeClick"
+            ref="tree"
             :expand-on-click-node="false">
               <span class="custom-tree-node" slot-scope="{ node, data }">
                 <span class="tree_node_h"><i :class="data.icon"></i>{{ data.label }} {{data.children ? `(${data.children.length})`: ''}}</span>
@@ -110,6 +113,12 @@
       <div class="left">
         <p>批量添加的标签</p>
         <div class="custom_tag_show">
+          <template v-for="(item, index) in waitingHandleTags">
+            <div :key="item.id" class="hand_r_tag">
+              <p class="r_text">{{item.label}}</p>
+              <div class="r_close" @click="removeCurrentTag(index)"><i class="el-icon-close"></i></div>
+            </div>
+          </template>
         </div>
       </div>
     </div>
@@ -182,6 +191,7 @@
       desc:'你想要的，就是我想给的',
     }]
   }]
+  
 
 	export default {
   data() {
@@ -212,6 +222,9 @@
       searchTagLibray: {
         searchLibrayTag: ''
       },
+      waitingHandleTags: [], // 等待处理的标签 批量添加，或者删除
+      
+      filterText: '',
 
       sighStateList: [],
       extrSystemOptions: [],
@@ -230,6 +243,11 @@
       windowOpener: ''
     }
   },
+  watch: {
+    filterText(val) {
+      this.$refs.tree.filter(val);
+    },
+  },
   created() {
     this.soloTagMangerList.push(...treeData)
     this.getOrderStateList() // 获取标签组数据
@@ -241,6 +259,35 @@
     this.getTime()
   },
   methods: {
+    removeCurrentTag(index) {
+      this.waitingHandleTags.splice(index, 1)
+      console.log(`移除等待处理的数组中某个元素，剩下的集合：${JSON.stringify(this.waitingHandleTags)}`)
+    },
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.name && data.name.indexOf(value) !== -1;
+    },
+    handleNodeClick(data) {
+      console.log(`添加标签点击当前line：${JSON.stringify(data)}`)
+      if (!data.children) {
+        this.waitingHandleTags.push(data) // 需要数组去重
+      }
+      console.log(`当前等待处理的数组集合：${JSON.stringify(this.waitingHandleTags)}`)
+    },
+    // 数组去重
+    unique(arr) {
+      const ret = []
+      arr.reduce((prev, next) => {
+        const newPrev = prev
+        newPrev[next] = (newPrev[next] + 1) || 1
+        if (newPrev[next] === 1) ret.push(next)
+        return newPrev
+      }, {})
+      return ret
+    },
+    searchLibray() {
+      this.filterText = this.searchTagLibray.searchLibrayTag
+    },
     searchLibray() {},
     sure() {},
     toggleSelection(rows) {
@@ -283,11 +330,11 @@
     handleSizeChange(value) {
       this.currentPage = 1;
       this.pageSize = value;
-      this.search();
+      this.search(this.url);
     },
     handleCurrentChange(value) {
       this.currentPage = value;
-      this.search()
+      this.search(this.url)
     },
     getTime() {
       if(this.dateValue && this.dateValue.length) {
@@ -481,12 +528,29 @@
       display: flex;
       align-items: left;
       justify-content: space-between;
+      .left {
+      width: 390px;
+      }
     }
     .custom_tag_show {
-      padding: 20px 10px;
-      width: 390px;
+      padding: 10px 10px;
       height: 470px;
       border: 1px solid #DCDCDC;
+      .hand_r_tag {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        font-size: 14px;
+        color: #333;
+      }
+      .r_text {
+        margin-bottom: 20px;
+      }
+      .r_close {
+        cursor: pointer;
+      }
     }
     .custom-tree-container {
       padding: 20px 10px;
