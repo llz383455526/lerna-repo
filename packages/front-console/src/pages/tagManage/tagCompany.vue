@@ -35,8 +35,8 @@
           <el-button size="small" @click="resetForm('formSearch')">清空</el-button>
         </el-form-item>
       </el-form>
-      <p>formSearch:{{formSearch}}</p>
-      <p>url:{{url}}</p>
+      <!-- <p>formSearch:{{formSearch}}</p>
+      <p>url:{{url}}</p> -->
     </div>
     <div class="tab_container">
       <div class="handle_batch" v-if="multipleSelection.length">
@@ -127,8 +127,8 @@
         </div>
       </div>
     </div>
-    <p>batchTagsForm: {{batchTagsForm}}</p>
-    <p>batchUrl: {{batchUrl}}</p>
+    <!-- <p>batchTagsForm: {{batchTagsForm}}</p>
+    <p>batchUrl: {{batchUrl}}</p> -->
     <span class="form_footer" slot="footer">
       <el-button @click="sure" type="primary">保存</el-button>
       <el-button @click="tagLibrayManager = false">关闭</el-button>
