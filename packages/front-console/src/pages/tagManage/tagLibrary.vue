@@ -269,9 +269,9 @@
   },
   methods: {
     filterNode(value, data) {
-        if (!value) return true;
-        return data.label.indexOf(value) !== -1;
-      },
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
     // 获取所有标签名
     getOptionServiceCompanies() {
       let self = this;

@@ -21,29 +21,24 @@
           </el-date-picker>
         </el-form-item>
 
-        <el-form-item label="客户公司" size="large" prop="companyName">
+        <el-form-item label="客户公司" size="small" prop="companyName">
           <el-input v-model="formSearch.companyName" placeholder="请输入"></el-input>
         </el-form-item>
 
         <el-form-item label="标签名称:" size="small">
           <el-select v-model="formSearch.tagIds" multiple collapse-tags>
-            <el-option v-for="item in tagGroupsList" :label="item.value" :value="item.key" :key="item.key"></el-option>
+            <el-option v-for="item in tagGroupsList" :label="item.tagName" :value="item.tagId" :key="item.tagId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item style="display:block;">
-          <el-button type="primary" @click="search(this.url)" size="small" :class="{disable: isHandle}">查询</el-button>
+          <el-button type="primary" @click="search(url)" size="small" :class="{disable: isHandle}">查询</el-button>
           <el-button size="small" @click="resetForm('formSearch')">清空</el-button>
-          <el-button size="small" @click="download" class="btn">导出</el-button>
         </el-form-item>
       </el-form>
-      <p>form:{{formSearch}}</p>
+      <p>formSearch:{{formSearch}}</p>
+      <p>url:{{url}}</p>
     </div>
     <div class="tab_container">
-      <!-- <el-tabs v-model="activeTabCell" @tab-click="handleTabToggle">
-        <el-tab-pane label="全部" name="first" />
-        <el-tab-pane label="新增公司(6)" name="second" />
-      </el-tabs> -->
-
       <div class="handle_batch" v-if="multipleSelection.length">
         <div class="batch_left">
           <span class="choose">已选择<i class="num">{{multipleSelection.length}}</i>条</span>
@@ -65,7 +60,7 @@
               <span class="tag_list_cell" v-for="(item, index) in scope.row.tagList" :key="index">{{ item.tagName }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="200">
+          <el-table-column label="操作" width="100">
             <template slot-scope="scope">
               <el-button
                 @click="editRow(scope.row)"
@@ -91,24 +86,31 @@
       <div class="left">
         <p>{{leftTitle}}</p>
         <div class="custom-tree-container">
-          <el-form :inline="true" :model="searchTagLibray" ref="searchTagLibray">
+          <!-- <el-input v-model="filterText" placeholder="请输入关键词" class="dia_f_input"></el-input> -->
+          <!-- <el-form :inline="true" :model="searchTagLibray" ref="searchTagLibray">
             <el-form-item label="标签名" size="small" prop="searchLibrayTag">
               <el-input v-model="filterText" placeholder="输入关键字进行过滤" class="dia_f_input" @keyup.enter.native="searchLibray"></el-input>
             </el-form-item>
             <el-form-item style="margin-top: -4px">
               <el-button type="primary" @click="searchLibray" size="small">查询</el-button>
             </el-form-item>
+          </el-form> -->
+          <el-form :inline="true" :model="searchTagLibray" ref="searchTagLibray">
+            <el-form-item label="标签名" size="small" prop="searchLibrayTag">
+              <el-input v-model="filterText" placeholder="输入关键字进行过滤" class="dia_f_input"></el-input>
+            </el-form-item>
           </el-form>
           <el-tree
+            class="filter-tree"
             :filter-node-method="filterNode"
             :data="soloTagMangerList" 
             node-key="id" 
             :default-expanded-keys="[1]" 
             @node-click="handleNodeClick"
-            ref="tree"
+            ref="tree2"
             :expand-on-click-node="true">
               <span class="custom-tree-node" slot-scope="{ node, data }">
-                <span class="tree_node_h"><i :class="data.icon"></i>{{ data.label }} {{data.children ? `(${data.children.length})`: ''}}</span>
+                <span class="tree_node_h"><i :class="data.group ? 'tag_files': 'tag_file'"></i>{{ data.tagName }} {{data.children.length ? `(${data.children.length})`: ''}}</span>
               </span>
             </el-tree>
         </div>
@@ -118,13 +120,15 @@
         <div class="custom_tag_show">
           <template v-for="(item, index) in waitingHandleTags">
             <div :key="item.id" class="hand_r_tag">
-              <p class="r_text">{{item.label}}</p>
+              <p class="r_text">{{item.tagName}}</p>
               <div class="r_close" @click="removeCurrentTag(index)"><i class="el-icon-close"></i></div>
             </div>
           </template>
         </div>
       </div>
     </div>
+    <p>batchTagsForm: {{batchTagsForm}}</p>
+    <p>batchUrl: {{batchUrl}}</p>
     <span class="form_footer" slot="footer">
       <el-button @click="sure" type="primary">保存</el-button>
       <el-button @click="tagLibrayManager = false">关闭</el-button>
@@ -138,63 +142,8 @@
 	import { post, get } from "../../store/api"
 	import _ from 'lodash'
 	import { showNotify } from '../../plugin/utils-notify'
-  import { baseUrl } from "../../config/address.js"
   import { formatTime } from '../../plugin/utils-functions'
   import { tags } from "../../api/tags"
-  let id = 1000;
-  const treeData = [{
-  id: 1,
-  label: '一级 1',
-  radio: '1',
-  icon:'tag_files',
-  desc:'你想要的，就是我想给的',
-  children: [{
-    id: 4,
-    label: '二级 1-1',
-    radio: '2',
-    icon:'tag_file',
-    desc:'你想要的，就是我想给的',
-  }]
-  }, {
-    id: 2,
-    label: '一级 2',
-    radio: '1',
-    icon:'tag_files',
-    desc:'你想要的，就是我想给的',
-    children: [{
-      id: 5,
-      label: '二级 2-1',
-      radio: '2',
-      icon:'tag_file',
-      desc:'你想要的，就是我想给的',
-    }, {
-      id: 6,
-      label: '二级 2-2',
-      radio: '2',
-      icon:'tag_file',
-      desc:'你想要的，就是我想给的',
-    }]
-  }, {
-    id: 3,
-    label: '一级 3',
-    radio: '2',
-    icon:'tag_files',
-    desc:'你想要的，就是我想给的',
-    children: [{
-      id: 7,
-      label: '二级 3-1',
-      radio: '1',
-      icon:'tag_file',
-      desc:'你想要的，就是我想给的',
-    }, {
-      id: 8,
-      label: '二级 3-2',
-      radio: '1',
-      icon:'tag_file',
-      desc:'你想要的，就是我想给的',
-    }]
-  }]
-  
 
 	export default {
   data() {
@@ -210,76 +159,102 @@
       },
       total: 0, // 统计数据
       activeTab: 'first',
-      activeTabCell: 'first',
       isReady: true,
       dateValue: '',//,[t, t],
       currentPage: 1,
       pageSize: 10,
       tagGroupsList: [], // 标签组名称
       multipleSelection: [], // 多选数据
-      url: null,
+      url: tags.tagsCustom,
       soloTagMangerList: [],
       tagLibrayManager: false, // 标签管理弹框展示
       dialogTitle: '',
       leftTitle: '',
       rightTitle: '',
+      batchTagsForm: {
+        companyIds: [],
+        companyType: 'client', // client-客户公司，channel-渠道商，service-服务商
+        tagIds: []
+      },
+      batchUrl: '',
+      waitingHandleTags: [], // 等待处理的标签 批量添加，或者删除
+      handleCompanies: [],
+      tableList: [],
+      filterText: '',
       searchTagLibray: {
         searchLibrayTag: ''
       },
-      waitingHandleTags: [], // 等待处理的标签 批量添加，或者删除
-      tableList: [],
-      filterText: '',
       isHandle: false,
 
     }
   },
   watch: {
     filterText(val) {
-      this.$refs.tree.filter(val);
+      this.$refs.tree2.filter(val)
+    },
+    waitingHandleTags(val){
+      this.batchTagsForm.tagIds = this.waitingHandleTags.map(val => val.tagId)
+    },
+    multipleSelection(val){
+      this.batchTagsForm.companyIds = this.multipleSelection.map(val => val.companyId)
     },
   },
   created() {
-    // this.soloTagMangerList.push(...treeData)
-    this.getOrderStateList() // 获取标签组数据
-    this.handleTabClick({'name': 'first'}) // 客户公司
+    this.getTagsNameList() // 获取标签组数据
+    this.search(this.url)
+    this.getTagsTree()
     this.isReady = false
   },
   mounted() {
-    Object.assign(this.formSearch, this.$route.query)
-    this.getTime()
+    // Object.assign(this.formSearch, this.$route.query)
+    // this.getTime()
   },
   methods: {
+    // 获取标签树
+    async getTagsTree(){
+      const result = await get(tags.tagsTree, {})
+      // console.log(`标签树： ${JSON.stringify(result)}`)
+      this.soloTagMangerList = result.children
+
+    },
     removeCurrentTag(index) {
       this.waitingHandleTags.splice(index, 1)
       console.log(`移除等待处理的数组中某个元素，剩下的集合：${JSON.stringify(this.waitingHandleTags)}`)
     },
     filterNode(value, data) {
       if (!value) return true;
-      return data.name && data.name.indexOf(value) !== -1;
+      return data.tagName.indexOf(value) !== -1;
     },
     handleNodeClick(data) {
       console.log(`添加标签点击当前line：${JSON.stringify(data)}`)
-      if (!data.children) {
-        this.waitingHandleTags.push(data) // 需要数组去重
+      if (!data.group) {
+        // 放之前，需要去重(未完成)
+        this.waitingHandleTags.push(data)
+        // if(this.waitingHandleTags.length) {
+        //   for(let i = 0; i < this.waitingHandleTags.length; i++) {
+        //     let _tagId = this.waitingHandleTags[i].tagId;
+        //     if( _tagId === data.tagId){ // 说明遇到重复项
+        //     console.log('confug')
+        //       // this.waitingHandleTags.splice(i, 1)
+        //     } else {
+        //       this.waitingHandleTags.push(data)
+        //     }
+        //   }
+        // } else {
+        //   this.waitingHandleTags.push(data)
+        // }
       }
       console.log(`当前等待处理的数组集合：${JSON.stringify(this.waitingHandleTags)}`)
     },
-    // 数组去重
-    unique(arr) {
-      const ret = []
-      arr.reduce((prev, next) => {
-        const newPrev = prev
-        newPrev[next] = (newPrev[next] + 1) || 1
-        if (newPrev[next] === 1) ret.push(next)
-        return newPrev
-      }, {})
-      return ret
+    async sure() {
+      const result = await post(this.batchUrl, this.batchTagsForm)
+      console.log(`批量处理标签: ${JSON.stringify(result)}`)
+      this.tagLibrayManager = false;
+      this.search(this.url);
+      this.batchTagsForm.companyIds = []
+      this.batchTagsForm.tagIds = []
+      this.filterText = ''
     },
-    searchLibray() {
-      this.filterText = this.searchTagLibray.searchLibrayTag
-    },
-    searchLibray() {},
-    sure() {},
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
@@ -293,41 +268,38 @@
     handleBatchTags(e) {
       this.waitingHandleTags = []
       this.dialogTitle = `批量${e === 'add' ? '添加': '移除'}标签`
-      this.tagLibrayManager = true;
       this.leftTitle = `选择需要批量${e === 'add' ? '添加': '移除'}的标签`
       this.rightTitle = `批量${e === 'add' ? '添加': '移除'}的标签`
+      this.batchUrl = e === 'add' ? tags.tagsCompanyBind: tags.tagsCompanyRemove
+      this.tagLibrayManager = true;
 
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-      console.log(`选择行数：${JSON.stringify(this.multipleSelection)}`)
+      // console.log(`选择行数：${JSON.stringify(this.multipleSelection)}`)
     },
     // 编辑当前行
     editRow(row) {
       this.waitingHandleTags = []
+      this.waitingHandleTags = row.tagList
+      this.batchTagsForm.companyId = row.companyId
+      this.batchUrl = tags.tagsCompanyUpdate
       console.log(`编辑当前行：${JSON.stringify(row)}`)
-      this.tagLibrayManager = true;
       this.dialogTitle = '编辑'
       this.leftTitle = '选择需要添加的标签'
       this.rightTitle = '公司已有标签'
+      this.tagLibrayManager = true;
     },
     // 搜索
     async search(url) {
       this.formSearch.page = this.currentPage
       this.formSearch.pageSize = this.pageSize
       console.log(`输入是的form内容：${JSON.stringify(this.formSearch)}`)
+      console.log(`url${JSON.stringify(url)}`)
       const result = await post(url, this.formSearch)
       console.log(`搜索后的数据：${JSON.stringify(result)}`)
       this.tableList = result.list
       this.total = result.total
-
-
-      // .then(result => {
-      //   // console.log(`${JSON.stringify(result)}`)
-      //   this.tableList = result.data
-      //     this.total = result.total
-      // })
-
     },
     handleSizeChange(value) {
       this.currentPage = 1;
@@ -347,71 +319,17 @@
         this.formSearch.createEndAt = ''
       }
     },
-    download() {
-      this.windowOpener = window.open()
-      let formSearch = JSON.parse(JSON.stringify(this.formSearch))
-      formSearch.manufacturer = 0
-      post(econtract.innerExport, formSearch, true).then(data => {
-        this.processId = data
-        this.showPro = true
-        this.progress()
-      })
+    // 获取标签名称数组
+    async getTagsNameList() {
+      const result = await get(tags.tagsLibOptions, {})
+      // console.log(`标签组的下拉： ${JSON.stringify(result)}`)
+      this.tagGroupsList = result
     },
-    progress() {
-      this.frame = requestAnimationFrame(this.progress)
-      if(this.isEnd && (!this.date || this.date < new Date().getTime() - 1000)) {
-        this.isEnd = false
-        get(file.exportStatus, {
-          processId: this.processId
-        }, true).then(data => {
-          this.isEnd = true
-          this.date = new Date().getTime()
-          this.pro = data.rate
-          if(data.status == 'Complated') {
-            this.$message.success('导出成功!')
-            cancelAnimationFrame(this.frame)
-            this.showPro = false
-            this.windowOpener.location.href = `${file.download}?processId=${this.processId}`
-          }
-          else if(data.status == 'Failed') {
-            this.$message({
-              type: 'error',
-              message: data.msg
-            });
-            cancelAnimationFrame(this.frame)
-            this.showPro = false
-          }
-        })
-      }
-    },
-    getOrderStateList() {
-      get('/api/econtract/order/statelist', {})
-        .then(result => {
-          this.tagGroupsList = result
-          this.total = result.total
-        })
-    },
-    getCustomerClientList() {
-},
-  resetForm(formName) {
-    this.$refs[formName].resetFields()
-    this.dateValue = ''
-    this.getTime()
-    this.formSearch.tagIds = []
-  },
-    handleTabToggle(tab, event) {
-      let _tab = tab.name
-      switch (_tab) {
-        case 'first':
-          this.formSearch.state = '' // 新增的6家公司
-        break
-        case 'second':
-          this.formSearch.state = '6' // 新增的6家公司
-          break
-        default:
-      }
-      this.search()
-
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+      this.dateValue = ''
+      this.getTime()
+      this.formSearch.tagIds = []
     },
     handleTabClick(tab, event) {
       console.log(tab);
@@ -422,9 +340,11 @@
           break
         case 'second':
           this.url = tags.tagsChannel
+          this.batchTagsForm.companyType = 'channel'
           break
         case 'third':
           this.url = tags.tagsServiceuery
+          this.batchTagsForm.companyType = 'service'
           break
         default:
       }
@@ -440,10 +360,14 @@
       padding:40px 30px 15px 30px;
       background-color: #fff;
     }
+    .dia_f_input {
+      width: 260px;
+    } 
     .tag_list_cell {
       display: inline-block;
       vertical-align: middle;
       margin-right: 10px;
+      margin-bottom: 6px;
       padding: 2px 8px;
       border: 1px solid #3F9EFF;
       border-radius: 3px;
