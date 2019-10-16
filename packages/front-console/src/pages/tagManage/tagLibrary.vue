@@ -188,7 +188,7 @@
           // { required: true, validator: validateTagName, trigger: 'blur' }
         ],
         description: [
-          { min: 0, max: 50, message: '建议不要超过50个字', trigger: 'blur' },
+          { min: 1, max: 50, message: '建议不要超过50个字', trigger: 'blur' },
           // { required: true, validator: validateTagName, trigger: 'blur' }
         ],
       },
@@ -344,6 +344,7 @@
     // 标签管理
     async editTagLibrayManager(data){
       this.displayTag.displayList = []
+      this.filterText = ''
       // console.log(`当前点击的tree数据data ${JSON.stringify(data)}`)
       const result = await get(tags.tagsTree, {tagId: data.tagId})
       // console.log(`拿到特定id标签树 ${JSON.stringify(result)}`)
@@ -366,13 +367,13 @@
       if(valid) {
         try {
           const result = await post(url, this.editForm)
-          console.log(`返回结果${JSON.stringify(result)}`)
+          // console.log(`返回结果${JSON.stringify(result)}`)
           this.editFormShow = false;
           this.search()
           this.editForm.tagName = ''
           this.editForm.description = ''
         } catch (error) {
-          console.log(`返回结果${JSON.stringify(error)}`)
+          console.log(`返回error结果${JSON.stringify(error)}`)
         }
       }
       })
@@ -380,6 +381,7 @@
     fun(arr) {
       for(let i = 0; i< arr.length; i++) {
         if(arr[i].children.length > 1) {
+          this.displayTag.displayList.push(arr[i])
           this.fun(arr[i].children)
         } else {
           this.displayTag.displayList.push(arr[i])
@@ -388,9 +390,9 @@
     },
     async isShowTags(){
       this.fun(this.tagDisplayList)
-      console.log(`修改：${JSON.stringify(this.displayTag)}`)
+      // console.log(`修改：${JSON.stringify(this.displayTag)}`)
       const result = await post(tags.tagsDisplay, this.displayTag)
-      console.log(`显示隐藏标签成功：${JSON.stringify(result)}`)
+      // console.log(`显示隐藏标签成功：${JSON.stringify(result)}`)
       this.search()
       this.tagLibrayManager = false
     },
