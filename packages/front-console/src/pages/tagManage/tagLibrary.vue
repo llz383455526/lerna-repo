@@ -112,7 +112,7 @@
           </span>
         </el-tree>
     </div>
-    修理后的标签tagDisplayList:<p>{{tagDisplayList}}</p>
+    修理后的标签displayTag:<p>{{displayTag}}</p>
     <span class="form_footer" slot="footer">
       <el-button @click="isShowTags" type="primary">保存</el-button>
       <el-button @click="tagLibrayManager = false">关闭</el-button>
@@ -377,8 +377,10 @@
       })
     },
     async isShowTags(){
-      console.log(`修改：${JSON.stringify(this.displayTag.displayList)}`)
-      const result = await post(tags.tagsDisplay, this.displayTag.displayList)
+      console.log(`修改：${JSON.stringify(this.displayTag)}`)
+      const result = await post(tags.tagsDisplay, this.displayTag)
+      this.search()
+      this.tagLibrayManager = false
       console.log(`是否显示隐藏：${JSON.stringify(result)}`)
     },
     clear() {
