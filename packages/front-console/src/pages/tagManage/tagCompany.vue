@@ -77,7 +77,7 @@
         @handleSizeChange="handleSizeChange"
         :currentSize="pageSize"
         @handleCurrentChange="handleCurrentChange"
-        :currentPage="currentPage" />
+        :currentPage="formSearch.page" />
     </div>
     
   <!-- 标签管理 -->
@@ -291,8 +291,8 @@
       this.tagLibrayManager = true;
     },
     // 搜索
-    async search(url) {
-      this.formSearch.page = this.currentPage
+    async search(url,page) {
+      this.formSearch.page = page || 1
       this.formSearch.pageSize = this.pageSize
       console.log(`输入是的form内容：${JSON.stringify(this.formSearch)}`)
       console.log(`url${JSON.stringify(url)}`)
@@ -302,13 +302,14 @@
       this.total = result.total
     },
     handleSizeChange(value) {
-      this.currentPage = 1;
+      this.formSearch.page = 1;
       this.pageSize = value;
       this.search(this.url);
     },
     handleCurrentChange(value) {
+      this.formSearch.page = value
       this.currentPage = value;
-      this.search(this.url)
+      this.search(this.url, value)
     },
     getTime() {
       if(this.dateValue && this.dateValue.length) {
