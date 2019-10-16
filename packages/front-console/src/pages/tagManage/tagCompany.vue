@@ -345,6 +345,7 @@
           break
         default:
       }
+      this.resetForm('formSearch')
       this.search(this.url)
     },
 	}
