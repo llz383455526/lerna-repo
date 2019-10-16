@@ -29,6 +29,7 @@
     <div class="tree_tab_hd">
       <div class="tab_tt_txt">标签名称</div>
       <div class="tab_tt_middle">标签描述</div>
+      <div class="tab_tt_status">状态</div>
       <div class="tab_tt_opea ">操作</div>
     </div>
     <el-tree
@@ -39,6 +40,7 @@
         <span class="custom-tree-node" slot-scope="{ node, data }">
           <span class="tree_node_h"><i :class="data.group ? 'tag_files': 'tag_file'" ></i>{{ data.tagName }} {{data.children.length ? `(${data.children.length})`: ''}}</span>
           <span class="tree_node_middle">{{data.description}}</span>
+          <span class="tree_node_status">{{data.display ? '显示': '隐藏'}}</span>
           <span class="tree_node_opea">
             <el-button v-show="data.group" @click="addChildTag(data)" type="text" size="medium" style="padding:0;">添加子标签<i class="opera_gap"></i></el-button>
             <el-button v-show="data.group" @click="editTagLibrayManager(data)" type="text" size="medium" style="padding:0;">标签管理<i class="opera_gap"></i></el-button>
@@ -267,10 +269,6 @@
         } catch (error) {
           console.log(`返回结果${JSON.stringify(error)}`)
         }
-      // .then(data => {
-      //   this.page = data
-      //   // this.tagMangerList.push(...treeData)
-      // })
     },
     // 清空表单
     resetForm(formName) {
@@ -448,6 +446,11 @@
     width: 500px;
     white-space: normal;
   }
+  .tree_node_status {
+    cursor: default;
+    color: #0283FB;
+    width: 50px;
+  }
   .tree_node_opea {
     width: 220px;
     text-align: right;
@@ -497,6 +500,9 @@
   }
   .tab_tt_middle {
     width: 500px;
+  }
+  .tab_tt_status {
+    width: 50px;
   }
   .tab_tt_opea {
     width: 220px;

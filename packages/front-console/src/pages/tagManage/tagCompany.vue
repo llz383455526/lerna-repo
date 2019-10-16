@@ -212,43 +212,39 @@
   methods: {
     // 获取标签树
     async getTagsTree(){
-      const result = await get(tags.tagsTree, {})
+      const result = await get(tags.tagsTree, {hide: true}) // true 不展示标签库中，隐藏的数据 false 展示所有数据
       // console.log(`标签树： ${JSON.stringify(result)}`)
       this.soloTagMangerList = result.children
 
     },
     removeCurrentTag(index) {
       this.waitingHandleTags.splice(index, 1)
-      console.log(`移除等待处理的数组中某个元素，剩下的集合：${JSON.stringify(this.waitingHandleTags)}`)
+      // console.log(`移除等待处理的数组中某个元素，剩下的集合：${JSON.stringify(this.waitingHandleTags)}`)
     },
     filterNode(value, data) {
       if (!value) return true;
       return data.tagName.indexOf(value) !== -1;
     },
     handleNodeClick(data) {
-      console.log(`添加标签点击当前line：${JSON.stringify(data)}`)
+      // console.log(`添加标签点击当前line：${JSON.stringify(data)}`)
       if (!data.group) {
-        // 放之前，需要去重(未完成)
-        this.waitingHandleTags.push(data)
-        // if(this.waitingHandleTags.length) {
-        //   for(let i = 0; i < this.waitingHandleTags.length; i++) {
-        //     let _tagId = this.waitingHandleTags[i].tagId;
-        //     if( _tagId === data.tagId){ // 说明遇到重复项
-        //     console.log('confug')
-        //       // this.waitingHandleTags.splice(i, 1)
-        //     } else {
-        //       this.waitingHandleTags.push(data)
-        //     }
-        //   }
-        // } else {
-        //   this.waitingHandleTags.push(data)
-        // }
+        // 放之前，需要去重
+        let isInArray = this.waitingHandleTags.some(item=>{
+        if(item.tagId === data.tagId){
+          return true 
+        } 
+        })
+        if(isInArray){ // 如果存在
+          showNotify('warning', '标签已存在，请勿重复添加');
+        } else {
+          this.waitingHandleTags.push(data)
+        }
       }
-      console.log(`当前等待处理的数组集合：${JSON.stringify(this.waitingHandleTags)}`)
+      // console.log(`当前等待处理的数组集合：${JSON.stringify(this.waitingHandleTags)}`)
     },
     async sure() {
       const result = await post(this.batchUrl, this.batchTagsForm)
-      console.log(`批量处理标签: ${JSON.stringify(result)}`)
+      // console.log(`批量处理标签: ${JSON.stringify(result)}`)
       this.tagLibrayManager = false;
       this.search(this.url);
       this.batchTagsForm.companyIds = []
