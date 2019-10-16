@@ -1,7 +1,7 @@
 <template>
 <div class="tag_container">
   <div style="margin-bottom:30px;" class="tag_tt">标签库管理</div>
-  <el-form :inline="true" :model="searchForm" ref="searchForm">
+  <el-form :inline="true" :model="searchForm" ref="searchForm" v-if="!showNoData">
       <el-form-item label="标签组" size="small" prop="searchTagGroup">
         <el-input v-model="searchForm.tagName" placeholder="请输入关键词"></el-input>
       </el-form-item>
@@ -25,7 +25,7 @@
 
   <el-button type="primary" size="medium" @click="addGroup">添加标签组</el-button>
 
-  <div class="tab_container custom-tree-container">
+  <div class="tab_container custom-tree-container" v-if="tagMangerList.length">
     <div class="tree_tab_hd">
       <div class="tab_tt_txt">标签名称</div>
       <div class="tab_tt_middle">标签描述</div>
@@ -56,7 +56,7 @@
       :currentPage="currentPage" />
   </div>
   <!-- 无数据状态 -->
-  <div class="tag_no_data" v-if="false">
+  <div class="tag_no_data" v-if="!tagMangerList.length">
     <p>暂无标签</p>
   </div>
   <!-- 编辑，标签添加 添加子标签 -->
@@ -154,7 +154,8 @@
         page: 1,
         pageSize: 10
       },
-      showTab:true,
+      firstLoad:false,
+      showNoData: false,
       tagsLibrarys: '',
       restaurants: [], // 获取到的标签名称数组
       serviceCompaniesList: [],
@@ -197,6 +198,7 @@
     }
   },
   created() {
+    this.firstLoad = true
     this.search()
   },
   watch: {
@@ -265,8 +267,15 @@
       try {
         const result = await post(tags.tagsQuery, this.searchForm)
         // console.log(`返回结果${JSON.stringify(result)}`)
-        this.tagMangerList = result.list
+        this.tagMangerList = result.list //result.list
         this.tagsLibrarys = result
+        if(!this.tagMangerList.length && this.firstLoad) {
+          this.showNoData = true
+          this.firstLoad = false
+          return
+        }
+        this.showNoData = false
+        this.firstLoad = false
         } catch (error) {
           console.log(`返回结果${JSON.stringify(error)}`)
         }
