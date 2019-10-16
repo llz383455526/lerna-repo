@@ -380,7 +380,7 @@
     },
     fun(arr) {
       for(let i = 0; i< arr.length; i++) {
-        if(arr[i].children.length > 1) {
+        if(arr[i].children.length > 0) {
           this.displayTag.displayList.push(arr[i])
           this.fun(arr[i].children)
         } else {
