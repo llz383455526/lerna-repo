@@ -1,7 +1,7 @@
 <template>
 <div class="tag_container">
   <div style="margin-bottom:30px;" class="tag_tt">标签库管理</div>
-  <el-form :inline="true" :model="searchForm" ref="searchForm" v-if="tagMangerList.length">
+  <el-form :inline="true" :model="searchForm" ref="searchForm" v-if="tagMangerList.length && showTab">
       <el-form-item label="标签组" size="small" prop="searchTagGroup">
         <el-input v-model="searchForm.tagName" placeholder="请输入关键词"></el-input>
       </el-form-item>
@@ -17,7 +17,7 @@
         />
       </el-form-item> -->
       <el-form-item style="margin-top: -4px">
-        <el-button type="primary" @click="search" size="small">查询</el-button>
+        <el-button type="primary" @click="search()" size="small">查询</el-button>
         <el-button size="small" @click="resetForm('searchForm')">清空</el-button>
       </el-form-item>
     </el-form>
@@ -25,7 +25,7 @@
 
   <el-button type="primary" size="medium" @click="addGroup">添加标签组</el-button>
 
-  <div class="tab_container custom-tree-container" v-if="tagMangerList.length">
+  <div class="tab_container custom-tree-container" v-if="tagMangerList.length && showTab">
     <div class="tree_tab_hd">
       <div class="tab_tt_txt">标签名称</div>
       <div class="tab_tt_middle">标签描述</div>
@@ -114,7 +114,7 @@
           </span>
         </el-tree>
     </div>
-    修理后的标签displayTag:<p>{{displayTag}}</p>
+    <!-- 修理后的标签displayTag:<p>{{displayTag}}</p> -->
     <span class="form_footer" slot="footer">
       <el-button @click="isShowTags" type="primary">保存</el-button>
       <el-button @click="tagLibrayManager = false">关闭</el-button>
@@ -154,6 +154,7 @@
         page: 1,
         pageSize: 10
       },
+      showTab:true,
       tagsLibrarys: '',
       restaurants: [], // 获取到的标签名称数组
       serviceCompaniesList: [],
@@ -203,7 +204,7 @@
       this.$refs.tree2.filter(val);
     },
     soloTagMangerList(val){
-      this.displayTag.displayList = this.soloTagMangerList
+      this.tagDisplayList = this.soloTagMangerList
     },
   },
   mounted() {
@@ -257,14 +258,15 @@
     showNode(node) {
       console.log(`点击的显示隐藏： ${JSON.stringify(node)}`)
     },
-    async search() {
-      this.searchForm.page = this.currentPage
+    async search(page) {
+      this.searchForm.page = page || 1
       this.searchForm.pageSize = this.pageSize
-      console.log(`搜索前，表单输入的数据： ${JSON.stringify(this.searchForm)}`)
+      // console.log(`搜索前，表单输入的数据： ${JSON.stringify(this.searchForm)}`)
       try {
         const result = await post(tags.tagsQuery, this.searchForm)
         // console.log(`返回结果${JSON.stringify(result)}`)
         this.tagMangerList = result.list
+        this.showTab = true
         this.tagsLibrarys = result
         } catch (error) {
           console.log(`返回结果${JSON.stringify(error)}`)
@@ -285,7 +287,7 @@
     },
     handleCurrentChange(value) {
       this.currentPage = value
-      this.search()
+      this.search(value)
     },
     // 添加标签组
     addGroup() {
@@ -296,7 +298,7 @@
     },
     // 添加子标签
     addChildTag(data) {
-      console.log(`当前点击的tree数据data ${JSON.stringify(data)}`)
+      // console.log(`当前点击的tree数据data ${JSON.stringify(data)}`)
       this.editFormShow = true;
       this.editFormTitle = '添加子标签';
       this.showTagName = true
@@ -336,21 +338,22 @@
     // 获取标签的详情
     async getTagDetail(id){
       const result = await get(tags.tagDetail, {tagId: id})
-      console.log(`拿到特定id标签的详情： ${JSON.stringify(result)}`)
+      // console.log(`拿到特定id标签的详情： ${JSON.stringify(result)}`)
       this.tagDetail = result
     },
     // 标签管理
     async editTagLibrayManager(data){
-      console.log(`当前点击的tree数据data ${JSON.stringify(data)}`)
+      this.displayTag.displayList = []
+      // console.log(`当前点击的tree数据data ${JSON.stringify(data)}`)
       const result = await get(tags.tagsTree, {tagId: data.tagId})
-      console.log(`拿到特定id标签树 ${JSON.stringify(result)}`)
+      // console.log(`拿到特定id标签树 ${JSON.stringify(result)}`)
       this.soloTagMangerList = [result]
       this.tagLibrayManager = true
     },
     // 获取标签树
     async getTagsTree(tagId){
       const result = await get(tags.tagsTree, {tagId})
-      console.log(`拿到特定id标签树 ${JSON.stringify(result)}`)
+      // console.log(`拿到特定id标签树 ${JSON.stringify(result)}`)
       this.soloTagMangerList = result.children
     },
     clearForm(next) {
@@ -374,12 +377,22 @@
       }
       })
     },
+    fun(arr) {
+      for(let i = 0; i< arr.length; i++) {
+        if(arr[i].children.length > 1) {
+          this.fun(arr[i].children)
+        } else {
+          this.displayTag.displayList.push(arr[i])
+        }
+      }
+    },
     async isShowTags(){
+      this.fun(this.tagDisplayList)
       console.log(`修改：${JSON.stringify(this.displayTag)}`)
       const result = await post(tags.tagsDisplay, this.displayTag)
+      console.log(`显示隐藏标签成功：${JSON.stringify(result)}`)
       this.search()
       this.tagLibrayManager = false
-      console.log(`是否显示隐藏：${JSON.stringify(result)}`)
     },
     clear() {
       this.searchForm.searchTagGroup = ''
