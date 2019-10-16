@@ -280,7 +280,7 @@
       this.waitingHandleTags = row.tagList
       this.batchTagsForm.companyId = row.companyId
       this.batchUrl = tags.tagsCompanyUpdate
-      console.log(`编辑当前行：${JSON.stringify(row)}`)
+      // console.log(`编辑当前行：${JSON.stringify(row)}`)
       this.dialogTitle = '编辑'
       this.leftTitle = '选择需要添加的标签'
       this.rightTitle = '公司已有标签'
@@ -290,10 +290,10 @@
     async search(url,page) {
       this.formSearch.page = page || 1
       this.formSearch.pageSize = this.pageSize
-      console.log(`输入是的form内容：${JSON.stringify(this.formSearch)}`)
+      // console.log(`输入是的form内容：${JSON.stringify(this.formSearch)}`)
       console.log(`url${JSON.stringify(url)}`)
       const result = await post(url, this.formSearch)
-      console.log(`搜索后的数据：${JSON.stringify(result)}`)
+      // console.log(`搜索后的数据：${JSON.stringify(result)}`)
       this.tableList = result.list
       this.total = result.total
     },
