@@ -68,9 +68,9 @@
 							</tr>
 							<tr>
 								<td>5</td>
-								<td>本月实际收到绩效费金额</td>
+								<td>已收到本月绩效费</td>
 								<td>实发</td>
-								<td>{{detail.rechargedAmount}}</td>
+								<td>{{detail.amount}}</td>
 								<td></td>
 							</tr>
 							<tr>
@@ -98,6 +98,7 @@
 
 <script>
 import aygPrint from '../../../component/aygPrint.vue'
+import { isNumber } from '../../../utils/reg'
 
 export default {
 	components: {
@@ -105,25 +106,24 @@ export default {
 	},
 	props: ['detail'],
 	computed: {
+		// null 当 0 处理
 		currentReceiveServiceFeeAmount() {
 			if (!this.detail) {
-				return null
+				return 0
 			}
-			const { serviceFeeAmount, notSettledServiceFeeAmount } = this.detail
-			if (!serviceFeeAmount || !notSettledServiceFeeAmount) {
-				return null
-			}
+			let { serviceFeeAmount, notSettledServiceFeeAmount } = this.detail
+			serviceFeeAmount = isNumber(serviceFeeAmount) ? serviceFeeAmount : 0
+			notSettledServiceFeeAmount = isNumber(notSettledServiceFeeAmount) ? notSettledServiceFeeAmount : 0
 			return (serviceFeeAmount - notSettledServiceFeeAmount).toFixed(2)
 		},
 		preServiceFeeAmount() {
 			if (!this.detail) {
-				return null
+				return 0
 			}
-			const {kpAmount, rechargedAmount} = this.detail
-			if (!kpAmount || !rechargedAmount || !this.currentReceiveServiceFeeAmount) {
-				return null
-			}
-			return (kpAmount - rechargedAmount - this.currentReceiveServiceFeeAmount).toFixed(2)
+			let {kpAmount, amount} = this.detail
+			kpAmount = isNumber(kpAmount) ? kpAmount : 0
+			amount = isNumber(amount) ? amount : 0
+			return (kpAmount - amount - this.currentReceiveServiceFeeAmount).toFixed(2)
 		}
 	},
 	methods: {

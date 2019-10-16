@@ -288,7 +288,8 @@ export default {
     data () {
         return {
             contractModel: new ContractModel(),
-            contractForm: ''
+						contractForm: '',
+						editType: ''
         }
     },
     mounted () {

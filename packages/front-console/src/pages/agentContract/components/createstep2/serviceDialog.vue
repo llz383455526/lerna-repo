@@ -12,8 +12,7 @@
                    placeholder="请选择"
                    style="width: 450px;">
           <template v-for="(item,key) in operateEnum == '3' ? agentServiceCompanyList : filterList">
-            <el-option v-if="item.name !== '睢县恒迅计算机科技有限公司'"
-                       :key="key"
+            <el-option :key="key"
                        :label="item.name"
                        :value="item.companyId"></el-option>
           </template>

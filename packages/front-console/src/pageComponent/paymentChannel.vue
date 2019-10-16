@@ -16,6 +16,7 @@
                 </template>
             </el-table-column>
             <el-table-column prop="payUserName" label="支付账号"></el-table-column>
+            <el-table-column prop="accountBalance" label="账号余额(元)"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button type="text" @click="deleteRow(scope.row)">删除</el-button>

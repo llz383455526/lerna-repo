@@ -89,7 +89,7 @@
         <el-form-item label="是否启用公钥证书签名方式" size="small" prop="alipay$cert$enable">
           <el-checkbox class="form_input" v-model="form.alipay$cert$enable" true-label="true" false-label="false"></el-checkbox>
         </el-form-item>
-        <div v-if="form.alipay$cert$enable">
+        <div v-if="form.alipay$cert$enable=='true'">
           <el-form-item label="应用公钥证书路径"  size="small" prop="alipay$app_cert_path">
             <el-input class="form_input" v-model="form.alipay$app_cert_path"></el-input>
           </el-form-item>
@@ -362,6 +362,36 @@
 						<el-input class="form_input" v-model="form.aliMYbank$deposit$accountName"></el-input>
 				</el-form-item>
 			</template>
+      <template v-if="form.thirdpaySystemId == 'spdb'">
+				<el-form-item label="主账号" size="small" prop="spdb$mainAcc$merchId">
+						<el-input class="form_input" v-model="form.spdb$mainAcc$merchId"></el-input>
+				</el-form-item>
+        <el-form-item label="主账号名称" size="small" prop="spdb$mainAcc$merchName">
+						<el-input class="form_input" v-model="form.spdb$mainAcc$merchName"></el-input>
+				</el-form-item>
+        <el-form-item label="主账号开户行名称" size="small" prop="spdb$mainAcc$bankName">
+						<el-input class="form_input" v-model="form.spdb$mainAcc$bankName"></el-input>
+				</el-form-item>
+				<el-form-item label="企业客户号" size="small" prop="spdb$mainAcc$merchCustCode">
+						<el-input class="form_input" v-model="form.spdb$mainAcc$merchCustCode"></el-input>
+				</el-form-item>
+				<el-form-item label="交易客户号" size="small" prop="spdb$transMasterID">
+						<el-input class="form_input" v-model="form.spdb$transMasterID"></el-input>
+				</el-form-item>
+				<el-form-item label="项目编号" size="small" prop="spdb$projectNumber">
+						<el-input class="form_input" v-model="form.spdb$projectNumber"></el-input>
+				</el-form-item>
+				<el-form-item label="费项编码" size="small" prop="spdb$costItemCode">
+						<el-input class="form_input" v-model="form.spdb$costItemCode"></el-input>
+				</el-form-item>
+				<el-form-item label="交易服务器地址" size="small" prop="spdb$server">
+						<el-input class="form_input" v-model="form.spdb$server"></el-input>
+				</el-form-item>
+				<el-form-item label="签名服务器地址" size="small" prop="spdb$sign$server">
+						<el-input class="form_input" v-model="form.spdb$sign$server"></el-input>
+				</el-form-item>
+			</template>
+			
       <el-form-item label="备注" prop="memo" size="small">
         <el-input class="form_input" v-model="form.memo"></el-input>
       </el-form-item>
@@ -388,9 +418,10 @@ export default {
         orderLimit: '',
         dailyLimit: '',
         memo: '',
-        loginAcctno: '',
+				loginAcctno: '',
       },
-      rule: '',
+			rule: '',
+			systemProp: ''
     }
   },
   created() {
@@ -399,57 +430,28 @@ export default {
   },
   methods: {
     init() {
-      this.rule = { ...commonRule, ...channel[`${this.form.thirdpaySystemId}Rule`] }
-      if (this.form.thirdpaySystemId === 'changjie') {
-        this.form = {
+			this.rule = { ...commonRule, ...channel[`${this.form.thirdpaySystemId}Rule`] }
+			this.systemProp = channel[`${this.form.thirdpaySystemId}Prop`]
+			let prop = {}
+			this.systemProp.forEach(item => {
+				prop[item.prop] = ''
+			})
+			this.form = {
           ...this.form,
-          cj$merchant_id: '',
-          cj$merchant_public_key: '',
-          cj$merchant_private_key: '',
-        }
-      }
-      if (this.form.thirdpaySystemId === 'wx') {
-        this.form = {
-          ...this.form,
-          wx$mchid: '',
-          wx$submchid: '',
-          wx$appid: '',
-          wx$key: '',
-          wx$apikey: '',
-          wx$certlocalpath: '',
-          wx$certpassword: '',
-          wx$notify_url: '',
-        }
-      }
+          ...prop
+        }	
       if (this.form.thirdpaySystemId === 'alipay') {
         this.form = {
           ...this.form,
-          alipay$appid: '',
-          alipay$userid: '',
-          alipay$rsatype: '',
-          alipay$app_private_key: '',
-          alipay$alipay_public_key: '',
-          alipay$mapi_md5_key: '',
           alipay$gateway: 'https://openapi.alipay.com/gateway.do',
           alipay$hb$notify_url:
             'https://hmjsjopenapi.aiyuangong.net/payment/api/alipay/async/hb',
           alipay$deposit$notify_url:
             'https://hmjsjopenapi.aiyuangong.net/payment/api/alipay/async/deposit',
           alipay$cert$enable: false, // 是否启用公钥证书签名方式
-          alipay$app_cert_path: '', //  证书存放在服务器上的绝对路径
-          alipay$alipay_cert_path: '', // 支付宝公钥证书路径
-          alipay$alipay_root_cert_path: '', // 支付宝根证书路径
         }
       }
-      if (this.form.thirdpaySystemId === 'yjf') {
-        this.form = {
-          ...this.form,
-          partner_id: '',
-          signtype: '',
-          sercurity_key: '',
-          pfx_file_pwd: '',
-          pfx_file_fullname: '',
-        }
+      if (this.form.thirdpaySystemId === 'yjf') { // 不知道要为什么这么处理，保留原有逻辑
         if (this.rule.signtype[0].required) {
           this.rule.signtype.shift()
         }
@@ -466,144 +468,17 @@ export default {
       if (this.form.thirdpaySystemId === 'pingan') {
         this.form = {
           ...this.form,
-          pingan$outercustcode: '',
-          pingan$mainacct$no: '',
-          pingan$mainacct$name: '',
-          pingan$yingziacct$no: '',
-          pingan$yingziacct$name: '',
-          pingan$khkf03$limitamount: '',
-          pingan$bank$name: '',
-          pingan$depositbank$name: '',
           pingan$b2bic$url: 'http://10.29.209.231:7072',
           pingan$upload$path: '/mnt/nfs',
           pingan$download$path: '/mnt/nfs',
         }
       }
-      if (this.form.thirdpaySystemId === 'cmb') {
-        this.form = {
-          ...this.form,
-          cmb$server: '',
-          cmb$nteckopr$loginName: '',
-          cmb$nteckopr$cmbBkNbr: '',
-          cmb$nteckopr$eacNbr: '',
-          cmb$nteckopr$cmbBusMod: '',
-          cmb$nteckopr$autUSR: '',
-          cmb$dcpaymnt$cmbBusMod: '',
-        }
-      }
       if (this.form.thirdpaySystemId === 'hf') {
         const hfFormData = {
-          mer_id: '',
-          mer_cust_id: '',
-          pfx_file_fullname: '',
-          pfx_file_pwd: '',
-          rec$hf$sftp$host: '',
-          rec$hf$sftp$port: '',
-          rec$hf$sftp$dir: '',
-          rec$hf$sftp$username: '',
-          rec$hf$sftp$password: '',
           hf$rec$api$use$http: 'false',
           hf$msg$sign$base64$disable: 'false',
         }
         this.form = { ...this.form, ...hfFormData }
-      }
-      if (this.form.thirdpaySystemId === 'hxb') {
-        this.form = {
-          ...this.form,
-          hxb$merchId: '',
-          hxb$server: '',
-        }
-      }
-      if (this.form.thirdpaySystemId === 'yeepay') {
-        this.form = {
-          ...this.form,
-          yeepay$merchId: '',
-          yeepay$privatekey: '',
-          yeepay$thirdPublickey: '',
-        }
-      }
-      if (this.form.thirdpaySystemId === 'lianlianpay') {
-        this.form = {
-          ...this.form,
-          lianlianpay$merchId: '',
-          lianlianpay$privatekey: '',
-          lianlianpay$thirdPublickey: '',
-          lianlianpay$vou$sftp$host: '',
-          lianlianpay$vou$sftp$port: '',
-          lianlianpay$vou$sftp$username: '',
-          lianlianpay$vou$sftp$password: '',
-          lianlianpay$rec$sftp$host: '',
-          lianlianpay$rec$sftp$port: '',
-          lianlianpay$rec$sftp$username: '',
-          lianlianpay$rec$sftp$password: '',
-          lianlianpay$rec$sftp$dir: '',
-        }
-      }
-      if (this.form.thirdpaySystemId === 'alibank') {
-        this.form = {
-          ...this.form,
-          alibank$merchId: '',
-          alibank$privatekey: '',
-          alibank$thirdPublickey: '',
-          alibank$deposit$depositBankName: '',
-          alibank$deposit$accountName: '',
-          alibank$deposit$account: '',
-        }
-      }
-      if (this.form.thirdpaySystemId === 'xtr') {
-        this.form = {
-          ...this.form,
-          xtr$merchId: '', // 商户号
-          xtr$companyId: '', // 发薪单位编号
-          xtr$companyName: '', // 发薪单位名称
-          xtr$channelType: '', // 渠道类型
-          xtr$accountNumber: '', // 付款账号
-          xtr$acctName: '', // 付款账户名称
-          xtr$depositBankName: '', // 开户支行名称
-          xtr$payPassword: '', // 支付密码
-          xtr$privatekey: '', // 我方私钥
-          xtr$thirdPublickey: '', // 薪太软公钥
-        }
-      }
-      if (this.form.thirdpaySystemId === 'alibank') {
-        this.form = {
-          ...this.form,
-          alibank$merchId: '',
-          alibank$privatekey: '',
-          alibank$thirdPublickey: '',
-          alibank$deposit$depositBankName: '',
-          alibank$deposit$accountName: '',
-          alibank$deposit$account: '',
-        }
-      }
-      if (this.form.thirdpaySystemId === 'aliMYbank') { // 阿里网商直连aliMYbank
-        this.form = {
-          ...this.form,
-          aliMYbank$merchId: '',
-          aliMYbank$thirdPublickey: '',
-          aliMYbank$merchCustCode: '', // 网商结算户
-          aliMYbank$privatekeyFilepath: '', // 证书文件路径
-          aliMYbank$privatekeyFilepwd: '', // 证书文件密码
-          aliMYbank$whiteChannelCode: '', // 平台专属出款渠道编码
-          aliMYbank$deposit$depositBankName: '', // 开户行
-          aliMYbank$deposit$accountName: '', // 开户名称
-        }
-      }
-      if (this.form.thirdpaySystemId === 'xtr') {
-        this.form.xtr$provider$companyName = this.form.companyName
-        this.form = {
-          ...this.form,
-          xtr$merchId: '', // 商户号
-          xtr$companyId: '', // 发薪单位编号
-          xtr$companyName: '', // 发薪单位名称
-          xtr$channelType: '', // 渠道类型
-          xtr$accountNumber: '', // 付款账号
-          xtr$acctName: '', // 付款账户名称
-          xtr$depositBankName: '', // 开户支行名称
-          xtr$payPassword: '', // 支付密码
-          xtr$privatekey: '', // 我方私钥
-          xtr$thirdPublickey: '', // 薪太软公钥
-        }
       }
     },
     back() {

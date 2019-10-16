@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-dialog title="渠道余额不足" :visible.sync="show" width="800px">
-            <el-form :model="form" :rules="rules" label-width="80px" size="small" ref="form">
+            <el-form :model="form" label-width="80px" size="small" ref="form">
                 <el-form-item label="挂起原因">
                     <span class="red">渠道余额不足</span>
                 </el-form-item>

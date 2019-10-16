@@ -60,6 +60,7 @@
         <el-table-column label="转入账户名" prop="toPaymentUserName"></el-table-column>
         <el-table-column label="金额" prop="tradeAmount"></el-table-column>
         <el-table-column label="调整备注" prop="remarks"></el-table-column>
+        <el-table-column label="渠道反馈" prop="errMsg" width="180"></el-table-column>
         <el-table-column label="操作人" prop="createByName"></el-table-column>
         <el-table-column label="处理时间" prop="updateTime"></el-table-column>
         <el-table-column label="状态" prop="stateName"></el-table-column>

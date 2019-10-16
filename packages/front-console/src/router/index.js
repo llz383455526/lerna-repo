@@ -8,6 +8,7 @@ const releaseRecord = r => require.ensure([], () => r(require('../pages/accountM
 let accountIndex = r => require.ensure([], () => r(require('../pages/account/index.vue')), 'accountIndex');
 let payOrderReject = r => require.ensure([], () => r(require('../pages/accountManager/payOrderReject.vue')), 'payOrderReject');
 let fundDetail = r => require.ensure([], () => r(require('../pages/account/fundDetail.vue')), 'fundDetail');
+let fundChildChannelDetail = r => require.ensure([], () => r(require('../pages/account/fundChildChannelDetail.vue')), 'fundChildChannelDetail');
 let payManager = r => require.ensure([], () => r(require('../pages/account/payManager.vue')), 'payManager');
 let regulation = r => require.ensure([], () => r(require('../pages/account/regulation.vue')), 'regulation');
 let clientDetail = r => require.ensure([], () => r(require('../pages/account/clientDetail.vue')), 'clientDetail');
@@ -123,6 +124,7 @@ let advertisingList = r => require.ensure([], () => r(require('../pages/manageme
 let advertisingCreate = r => require.ensure([], () => r(require('../pages/management/advertisingCreate')), 'advertisingCreate')
 let messageList = r => require.ensure([], () => r(require('../pages/management/messageList')), 'messageList')
 let messageCreate = r => require.ensure([], () => r(require('../pages/management/messageCreate')), 'messageCreate')
+let payOrderErrCodeList = r => require.ensure([], () => r(require('../pages/management/payOrderErrCodeList')), 'payOrderErrCodeList')
 
 let invoiceListNew = r => require.ensure([], () => r(require('../pages/reconciliationCenter/invoiceList')), 'invoiceList')
 let invoiceDetail = r => require.ensure([], () => r(require('../pages/reconciliationCenter/invoiceDetail')), 'invoiceDetail')
@@ -286,6 +288,13 @@ export default [{
             {
                 path: 'fundDetail',
                 component: fundDetail,
+                meta: {
+                    keepAlive: false
+                }
+            },
+            {
+                path: 'fundChildChannelDetail',
+                component: fundChildChannelDetail,
                 meta: {
                     keepAlive: false
                 }
@@ -663,6 +672,13 @@ export default [{
             {
                 path: 'messageList',
                 component: messageList,
+                meta: {
+                    keepAlive: false
+                }
+            },
+            {
+                path: 'payOrderErrCodeList',
+                component: payOrderErrCodeList,
                 meta: {
                     keepAlive: false
                 }

@@ -51,6 +51,7 @@
                                 </div>
                             </div>
                         </div>
+												<heguitong :contractModel='contractModel'></heguitong>
                         <div class="col-xs-12">
                             <h4 class="block green">合同备注</h4>
                         </div>
@@ -64,9 +65,11 @@
 
 <script>
 import { baseUrl } from '../../../../config/address.js'
+import heguitong from './heguitong.vue'
 
 export default {
-    props: ['contractModel'],
+		props: ['contractModel'],
+		components: { heguitong },
     data() {
         return {
             addr: '',

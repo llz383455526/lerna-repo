@@ -24,6 +24,16 @@ const workflow = {
     queryInstanceId: '/api/taxplan-workflow/flowable/operate/query-instance-id',
     getBizExtendData: '/api/taxplan-workflow/bizProcess/get-biz-extend-data',
     getTaskId: '/api/taxplan-workflow/bizProcess/instanceDetail', // 获取工单的taskId
+    addRiskWorkflow: '/api/risk-mgt-service/compliance-risk/add-compliance-risk-report', // 添加合规通工单
+    getRiskWorkflow: '/api/risk-mgt-service/compliance-risk/get-compliance-risk-report-by-id', // 获取工单详情
+    delRiskReport: '/api/risk-mgt-service/compliance-risk/delete-compliance-risk-report-attachment', // 删除报告
+    delRiskPluginReport: '/api/risk-mgt-service/compliance-risk/delete-compliance-risk-report-ext-file', // 删除合规通附件
+    getCustomerList: '/api/sysmgr-web/commom/company?companyIdentity=custom', // 模糊匹配客户名称
+    getContractList: '/api/opencrm/common/custom-company-instance-list', // 查找客户合同编号
+    editRiskWorkflow: '/api/risk-mgt-service/compliance-risk/update-compliance-risk-report', // 重新编辑合规通报告
+    getUploadNo: '/api/risk-mgt-service/compliance-risk/get-compliance-risk-report-no', // 获取预设的上传编号
+    approveRiskWorkflow: '/api/risk-mgt-service/compliance-risk/consent-approval', // 审核通过
+    rejectRiskWorkflow: '/api/risk-mgt-service/compliance-risk/reject-approval', // 驳回
 }
 
-export {workflow}
+export { workflow }

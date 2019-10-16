@@ -8,7 +8,7 @@
       <el-table-column prop="month" label="实发月份" width="100" fixed></el-table-column>
       <el-table-column prop="serviceCompanyName" label="发放服务公司" width="120" fixed></el-table-column>
       <el-table-column prop="settleCompanyName" label="结算主体" width="120" fixed></el-table-column>
-      <el-table-column prop="settleCompanyName" label="客户公司" width="120" fixed></el-table-column>
+      <el-table-column prop="customerCompanyName" label="客户公司" width="120" fixed></el-table-column>
       <el-table-column prop="agentCompanyName" label="代理商" width="120" fixed></el-table-column>
       <el-table-column prop="salesmanName" label="销售" width="120"></el-table-column>
       <el-table-column prop="groupName" label="所属团队" width="120"></el-table-column>
@@ -31,9 +31,9 @@
       <el-table-column prop="gtServiceFeeRate" label="服务费费率(>服务费区间值)(E)" width="120"></el-table-column>
       <el-table-column prop="lteServiceFeeRate" label="服务费费率(<=服务费区间值)(F)" width="120"></el-table-column>
       <el-table-column prop="prepayServiceFeeRate" label="预收比例" width="100"></el-table-column>
-      <el-table-column prop="lteServiceFeeRate" label="返佣计算区间值" width="120"></el-table-column>
-      <el-table-column prop="gtAmount" label="实发金额>返佣结算区间值(G)" width="120"></el-table-column>
-      <el-table-column prop="lteAmount" label="实发金额<=返佣结算区间值(H)" width="120"></el-table-column>
+      <el-table-column prop="agentSettlePersonStepAmount" label="返佣计算区间值" width="120"></el-table-column>
+      <el-table-column prop="gtAmountByCommission" label="实发金额>返佣结算区间值(G)" width="120"></el-table-column>
+      <el-table-column prop="lteAmountByCommission" label="实发金额<=返佣结算区间值(H)" width="120"></el-table-column>
     </el-table>
 		<div style="text-align: right; margin-top: 25px;">
 			<el-button

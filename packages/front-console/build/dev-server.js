@@ -41,6 +41,14 @@ let options = {
 }
 if (context.length) {
 		server.use(proxyMiddleware(context, options))
+		// 跟后端直连的时候用
+    // server.use(proxyMiddleware('/api/paymentmgt/front/channel/add', {
+    //     target: 'http://192.168.2.16:8008',
+    //     changeOrigin: true,
+    //     pathRewrite: {
+    //         '/api/paymentmgt/front/channel/add':'/front/channel/add'
+    //     }
+    // }))
     cookieDomainRewrite: 'localhost'
 }
 server.use(history({

@@ -15,37 +15,12 @@
                 </el-table-column>
 				<el-table-column prop="companyName" label="客户公司" width="140" fixed></el-table-column>
                 <el-table-column prop="appName" label="商户名称" width="140" fixed></el-table-column>
-                <el-table-column prop="salesList" label="关联销售" width="120">
-                    <template slot-scope="scope">
-                        <div v-for="e in scope.row.salesList" :key="e.id">{{e.name}}</div>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="outOrderNo" label="客户订单号" width="120"></el-table-column>
                 <el-table-column prop="serviceCompanyName" label="服务公司" width="140"></el-table-column>
-                <el-table-column prop="agentCompanyName" label="代理商公司名称" width="140"></el-table-column>
                 <el-table-column prop="paymentThirdTypeName" label="发放渠道" width="80"></el-table-column>
                 <el-table-column prop="sourceTypeName" label="发放方式" width="80"></el-table-column>
-				<el-table-column prop="paymentTradeNo" label="支付订单号" width="90"></el-table-column>
-                <el-table-column prop="paymentThirdTradeNo" label="渠道交易流水号" width="120"></el-table-column>
                 <el-table-column prop="createAt" label="请求时间" width="160">
                     <template slot-scope="scope">
                         <span>{{scope.row.createAt | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="accountName" label="收款人姓名" width="100"></el-table-column>
-				<el-table-column prop="idCard" label="收款人身份证号" width="150"></el-table-column>
-				<el-table-column prop="phone" label="收款人手机号" width="100"></el-table-column>
-                <el-table-column prop="accountNo" label="收款账号" width="160"></el-table-column>
-                <el-table-column prop="amount" label="交易金额" width="120">
-                    <template slot-scope="scope">
-                        <span>{{scope.row.amount | formatMoney}}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="stateName" label="交易状态" width="140"></el-table-column>
-                <el-table-column prop="paymentResDesc" label="反馈结果" width="140">
-                    <template slot-scope="scope">
-                    <span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
-                          :title="scope.row.paymentResDesc">{{scope.row.paymentResDesc}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="paymentResTime" label="完成时间" width="160">
@@ -53,11 +28,41 @@
                         <span>{{scope.row.paymentResTime | formatTime('yyyy-MM-dd hh:mm:ss')}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="costTimeName" label="发放时长(秒)" width="140">
+                <el-table-column prop="accountName" label="收款人姓名" width="100"></el-table-column>
+				<el-table-column prop="idCard" label="收款人身份证号" width="150"></el-table-column>
+                <el-table-column prop="accountNo" label="收款账号" width="160"></el-table-column>
+                <el-table-column prop="amount" label="交易金额" width="120">
+                    <template slot-scope="scope">
+                        <span>{{scope.row.amount | formatMoney}}</span>
+                    </template>
                 </el-table-column>
-                <el-table-column prop="notifyStateName" label="通知用户状态" width="120"></el-table-column>
-                <el-table-column prop="memo" label="款项属性" width="120"></el-table-column>
+                <el-table-column prop="phone" label="收款人手机号" width="100"></el-table-column>
+                <el-table-column prop="stateName" label="交易状态" width="140"></el-table-column>
                 <el-table-column prop="stepName" label="当前步骤" width="120"></el-table-column>
+                <el-table-column prop="paymentResDesc" label="反馈结果" width="140">
+                    <template slot-scope="scope">
+                    <span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
+                          :title="scope.row.paymentResDesc">{{scope.row.paymentResDesc}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="outOrderNo" label="客户订单号" width="120"></el-table-column>
+                <el-table-column prop="paymentTradeNo" label="支付订单号" width="90"></el-table-column>
+                <el-table-column prop="paymentThirdTradeNo" label="渠道交易流水号" width="120"></el-table-column>
+                <el-table-column prop="memo" label="款项属性" width="120"></el-table-column>
+                <el-table-column prop="notifyStateName" label="通知用户状态" width="120"></el-table-column>
+                <el-table-column prop="salesList" label="关联销售" width="120">
+                    <template slot-scope="scope">
+                        <div v-for="e in scope.row.salesList" :key="e.id">{{e.name}}</div>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="deliverList" label="关联交付" width="120">
+                	<template slot-scope="scope">
+                        <div v-for="e in scope.row.deliverList" :key="e.id">{{e.name}}</div>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="agentCompanyName" label="代理商公司名称" width="140"></el-table-column>
+                <!--<el-table-column prop="originErrMsg" label="渠道反馈" width="140"></el-table-column>-->
+                <el-table-column prop="costTimeName" label="发放时长(秒)" width="140"></el-table-column>
                 <el-table-column key="ation" prop="ation" label="操作" width="140" fixed="right" v-if="checkRight(permissions, 'console-dlv:/pay-order/download-pay-item-electronic-return')">
                     <template slot-scope="scope">
                         <el-button type="text" v-if="scope.row.supportCertificateDownload && scope.row.state == 30" @click="download(scope.row)">下载电子回单</el-button>
@@ -119,6 +124,7 @@ export default {
                 paymentResTimeBegin: '',
                 paymentResTimeEnd: '',
                 agentCompanyName: '',
+                paymentTradeNo:'',
                 page: 1,
                 pageSize: 10
             },

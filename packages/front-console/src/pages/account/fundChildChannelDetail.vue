@@ -1,6 +1,6 @@
 <template>
     <div class="company-build-container company-container" v-loading="isReady">
-        <div class="title">资金明细</div>
+        <div class="title">渠道资金明细</div>
         <el-form :model="form" :inline="true" ref="form">
             <el-form-item label="企业" prop="companyId">
                 <el-select size="small" filterable v-model="form.companyId">
@@ -20,17 +20,23 @@
                     <el-option v-for="(item, key) in option.serveCompanyList" :key="key" :value="item.id" :label="item.name"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="账户类型" prop="balanceType">
+            <!--<el-form-item label="账户类型" prop="balanceType">
                 <el-select size="small" filterable v-model="form.balanceType">
                     <el-option label="全部" value=""></el-option>
                     <el-option :value="1" label="实发账户余额"></el-option>
                     <el-option :value="3" label="服务费账户余额"></el-option>
                 </el-select>
-            </el-form-item>
+            </el-form-item>-->
             <el-form-item label="渠道" prop="bankType">
             	<el-select size="small" filterable v-model="form.bankType" @change="changeBankType(form.bankType)">
             		<el-option label="全部" value=""></el-option>
             		<el-option v-for="bankType in bankTypeList" :key="bankType.value" :value="bankType.value" :label="bankType.text"></el-option>
+            	</el-select>
+            </el-form-item>
+            <el-form-item label="子渠道" prop="paymentThirdType">
+            	<el-select size="small" filterable v-model="form.paymentThirdType">
+            		<el-option label="全部" value=""></el-option>
+            		<el-option v-for="paymentThirdType in paymentThirdTypeList" :key="paymentThirdType.value" :value="paymentThirdType.value" :label="paymentThirdType.text"></el-option>
             	</el-select>
             </el-form-item>
             <el-form-item label="操作" prop="bizTradeName">
@@ -65,6 +71,7 @@
             <el-table-column label="服务商" prop="serviceCompanyName"></el-table-column>
             <!-- <el-table-column label="转包服务商" prop="serviceCompanyName"></el-table-column> -->
             <el-table-column label="渠道" prop="bankTypeName"></el-table-column>
+            <el-table-column label="子渠道" prop="paymentThirdTypeName"></el-table-column>
             <!-- <el-table-column label="支付账号" prop="payUserName"></el-table-column> -->
             <el-table-column label="金额" prop="tradeAmount">
                 <template slot-scope="scope">
@@ -106,15 +113,16 @@ export default {
       return {
         form: {
           appId: "",
-          balanceType: '',
+          balanceType: '2',//balanceType = 2的情况才是子渠道
           bizTradeName: "",
           companyId: "",
           createAtBegin: "",
           createAtEnd: "",
-          bankType:"",
           page: 1,
           pageSize: 10,
-          serviceCompanyId: ""
+          serviceCompanyId: "",
+          bankType:"",
+          paymentThirdType:"",
         },
         range: [t_0, t],
         data: {},
@@ -122,6 +130,7 @@ export default {
         apps: [],
         handles: [],
         bankTypeList:[],
+        paymentThirdTypeList:[],
         option: new optionModel(),
         isReady: true,
         downloadCode: '',
@@ -219,6 +228,13 @@ export default {
                     })
                 }, 1000 * 1)
             })
+        },
+        changeBankType(bankType){
+        	this.paymentThirdTypeList = [];
+        	this.form.paymentThirdType = "";
+        	get('/api/sysmgr-web/commom/option-child-channel-list?enumType='+bankType).then(data => {
+            	this.paymentThirdTypeList = data
+        	})
         }
     }
 };

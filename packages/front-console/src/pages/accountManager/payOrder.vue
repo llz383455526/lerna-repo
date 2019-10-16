@@ -44,8 +44,8 @@
 					<el-option v-for="(item, index) in sourceTypeList" :label="item.text" :value="item.value" :key="index"></el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="渠道交易流水号:" prop="paymentThirdTradeNo">
-				<el-input style="width: 150px" v-model="formSearch.paymentThirdTradeNo" placeholder="渠道交易流水号"></el-input>
+			<el-form-item label="支付订单号:" prop="paymentTradeNo">
+				<el-input style="width: 150px" v-model="formSearch.paymentTradeNo" placeholder="支付订单号"></el-input>
 			</el-form-item>
 			<el-form-item label="收款人姓名:" prop="accountName">
 				<el-input style="width: 150px" v-model="formSearch.accountName" placeholder="收款人姓名"></el-input>
@@ -90,6 +90,9 @@
 					<el-option label="所有" value=""></el-option>
 					<el-option v-for="(item, index) in agentList" :label="item.companyName" :value="item.companyName" :key="index"></el-option>
 				</el-select>
+			</el-form-item>
+			<el-form-item label="渠道交易流水号:" prop="paymentThirdTradeNo">
+				<el-input style="width: 150px" v-model="formSearch.paymentThirdTradeNo" placeholder="渠道交易流水号"></el-input>
 			</el-form-item>
 			<el-form-item style="margin-top: -4px">
 				<el-button type="primary" @click="query">查询</el-button>
@@ -154,6 +157,7 @@ export default {
 				paymentResTimeBegin: '',
 				paymentResTimeEnd: '',
 				agentCompanyName: '',
+				paymentTradeNo:'',
 				page: 1,
 				pageSize: 10
 			},

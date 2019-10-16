@@ -1038,8 +1038,8 @@ export default {
                     value: 'hf'
                 },
                 {
-			        text: '华夏银行',
-			        value: 'hxb'
+									text: '华夏银行',
+									value: 'hxb'
                 },
                 {
                     text: '易宝',
@@ -1060,6 +1060,10 @@ export default {
                 {
                     text: '薪太软',
                     value: 'xtr'
+								},
+								{
+                    text: '浦发银行',
+                    value: 'spdb'
                 }
             ],
             checkValue: 'first',

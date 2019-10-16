@@ -439,6 +439,8 @@
     />
     <insufficient ref="insufficient" />
     <service-insufficient ref="serviceInsufficient" />
+    <standard-risk ref="standardRisk"
+      @create="submitCb" @handle="auditCb"></standard-risk>
   </div>
 </template>
 <script>
@@ -454,6 +456,7 @@ import { Loading } from 'element-ui'
 import insufficient from './dialog/insufficient'
 import serviceInsufficient from './dialog/serviceInsufficient'
 import postAudit from './dialog/postAudit'
+import standardRisk from './dialog/standardRisk'
 
 export default {
     components: {
@@ -464,7 +467,8 @@ export default {
         knotty,
         insufficient,
         serviceInsufficient,
-        postAudit
+        postAudit,
+        standardRisk,
     },
     data() {
         return {
@@ -523,6 +527,10 @@ export default {
                 {
                     text: '疑难工单',
                     right: 'balance-web:/puzzle-channel/puzzlChannelApply'  // 四个单绑在一起了，所以用一个单的权限进行判断
+                },
+                {
+                    text: '合规通工单',
+                    right: 'risk-mgt-service:/compliance-risk/add-compliance-risk-report'  // 四个单绑在一起了，所以用一个单的权限进行判断
                 }
             ],
             typeList: [],
@@ -552,6 +560,7 @@ export default {
             ],
             emergencyList: [],
             postAuditDialog: false, // 岗位审核弹框
+            currentWorkflow: {}, // 当前打开的工单信息
         }
     },
     computed: {
@@ -732,6 +741,16 @@ export default {
                         look: false
                     })
                     break;
+                case 5:
+                  this.$refs.standardRisk.isCreate = true // 新建
+                  this.$refs.standardRisk.look = false
+                  this.$refs.standardRisk.show = true
+                    // this.$refs.standardRisk.transmit({
+                    //     show: true,
+                    //     param: {},
+                    //     look: false
+                    // })
+                    break;
                 default:
                     break;
             }
@@ -753,6 +772,8 @@ export default {
             get(workflow.getTaskId, {processInsId: param.processInstanceId }).then(res => {
                 param.id = res.processTaskId
                 param.insVariables = res.insVariables
+                param.currentTaskNodeId = res.currentTaskNodeId
+                
             switch (param.businessType) {
                 case 'invoice-flow':
                 case 'make-out-invoice-service-to-service':
@@ -813,6 +834,14 @@ export default {
                     // 合规通 爱收入岗位模板弹框
                     this.$refs.postDialog.query({ processInstanceId: param.processInstanceId, businessId: param.businessId, taskId: res.processTaskId })
                     this.postAuditDialog = true
+                    break;
+                case 'compliance-risk-flow':
+                    // 合规通工单弹窗
+                    this.$refs.standardRisk.isCreate = false // 新建
+                    this.$refs.standardRisk.look = look // 新建
+                    this.$refs.standardRisk.show = true
+                    this.$refs.standardRisk.currentWorkflow = param
+                    break;
                 default:
                     break;
             }

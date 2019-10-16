@@ -45,7 +45,7 @@ const router = {
             path: 'list',
             component: newContractList,
             meta: {
-                keepAlive: false
+              keepAlive: false
             }
         },
         {

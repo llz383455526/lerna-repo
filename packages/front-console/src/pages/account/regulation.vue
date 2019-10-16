@@ -2,6 +2,34 @@
     <div class="company-build-container company-container">
         <div class="title">调账管理</div>
         <el-form :model="form" :inline="true" ref="form">
+        	
+        	<el-form-item label="客户公司" prop="customCompanyId">
+                <el-select size="small" filterable v-model="form.customCompanyId">
+                    <el-option label="全部" value=""></el-option>
+                    <el-option v-for="e in customCompanys" :value="e.id" :label="e.name" :key="e.id"></el-option>
+                </el-select>
+            </el-form-item>
+        	<el-form-item label="商户" prop="appId">
+                <el-select size="small" filterable v-model="form.appId">
+                    <el-option label="全部" value=""></el-option>
+                    <el-option v-for="e in apps" :value="e.value" :label="e.text" :key="e.value"></el-option>
+                </el-select>
+            </el-form-item>
+        	
+        	<el-form-item label="转出渠道" prop="fromPaymentThirdType">
+            	<el-select size="small" filterable v-model="form.fromPaymentThirdType">
+            		<el-option label="全部" value=""></el-option>
+            		<el-option v-for="paymentThirdType in fromPaymentThirdTypeList" :key="paymentThirdType.value" :value="paymentThirdType.value" :label="paymentThirdType.text"></el-option>
+            	</el-select>
+            </el-form-item>
+            
+            <el-form-item label="转入渠道" prop="toPaymentThirdType">
+            	<el-select size="small" filterable v-model="form.toPaymentThirdType">
+            		<el-option label="全部" value=""></el-option>
+            		<el-option v-for="paymentThirdType in toPaymentThirdTypeList" :key="paymentThirdType.value" :value="paymentThirdType.value" :label="paymentThirdType.text"></el-option>
+            	</el-select>
+            </el-form-item>
+        	
             <el-form-item label="服务商名称" prop="serviceCompanyId">
                 <el-select size="small" filterable v-model="form.serviceCompanyId">
                     <el-option v-for="e in companys" :value="e.id" :label="e.name" :key="e.id"></el-option>
@@ -21,25 +49,30 @@
             <el-form-item>
                 <el-button size="small" type="primary" @click="query">查询</el-button>
                 <el-button size="small" @click="reset">清除</el-button>
+                <el-button size="small" @click="exportDetail">导出</el-button>
             </el-form-item>
         </el-form>
         <el-button size="small" type="primary" @click="show = true">调账申请</el-button>
         <el-table :data="data.list">
-            <el-table-column label="操作人" prop="createByName"></el-table-column>
+            <el-table-column label="客户公司" prop="customCompanyName"></el-table-column>
+            <el-table-column label="商户" prop="appName"></el-table-column>
             <el-table-column label="服务商信息" prop="serviceCompanyName"></el-table-column>
+            <el-table-column label="转出渠道" prop="fromPaymentThirdTypeName"></el-table-column>	
             <el-table-column label="转出渠道信息" prop="fromPaymentThirdType">
                 <template slot-scope="scope">
                     {{`${scope.row.fromBankTypeName}/${scope.row.fromChannelLoginAcctNo}/${scope.row.fromChannelMerCustId}/${scope.row.fromPayUserName}`}}
                 </template>
             </el-table-column>
+            <el-table-column label="转入渠道" prop="toPaymentThirdTypeName"></el-table-column>
             <el-table-column label="转入渠道信息" prop="toPaymentThirdType">
                 <template slot-scope="scope">
                     {{`${scope.row.toBankTypeName}/${scope.row.toChannelLoginAcctNo}/${scope.row.toChannelMerCustId}/${scope.row.toPayUserName}`}}
                 </template>
             </el-table-column>
             <el-table-column label="金额（元）" prop="tradeAmount"></el-table-column>
-            <el-table-column label="处理时间" prop="tradeAtStr"></el-table-column>
             <el-table-column label="调账备注" prop="remarks"></el-table-column>
+            <el-table-column label="操作人" prop="createByName"></el-table-column>
+            <el-table-column label="操作日期" prop="tradeAtStr"></el-table-column>
         </el-table>
         <ayg-pagination
             :total="data.total"
@@ -117,6 +150,7 @@
 <script>
 import { post, get, postWithErrorCallback } from "../../store/api";
 import { mapGetters } from "vuex";
+import {showLoading, hideLoading} from '../../plugin/utils-loading';
 export default {
     data() {
         var moreThenZero = (rule, value, cb) => {
@@ -129,6 +163,10 @@ export default {
         }
         return {
             form: {
+            	appId:'',
+            	customCompanyId:'',
+            	fromPaymentThirdType:'',
+            	toPaymentThirdType:'',
                 serviceCompanyId: '',
                 tradeAtBegin: '',
                 tradeAtEnd: '',
@@ -143,6 +181,10 @@ export default {
             channelType: [],
             channels: [],
             channels_0: [],
+            fromPaymentThirdTypeList:[],
+            toPaymentThirdTypeList:[],
+            companys:[],
+            customCompanys:[],
             regForm: {
                 appId: '',
                 appName: '',
@@ -155,6 +197,7 @@ export default {
                 tradeAmount: '',
                 remarks: ''
             },
+            apps:[],
             rules: {
                 appId: [
                     {
@@ -238,7 +281,17 @@ export default {
         // })
         get('/api/sysmgr-web/commom/company?companyIdentity=service').then(data => {
           this.companys = data
-      })
+      	})
+        get('/api/sysmgr-web/commom/app-list').then(data => {
+            this.apps = data
+        })
+        get('/api/sysmgr-web/commom/option?enumType=ChannelType').then(data => {
+            this.fromPaymentThirdTypeList = data
+            this.toPaymentThirdTypeList = data
+        })
+        get('/api/sysmgr-web/commom/company?companyIdentity=custom').then(data => {
+            this.customCompanys = data
+        })
     },
     methods: {
         getTime() {
@@ -407,7 +460,25 @@ export default {
                     }
                 }
             })
-        }
+        },
+        exportDetail() {
+            showLoading('请稍等...')
+            var param = JSON.parse(JSON.stringify(this.form))
+            get('/api/balance-web/balance-trade-recon/export-trade-recon-list', param, true).then(data => {
+                this.downloadCode = data
+                this.interval = setInterval(() => {
+                    get('/api/balance-web/file/check-export', {
+                        downloadCode: this.downloadCode
+                    }, true).then(res => {
+                        if(res) {
+                            clearInterval(this.interval)
+                            hideLoading()
+                            location.href = `/api/balance-web/file/download-export?downloadCode=${this.downloadCode}`
+                        }
+                    })
+                }, 1000 * 1)
+            })
+        },
     }
 }
 </script>
