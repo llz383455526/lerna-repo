@@ -21,9 +21,17 @@
           </el-date-picker>
         </el-form-item>
 
-        <el-form-item label="客户公司" size="small" prop="companyName">
+        <el-form-item label="客户公司" size="small" prop="companyName" v-if="activeTab === 'first'">
           <el-input v-model.trim="formSearch.companyName" placeholder="请输入" @keyup.enter.native="search(url)"></el-input>
         </el-form-item>
+        <el-form-item label="渠道/代理商" size="small" prop="companyName" v-if="activeTab === 'second'">
+          <el-input v-model.trim="formSearch.companyName" placeholder="请输入" @keyup.enter.native="search(url)"></el-input>
+        </el-form-item>
+        <el-form-item label="服务商公司" size="small" prop="companyName" v-if="activeTab === 'third'">
+          <el-input v-model.trim="formSearch.companyName" placeholder="请输入" @keyup.enter.native="search(url)"></el-input>
+        </el-form-item>
+
+
 
         <el-form-item label="标签名称:" size="small">
           <el-select v-model="formSearch.tagIds" multiple collapse-tags>

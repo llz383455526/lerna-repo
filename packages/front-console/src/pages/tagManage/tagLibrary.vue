@@ -3,7 +3,7 @@
     <div style="margin-bottom:30px;" class="tag_tt">标签库管理</div>
     <el-form :inline="true" :model="searchForm" ref="searchForm" v-if="!showNoData" @submit.native.prevent>
         <el-form-item label="标签组" size="small" prop="searchTagGroup">
-          <el-input v-model.trim="searchForm.tagName" placeholder="请输入关键词" @keyup.enter.native="search()"></el-input>
+          <el-input v-model.trim="searchForm.tagName" placeholder="请输入关键词" @keyup.enter.native="search()" class="dia_f_input_W240" @change="changeSearchText"></el-input>
         </el-form-item>
         <el-form-item style="margin-top: -4px">
           <el-button type="primary" @click="search()" size="small">查询</el-button>
@@ -57,7 +57,7 @@
           <p class="not_edit_group_name">{{editForm.editTagGroupName}}</p>
         </div>
         <el-form-item label="标签组名：" prop="tagName" v-else>
-          <el-input v-model="editForm.tagName" class="dia_f_input" placeholder="建议不要超过10个字"></el-input>
+          <el-input v-model="editForm.tagName" class="dia_f_input" placeholder="建议不要超过10个字" @change="changeTagName"></el-input>
         </el-form-item>
         <el-form-item label="标签名称：" prop="tagName" v-if="showTagName">
           <el-input v-model="editForm.tagName" class="dia_f_input" placeholder="建议不要超过10个字"></el-input>
@@ -70,8 +70,8 @@
       <p>提交地址： {{type === 'add' ? 'tags.tagCreate': 'tags.tagUpdate'}}</p>
       <p>tagDetail {{tagDetail}}</p> -->
       <span class="form_footer" slot="footer">
+        <el-button @click="editFormShow = false">取消</el-button>
         <el-button @click="sureCreatedTag" type="primary">保存</el-button>
-        <el-button @click="editFormShow = false">关闭</el-button>
       </span>
     </el-dialog>
     
@@ -184,6 +184,12 @@
   },
   mounted() {},
   methods: {
+    changeSearchText() {
+      this.searchForm.tagName = this.searchForm.tagName.replace(/\s/ig,'')
+    },
+    changeTagName(){
+      this.editForm.tagName = this.editForm.tagName.replace(/\s/ig,'')
+    },
     filterNode(value, data) {
       if (!value) return true;
       return data.tagName.indexOf(value) !== -1;
@@ -220,6 +226,7 @@
       this.searchForm.page = 1
       this.currentPage = 1
       this.searchForm.pageSize = 10
+      this.search()
     },
     handleSizeChange(value) {
       this.currentPage = 1
@@ -232,6 +239,7 @@
     },
     // 添加标签组
     addGroup() {
+      this.clearEditForm()
       this.type = 'add'
       this.editFormShow = true
       this.editFormTitle = '添加标签组'
@@ -305,25 +313,29 @@
     },
     // 编辑、标签组添加、子标签添加，
     sureCreatedTag(){
+      this.editForm.tagName = this.editForm.tagName.replace(/\s/ig,'')
       let url = this.type === 'add' ? tags.tagCreate: tags.tagUpdate
       this.$refs['editForm'].validate(async valid => {
       if(valid) {
         try {
           const result = await post(url, this.editForm)
           this.editFormShow = false;
-          this.search()
-          this.editForm.editTagGroupName = ''
-          this.editForm.tagName = ''
-          this.editForm.description = ''
-          this.editForm.tagId = 0
-          this.editForm.parentId = 0
-          this.editForm.group = true
+          this.search(this.currentPage)
+          this.clearEditForm()
           this.type = 'add'
         } catch (error) {
           console.log(`返回error结果${JSON.stringify(error)}`)
         }
       }
       })
+    },
+    clearEditForm() {
+      this.editForm.editTagGroupName = ''
+      this.editForm.tagName = ''
+      this.editForm.description = ''
+      this.editForm.tagId = 0
+      this.editForm.parentId = 0
+      this.editForm.group = true
     },
     // 递归树组-数组降级
     flattenArr(arr) {
@@ -339,7 +351,7 @@
     async sureShowTags(){
       this.flattenArr(this.tagDisplayList)
       const result = await post(tags.tagsDisplay, this.displayTag)
-      this.search()
+      this.search(this.currentPage)
       this.tagLibrayManager = false
     },
     }
@@ -374,7 +386,10 @@ $point_w: 4px; // 状态前面的小点宽度
 }
 .dia_f_input {
   width: 260px;
-} 
+}
+.dia_f_input_W240 {
+  width: 240px;
+}
 .not_edit_group_wrap {
   margin-bottom: 20px;
   p {
