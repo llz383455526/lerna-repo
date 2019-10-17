@@ -350,6 +350,9 @@
     },
     async sureShowTags(){
       this.flattenArr(this.tagDisplayList)
+      this.displayTag.displayList = this.displayTag.displayList.map((item) => {
+        return {tagId: item.tagId, display: item.display}
+      })
       const result = await post(tags.tagsDisplay, this.displayTag)
       this.search(this.currentPage)
       this.tagLibrayManager = false
