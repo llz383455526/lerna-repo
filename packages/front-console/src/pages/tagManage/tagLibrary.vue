@@ -1,150 +1,121 @@
 <template>
-<div class="tag_container">
-  <div style="margin-bottom:30px;" class="tag_tt">标签库管理</div>
-  <el-form :inline="true" :model="searchForm" ref="searchForm" v-if="!showNoData" @submit.native.prevent>
-      <el-form-item label="标签组" size="small" prop="searchTagGroup">
-        <el-input v-model.trim="searchForm.tagName" placeholder="请输入关键词" @keyup.enter.native="search()"></el-input>
-      </el-form-item>
-      <!-- <el-form-item label="标签名称" size="small" prop="searchTagName">
-        <el-input v-model="searchForm.searchTagName" placeholder="请输入关键词"></el-input>
-        <el-autocomplete
-          class="inline-input"
-          v-model="searchForm.searchTagName"
-          :fetch-suggestions="querySearch"
-          placeholder="请输入关键词"
-          @blur="calcuCompanyId"
-          @select="handleSelect"
-        />
-      </el-form-item> -->
-      <el-form-item style="margin-top: -4px">
-        <el-button type="primary" @click="search()" size="small">查询</el-button>
-        <el-button size="small" @click="resetForm('searchForm')">清空</el-button>
-      </el-form-item>
-    </el-form>
-    <!-- <p>标签库管理搜索字段searchForm：{{searchForm}}</p> -->
-
-  <el-button type="primary" size="medium" @click="addGroup">添加标签组</el-button>
-
-  <div class="tab_container custom-tree-container" v-if="tagMangerList.length">
-    <div class="tree_tab_hd">
-      <div class="tab_tt_txt">标签名称</div>
-      <div class="tab_tt_middle">标签描述</div>
-      <div class="tab_tt_status">状态</div>
-      <div class="tab_tt_opea ">操作</div>
-    </div>
-    <el-tree
-      :data="tagMangerList" 
-      node-key="id" 
-      :default-expanded-keys="[0, 1]" 
-      :expand-on-click-node="false">
-        <span class="custom-tree-node" slot-scope="{ node, data }">
-          <span class="tree_node_h"><i :class="data.group ? 'tag_files': 'tag_file'" ></i>{{ data.tagName }} {{data.children.length ? `(${data.children.length})`: ''}}</span>
-          <span class="tree_node_middle">{{data.description}}</span>
-          <span class="tree_node_status"><i :class="['tag_show_hiden',data.display ? 'tag_show': 'tag_hiden']"></i>{{data.display ? '显示': '隐藏'}}</span>
-          <span class="tree_node_opea">
-            <el-button v-show="data.group" @click="addChildTag(data)" type="text" size="medium" style="padding:0;">添加子标签<i class="opera_gap"></i></el-button>
-            <el-button v-show="data.group" @click="editTagLibrayManager(data)" type="text" size="medium" style="padding:0;">标签管理<i class="opera_gap"></i></el-button>
-            <el-button @click="ModifyTagName(data)" type="text" size="medium" style="padding:0;">编辑</el-button>
-          </span>
-        </span>
-      </el-tree>
-    <ayg-pagination
-      v-if="tagsLibrarys.total" 
-      :total="tagsLibrarys.total"
-      @handleSizeChange="handleSizeChange"
-      @handleCurrentChange="handleCurrentChange" 
-      :currentPage="currentPage" />
-  </div>
-  <!-- 无数据状态 -->
-  <div class="tag_no_data" v-if="!tagMangerList.length">
-    <p>暂无标签</p>
-  </div>
-  <!-- 编辑，标签添加 添加子标签 -->
-  <el-dialog :title="editFormTitle"  :visible.sync="editFormShow" :before-close="clearForm" width="558px" top="339px">
-    <el-form label-width="100px" :rules="rules" :model="editForm" ref="editForm">
-      <div class="not_edit_group_wrap" v-if="notEditGroupName">
-        <p class="not_edit_label">标签组名：</p>
-        <p class="not_edit_group_name">{{editForm.editTagGroupName}}</p>
-      </div>
-      <el-form-item label="标签组名：" prop="tagName" v-else>
-        <el-input v-model="editForm.tagName" class="dia_f_input" placeholder="建议不要超过10个字"></el-input>
-      </el-form-item>
-      <el-form-item label="标签名称：" prop="tagName" v-if="showTagName">
-        <el-input v-model="editForm.tagName" class="dia_f_input" placeholder="建议不要超过10个字"></el-input>
-      </el-form-item>
-      <el-form-item label="标签描述：" prop="description">
-        <el-input type="textarea" :rows="5" placeholder="建议不要超过50个字" v-model="editForm.description"></el-input>
-      </el-form-item>
-    </el-form>
-    <!-- <p>标签编辑的editForm表单信息： {{editForm}}</p>
-    <p>提交地址： {{type === 'add' ? 'tags.tagCreate': 'tags.tagUpdate'}}</p>
-    <p>tagDetail {{tagDetail}}</p> -->
-    <span class="form_footer" slot="footer">
-      <el-button @click="sureCreatedTag" type="primary">保存</el-button>
-      <el-button @click="editFormShow = false">关闭</el-button>
-    </span>
-  </el-dialog>
-  
-  <!-- 标签管理 -->
-  <el-dialog title="标签管理"  :visible.sync="tagLibrayManager" width="558px" top="339px">
-    <div class="custom-tree-container">
-      <el-form :inline="true" :model="searchTagLibray" ref="searchTagLibray">
-        <el-form-item label="标签名" size="small" prop="searchLibrayTag">
-          <el-input v-model="filterText" placeholder="输入关键字进行过滤" class="dia_f_input"></el-input>
+  <div class="tag_container">
+    <div style="margin-bottom:30px;" class="tag_tt">标签库管理</div>
+    <el-form :inline="true" :model="searchForm" ref="searchForm" v-if="!showNoData" @submit.native.prevent>
+        <el-form-item label="标签组" size="small" prop="searchTagGroup">
+          <el-input v-model.trim="searchForm.tagName" placeholder="请输入关键词" @keyup.enter.native="search()"></el-input>
+        </el-form-item>
+        <el-form-item style="margin-top: -4px">
+          <el-button type="primary" @click="search()" size="small">查询</el-button>
+          <el-button size="small" @click="resetForm('searchForm')">清空</el-button>
         </el-form-item>
       </el-form>
+      <!-- <p>标签库管理搜索字段searchForm：{{searchForm}}</p> -->
+
+    <el-button type="primary" size="medium" @click="addGroup">添加标签组</el-button>
+    <!-- 标签库树形显示 -->
+    <div class="tab_container custom-tree-container" v-if="tagMangerList.length">
+      <div class="tree_tab_hd">
+        <div class="tab_tt_txt">标签名称</div>
+        <div class="tab_tt_middle">标签描述</div>
+        <div class="tab_tt_status">状态</div>
+        <div class="tab_tt_opea ">操作</div>
+      </div>
       <el-tree
-        class="filter-tree"
-        ref="tree2"
-        :data="soloTagMangerList"
-        :filter-node-method="filterNode"
+        :data="tagMangerList" 
         node-key="id" 
-        :default-expanded-keys="[1]" 
+        :default-expanded-keys="[0, 1]" 
         :expand-on-click-node="false">
           <span class="custom-tree-node" slot-scope="{ node, data }">
-            <span class="tree_node_h"><i :class="data.group ? 'tag_files': 'tag_file'"></i>{{ data.tagName }} {{data.children.length ? `(${data.children.length})`: ''}}</span>
-            <span class="tree_node_h200">
-              <el-radio-group v-model="data.display" size="small">
-              <el-radio :label="true">显示</el-radio>
-              <el-radio :label="false">隐藏</el-radio>
-            </el-radio-group>
-              <!-- <el-radio v-model="data.display" :label="data.display" @change="showNode(data)">显示</el-radio>
-              <el-radio v-model="data.display" :label="!data.display">隐藏</el-radio> -->
+            <span class="tree_node_h"><i :class="data.group ? 'tag_files': 'tag_file'" ></i>{{ data.tagName }} {{data.children.length ? `(${data.children.length})`: ''}}</span>
+            <span class="tree_node_middle">{{data.description}}</span>
+            <span class="tree_node_status"><i :class="['tag_show_hiden',data.display ? 'tag_show': 'tag_hiden']"></i>{{data.display ? '显示': '隐藏'}}</span>
+            <span class="tree_node_opea">
+              <el-button v-show="data.group" @click="addChildTag(data)" type="text" size="medium" style="padding:0;">添加子标签<i class="opera_gap"></i></el-button>
+              <el-button v-show="data.group" @click="editTagLibrayManager(data)" type="text" size="medium" style="padding:0;">标签管理<i class="opera_gap"></i></el-button>
+              <el-button @click="ModifyTagName(data)" type="text" size="medium" style="padding:0;">编辑</el-button>
             </span>
           </span>
         </el-tree>
+      <ayg-pagination
+        v-if="tagsLibrarys.total" 
+        :total="tagsLibrarys.total"
+        @handleSizeChange="handleSizeChange"
+        @handleCurrentChange="handleCurrentChange" 
+        :currentPage="currentPage" />
     </div>
-    <!-- 修理后的标签displayTag:<p>{{displayTag}}</p> -->
-    <span class="form_footer" slot="footer">
-      <el-button @click="isShowTags" type="primary">保存</el-button>
-      <el-button @click="tagLibrayManager = false">关闭</el-button>
-    </span>
-  </el-dialog>
-</div>
+    <!-- 无数据状态 -->
+    <div class="tag_no_data" v-if="!tagMangerList.length">
+      <p>暂无标签</p>
+    </div>
+    <!-- 编辑，标签添加 添加子标签 -->
+    <el-dialog :title="editFormTitle"  :visible.sync="editFormShow" :before-close="clearForm" width="558px" top="339px">
+      <el-form label-width="100px" :rules="rules" :model="editForm" ref="editForm">
+        <div class="not_edit_group_wrap" v-if="notEditGroupName">
+          <p class="not_edit_label">标签组名：</p>
+          <p class="not_edit_group_name">{{editForm.editTagGroupName}}</p>
+        </div>
+        <el-form-item label="标签组名：" prop="tagName" v-else>
+          <el-input v-model="editForm.tagName" class="dia_f_input" placeholder="建议不要超过10个字"></el-input>
+        </el-form-item>
+        <el-form-item label="标签名称：" prop="tagName" v-if="showTagName">
+          <el-input v-model="editForm.tagName" class="dia_f_input" placeholder="建议不要超过10个字"></el-input>
+        </el-form-item>
+        <el-form-item label="标签描述：" prop="description">
+          <el-input type="textarea" :rows="5" placeholder="建议不要超过50个字" v-model="editForm.description"></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- <p>标签编辑的editForm表单信息： {{editForm}}</p>
+      <p>提交地址： {{type === 'add' ? 'tags.tagCreate': 'tags.tagUpdate'}}</p>
+      <p>tagDetail {{tagDetail}}</p> -->
+      <span class="form_footer" slot="footer">
+        <el-button @click="sureCreatedTag" type="primary">保存</el-button>
+        <el-button @click="editFormShow = false">关闭</el-button>
+      </span>
+    </el-dialog>
+    
+    <!-- 标签管理 -->
+    <el-dialog title="标签管理"  :visible.sync="tagLibrayManager" width="558px" top="339px">
+      <div class="custom-tree-container">
+        <el-form :inline="true" :model="searchTagLibray" ref="searchTagLibray">
+          <el-form-item label="标签名" size="small" prop="searchLibrayTag">
+            <el-input v-model="filterText" placeholder="输入关键字进行过滤" class="dia_f_input"></el-input>
+          </el-form-item>
+        </el-form>
+        <el-tree
+          class="filter-tree"
+          ref="tree2"
+          :data="soloTagMangerList"
+          :filter-node-method="filterNode"
+          node-key="id" 
+          :default-expanded-keys="[1]" 
+          :expand-on-click-node="false">
+            <span class="custom-tree-node" slot-scope="{ node, data }">
+              <span class="tree_node_h"><i :class="data.group ? 'tag_files': 'tag_file'"></i>{{ data.tagName }} {{data.children.length ? `(${data.children.length})`: ''}}</span>
+              <span class="tree_node_h200">
+                <el-radio-group v-model="data.display" size="small">
+                <el-radio :label="true">显示</el-radio>
+                <el-radio :label="false">隐藏</el-radio>
+              </el-radio-group>
+              </span>
+            </span>
+          </el-tree>
+      </div>
+      <!-- 修理后的标签displayTag:<p>{{displayTag}}</p> -->
+      <span class="form_footer" slot="footer">
+        <el-button @click="sureShowTags" type="primary">保存</el-button>
+        <el-button @click="tagLibrayManager = false">关闭</el-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
   import { get, post } from "../../store/api"
   import { tags } from "../../api/tags"
-  import {showNotify} from '../../plugin/utils-notify'
-  import _ from 'lodash'
 
   export default {
     data() {
-    // 校验标签名
-    const validateTagName = (rule, value, callback) => {
-      if(!value) {
-        return callback(new Error('请填写标签组名'))
-      }
-      // 异步校验
-      post(tags.postDetail, value).then(data => {
-        if(data.status !== 200) {
-          return callback(new Error('名称已存在，请重命名'))
-        } else {
-          return callback()
-        }
-        })
-    }
     return {
       soloTagMangerList: [],
       tagMangerList:  [],//JSON.parse(JSON.stringify(treeData)),
@@ -157,8 +128,6 @@
       firstLoad:false,
       showNoData: false,
       tagsLibrarys: '',
-      restaurants: [], // 获取到的标签名称数组
-      serviceCompaniesList: [],
       searchTagLibray: {
         searchLibrayTag: ''
       },
@@ -185,12 +154,10 @@
       rules: {
         tagName: [
           { required: true, message: '请填写标签组名', trigger: 'blur' },
-          { min: 0, max: 10, message: '长度在 0 到 10 个字', trigger: 'blur' },
-          // { required: true, validator: validateTagName, trigger: 'blur' }
+          { min: 1, max: 10, message: '建议不要超过10个字', trigger: 'blur' },
         ],
         description: [
           { min: 1, max: 50, message: '建议不要超过50个字', trigger: 'blur' },
-          // { required: true, validator: validateTagName, trigger: 'blur' }
         ],
       },
       currentPage: 1,
@@ -209,57 +176,13 @@
       this.tagDisplayList = this.soloTagMangerList
     },
   },
-  mounted() {
-    // this.search()
-  },
+  mounted() {},
   methods: {
     filterNode(value, data) {
       if (!value) return true;
       return data.tagName.indexOf(value) !== -1;
     },
-    // 获取所有标签名
-    getOptionServiceCompanies() {
-      let self = this;
-      get (tags.tagsList).then (data => {
-        self.serviceCompaniesList = data
-        // console.log(`拿到的标签数据 ${JSON.stringify(data)}`)
-        _.foreach (data, function (value, key) {
-          self.restaurants[key] = {
-            "value": value['companyName']
-          }
-        })
-        // console.log(`当前处理后的格式 ${JSON.stringify(self.restaurants)}`)
-      })
-    },
-    handleSelect(item) {
-      // console.log(`当前选取的item ${JSON.stringify(item)}`)
-      this.calcuCompanyId (item);
-    },
-    calcuCompanyId(item) {
-      let self = this
-      _.foreach (this.serviceCompaniesList, function (value) {
-        if (value['companyName'] !== self.searchForm.searchTagName) {
-          self.searchForm.tagId = value['companyId']
-          return false
-        } else {
-          self.searchForm.tagId = ''
-        }
-      })
-    },
-    querySearch(queryString, cb) {
-      var restaurants = this.restaurants;
-      var results = queryString ? restaurants.filter (this.createFilter (queryString)) : restaurants;
-      // 调用 callback 返回建议列表的数据
-      cb (results);
-    },
-    createFilter(queryString) {
-      return (restaurant) => {
-        return (restaurant.value.toLowerCase ().indexOf (queryString.toLowerCase ()) === 0);
-      };
-    },
-    showNode(node) {
-      console.log(`点击的显示隐藏： ${JSON.stringify(node)}`)
-    },
+    // 搜索表单
     async search(page) {
       this.searchForm.page = page || 1
       this.searchForm.pageSize = this.pageSize
@@ -299,6 +222,7 @@
     },
     // 添加标签组
     addGroup() {
+      this.type = 'add'
       this.editFormShow = true
       this.editFormTitle = '添加标签组'
       this.notEditGroupName = false
@@ -306,6 +230,7 @@
     },
     // 添加子标签
     addChildTag(data) {
+      this.type = 'add'
       // console.log(`当前点击的tree数据data ${JSON.stringify(data)}`)
       this.editFormShow = true;
       this.editFormTitle = '添加子标签';
@@ -342,7 +267,6 @@
         this.editForm.group = false
       }
     },
-    
     // 获取标签的详情
     async getTagDetail(id){
       const result = await get(tags.tagDetail, {tagId: id})
@@ -369,45 +293,43 @@
       this.$refs['editForm'].clearValidate()
       next()
     },
+    // 编辑、标签组添加、子标签添加，
     sureCreatedTag(){
       let url = this.type === 'add' ? tags.tagCreate: tags.tagUpdate
       this.$refs['editForm'].validate(async valid => {
       if(valid) {
         try {
           const result = await post(url, this.editForm)
-          // console.log(`返回结果${JSON.stringify(result)}`)
           this.editFormShow = false;
           this.search()
+          this.editForm.editTagGroupName = ''
           this.editForm.tagName = ''
           this.editForm.description = ''
+          this.editForm.tagId = 0
+          this.type = 'add'
         } catch (error) {
           console.log(`返回error结果${JSON.stringify(error)}`)
         }
       }
       })
     },
-    fun(arr) {
+    // 递归树组-数组降级
+    flattenArr(arr) {
       for(let i = 0; i< arr.length; i++) {
         if(arr[i].children.length > 0) {
           this.displayTag.displayList.push(arr[i])
-          this.fun(arr[i].children)
+          this.flattenArr(arr[i].children)
         } else {
           this.displayTag.displayList.push(arr[i])
         }
       }
     },
-    async isShowTags(){
-      this.fun(this.tagDisplayList)
-      // console.log(`修改：${JSON.stringify(this.displayTag)}`)
+    async sureShowTags(){
+      this.flattenArr(this.tagDisplayList)
       const result = await post(tags.tagsDisplay, this.displayTag)
-      // console.log(`显示隐藏标签成功：${JSON.stringify(result)}`)
       this.search()
       this.tagLibrayManager = false
     },
-    clear() {
-      this.searchForm.searchTagGroup = ''
-      this.searchForm.searchTagName = ''
-      },
     }
   }
 </script>
