@@ -50,7 +50,7 @@
       <p>暂无标签</p>
     </div>
     <!-- 编辑，标签添加 添加子标签 -->
-    <el-dialog :title="editFormTitle"  :visible.sync="editFormShow" :before-close="clearForm" width="558px" top="339px">
+    <el-dialog :title="editFormTitle"  :visible.sync="editFormShow" :before-close="clearForm" width="558px" top="209px">
       <el-form label-width="100px" :rules="rules" :model="editForm" ref="editForm">
         <div class="not_edit_group_wrap" v-if="notEditGroupName">
           <p class="not_edit_label">标签组名：</p>
@@ -76,7 +76,7 @@
     </el-dialog>
     
     <!-- 标签管理 -->
-    <el-dialog title="标签管理"  :visible.sync="tagLibrayManager" width="558px" top="339px">
+    <el-dialog title="标签管理"  :visible.sync="tagLibrayManager" width="558px" top="189px">
       <div class="custom-tree-container">
         <el-form :inline="true" :model="searchTagLibray" ref="searchTagLibray">
           <el-form-item label="标签名" size="small" prop="searchLibrayTag">

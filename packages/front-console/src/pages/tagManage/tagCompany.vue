@@ -89,7 +89,7 @@
     </div>
     
   <!-- 标签管理 -->
-  <el-dialog :title="dialogTitle"  :visible.sync="tagLibrayManager" width="840px" top="339px">
+  <el-dialog :title="dialogTitle"  :visible.sync="tagLibrayManager" width="840px" top="189px">
     <div class="dialog_manage">
       <div class="left">
         <p>{{leftTitle}}</p>
@@ -112,8 +112,8 @@
             class="filter-tree"
             :filter-node-method="filterNode"
             :data="soloTagMangerList" 
-            node-key="id" 
-            :default-expanded-keys="[1]" 
+            node-key="tagId" 
+            :default-expanded-keys="expandedkeys" 
             @node-click="handleNodeClick"
             ref="tree2"
             :expand-on-click-node="true">
@@ -193,6 +193,7 @@
         searchLibrayTag: ''
       },
       isHandle: false,
+      expandedkeys: [], // tree默认展开节点数
 
     }
   },
@@ -223,6 +224,9 @@
       const result = await get(tags.tagsTree, {hide: true}) // true 不展示标签库中，隐藏的数据 false 展示所有数据
       // console.log(`标签树： ${JSON.stringify(result)}`)
       this.soloTagMangerList = result.children
+      if(this.soloTagMangerList.length > 0) {
+        this.expandedkeys.push(this.soloTagMangerList[0].tagId)
+      }
 
     },
     removeCurrentTag(index) {
