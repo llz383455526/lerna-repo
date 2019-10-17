@@ -22,7 +22,7 @@
         </el-form-item>
 
         <el-form-item label="客户公司" size="small" prop="companyName">
-          <el-input v-model="formSearch.companyName" placeholder="请输入"></el-input>
+          <el-input v-model.trim="formSearch.companyName" placeholder="请输入" @keyup.enter.native="search(url)"></el-input>
         </el-form-item>
 
         <el-form-item label="标签名称:" size="small">

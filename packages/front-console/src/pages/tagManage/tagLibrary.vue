@@ -1,9 +1,9 @@
 <template>
 <div class="tag_container">
   <div style="margin-bottom:30px;" class="tag_tt">标签库管理</div>
-  <el-form :inline="true" :model="searchForm" ref="searchForm" v-if="!showNoData">
+  <el-form :inline="true" :model="searchForm" ref="searchForm" v-if="!showNoData" @submit.native.prevent>
       <el-form-item label="标签组" size="small" prop="searchTagGroup">
-        <el-input v-model="searchForm.tagName" placeholder="请输入关键词"></el-input>
+        <el-input v-model.trim="searchForm.tagName" placeholder="请输入关键词" @keyup.enter.native="search()"></el-input>
       </el-form-item>
       <!-- <el-form-item label="标签名称" size="small" prop="searchTagName">
         <el-input v-model="searchForm.searchTagName" placeholder="请输入关键词"></el-input>
