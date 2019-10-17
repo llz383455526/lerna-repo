@@ -34,7 +34,7 @@
 
 
         <el-form-item label="标签名称:" size="small">
-          <el-select v-model="formSearch.tagIds" multiple collapse-tags>
+          <el-select v-model="formSearch.tagIds" multiple collapse-tags filterable>
             <el-option v-for="item in tagGroupsList" :label="item.tagName" :value="item.tagId" :key="item.tagId"></el-option>
           </el-select>
         </el-form-item>
