@@ -108,19 +108,21 @@
               <el-input v-model="filterText" placeholder="输入关键字进行过滤" class="dia_f_input"></el-input>
             </el-form-item>
           </el-form>
-          <el-tree
-            class="filter-tree"
-            :filter-node-method="filterNode"
-            :data="soloTagMangerList" 
-            node-key="tagId" 
-            :default-expanded-keys="expandedkeys" 
-            @node-click="handleNodeClick"
-            ref="tree2"
-            :expand-on-click-node="true">
-              <span class="custom-tree-node" slot-scope="{ node, data }">
-                <span class="tree_node_h"><i :class="data.group ? 'tag_files': 'tag_file'"></i>{{ data.tagName }} {{data.children.length ? `(${data.children.length})`: ''}}</span>
-              </span>
-            </el-tree>
+          <div class="fix_tree_search">
+            <el-tree
+              class="filter-tree"
+              :filter-node-method="filterNode"
+              :data="soloTagMangerList" 
+              node-key="tagId" 
+              :default-expanded-keys="expandedkeys" 
+              @node-click="handleNodeClick"
+              ref="tree2"
+              :expand-on-click-node="true">
+                <span class="custom-tree-node" slot-scope="{ node, data }">
+                  <span class="tree_node_h"><i :class="data.group ? 'tag_files': 'tag_file'"></i>{{ data.tagName }} {{data.children.length ? `(${data.children.length})`: ''}}</span>
+                </span>
+              </el-tree>
+            </div>
         </div>
       </div>
       <div class="left">
@@ -255,6 +257,7 @@
       // console.log(`当前等待处理的数组集合：${JSON.stringify(this.waitingHandleTags)}`)
     },
     async sure() {
+      this.resetForm('formSearch')
       const result = await post(this.batchUrl, this.batchTagsForm)
       // console.log(`批量处理标签: ${JSON.stringify(result)}`)
       this.tagLibrayManager = false;
@@ -442,9 +445,7 @@
             border: 1px solid #DBDEE3;
             border-radius: 4px;
             &:hover {
-              color: #0283FB;
-              border-color: rgb(179, 218, 254);
-              background-color: rgb(230, 243, 255);
+              font-weight: 600;
             }
           }
         }
@@ -505,7 +506,10 @@
       width: 390px;
       height: 470px;
       border: 1px solid #DCDCDC;
-      overflow-y: auto;
+      .fix_tree_search {
+        height: 380px;
+        overflow-y: auto;
+      }
       /deep/ .el-tree-node__content {
         padding: 25px 0;
         border-bottom: 1px solid #F2F2F2;
