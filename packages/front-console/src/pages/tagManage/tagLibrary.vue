@@ -40,7 +40,7 @@
         <span class="custom-tree-node" slot-scope="{ node, data }">
           <span class="tree_node_h"><i :class="data.group ? 'tag_files': 'tag_file'" ></i>{{ data.tagName }} {{data.children.length ? `(${data.children.length})`: ''}}</span>
           <span class="tree_node_middle">{{data.description}}</span>
-          <span class="tree_node_status">{{data.display ? '显示': '隐藏'}}</span>
+          <span class="tree_node_status"><i :class="['tag_show_hiden',data.display ? 'tag_show': 'tag_hiden']"></i>{{data.display ? '显示': '隐藏'}}</span>
           <span class="tree_node_opea">
             <el-button v-show="data.group" @click="addChildTag(data)" type="text" size="medium" style="padding:0;">添加子标签<i class="opera_gap"></i></el-button>
             <el-button v-show="data.group" @click="editTagLibrayManager(data)" type="text" size="medium" style="padding:0;">标签管理<i class="opera_gap"></i></el-button>
@@ -412,6 +412,12 @@
   }
 </script>
 <style lang="scss" scoped>
+
+$status_w: 130px; // 状态的宽度
+$desc_w: 400px;// 描述的宽度
+$ope_w: 240px; // 操作区域的宽度
+$point_w: 4px; // 状态前面的小点宽度
+
 .tag_container {
   padding:40px 15px 15px;
   background-color: #fff;
@@ -466,17 +472,27 @@
   }
   .tree_node_middle {
     padding-right: 20px;
-    width: 500px;
+    width: $desc_w;
     white-space: normal;
   }
   .tree_node_status {
     cursor: default;
-    color: #0283FB;
-    width: 50px;
+    // color: #0283FB;
+    width: $status_w;
   }
   .tree_node_opea {
-    width: 220px;
+    width: $ope_w;
     text-align: right;
+  }
+  .tag_show_hiden {
+    display: inline-block;
+    vertical-align: middle;
+    width: $point_w;
+    height: $point_w;
+    margin-right: 10px;
+    border-radius: 100%;
+    &.tag_show {background: #0283FB;}
+    &.tag_hiden {background: #f50;}
   }
 }
 .custom-tree-container {
@@ -522,13 +538,13 @@
     padding-left: 10px;
   }
   .tab_tt_middle {
-    width: 500px;
+    width: $desc_w;
   }
   .tab_tt_status {
-    width: 50px;
+    width: $status_w;
   }
   .tab_tt_opea {
-    width: 220px;
+    width: $ope_w;
     text-align: center;
   }
 }
