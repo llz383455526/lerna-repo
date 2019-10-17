@@ -23,8 +23,9 @@
       </div>
       <el-tree
         :data="tagMangerList" 
-        node-key="id" 
-        :default-expanded-keys="[0, 1]" 
+        node-key="tagId"
+        :props="defaultProps"
+        :default-expanded-keys="expandedkeys" 
         :expand-on-click-node="false">
           <span class="custom-tree-node" slot-scope="{ node, data }">
             <span class="tree_node_h"><i :class="data.group ? 'tag_files': 'tag_file'" ></i>{{ data.tagName }} {{data.children.length ? `(${data.children.length})`: ''}}</span>
@@ -87,8 +88,8 @@
           ref="tree2"
           :data="soloTagMangerList"
           :filter-node-method="filterNode"
-          node-key="id" 
-          :default-expanded-keys="[1]" 
+          node-key="tagId"
+          default-expand-all
           :expand-on-click-node="false">
             <span class="custom-tree-node" slot-scope="{ node, data }">
               <span class="tree_node_h"><i :class="data.group ? 'tag_files': 'tag_file'"></i>{{ data.tagName }} {{data.children.length ? `(${data.children.length})`: ''}}</span>
@@ -162,6 +163,11 @@
       },
       currentPage: 1,
       pageSize: 10,
+      defaultProps: {
+          children: "children",
+          label: "tagName"
+        },
+      expandedkeys: [], // tree默认展开节点数
     }
   },
   created() {
@@ -184,6 +190,7 @@
     },
     // 搜索表单
     async search(page) {
+      this.expandedkeys = []
       this.searchForm.page = page || 1
       this.searchForm.pageSize = this.pageSize
       // console.log(`搜索前，表单输入的数据： ${JSON.stringify(this.searchForm)}`)
@@ -199,6 +206,9 @@
         }
         this.showNoData = false
         this.firstLoad = false
+        if(this.tagMangerList.length > 0) {
+          this.expandedkeys.push(this.tagMangerList[0].tagId)
+        }
         } catch (error) {
           console.log(`返回结果${JSON.stringify(error)}`)
         }
@@ -306,6 +316,8 @@
           this.editForm.tagName = ''
           this.editForm.description = ''
           this.editForm.tagId = 0
+          this.editForm.parentId = 0
+          this.editForm.group = true
           this.type = 'add'
         } catch (error) {
           console.log(`返回error结果${JSON.stringify(error)}`)
