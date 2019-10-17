@@ -483,6 +483,7 @@
       padding: 10px 10px;
       height: 470px;
       border: 1px solid #DCDCDC;
+      overflow-y: auto;
       .hand_r_tag {
         flex: 1;
         display: flex;
