@@ -140,7 +140,7 @@
     <!-- <p>batchTagsForm: {{batchTagsForm}}</p>
     <p>batchUrl: {{batchUrl}}</p> -->
     <span class="form_footer" slot="footer">
-      <el-button @click="sure" type="primary">保存</el-button>
+      <el-button @click="saveChange" type="primary">保存</el-button>
       <el-button @click="tagLibrayManager = false">关闭</el-button>
     </span>
   </el-dialog>
@@ -256,8 +256,8 @@
       }
       // console.log(`当前等待处理的数组集合：${JSON.stringify(this.waitingHandleTags)}`)
     },
-    async sure() {
-      this.resetForm('formSearch')
+    async saveChange() {
+      // this.resetForm('formSearch')
       const result = await post(this.batchUrl, this.batchTagsForm)
       // console.log(`批量处理标签: ${JSON.stringify(result)}`)
       this.tagLibrayManager = false;
