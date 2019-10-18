@@ -261,7 +261,7 @@
       const result = await post(this.batchUrl, this.batchTagsForm)
       // console.log(`批量处理标签: ${JSON.stringify(result)}`)
       this.tagLibrayManager = false;
-      this.search(this.url);
+      this.search(this.url, this.currentPage);
       this.batchTagsForm.companyIds = []
       this.batchTagsForm.tagIds = []
       this.filterText = ''
