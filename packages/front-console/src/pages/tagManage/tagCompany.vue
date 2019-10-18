@@ -344,6 +344,7 @@
       this.dateValue = ''
       this.getTime()
       this.formSearch.tagIds = []
+      this.search(this.url)
     },
     handleTabClick(tab, event) {
       console.log(tab);
@@ -363,7 +364,6 @@
         default:
       }
       this.resetForm('formSearch')
-      this.search(this.url)
     },
 	}
 	}
