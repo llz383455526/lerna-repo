@@ -277,6 +277,7 @@
     },
     // 处理批量操作
     handleBatchTags(e) {
+      this.filterText = ''
       this.waitingHandleTags = []
       this.dialogTitle = `批量${e === 'add' ? '添加': '移除'}标签`
       this.leftTitle = `选择需要批量${e === 'add' ? '添加': '移除'}的标签`
@@ -291,6 +292,7 @@
     },
     // 编辑当前行
     editRow(row) {
+      this.filterText = ''
       this.waitingHandleTags = []
       this.waitingHandleTags = row.tagList
       this.batchTagsForm.companyId = row.companyId

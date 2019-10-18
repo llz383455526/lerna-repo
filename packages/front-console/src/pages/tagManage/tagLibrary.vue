@@ -212,7 +212,7 @@
         }
         this.showNoData = false
         this.firstLoad = false
-        if(this.tagMangerList.length > 0) {
+        if(this.tagMangerList.length > 0 && this.currentPage === 1) {
           this.expandedkeys.push(this.tagMangerList[0].tagId)
         }
         } catch (error) {
