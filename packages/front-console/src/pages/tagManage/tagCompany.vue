@@ -342,6 +342,7 @@
     resetForm(formName) {
       this.$refs[formName].resetFields()
       this.dateValue = ''
+      this.currentPage = 1
       this.getTime()
       this.formSearch.tagIds = []
       this.search(this.url)
