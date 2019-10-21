@@ -512,7 +512,7 @@ export default {
     },
     setChannel() {
       post(
-        "/api/console-dlv/company/salary-online-order/change-order-channel-acccount",
+        "/api/console-dlv/company/salary-online-order/change-order-channel-acccount-by-account",
         this.channelForm
       ).then(data => {
         console.log(data);

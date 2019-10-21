@@ -350,7 +350,7 @@ export default {
   top: -1px;
 
   #mainContainer {
-    min-height: calc(100vh -60);
+    min-height: calc(100vh - 60px);
     position: relative;
     max-width: 1366px;
     margin: 20px auto 0;

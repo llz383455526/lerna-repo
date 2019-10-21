@@ -124,8 +124,77 @@
       <app-list :showAdd="true"
                 :companyId="companyId"></app-list>
     </div>
-    <div class="content">
+    <div class="content" v-if="checkAccountPower">
       <sign-list ref="signList"></sign-list>
+      <el-card class="box-card">
+        <div slot="header">
+          <span>账号渠道</span>
+          <el-button
+            v-if="addAccountPower"
+            style="margin-left: 20px;"
+            size="small"
+            type="primary"
+            @click="accountChannelShow = true"
+          >
+            新增
+          </el-button>
+        </div>
+        <div class="text">
+          <el-table
+            class="table"
+            :data="accountChannelsList"
+            border=""
+          >
+            <el-table-column
+              prop="userId"
+              label="ID"
+            />
+            <el-table-column
+              prop="merchId"
+              label="账号"
+            />
+            <el-table-column
+              prop="payeruserName"
+              label="账号名称" 
+            />
+            <el-table-column
+              prop="channelAlias"
+              label="银行"
+            >
+            </el-table-column>
+            <!--<el-table-column
+              prop="merchId"
+              label="开户行"
+            >
+            </el-table-column> -->
+            <el-table-column
+              prop="memo"
+              label="备注"
+            >
+            </el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button
+                  type="text"
+                  @click="editAccountChanel(scope.row.channelId)"
+                >
+                  修改
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="page">
+            <el-pagination
+              background
+              layout="prev, pager, next"
+              :page-size="accountChannelsPage.pageSize"
+              :total="accountChannelsPage.total"
+              @current-change="queryAccountChannelsPage"
+              :current-page="accountChannelsPage.pageNo"
+            />
+          </div>
+        </div>
+      </el-card>
     </div>
     <el-button class="back"
                type="primary"
@@ -426,22 +495,63 @@
     </el-dialog>
     <auth-code @result="getAuthCode"
                ref="authCode"></auth-code>
+    <el-dialog
+      title="请选择渠道"
+      :visible.sync="accountChannelShow"
+      width="70%"
+    >
+      <el-button
+        size="small"
+        type="primary"
+        style="margin: 5px"
+        v-for="channel in accountChannels"
+        :key="channel.value"
+        @click="addAccountChanel(channel.value)"
+      >{{channel.text}}</el-button>
+      <span
+        class="form_footer"
+        slot="footer"
+      >
+        <el-button
+          @click="accountChannelShow = false"
+          size="small"
+        >取消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
 import { get, post, formPost, postButNoErrorToast, postWithErrorCallback } from "../../store/api";
 import {mapGetters} from 'vuex'
 import { createUser } from "../../service/userApi";
-import { setTimeout } from "timers";
-import { sysmgr } from "src/api";
+import { sysmgr, accountChannel } from "src/api";
 import authCode from '../../pageComponent/authCode'
 import signList from '../../pageComponent/signList'
 import appList from '../../pageComponent/appList'
+
 export default {
     computed: {
       ...mapGetters({
           agentList: 'agentList',
-        })
+        }),
+      permissions() {
+          return this.$store.state.permissions
+      },
+      // 账号渠道新增权限
+      addAccountPower() {
+        return this.checkRight(this.permissions, 'paymentmgt:/front/custCom_channel_payuser/add')
+      },
+      // 账号渠道查看权限
+      checkAccountPower() {
+        const tag = this.checkRight(this.permissions, 'paymentmgt:/front/payuser/qryAcctbycompany')
+        // 获取账号渠道列表
+        if(tag) {
+          post(accountChannel.accountChannelsList, { companyId: this.companyId }).then(data => {
+              this.accountChannelsList = data
+          })
+        }
+        return tag
+      }
     },
     components: {
         authCode,
@@ -661,6 +771,19 @@ export default {
                 return time.getTime() < beginTime;
             }
         },
+      isExamine: '', // 以前的大神遗留一个bug，不知道为啥没定义
+      accountChannelShow: false, // 账户渠道弹窗显示
+      accountChannelsList: [], // 账户渠道列表
+      accountChannels: [
+        {
+          text: '平安银行',
+          value: 'pingan'
+        }
+      ], // 账户渠道
+      accountChannelsPage: { // 账户渠道分页
+        pageSize: 10,
+        pageNo: 1
+      }
     };
   },
   created() {
@@ -689,6 +812,12 @@ export default {
     get(sysmgr.getGroupUsers, { relationKey: 'DeliverUserRelation' }).then(data => {
         this.deliverList = data
     })
+    // 获取账号渠道列表
+    if(this.checkAccountPower) {
+      post(accountChannel.accountChannelsList, { companyId: this.companyId }).then(data => {
+          this.accountChannelsList = data
+      })
+    }
   },
   methods: {
     getDeliverName() {
@@ -889,6 +1018,19 @@ export default {
     },
     getAuthCode(a) {
         this.authCode = a
+    },
+    // 账号渠道翻页
+    queryAccountChannelsPage() {
+      
+    },
+     // 添加跳转
+    addAccountChanel(channelVal) {
+      this.$router.push(`addAccountServer?&thirdpaySystemId=${channelVal}&companyId=${this.msg.id}&companyName=${this.msg.fullName}`)
+      this.accountChannelShow = false;
+    },
+    // 修改跳转
+    editAccountChanel(channelId) {
+      this.$router.push(`editAccountServer?&channelId=${channelId}`)
     }
   }
 };

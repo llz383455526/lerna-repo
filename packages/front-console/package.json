@@ -15,9 +15,6 @@
 		"test": "gulp & node build/build.js",
 		"lint": "eslint . --ext .vue,.js,.json"
 	},
-	"gitHooks": {
-		"post-commit": "node node_modules/hm-githook/index.js test_92"
-	},
 	"dependencies": {
 		"@riophae/vue-treeselect": "^0.0.37",
 		"@smallwei/avue": "^2.1.0",

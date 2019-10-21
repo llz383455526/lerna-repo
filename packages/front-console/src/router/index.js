@@ -1134,6 +1134,20 @@ export default [{
                 }
             },
             {
+              path: 'addAccountServer',
+              component: () => import('../pages/clientManager/addAccountServer'),
+              meta: {
+                  keepAlive: false
+              }
+            },
+            {
+                path: 'editAccountServer',
+                component: () => import('../pages/clientManager/addAccountServer'),
+                meta: {
+                    keepAlive: false
+                }
+            },
+            {
                 path: 'serverDetail',
                 component: serverDetail,
                 meta: {

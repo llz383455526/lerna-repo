@@ -39,10 +39,16 @@
                 <el-table-column prop="phone" label="收款人手机号" width="100"></el-table-column>
                 <el-table-column prop="stateName" label="交易状态" width="140"></el-table-column>
                 <el-table-column prop="stepName" label="当前步骤" width="120"></el-table-column>
-                <el-table-column prop="paymentResDesc" label="反馈结果" width="140">
+				<el-table-column prop="paymentResDesc" label="返回结果" width="140">
                     <template slot-scope="scope">
                     <span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
                           :title="scope.row.paymentResDesc">{{scope.row.paymentResDesc}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="originErrMsg" label="渠道返回" width="140">
+                    <template slot-scope="scope">
+                    <span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
+                          :title="scope.row.originErrMsg">{{scope.row.originErrMsg}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="outOrderNo" label="客户订单号" width="120"></el-table-column>

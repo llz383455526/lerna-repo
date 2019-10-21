@@ -252,6 +252,7 @@
                 SalesList: [],
                 OriginaTypelList: [],
                 AgentCompanyList: [],
+                SalesTable: '',
                 // onlineAuditIsShow: false,
                 // shangHuShangXianModel: null
             };
@@ -265,7 +266,7 @@
         activated() {
             this.activeData && (this.form = JSON.parse(this.activeData))
             this.query(this.form.page);
-            this.getDeliverList()
+            // this.getDeliverList()
             //   this.getSalesList()
             this.getOriginaTypelList()
             this.getAgentCompanyList()
