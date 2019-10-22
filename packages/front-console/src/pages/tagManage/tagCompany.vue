@@ -105,7 +105,7 @@
           </el-form> -->
           <el-form :inline="true" :model="searchTagLibray" ref="searchTagLibray">
             <el-form-item label="标签名" size="small" prop="searchLibrayTag">
-              <el-input v-model="filterText" placeholder="输入关键字进行过滤" class="dia_f_input"></el-input>
+              <el-input v-model.trim="filterText" clearable placeholder="输入关键字进行过滤" class="dia_f_input"></el-input>
             </el-form-item>
           </el-form>
           <div class="fix_tree_search">
@@ -235,9 +235,25 @@
       this.waitingHandleTags.splice(index, 1)
       // console.log(`移除等待处理的数组中某个元素，剩下的集合：${JSON.stringify(this.waitingHandleTags)}`)
     },
-    filterNode(value, data) {
-      if (!value) return true;
-      return data.tagName.indexOf(value) !== -1;
+    filterNode(value, data, node) {
+      // if (!value) return true;
+      // return data.tagName.indexOf(value) !== -1;
+      //如果共有三级菜单
+      if (!value) return true
+      let if_one = data.tagName.indexOf(value) !== -1
+      let if_two = node.parent && node.parent.data && node.parent.data.tagName && (node.parent.data.tagName.indexOf(value) !== -1)
+      let if_three = node.parent && node.parent.parent && node.parent.parent.data && node.parent.parent.data.tagName && (node.parent.parent.data.tagName.indexOf(value) !== -1)
+      let result_one = false
+      let result_two = false
+      let result_three = false
+      if(node.level === 1) {
+        result_one = if_one
+      }else if(node.level === 2) {
+        result_two = if_one || if_two
+      }else if(node.level === 3) {
+        result_three = if_one || if_two || if_three
+      }
+        return result_one || result_two || result_three
     },
     handleNodeClick(data) {
       // console.log(`添加标签点击当前line：${JSON.stringify(data)}`)
