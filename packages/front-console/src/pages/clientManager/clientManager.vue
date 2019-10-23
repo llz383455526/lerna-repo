@@ -266,7 +266,7 @@
         activated() {
             this.activeData && (this.form = JSON.parse(this.activeData))
             this.query(this.form.page);
-            // this.getDeliverList()
+            this.getDeliverList()
             //   this.getSalesList()
             this.getOriginaTypelList()
             this.getAgentCompanyList()
@@ -317,11 +317,11 @@
             //     })
             //     this.onlineAuditIsShow = true
             // },
-            // getDeliverList() {
-            //     get('/api/sysmgr-web/user/get-group-users?relationKey=DeliverUserRelation').then((res) => {
-            //         this.DeliverList = res
-            //     })
-            // },
+            getDeliverList() {
+                get('/api/sysmgr-web/user/get-group-users?relationKey=DeliverUserRelation').then((res) => {
+                    this.DeliverList = res
+                })
+            },
             getSalesList() {
                 const queryForm = {
                     accountInfo: "",
