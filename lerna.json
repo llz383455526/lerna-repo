@@ -1,10 +1,9 @@
 {
   "packages": [
-    "packages/*"
+    "packages/*",
+    "packages/@taxplanning/*"
   ],
-  "npmClientArgs": [
-    "--no-lockfile"
-  ],
+  "npmClientArgs": ["--no-lockfile"],
   "changelog": {
     "repo": "llz/lerna-repo",
     "labels": {
