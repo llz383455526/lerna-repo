@@ -11,6 +11,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import zhifuchannel from 'module-zhifu-channel'
 import HmBrowserTip from './component/browserTip.vue'
 import { getBrowserInfo } from './plugin/utils-functions'
 
@@ -22,6 +23,9 @@ export default {
     return {
       tipVisible: false,
     }
+  },
+  created() {
+    console.log(zhifuchannel)
   },
   computed: {
     ...mapGetters({
@@ -40,34 +44,34 @@ export default {
   },
   watch: {
     principalMenu(menu) {
-      if(menu && menu.length && this.$route.fullPath == '/main'){
+      if (menu && menu.length && this.$route.fullPath == '/main') {
         // console.log(menu[0].children[0].action)
         // this.$router.push(menu[0].children[0].action)
-        if(this.userInformation.userProfile && this.userInformation.userProfile.subjectType !== 'agent') {
-            this.$router.push('/main/workOrder/workOrderIndex')
+        if (this.userInformation.userProfile && this.userInformation.userProfile.subjectType !== 'agent') {
+          this.$router.push('/main/workOrder/workOrderIndex')
         } else {
-            // 遍历找到发放流水
-            // menu.forEach((item) => {
-            //     console.log(item.title)
-            //     if (item.title === '流水管理') {
-            //         console.log(item)
-            //     }
-            // })
-            if(menu[0].children && menu[0].children.length) {
-                this.$router.push(menu[0].children[0].action)
-            } else {
-                this.$router.push(menu[0].action)
-            }
+          // 遍历找到发放流水
+          // menu.forEach((item) => {
+          //     console.log(item.title)
+          //     if (item.title === '流水管理') {
+          //         console.log(item)
+          //     }
+          // })
+          if (menu[0].children && menu[0].children.length) {
+            this.$router.push(menu[0].children[0].action)
+          } else {
+            this.$router.push(menu[0].action)
+          }
         }
       }
-    }
+    },
   },
   mounted() {
     if (this.needTip) {
       this.tipVisible = true
     }
-  }
-};
+  },
+}
 </script>
 
 <style lang="scss" scoped>
@@ -130,20 +134,3 @@ body {
   margin: 0px 30px 30px;
 }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

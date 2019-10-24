@@ -1,7 +1,5 @@
 'use strict';
 
-module.exports = moduleZhifuChannel;
+import channel from './channel'
 
-function moduleZhifuChannel() {
-    console.log('module-zhifu-channel loaded')
-}
+export default channel
