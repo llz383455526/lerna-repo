@@ -5,6 +5,15 @@
 1. 执行: npm i lerna -g，全局安装lerna
 1. 执行：lerna init -i ，使用independent模式初始化项目
 
+## lerna create
+
+使用lerna create package-name快速创建module
+
+```shell
+# 该命令会调用npm init，在packages目录下快速初始化一个名称为module-4的工作目录
+lerna create module-4
+```
+
 ## lerna add
 
 1. 在packages目录下新增module-1、module-2、module-3，一共3个package。
