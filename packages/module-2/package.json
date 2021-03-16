@@ -1,6 +1,6 @@
 {
   "name": "@llz/module-2",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -13,6 +13,6 @@
     "webpack": "^5.26.0"
   },
   "dependencies": {
-    "@llz/module-1": "^1.0.0"
+    "@llz/module-1": "^1.0.1"
   }
 }
