@@ -1,9 +1,11 @@
-# lerna init
+# 常用命令
+
+## lerna init
 
 1. 执行: npm i lerna -g，全局安装lerna
 1. 执行：lerna init -i ，使用independent模式初始化项目
 
-# lerna add
+## lerna add
 
 1. 在packages目录下新增module-1、module-2、module-3，一共3个package。
   此时目录结构如下：
@@ -40,11 +42,11 @@
 
 lerna add不只是会添加依赖关系到package.json，还会执行npm install来安装依赖,此时在每个module里都会有自己的node_modules目录
 
-# lerna ls
+## lerna ls
 
 在上一步操作中我们通过lerna add为每个module都添加了依赖关系，我们可以通过lerna ls --graph来查看最终的依赖关系是否符合我们的需求
 
-# lerna bootstrap
+## lerna bootstrap
 
 基于上一步的代码，如果别人clone了我的代码进行开发，他该如何安装依赖呢。答案是执行lerna bootstrap
 
@@ -63,3 +65,7 @@ lerna success Bootstrapped 3 packages
 有人可能会问了，我直接去packages下每个module里执行npm install不也可以吗？
 答案是不可以。
 因为对于外部依赖，npm install是可以安装的，但是对于module之间的依赖它也认为是外部依赖从而去网上下载安装。导致在开发过程中，如果修改了module-1,module-2并不会引用到最新的代码。
+
+## lerna clean
+
+与lerna bootstrap 是安装依赖相反，lerna clean会将packages下所有module的node_modules清除掉。
