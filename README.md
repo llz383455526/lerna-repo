@@ -78,3 +78,23 @@ lerna success Bootstrapped 3 packages
 ## lerna clean
 
 与lerna bootstrap 是安装依赖相反，lerna clean会将packages下所有module的node_modules清除掉。
+
+## lerna changed / lerna diff
+
+lerna changed用来列出有哪些module有更新,如果某个module依赖的module发生了更改，这个module也会列出来。
+
+```shell
+$ lerna changed
+lerna notice cli v4.0.0
+lerna info versioning independent
+lerna info Looking for changed packages since @llz/module-1@1.0.1
+@llz/module-1 
+@llz/module-2
+@llz/module-3
+@llz/module-4
+```
+
+如上所示，我只修改了module-1和module-4的代码，因为module-2和module-3都依赖module-1,所以module-2和module-3也会被提示有更改
+---
+
+如果要看哪些文件做了哪些更新，可以受用lerna diff命令，该命令会使用git，列出每个修改文件的每一行更改。
